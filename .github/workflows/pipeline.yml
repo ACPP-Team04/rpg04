@@ -26,10 +26,6 @@ jobs:
             compiler: g++-14
             target: Linux
 
-          - os: macos-latest
-            compiler: g++-14
-            target: Macos
-
           - os: windows-latest
             compiler: cl
             target: Windows

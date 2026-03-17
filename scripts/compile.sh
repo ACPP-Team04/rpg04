@@ -6,7 +6,7 @@ OS_TARGET=$2
 
 
 case "${OS_TARGET}" in
-  Linux|Macos)
+  Linux)
     CMAKE_GENERATOR="Unix Makefiles"
     CMAKE_EXTRA_FLAGS="-DCMAKE_CXX_COMPILER=${CPP_COMPILER}"
     ;;
