@@ -1,0 +1,7 @@
+/home/marco/rpg04/build/CMakeFiles/game-lib.dir
+/home/marco/rpg04/build/CMakeFiles/main.dir
+/home/marco/rpg04/build/CMakeFiles/tests.dir
+/home/marco/rpg04/build/CMakeFiles/format.dir
+/home/marco/rpg04/build/CMakeFiles/test.dir
+/home/marco/rpg04/build/CMakeFiles/edit_cache.dir
+/home/marco/rpg04/build/CMakeFiles/rebuild_cache.dir

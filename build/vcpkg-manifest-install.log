@@ -1,0 +1,31 @@
+Detecting compiler hash for triplet x64-linux...
+Compiler found: /usr/bin/c++
+The following packages will be built and installed:
+    gtest:x64-linux@1.17.0#2
+  * vcpkg-cmake:x64-linux@2024-04-23
+  * vcpkg-cmake-config:x64-linux@2024-05-23
+Additional packages (*) will be modified to complete this operation.
+Restored 3 package(s) from /home/marco/.cache/vcpkg/archives in 61.7 ms. Use --debug to see more details.
+Installing 1/3 vcpkg-cmake-config:x64-linux@2024-05-23...
+vcpkg-cmake-config:x64-linux@2024-05-23 package ABI: 938b5e1dc7ceacf08654bef246055524d658786b56f39c96f3b23d2de8d063d3
+Elapsed time to handle vcpkg-cmake-config:x64-linux: 892 us
+Installing 2/3 vcpkg-cmake:x64-linux@2024-04-23...
+vcpkg-cmake:x64-linux@2024-04-23 package ABI: f7cbaf4a1eecbbb1579be1e8dbbd016626910498335b8370236a4219615937b6
+Elapsed time to handle vcpkg-cmake:x64-linux: 947 us
+Installing 3/3 gtest:x64-linux@1.17.0#2...
+gtest:x64-linux@1.17.0#2 package ABI: 4cc21124af27493ac1787e1dc10c3210a797392776b8c63de971fa570703f0b9
+Elapsed time to handle gtest:x64-linux: 1.72 ms
+Installed contents are licensed to you by owners. Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+Packages installed in this vcpkg installation declare the following licenses:
+BSD-3-Clause
+MIT
+The package gtest is compatible with built-in CMake targets:
+
+    enable_testing()
+    
+    find_package(GTest CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+    
+    add_test(AllTestsInMain main)
+
+All requested installations completed successfully in: 3.87 ms

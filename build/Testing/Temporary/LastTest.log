@@ -1,0 +1,29 @@
+Start testing: Mar 17 13:37 CET
+----------------------------------------------------------
+1/1 Testing: tests
+1/1 Test: tests
+Command: "/home/marco/rpg04/build/tests"
+Directory: /home/marco/rpg04/build
+"tests" start time: Mar 17 13:37 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/marco/rpg04/vcpkg/buildtrees/gtest/src/v1.17.0-0c449efaff.clean/googletest/src/gtest_main.cc
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PlayerTest
+[ RUN      ] PlayerTest.NameIsCorrect
+[       OK ] PlayerTest.NameIsCorrect (0 ms)
+[----------] 1 test from PlayerTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"tests" end time: Mar 17 13:37 CET
+"tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Mar 17 13:37 CET

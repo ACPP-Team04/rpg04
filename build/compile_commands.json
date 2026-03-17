@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/marco/rpg04/build",
+  "command": "/usr/bin/c++  -I/home/marco/rpg04/src/main -std=gnu++23 -o CMakeFiles/game-lib.dir/src/main/Implementation/Player/Player.cpp.o -c /home/marco/rpg04/src/main/Implementation/Player/Player.cpp",
+  "file": "/home/marco/rpg04/src/main/Implementation/Player/Player.cpp",
+  "output": "CMakeFiles/game-lib.dir/src/main/Implementation/Player/Player.cpp.o"
+},
+{
+  "directory": "/home/marco/rpg04/build",
+  "command": "/usr/bin/c++  -I/home/marco/rpg04/src/main -std=gnu++23 -o CMakeFiles/main.dir/src/main/main.cpp.o -c /home/marco/rpg04/src/main/main.cpp",
+  "file": "/home/marco/rpg04/src/main/main.cpp",
+  "output": "CMakeFiles/main.dir/src/main/main.cpp.o"
+},
+{
+  "directory": "/home/marco/rpg04/build",
+  "command": "/usr/bin/c++  -I/home/marco/rpg04/src/main -isystem /home/marco/rpg04/build/vcpkg_installed/x64-linux/include -std=gnu++23 -o CMakeFiles/tests.dir/src/test/test.cpp.o -c /home/marco/rpg04/src/test/test.cpp",
+  "file": "/home/marco/rpg04/src/test/test.cpp",
+  "output": "CMakeFiles/tests.dir/src/test/test.cpp.o"
+}
+]
