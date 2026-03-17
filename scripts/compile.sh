@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CPP_COMPILER=$2
-OS_TARGET=$1
+CPP_COMPILER=$1
+OS_TARGET=$2
 
 
 case "${OS_TARGET}" in
