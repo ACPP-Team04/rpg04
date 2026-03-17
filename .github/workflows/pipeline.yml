@@ -12,7 +12,8 @@ on:
 defaults:
   run:
     shell: bash
-
+permissions:
+  contents: write
 jobs:
   build_and_test:
     name: Build & test game on ${{ matrix.os }} with ${{ matrix.compiler }}.
