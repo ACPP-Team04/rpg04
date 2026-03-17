@@ -25,9 +25,8 @@ echo "[1/2] Configuring CMake …"
 cmake -S . \
       -B \
       -G "${CMAKE_GENERATOR}" \
-      -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
       ${CMAKE_EXTRA_FLAGS}
 
 echo ""
-echo "[2/2] Building (${BUILD_TYPE}) …"
+echo "[2/2] Building…"
 cmake --build build
