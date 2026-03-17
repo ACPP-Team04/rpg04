@@ -3,6 +3,6 @@
 
 TEST(PlayerTest, NameIsCorrect)
 {
-	Player player("Hero");
-	EXPECT_EQ(player.getName(), "Hero");
+	Player        player("Hero");
+	EXPECT_EQ            (player.getName(), "Hero");
 }
