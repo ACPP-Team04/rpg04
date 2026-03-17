@@ -47,8 +47,8 @@ jobs:
 
       - name: Compile a Build for game
         run: ./scripts/compile.sh \
-            --cpp-compiler ${{ matrix.compiler }} \
-            --os ${{ matrix.target }}
+            ${{ matrix.compiler }} \
+            ${{ matrix.target }}
 
       - name: Run all of Tests.
         run: ./scripts/test.sh
