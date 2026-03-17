@@ -23,7 +23,7 @@ esac
 echo ""
 echo "[1/2] Configuring CMake …"
 cmake -S . \
-      -B \
+      -B build \
       -G "${CMAKE_GENERATOR}" \
       ${CMAKE_EXTRA_FLAGS}
 
