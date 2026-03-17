@@ -46,9 +46,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Compile a Build for game
-        run: ./scripts/compile.sh \
-            ${{ matrix.compiler }} \
-            ${{ matrix.target }}
+        run: ./scripts/compile.sh ${{ matrix.compiler }} ${{ matrix.target }}
 
       - name: Run all of Tests.
         run: ./scripts/test.sh
