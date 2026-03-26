@@ -7,7 +7,7 @@ find_package(GTest REQUIRED)
 
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS 
     "src/main/*.cpp" 
-    "src/main/*.h"
+    "src/main/*.hpp"
 )
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*main\\.cpp$") 
 
