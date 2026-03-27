@@ -4,8 +4,8 @@
 
 class Test1 : public Component {
 public:
-	Test1();
+	Test1()= default;
 
-	int x;
-	int y;
+	int x{};
+	int y{};
 };
