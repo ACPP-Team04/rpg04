@@ -23,7 +23,7 @@ class ArchetypeManager {
 		if (this->archetypes.contains(archeTypeSignature)) {
 			return this->archetypes[archeTypeSignature];
 		}
-		SharedArchetype newArchType = std::make_shared<Archetype>(Archetype::createArchType<T...>);
+		SharedArchetype newArchType = std::make_shared<Archetype>(Archetype::createArchType<T...>(archeTypeSignature));
 		this->archetypes.insert({archeTypeSignature, newArchType});
 
 		return newArchType;
@@ -36,10 +36,9 @@ class ArchetypeManager {
 	void removeEntityIdFromArchetype(EntityID deletableEntityID,SharedArchetype archetype)
 	{
 		EntityLocation deletableEntityLocation = this->entityIdToArchetype[deletableEntityID];
-		archetype->removeEntityAt(deletableEntityLocation.index);
-
 		EntityID lastEntityId = archetype->getLastEntityId();
-		this->entityIdToArchetype[archetype->getLastEntityId()].index=deletableEntityLocation.index;
+		archetype->removeEntityAt(deletableEntityLocation.index);
+		this->entityIdToArchetype[lastEntityId].index = deletableEntityLocation.index;
 		this->entityIdToArchetype.erase(deletableEntityID);
 	}
 	template <typename ...T>
@@ -56,49 +55,42 @@ class ArchetypeManager {
 		if (oldLocation.archetype == newArchType) {
 			return;
 		}
+
+		size_t newLocationIdx = newArchType->addEntity(entityId);
+		moveInterSectionComponents(oldLocation.index,newLocationIdx,oldLocation.archetype, newArchType);
+
 		removeEntityIdFromArchetype(entityId,oldLocation.archetype);
-
-		size_t newIdx = targetArch->addEntity(entityId);
-		entityIdToArchetype[entityId] = {targetArch, newIdx};
+		entityIdToArchetype[entityId] = {newArchType, newLocationIdx};
 	}
 
 
-
-
-
-	template <typename T>
-	size_t addEntityIdToArchetype(SharedArchetype archetype)
+	void moveInterSectionComponents(int oldIndex, int newIndex, SharedArchetype oldArchetype,SharedArchetype newArchetype)
 	{
-		ComponentPool<T>*componentPool = archetype->getComponentPool<T>();
-		return componentPool->addEntity();
+		auto intersectionIds = ArchetypeBitSignature::getIntersectionIds(oldArchetype->getTypeSignature(), newArchetype->getTypeSignature());
 
-	}
-
-	EntityID getEntityLocationByIndex(ArchetypeBitSignature bitSignature,size_t index)
-	{
-		for (auto it : this->entityIdToArchetype) {
-			if (it.second.archetype.get()->getTypeSignature() != bitSignature) {
-				continue;
-			}
-			if (it.second.index == index) {
-				return it.first;
-			}
+		for (auto intersectionId : intersectionIds) {
+			IPool *newPool = newArchetype->getPoolById(intersectionId);
+			IPool *oldPool = oldArchetype->getPoolById(intersectionId);
+			oldPool->copyTo(oldIndex,newPool,newIndex);
 		}
-		throw std::out_of_range("Entity index out of range");
 	}
 
   public:
+
 	template <typename ...T>
-	EntityID createArchType()
+	EntityID createEntity()
 	{
 		EntityID entityId = EntityID();
-		std::shared_ptr<Archetype> newArchType = addArchType<T...>();
-		newArchType.get()->addEntityIdToComponentMap(entityId);
-
+		this->addEntityIdsToArchType<T...>(entityId);
+		return entityId;
 	}
 
-	std::shared_ptr<Archetype> addComponent(EntityID entityId)
+	template <typename ...T>
+	void addComponent(EntityID entityId)
 	{
-
+		this->addEntityIdsToArchType<T...>(entityId);
 	}
+
+
+
 };

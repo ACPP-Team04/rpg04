@@ -3,6 +3,8 @@
 #include "Abstract/EntityID.hpp"
 
 #include <bitset>
+#include <iostream>
+#include <ostream>
 #include <strings.h>
 #include <typeindex>
 #include <unordered_set>
@@ -31,12 +33,28 @@ class ArchetypeBitSignature {
 		  return !(lhs == rhs);
 	  }
 
+	static std::vector<int> getIntersectionIds(ArchetypeBitSignature a, ArchetypeBitSignature b)
+	{
+		std::vector<int> result;
+		std::bitset<MAX_COMPONENTS> intersect = a.getTypeSignature() & b.getTypeSignature();
+		for (int i = 0; i < MAX_COMPONENTS; i++) {
+			if (intersect.test(i)) {
+				result.push_back(i);
+			}
+		}
+		return result;
+	}
+
 	private:
 	std::bitset<MAX_COMPONENTS> bits;
 	void setBit(const int bit)
 	{
+
 		this->bits.set(bit);
+
 	}
+
+
 
 
 };
@@ -51,6 +69,7 @@ struct IPool {
 	virtual size_t addEntity()=0;
 	virtual	void removeLastEntity()=0;
 	virtual void moveFrom(size_t indexTo,size_t indexFrom)=0;
+	virtual void copyTo(size_t oldIndex, IPool* otherPool, size_t newIndex) = 0;
 };
 
 template <typename T>
@@ -84,22 +103,33 @@ struct ComponentPool: IPool {
 	{
 		this->components[indexTo] = std::move(this->components[indexFrom]);
 	}
+
+	void copyTo(size_t oldIndex, IPool *newPool, size_t newIndex) override
+	{
+		std::cout << oldIndex << " " << newIndex << std::endl;
+		auto* newPoolCast = static_cast<ComponentPool<T>*>(newPool);
+		newPoolCast->components[newIndex] = std::move(this->components[oldIndex]);
+	}
 };
 
 
 class Archetype {
 	public:
 	template <typename ...T>
-	static Archetype createArchType()
+	static Archetype createArchType(ArchetypeBitSignature signature)
 	{
 		Archetype archetype = Archetype();
-		archetype.init<T...>();
+		archetype.init<T...>(signature);
 		return archetype;
 	}
 	friend bool operator==(const Archetype &lhs, const Archetype &rhs) { return lhs.type == rhs.type; }
 	friend bool operator!=(const Archetype &lhs, const Archetype &rhs) { return !(lhs == rhs); }
 
 
+	IPool* getPoolById(int componentId)
+	{
+		return componentPools[componentId].get();
+	}
 	template <typename T>
 	ComponentPool<T>* getComponentPool() {
 		int id = ComponentRegistry::getInstance().getComponentId<T>();
@@ -135,7 +165,9 @@ class Archetype {
 		entityIds.pop_back();
 		for (auto const& [id, pool] : componentPools) {
 			pool->moveFrom(location,lastIndex);
+			pool->removeLastEntity();
 		}
+
 	}
 
 	EntityID getLastEntityId()
@@ -154,9 +186,9 @@ class Archetype {
 	std::vector<EntityID> entityIds;
 
 	template <typename ...T>
-	void init()
+	void init(ArchetypeBitSignature signature)
 	{
-		this->setTypeSignature<T...>();
+		this->type = signature;
 		this->createComponentVectors<T...>();
 	}
 
@@ -175,28 +207,19 @@ class Archetype {
 		this->componentPools.insert({componentId,std::make_unique<ComponentPool<T>>()});
 
 	}
-	template <typename ...T>
-	void setTypeSignature()
-	{
-		this->type = ArchetypeBitSignature();
-		this->type.convertToBits<T...>();
-
-	}
-
-
 };
 
 namespace std {
 	template <>
 	struct hash<ArchetypeBitSignature> {
-		size_t operator()(const ArchetypeBitSignature &archetypeBitSignature)
+		size_t operator()(const ArchetypeBitSignature &archetypeBitSignature) const
 		{
 			return hash<std::bitset<ArchetypeBitSignature::MAX_COMPONENTS>>{}(archetypeBitSignature.getTypeSignature());
 		}
 	};
 	template <>
 	struct hash<std::shared_ptr<Archetype>> {
-		size_t operator()(const std::shared_ptr<Archetype> &archetype)
+		size_t operator()(const std::shared_ptr<Archetype> &archetype) const
 		{
 			return hash<ArchetypeBitSignature>{}(archetype->getTypeSignature());
 		}

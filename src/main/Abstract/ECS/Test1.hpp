@@ -9,3 +9,11 @@ public:
 	int x{};
 	int y{};
 };
+
+class Test2 : public Component {
+public:
+	Test2()= default;
+
+	int x{};
+	int y{};
+};

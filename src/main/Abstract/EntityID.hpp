@@ -2,7 +2,7 @@
 
 class EntityID : public Component {
 	public:
-	static int IdCounter;
+	inline static int IdCounter = 0;
 
 	int getId() const
 	{

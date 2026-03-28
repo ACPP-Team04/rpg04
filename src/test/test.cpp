@@ -1,23 +1,23 @@
 #include "Abstract/ECS/Component.hpp"
-#include "Abstract/ECS/Entity.hpp"
 #include "Abstract/ECS/Test1.hpp"
-#include <Abstract/ECS/SlowRepository.hpp>
-
+#include <Abstract/ECS/Archetype/ArchetypeManager.hpp>
+#include "Abstract/ECS/ComponentRegistry/ComponentRegistry.hpp"
 #include <gtest/gtest.h>
 
-TEST(PlayerTest, NameIsCorrect)
+TEST(ArchtypeMangerCreateEntity, CreateNew)
 {
-	auto* repository = new SlowRepository();
+	auto& registry = ComponentRegistry::getInstance();
+	registry.registerComponent<Test1>();
+	registry.registerComponent<Test2>();
+	ArchetypeManager archtypeManger = ArchetypeManager();
 
-	Entity entity(23);
-	repository->addComponentToEntity<Test1>(entity);
+	EntityID entity_id = archtypeManger.createEntity<Test1>();
+	EntityID entity_id2 = archtypeManger.createEntity<Test2>();
+	EntityID entity_id3 = archtypeManger.createEntity<Test1,Test2>();
+	EXPECT_EQ(entity_id.getId(), 0);
+	EXPECT_EQ(entity_id2.getId(), 1);
+	EXPECT_EQ(entity_id3.getId(), 2);
 
-	std::optional<std::shared_ptr<Test1>> component = repository->getComponentByEntity<Test1>(entity);
-
-	if (!component) {
-		std::cerr << "Test1 component not found!" << std::endl;
-	}
-	std::cout << component.value()->x<< std::endl;
-
-
+	archtypeManger.addComponent<Test1,Test2>(entity_id);
+	EXPECT_EQ(entity_id3.getId(), 2);
 }
