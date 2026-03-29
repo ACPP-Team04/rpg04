@@ -88,6 +88,7 @@ jobs:
             --gcov-executable gcov-14 \
             --exclude 'src/test' \
             --exclude ".*dummy\.cpp" \
+            --exclude 'vcpkg_installed' \
             --html --html-details \
             -o build-coverage/coverage.html
 
@@ -95,4 +96,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: build-coverage/coverage.html
+          path: build-coverage/
