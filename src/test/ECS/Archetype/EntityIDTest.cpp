@@ -14,12 +14,15 @@ std::vector<EntityID> fillNEntities(int n)
 static int N = 10;
 TEST(EntityID, Unique)
 {
+	size_t startCounter = EntityID::IdCounter;
 	std::vector<EntityID> entities = fillNEntities(N);
 
+	size_t currentCounter = EntityID::IdCounter;
 	for (int i = 0; i < N; i++) {
-		EXPECT_EQ(entities[i].getId(), i);
+		EXPECT_EQ(entities[i].getId(), i + startCounter);
 	}
-	EXPECT_EQ(entities.back().getId(), N - 1);
+	size_t endCounter = EntityID::IdCounter;
+	EXPECT_EQ(entities.back().getId(), endCounter - 1);
 }
 
 TEST(EntityID, Copy)
