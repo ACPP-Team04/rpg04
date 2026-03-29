@@ -3,7 +3,7 @@
 
 template <typename T>
 class Component {
-	public:
+  public:
 	Component() = default;
 	virtual ~Component() = default;
 	TypeInfo<T> typeInfo;

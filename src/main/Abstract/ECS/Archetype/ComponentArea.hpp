@@ -11,17 +11,14 @@ struct ComponentArea {
 	std::vector<EntityID> entityIds;
 	size_t registerEntity(EntityID entityId)
 	{
-		for (auto& it:this->componentPools) {
+		for (auto &it : this->componentPools) {
 			it.second->addEntity();
 		}
 		entityIds.emplace_back(entityId);
 		return getLastEntityIndex();
 	}
 
-	size_t getLastEntityIndex() const
-	{
-		return this->entityIds.size()-1;
-	}
+	size_t getLastEntityIndex() const { return this->entityIds.size() - 1; }
 
 	EntityID removeEntity(size_t index)
 	{
@@ -33,31 +30,29 @@ struct ComponentArea {
 		}
 		entityIds.pop_back();
 
-		for (auto const& [id, pool] : componentPools) {
-			pool->moveFrom(index,lastIndex);
+		for (auto const &[id, pool] : componentPools) {
+			pool->moveFrom(index, lastIndex);
 			pool->removeLastEntity();
 		}
 
 		return lastEntityId;
 	}
 
-	template <typename ...T>
+	template <typename... T>
 	void createComponentVectors()
 	{
-		(createComponentVector<T>(),...);
-
+		(createComponentVector<T>(), ...);
 	}
 	template <typename T>
 	void createComponentVector()
 	{
-		this->componentPools.insert({ArchetypeBitSignature::get<T>(),std::make_unique<ComponentPool<T>>()});
-
+		this->componentPools.insert({ArchetypeBitSignature::get<T>(), std::make_unique<ComponentPool<T>>()});
 	}
 
-	size_t moveEntityFromOldArchetype(EntityID entity_id,size_t oldIndex, ComponentArea * oldComponentArea)
+	size_t moveEntityFromOldArchetype(EntityID entity_id, size_t oldIndex, ComponentArea *oldComponentArea)
 	{
 		size_t newIndex = this->registerEntity(entity_id);
-		for (auto& [sig, pool] : this->componentPools) {
+		for (auto &[sig, pool] : this->componentPools) {
 			if (oldComponentArea->componentPools.contains(sig)) {
 				oldComponentArea->componentPools[sig]->copyTo(oldIndex, pool.get(), newIndex);
 			}

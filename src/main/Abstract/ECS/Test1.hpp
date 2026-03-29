@@ -2,19 +2,17 @@
 #include "Component/Component.hpp"
 
 class Test1 : public Component<Test1> {
-public:
-	Test1()= default;
+  public:
+	Test1() = default;
 
 	int x{};
 	int y{};
-
 };
 
 class Test2 : public Component<Test2> {
-public:
-	Test2()= default;
+  public:
+	Test2() = default;
 
 	int x{};
 	int y{};
-
 };
