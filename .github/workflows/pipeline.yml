@@ -84,10 +84,10 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          gcovr -r . build-coverage \
-	    --gcov-executable gcov-14 \
-	    --exclude 'src/test' \
-	    --exclude ".*dummy\.cpp"
+            gcovr -r . build-coverage \
+            --gcov-executable gcov-14 \
+            --exclude 'src/test' \
+            --exclude ".*dummy\.cpp"
             --html --html-details \
             -o build-coverage/coverage.html
 
