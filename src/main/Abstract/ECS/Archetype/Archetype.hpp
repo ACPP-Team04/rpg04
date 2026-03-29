@@ -1,9 +1,5 @@
 #pragma once
-#include "../Component/ComponentTypeInfo.hpp"
-
 #include "ComponentArea.hpp"
-
-#include <bitset>
 class Archetype {
 	public:
 
@@ -46,7 +42,6 @@ class Archetype {
 	template <typename ...T>
 	void init(ArchetypeBitSignature signature)
 	{
-		this->componentArea = ComponentArea();
 		this->componentArea.createComponentVectors<T...>();
 		this->type = signature;
 	}
