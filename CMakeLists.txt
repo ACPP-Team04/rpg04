@@ -22,7 +22,7 @@ target_link_libraries(main PRIVATE game-lib)
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS 
     "src/test/*.cpp" 
-    "src/test/*.h"
+    "src/test/*.hpp"
 )
 add_executable(tests ${TEST_SOURCES})
 set_property(TARGET tests PROPERTY CXX_STANDARD 23)
