@@ -1,6 +1,6 @@
-#include "ECS/Component.hpp"
+#include "../Component/Component.hpp"
 
-class EntityID : public Component {
+class EntityID{
 	public:
 	inline static int IdCounter = 0;
 

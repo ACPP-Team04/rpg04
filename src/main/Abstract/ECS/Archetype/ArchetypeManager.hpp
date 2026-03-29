@@ -14,65 +14,101 @@ struct EntityLocation {
 class ArchetypeManager {
 	std::unordered_map<ArchetypeBitSignature,SharedArchetype> archetypes;
 	std::unordered_map<EntityID,EntityLocation> entityIdToArchetype;
-	template <typename ...T>
-
-	SharedArchetype addArchType()
+	SharedArchetype getArchetypeBySignature(ArchetypeBitSignature signature)
 	{
-		ArchetypeBitSignature archeTypeSignature = ArchetypeBitSignature();
-		archeTypeSignature.convertToBits<T...>();
-		if (this->archetypes.contains(archeTypeSignature)) {
-			return this->archetypes[archeTypeSignature];
-		}
-		SharedArchetype newArchType = std::make_shared<Archetype>(Archetype::createArchType<T...>(archeTypeSignature));
-		this->archetypes.insert({archeTypeSignature, newArchType});
+		return this->archetypes[signature];
+	}
 
-		return newArchType;
+	void addArchtypeBySignature(SharedArchetype archetype)
+	{
+		this->archetypes.insert({archetype->getArchTypeSignature(),archetype});
+	}
+
+	bool signatureHasArchetype(ArchetypeBitSignature signature)
+	{
+		return this->archetypes.contains(signature);
 	}
 
 	bool hasArchetype(EntityID entityId)
 	{
 		return this->entityIdToArchetype.contains(entityId);
 	}
+
+	EntityLocation getEntityLocation(EntityID entityId)
+	{
+		return this->entityIdToArchetype[entityId];
+	}
+
+	void setEntityLocation(EntityID entityId, EntityLocation newLocation)
+	{
+		this->entityIdToArchetype[entityId] = newLocation;
+	}
+
+	void deleteEntityLocation(EntityID entityId)
+	{
+		this->entityIdToArchetype.erase(entityId);
+	}
+
+	bool isEntityInArchetype(EntityID entityId, SharedArchetype archetype)
+	{
+		if (!entityIdToArchetype.contains(entityId)) {
+			return false;
+		}
+		return entityIdToArchetype[entityId].archetype == archetype;
+	}
+
+	template <typename ...T>
+	SharedArchetype createArchType()
+	{
+		SharedArchetype newArchType = Archetype::createArchType<T...>();
+		addArchtypeBySignature(newArchType);
+		return newArchType;
+	}
+
+	template <typename ...T>
+	SharedArchetype createArchTypeIfNotExists()
+	{
+		ArchetypeBitSignature archeTypeSignature = ArchetypeBitSignature::get<T...>();
+		if (signatureHasArchetype(archeTypeSignature)) {
+			return getArchetypeBySignature(archeTypeSignature);
+		}
+		return createArchType<T...>();
+	}
+
 	void removeEntityIdFromArchetype(EntityID deletableEntityID,SharedArchetype archetype)
 	{
-		EntityLocation deletableEntityLocation = this->entityIdToArchetype[deletableEntityID];
-		EntityID lastEntityId = archetype->getLastEntityId();
-		archetype->removeEntityAt(deletableEntityLocation.index);
-		this->entityIdToArchetype[lastEntityId].index = deletableEntityLocation.index;
-		this->entityIdToArchetype.erase(deletableEntityID);
+		EntityLocation oldLocation = getEntityLocation(deletableEntityID);
+		EntityID entityIdOnOldLocation = archetype->removeEntity(oldLocation.index);
+		setEntityLocation(entityIdOnOldLocation,oldLocation);
+		deleteEntityLocation(deletableEntityID);
 	}
+
 	template <typename ...T>
 	void addEntityIdsToArchType(EntityID entityId)
 	{
-		SharedArchetype newArchType = addArchType<T...>();
+		SharedArchetype newArchType = createArchTypeIfNotExists<T...>();
+
 		if (!hasArchetype(entityId)) {
-			size_t location = newArchType->addEntity(entityId);
-			entityIdToArchetype[entityId] = {newArchType, location};
+			size_t location = newArchType->registerEntity(entityId);
+			setEntityLocation(entityId,{newArchType,location});
 			return;
 		}
 
-		EntityLocation oldLocation = this->entityIdToArchetype[entityId];
-		if (oldLocation.archetype == newArchType) {
+		if (isEntityInArchetype(entityId,newArchType)) {
 			return;
 		}
 
-		size_t newLocationIdx = newArchType->addEntity(entityId);
-		moveInterSectionComponents(oldLocation.index,newLocationIdx,oldLocation.archetype, newArchType);
-
-		removeEntityIdFromArchetype(entityId,oldLocation.archetype);
-		entityIdToArchetype[entityId] = {newArchType, newLocationIdx};
+		migrateToNewArchetype(entityId,newArchType);
 	}
 
 
-	void moveInterSectionComponents(int oldIndex, int newIndex, SharedArchetype oldArchetype,SharedArchetype newArchetype)
+	void migrateToNewArchetype(EntityID entityId,SharedArchetype newArchetype)
 	{
-		auto intersectionIds = ArchetypeBitSignature::getIntersectionIds(oldArchetype->getTypeSignature(), newArchetype->getTypeSignature());
+		EntityLocation oldLocation = getEntityLocation(entityId);
+		size_t newIndex = newArchetype->moveComponentsFromArchetype(entityId, oldLocation.index, oldLocation.archetype);
+		removeEntityIdFromArchetype(entityId,oldLocation.archetype);
+		this->setEntityLocation(entityId,{newArchetype,newIndex});
 
-		for (auto intersectionId : intersectionIds) {
-			IPool *newPool = newArchetype->getPoolById(intersectionId);
-			IPool *oldPool = oldArchetype->getPoolById(intersectionId);
-			oldPool->copyTo(oldIndex,newPool,newIndex);
-		}
 	}
 
   public:

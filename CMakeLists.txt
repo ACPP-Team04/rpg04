@@ -15,7 +15,7 @@ add_library(game-lib ${GAME_SOURCES})
 set_property(TARGET game-lib PROPERTY CXX_STANDARD 20)
 target_include_directories(game-lib PUBLIC src/main)  
 
-add_executable(main src/main/main.cpp)
+add_executable(main src/main/Implementation/main.cpp)
 set_property(TARGET main PROPERTY CXX_STANDARD 20)
 target_link_libraries(main PRIVATE game-lib)
 

@@ -1,14 +1,12 @@
-#include "Abstract/ECS/Component.hpp"
+#include "../main/Abstract/ECS/Component/Component.hpp"
+#include "Abstract/ECS/Component/ComponentTypeInfo.hpp"
 #include "Abstract/ECS/Test1.hpp"
 #include <Abstract/ECS/Archetype/ArchetypeManager.hpp>
-#include "Abstract/ECS/ComponentRegistry/ComponentRegistry.hpp"
 #include <gtest/gtest.h>
 
 TEST(ArchtypeMangerCreateEntity, CreateNew)
 {
-	auto& registry = ComponentRegistry::getInstance();
-	registry.registerComponent<Test1>();
-	registry.registerComponent<Test2>();
+
 	ArchetypeManager archtypeManger = ArchetypeManager();
 
 	EntityID entity_id = archtypeManger.createEntity<Test1>();
