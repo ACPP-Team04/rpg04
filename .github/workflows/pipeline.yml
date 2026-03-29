@@ -86,7 +86,7 @@ jobs:
         run: |
           gcovr -r . build-coverage \
 	    --gcov-executable gcov-14 \
-            --exclude 'src/test' \
+	    --exclude 'src/test' \
 	    --exclude ".*dummy\.cpp"
             --html --html-details \
             -o build-coverage/coverage.html
