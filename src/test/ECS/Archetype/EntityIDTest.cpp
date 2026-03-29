@@ -24,9 +24,10 @@ TEST(EntityID, Unique)
 
 TEST(EntityID, Copy)
 {
+	int currentCounter = EntityID::IdCounter;
 	EntityID origin = EntityID();
 	EntityID copy = origin;
 
 	EXPECT_EQ(copy.getId(), origin.getId());
-	EXPECT_EQ(EntityID::IdCounter, 1);
+	EXPECT_EQ(EntityID::IdCounter, currentCounter + 1);
 }
