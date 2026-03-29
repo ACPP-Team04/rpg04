@@ -1,6 +1,6 @@
 
-#include <gtest/gtest.h>
 #include "Abstract/ECS/Entity/EntityID.hpp"
+#include <gtest/gtest.h>
 
 std::vector<EntityID> fillNEntities(int n)
 {
@@ -12,7 +12,7 @@ std::vector<EntityID> fillNEntities(int n)
 }
 
 static int N = 10;
-TEST(EntityID,Unique)
+TEST(EntityID, Unique)
 {
 	std::vector<EntityID> entities = fillNEntities(N);
 
@@ -22,11 +22,11 @@ TEST(EntityID,Unique)
 	EXPECT_EQ(entities.back().getId(), N - 1);
 }
 
-TEST(EntityID,Copy)
+TEST(EntityID, Copy)
 {
 	EntityID origin = EntityID();
 	EntityID copy = origin;
 
 	EXPECT_EQ(copy.getId(), origin.getId());
-	EXPECT_EQ(EntityID::IdCounter,1);
+	EXPECT_EQ(EntityID::IdCounter, 1);
 }

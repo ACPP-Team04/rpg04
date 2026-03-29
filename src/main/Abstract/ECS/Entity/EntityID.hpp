@@ -5,7 +5,7 @@ class EntityID {
   public:
 	EntityID() : id(IdCounter++) {}
 	~EntityID() = default;
-	EntityID(const EntityID &other) : id(other.id){}
+	EntityID(const EntityID &other) : id(other.id) {}
 	EntityID(EntityID &&other) noexcept : id(other.id) {}
 	EntityID &operator=(const EntityID &other)
 	{
