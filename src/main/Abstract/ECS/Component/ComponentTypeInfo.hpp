@@ -1,10 +1,7 @@
 #pragma once
 #include <bitset>
 #define MAX_COMPONENTS 64
-enum class BitwiseOperator {
-	OR,
-	AND
-};
+enum class BitwiseOperator { OR, AND };
 using bitset = std::bitset<MAX_COMPONENTS>;
 struct TypeId {
 	static int nextId()
@@ -16,12 +13,14 @@ struct TypeId {
 
 template <typename T>
 struct TypeInfo {
-	static int id() {
+	static int id()
+	{
 		static int id = TypeId::nextId();
 		return id;
 	}
 
-	static bitset bitRepr() {
+	static bitset bitRepr()
+	{
 		bitset bits;
 		bits.set(id());
 		return bits;

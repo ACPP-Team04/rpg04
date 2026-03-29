@@ -11,11 +11,11 @@ TEST(ArchtypeMangerCreateEntity, CreateNew)
 
 	EntityID entity_id = archtypeManger.createEntity<Test1>();
 	EntityID entity_id2 = archtypeManger.createEntity<Test2>();
-	EntityID entity_id3 = archtypeManger.createEntity<Test1,Test2,Test1>();
+	EntityID entity_id3 = archtypeManger.createEntity<Test1, Test2, Test1>();
 	EXPECT_EQ(entity_id.getId(), 0);
 	EXPECT_EQ(entity_id2.getId(), 1);
 	EXPECT_EQ(entity_id3.getId(), 2);
 
-	archtypeManger.addComponent<Test1,Test2>(entity_id);
+	archtypeManger.addComponent<Test1, Test2>(entity_id);
 	EXPECT_EQ(entity_id3.getId(), 2);
 }
