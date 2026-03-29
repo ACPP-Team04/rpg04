@@ -27,20 +27,29 @@ struct ComponentPool : IPool {
 		return this->components.size() - 1;
 	}
 
-	void removeLastEntity() override { this->components.pop_back(); }
+	void removeLastEntity() override
+	{
+		if (this->components.empty()) {
+			throw std::range_error("Cannot remove last entity from an empty componentvector");
+		}
+		this->components.pop_back();
+	}
 
-	T &getComponent(size_t location) { return this->components[location]; }
-	T &getLastEntityComponent() { return this->components.back(); }
-
+	T &getComponent(size_t location)
+	{
+		if (this->components.size() <= location) {
+			throw std::range_error("Index out of bounds");
+		}
+		return this->components[location];
+	}
 	void moveFrom(size_t indexTo, size_t indexFrom) override
 	{
-		this->components[indexTo] = std::move(this->components[indexFrom]);
+		this->getComponent(indexTo) = std::move(this->getComponent(indexFrom));
 	}
 
 	void copyTo(size_t oldIndex, IPool *newPool, size_t newIndex) override
 	{
-		std::cout << oldIndex << " " << newIndex << std::endl;
 		auto *newPoolCast = static_cast<ComponentPool<T> *>(newPool);
-		newPoolCast->components[newIndex] = std::move(this->components[oldIndex]);
+		newPoolCast->getComponent(newIndex) = std::move(this->getComponent(oldIndex));
 	}
 };
