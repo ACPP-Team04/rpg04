@@ -76,8 +76,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v7
       - name: Run Build Wrapper
         run: |
-          mkdir build
-          cmake -S . -B build -DCMAKE_CXX_COMPILER=/usr/bin/g++-14 -DCMAKE_C_COMPILER=/usr/bin/gcc-14
+          cmake -S . -B build -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-14
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
       - name: Run tests to generate coverage statistics
         run: |
