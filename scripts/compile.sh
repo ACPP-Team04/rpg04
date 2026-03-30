@@ -8,10 +8,7 @@ OS_TARGET=$2
 case "${OS_TARGET}" in
   Linux)
     CMAKE_GENERATOR="Unix Makefiles"
-    CMAKE_EXTRA_FLAGS='-DCMAKE_CXX_COMPILER=${CPP_COMPILER} -DCMAKE_CXX_FLAGS="--coverage -O0 -g" -DCMAKE_BUILD_TYPE=Debug'
-    sudo apt-get update
-    sudo apt-get install -y build-essential g++-14 cmake ninja-build python3-pip
-    pip install gcovr
+    CMAKE_EXTRA_FLAGS="-DCMAKE_CXX_COMPILER=${CPP_COMPILER}"
     ;;
   Windows)
     CMAKE_GENERATOR="Visual Studio 17 2022"
