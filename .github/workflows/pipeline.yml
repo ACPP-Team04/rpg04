@@ -56,78 +56,43 @@ jobs:
 
       - name: Run all of Tests.
         run: ./scripts/test.sh
-  coverage:
-    name: Coverage report on Ubuntu
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
-          submodules: true
-          fetch-depth: 0
-
-      - name: Install dependencies
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up Python 3.8 for gcovr
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: 3.8
+      - name: install gcovr 5.0
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential g++-14 cmake ninja-build python3-pip
-          pip install gcovr
-      - name: Install Sonar build-wrapper
+          pip install gcovr==5.0 # 5.1 is not supported
+      - name: Install Build Wrapper
+        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v7
+      - name: Run Build Wrapper
         run: |
-          curl -sSLo build-wrapper.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-          unzip build-wrapper.zip
-
-
-      - name: Build
+          mkdir build
+          cmake -S . -B build \
+            -DENABLE_COVERAGE=ON \
+            -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
+      - name: Run tests to generate coverage statistics
         run: |
-          export CC=/usr/bin/gcc-14
-          export CXX=/usr/bin/g++-14
-
-          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
-            --out-dir bw-output \
-            bash -c "
-              rm -rf build-coverage &&
-              cmake -S . -B build-coverage \
-                -DCMAKE_CXX_COMPILER=/usr/bin/g++-14 \
-                -DCMAKE_C_COMPILER=/usr/bin/gcc-14 &&
-              cmake --build build-coverage
-            "
-      - name: Run tests
-        run: ctest --test-dir build-coverage --output-on-failure
-
-      - name: Generate coverage report
+          ctest --test-dir build --output-on-failure
+      - name: Collect coverage into one XML report
         run: |
-          gcovr \
-            --root . \
-            --object-directory build-coverage \
-            --filter src/ \
-            --exclude ".*dummy\.cpp" \
-            --sonarqube coverage.xml
-      - name: Debug compile_commands paths
-        run: |
-          echo "Runner pwd: $(pwd)"
-          head -5 build-coverage/compile_commands.json
-      - name: Analyze with SonarCloud
-        uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
+          gcovr --sonarqube > coverage.xml
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v7
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Put the name of your token here
         with:
-          # Additional arguments for the SonarScanner CLI
-          args:
-            # Unique keys of your project and organization. You can find them in SonarCloud > Information (bottom-left menu)
-            # mandatory
-            -Dsonar.projectKey=ACPP-Team04_rpg04
-            -Dsonar.organization=acpp-team04
-            -Dsonar.sources=src/main
-            -Dsonar.tests=src/test
-            -Dsonar.cfamily.cache.enabled=false
-            -Dsonar.coverageReportPaths=coverage.xml
-            -Dsonar.cfamily.compile-commands=bw-output/compile_commands.json
-            # Comma-separated paths to directories containing main source files.
-            #-Dsonar.sources= # optional, default is project base directory
-            # Comma-separated paths to directories containing test source files.
-            #-Dsonar.tests= # optional. For more info about Code Coverage, please refer to https://docs.sonarcloud.io/enriching/test-coverage/overview/
-          # Adds more detail to both client and server-side analysis logs, activating DEBUG mode for the scanner, and adding client-side environment variables and system properties to the server-side log of analysis report processing.
-          #-Dsonar.verbose= # optional, default is false
-          # When you need the analysis to take place in a directory other than the one from which it was launched, default is .
-          projectBaseDir: .
+          args: >
+            --define sonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json
+            --define sonar.coverageReportPaths=coverage.xml
