@@ -78,13 +78,18 @@ jobs:
           unzip build-wrapper.zip
 
 
-      - name: Build with wrapper (FULL clean build)
+      - name: Build
         run: |
+          export CC=/usr/bin/gcc-14
+          export CXX=/usr/bin/g++-14
+
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
             bash -c "
               rm -rf build-coverage &&
-              cmake -S . -B build-coverage -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-14 &&
+              cmake -S . -B build-coverage \
+                -DCMAKE_CXX_COMPILER=/usr/bin/g++-14 \
+                -DCMAKE_C_COMPILER=/usr/bin/gcc-14 &&
               cmake --build build-coverage
             "
       - name: Run tests
