@@ -2,19 +2,60 @@ name: compile_and_test
 
 on:
   push:
-    branches: [ main, 17-add-code-coverage-tool]
+    branches: [ main,sonarqubeSetup ]
+
   pull_request:
-    branches: [ main ]
+    branches: [ main,sonarqubeSetup ]
+
   workflow_dispatch:
 
 defaults:
   run:
     shell: bash
-
 permissions:
   contents: write
-
 jobs:
+  build_and_test:
+    name: Build & test game on ${{ matrix.os }} with ${{ matrix.compiler }}.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        compiler: [ g++-14 ]
+        include:
+          - os: ubuntu-latest
+            compiler: g++-14
+            target: Linux
+
+          - os: windows-latest
+            compiler: cl
+            target: Windows
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Install build dependencies (Linux)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential g++-14 cmake ninja-build
+
+      - name: Make scripts executable
+        run: chmod +x ./scripts/*.sh
+
+      - name: Add msbuild to PATH
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Compile a Build for game
+        run: ./scripts/compile.sh ${{ matrix.compiler }} ${{ matrix.target }}
+
+      - name: Run all of Tests.
+        run: ./scripts/test.sh
   coverage:
     name: Coverage and SonarScan
     runs-on: ubuntu-latest
