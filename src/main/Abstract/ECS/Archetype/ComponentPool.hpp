@@ -29,9 +29,21 @@ struct ComponentPool : IPool {
 		return this->components.size() - 1;
 	}
 
-	void removeLastEntity() override { this->components.pop_back(); }
+	void removeLastEntity() override
+	{
+		if (this->components.empty()) {
+			throw std::range_error("outOfBounds");
+		}
+		this->components.pop_back();
+	}
 
-	T &getComponent(size_t location) { return this->components[location]; }
+	T &getComponent(size_t location)
+	{
+		if (this->components.size() <= location) {
+			throw std::range_error("out of bounds");
+		}
+		return this->components[location];
+	}
 	T &getLastEntityComponent() { return this->components.back(); }
 	T *getComponentArrayAsReference() { return this->components.data(); }
 	void moveFrom(size_t indexTo, size_t indexFrom) override

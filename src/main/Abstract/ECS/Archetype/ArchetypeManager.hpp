@@ -137,7 +137,7 @@ class ArchetypeManager {
 	void removeComponentFromEntity(EntityID entityId)
 	{
 		if (!hasArchetype(entityId)) {
-			throw new std::runtime_error("Cannot remove component from entity because it has no archetype!");
+			throw std::runtime_error("Cannot remove component from entity because it has no archetype!");
 		}
 
 		EntityLocation location = getEntityLocation(entityId);
@@ -158,8 +158,7 @@ class ArchetypeManager {
 	void addComponentToEntity(EntityID entityId)
 	{
 		if (!hasArchetype(entityId)) {
-			throw new std::runtime_error(
-			    "Cannot add component to entity because it has no archetype. Create it first!");
+			throw std::runtime_error("Cannot add component to entity because it has no archetype. Create it first!");
 		}
 
 		EntityLocation location = getEntityLocation(entityId);
