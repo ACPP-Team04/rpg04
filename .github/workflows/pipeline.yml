@@ -100,7 +100,7 @@ jobs:
             # mandatory
             -Dsonar.projectKey=ACPP-Team04_rpg04
             -Dsonar.organization=acpp-team04
-            -Dsonar.sources=src
+            -Dsonar.sources=src/main
             -Dsonar.tests=src/test
             -Dsonar.coverageReportPaths=coverage.xml
             -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
