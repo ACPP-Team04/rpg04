@@ -77,15 +77,16 @@ jobs:
           curl -sSLo build-wrapper.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip build-wrapper.zip
 
-      - name: Configure coverage build
-        run: cmake -S . -B build-coverage -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-14
 
-      - name: Build with wrapper
+      - name: Build with wrapper (FULL clean build)
         run: |
           ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 \
             --out-dir bw-output \
-            cmake --build build-coverage
-
+            bash -c "
+              rm -rf build-coverage &&
+              cmake -S . -B build-coverage -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-14 &&
+              cmake --build build-coverage
+            "
       - name: Run tests
         run: ctest --test-dir build-coverage --output-on-failure
 
