@@ -88,7 +88,7 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          gcovr -r . build-coverage --sonarqube \
+          gcovr -r . build-coverage --sonarqube build-coverage/coverage.xml \
             --gcov-executable gcov-14 \
             --exclude 'src/test' \
             --exclude ".*dummy\.cpp" \
@@ -111,3 +111,4 @@ jobs:
             -Dsonar.exclusions=vcpkg_installed/**,build-coverage/**
             -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
             -Dsonar.cpp.gcov.reportPaths=build-coverage/coverage.xml
+            -Dsonar.coverageReportPaths=build-coverage/coverage.xml
