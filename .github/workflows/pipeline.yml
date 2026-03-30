@@ -88,6 +88,7 @@ jobs:
             --root . \
             --object-directory build-coverage \
             --filter src/ \
+            --exclude ".*dummy\.cpp" \
             --sonarqube coverage.xml
       - name: Debug compile_commands paths
         run: |
