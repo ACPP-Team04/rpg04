@@ -89,9 +89,10 @@ jobs:
             --object-directory build-coverage \
             --filter src/ \
             --sonarqube coverage.xml
-      - name: Fix compile_commands.json paths for Sonar
+      - name: Debug compile_commands paths
         run: |
-          sed -i "s|$(pwd)|/github/workspace|g" build-coverage/compile_commands.json
+          echo "Runner pwd: $(pwd)"
+          head -5 build-coverage/compile_commands.json
       - name: Analyze with SonarCloud
         uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
         env:
