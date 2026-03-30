@@ -88,7 +88,7 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          gcovr -r . build-coverage \
+          gcovr -r . build-coverage --sonarqube \
             --gcov-executable gcov-14 \
             --exclude 'src/test' \
             --exclude ".*dummy\.cpp" \
