@@ -84,7 +84,7 @@ jobs:
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
       - name: Run tests to generate coverage statistics
         run: |
-          ctest --test-dir build --output-on-failure
+          cmake --build build/ --target coverage
       - name: Collect coverage into one XML report
         run: |
           gcovr --sonarqube > coverage.xml
@@ -95,4 +95,4 @@ jobs:
         with:
           args: >
             --define sonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json
-            --define sonar.coverageReportPaths=coverage.xml
+            --Dsonar.coverageReportPaths=${{ github.workspace }}/coverage.xml

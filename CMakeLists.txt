@@ -43,3 +43,8 @@ set_target_properties(tests PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}"
   RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}"
 )
+
+add_custom_target(coverage
+        COMMAND ${CMAKE_COMMAND} --build . --target test
+        COMMAND gcovr --root . --xml-pretty -o ${CMAKE_BINARY_DIR}/coverage.xml
+        DEPENDS test_return_one)
