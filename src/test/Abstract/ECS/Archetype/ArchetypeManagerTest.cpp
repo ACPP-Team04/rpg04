@@ -108,4 +108,3 @@ TEST(ArchetypeManager, addMultiple)
 	});
 	EXPECT_EQ(3, counter);
 }
-

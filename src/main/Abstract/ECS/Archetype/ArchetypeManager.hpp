@@ -128,14 +128,6 @@ class ArchetypeManager {
 	}
 
 	template <typename... T>
-	EntityID createEntity(EntityTag tag)
-	{
-		EntityID entityId = EntityID();
-		this->addEntityIdsToArchType<T...>(entityId);
-		this->addEntityTag(tag, entityId);
-		return entityId;
-	}
-	template <typename... T>
 	EntityID createEntity()
 	{
 		EntityID entityId = EntityID();
@@ -143,49 +135,9 @@ class ArchetypeManager {
 		return entityId;
 	}
 
-	std::vector<EntityID> getEntityIdByTag(EntityTag tag) { return this->entityTagToEntityId[tag]; }
-
-	template <typename T>
-	T &getComponent(EntityID entityId)
-	{
-		EntityLocation location = getEntityLocation(entityId);
-		return std::get<0>(location.archetype->getComponentArrays<T>(location.index));
-	}
-
 	template <typename... T>
-	void removeComponentFromEntity(EntityID entityId)
+	void addComponent(EntityID entityId)
 	{
-		if (!hasArchetype(entityId)) {
-			throw std::runtime_error("Cannot remove component from entity because it has no archetype!");
-		}
-
-		EntityLocation location = getEntityLocation(entityId);
-		ArchetypeBitSignature oldArchTypeSignature = location.archetype->getArchTypeSignature();
-		ArchetypeBitSignature removeSignature = ArchetypeBitSignature::get<T...>();
-		ArchetypeBitSignature newArchTypeSignature =
-		    ArchetypeBitSignature(oldArchTypeSignature.signature & (~removeSignature.signature));
-
-		SharedArchetype oldArchetype = this->getArchetypeBySignature(oldArchTypeSignature);
-		SharedArchetype newArchetype = Archetype::createEmptyArchTypeBySignature(newArchTypeSignature);
-
-		oldArchetype->getComponentArea()->copyStructureTo(newArchetype->getComponentArea(), newArchTypeSignature);
-		addArchtypeBySignature(newArchetype);
-		this->addEntityIdsToArchType(entityId, newArchetype);
-	}
-
-	template <typename... T>
-	void addComponentToEntity(EntityID entityId)
-	{
-		EntityLocation location = getEntityLocation(entityId);
-		SharedArchetype oldArchetype = location.archetype;
-		SharedArchetype newArchetype = oldArchetype->addComponent<T...>();
-
-		ArchetypeBitSignature newSig = newArchetype->getArchTypeSignature();
-		if (signatureHasArchetype(newSig)) {
-			newArchetype = getArchetypeBySignature(newSig);
-		} else {
-			addArchtypeBySignature(newArchetype);
-		}
-		this->addEntityIdsToArchType(entityId, newArchetype);
+		this->addEntityIdsToArchType<T...>(entityId);
 	}
 };
