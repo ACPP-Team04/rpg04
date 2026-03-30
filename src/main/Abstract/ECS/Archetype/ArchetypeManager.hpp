@@ -1,14 +1,17 @@
 #pragma once
 #include "Archetype.hpp"
+#include "View.hpp"
 
 #include <unordered_map>
 #include <unordered_set>
 
 using SharedArchetype = std::shared_ptr<Archetype>;
+
 struct EntityLocation {
 	SharedArchetype archetype;
 	size_t index;
 };
+
 class ArchetypeManager {
 	std::unordered_map<ArchetypeBitSignature, SharedArchetype> archetypes;
 	std::unordered_map<EntityID, EntityLocation> entityIdToArchetype;
@@ -37,7 +40,7 @@ class ArchetypeManager {
 		if (!entityIdToArchetype.contains(entityId)) {
 			return false;
 		}
-		return entityIdToArchetype[entityId].archetype == archetype;
+		return entityIdToArchetype[entityId].archetype->getArchTypeSignature() == archetype->getArchTypeSignature();
 	}
 
 	template <typename... T>
@@ -70,7 +73,11 @@ class ArchetypeManager {
 	void addEntityIdsToArchType(EntityID entityId)
 	{
 		SharedArchetype newArchType = createArchTypeIfNotExists<T...>();
+		addEntityIdsToArchType(entityId, newArchType);
+	}
 
+	void addEntityIdsToArchType(EntityID entityId, SharedArchetype newArchType)
+	{
 		if (!hasArchetype(entityId)) {
 			size_t location = newArchType->registerEntity(entityId);
 			setEntityLocation(entityId, {newArchType, location});
@@ -94,6 +101,24 @@ class ArchetypeManager {
 
   public:
 	template <typename... T>
+	View<T...> view()
+	{
+		ArchetypeBitSignature requestSignature = ArchetypeBitSignature::get<T...>();
+		View<T...> view;
+		std::vector<SharedArchetype> intersectionArchetypes;
+		for (auto [signature, arch] : this->archetypes) {
+			if (ArchetypeBitSignature::intersect(requestSignature, signature) == requestSignature) {
+				intersectionArchetypes.push_back(arch);
+			}
+		}
+		if (intersectionArchetypes.empty()) {
+			return view;
+		}
+		view.archetypes = intersectionArchetypes;
+		return view;
+	}
+
+	template <typename... T>
 	EntityID createEntity()
 	{
 		EntityID entityId = EntityID();
@@ -101,9 +126,47 @@ class ArchetypeManager {
 		return entityId;
 	}
 
-	template <typename... T>
-	void addComponent(EntityID entityId)
+	template <typename T>
+	T &getComponent(EntityID entityId)
 	{
-		this->addEntityIdsToArchType<T...>(entityId);
+		EntityLocation location = getEntityLocation(entityId);
+		return std::get<0>(location.archetype->getComponentArrays<T>(location.index));
+	}
+
+	template <typename... T>
+	void removeComponentFromEntity(EntityID entityId)
+	{
+		if (!hasArchetype(entityId)) {
+			throw new std::runtime_error("Cannot remove component from entity because it has no archetype!");
+		}
+
+		EntityLocation location = getEntityLocation(entityId);
+		ArchetypeBitSignature oldArchTypeSignature = location.archetype->getArchTypeSignature();
+		ArchetypeBitSignature removeSignature = ArchetypeBitSignature::get<T...>();
+		ArchetypeBitSignature newArchTypeSignature =
+		    ArchetypeBitSignature(oldArchTypeSignature.signature & (~removeSignature.signature));
+
+		SharedArchetype oldArchetype = this->getArchetypeBySignature(oldArchTypeSignature);
+		SharedArchetype newArchetype = Archetype::createEmptyArchTypeBySignature(newArchTypeSignature);
+
+		oldArchetype->getComponentArea()->copyStructureTo(newArchetype->getComponentArea(), newArchTypeSignature);
+		addArchtypeBySignature(newArchetype);
+		this->addEntityIdsToArchType(entityId, newArchetype);
+	}
+
+	template <typename... T>
+	void addComponentToEntity(EntityID entityId)
+	{
+		if (!hasArchetype(entityId)) {
+			throw new std::runtime_error(
+			    "Cannot add component to entity because it has no archetype. Create it first!");
+		}
+
+		EntityLocation location = getEntityLocation(entityId);
+		SharedArchetype oldArchetype = location.archetype;
+
+		SharedArchetype newArchetype = oldArchetype->addComponent<T...>();
+		addArchtypeBySignature(newArchetype);
+		this->addEntityIdsToArchType(entityId, newArchetype);
 	}
 };

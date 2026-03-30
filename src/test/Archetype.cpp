@@ -16,6 +16,6 @@ TEST(ArchtypeMangerCreateEntity, CreateNew)
 	EXPECT_EQ(entity_id2.getId(), 1);
 	EXPECT_EQ(entity_id3.getId(), 2);
 
-	archtypeManger.addComponent<Test1, Test2>(entity_id);
+	archtypeManger.addComponentToEntity<Test1, Test2>(entity_id);
 	EXPECT_EQ(entity_id3.getId(), 2);
 }

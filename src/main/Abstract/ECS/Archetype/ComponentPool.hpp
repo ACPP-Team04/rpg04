@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <vector>
 
@@ -15,6 +16,7 @@ struct IPool {
 	virtual void removeLastEntity() = 0;
 	virtual void moveFrom(size_t indexTo, size_t indexFrom) = 0;
 	virtual void copyTo(size_t oldIndex, IPool *otherPool, size_t newIndex) = 0;
+	virtual std::unique_ptr<IPool> createEmpty() = 0;
 };
 
 template <typename T>
@@ -31,7 +33,7 @@ struct ComponentPool : IPool {
 
 	T &getComponent(size_t location) { return this->components[location]; }
 	T &getLastEntityComponent() { return this->components.back(); }
-
+	T *getComponentArrayAsReference() { return this->components.data(); }
 	void moveFrom(size_t indexTo, size_t indexFrom) override
 	{
 		this->components[indexTo] = std::move(this->components[indexFrom]);
@@ -43,4 +45,6 @@ struct ComponentPool : IPool {
 		auto *newPoolCast = static_cast<ComponentPool<T> *>(newPool);
 		newPoolCast->components[newIndex] = std::move(this->components[oldIndex]);
 	}
+
+	std::unique_ptr<IPool> createEmpty() override { return std::make_unique<ComponentPool<T>>(); }
 };

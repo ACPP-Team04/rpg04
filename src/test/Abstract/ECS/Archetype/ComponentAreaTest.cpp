@@ -17,7 +17,7 @@ class MockPool : public IPool {
 	size_t lastCopyOldIndex = 0;
 	size_t lastCopyNewIndex = 0;
 	IPool *lastCopyTargetPool = nullptr;
-
+	std::unique_ptr<IPool> createEmpty() { return std::make_unique<MockPool>(); }
 	size_t currentSize = 0;
 
 	size_t addEntity() override

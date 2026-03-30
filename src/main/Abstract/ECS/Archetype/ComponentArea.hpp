@@ -38,6 +38,8 @@ struct ComponentArea {
 		return lastEntityId;
 	}
 
+	EntityID *getEntityList() { return this->entityIds.data(); }
+
 	template <typename... T>
 	void createComponentVectors()
 	{
@@ -58,5 +60,30 @@ struct ComponentArea {
 			}
 		}
 		return newIndex;
+	}
+
+	void copyStructureTo(ComponentArea *target, ArchetypeBitSignature newArchTypeSignature)
+	{
+		for (auto const &[compSignature, pool] : this->componentPools) {
+			if ((newArchTypeSignature.signature & compSignature.signature) == compSignature.signature) {
+				target->componentPools[compSignature] = pool->createEmpty();
+			}
+		}
+	}
+
+	template <typename... T>
+	std::tuple<T *...> getComponentArraysReferenceAsTuple()
+	{
+		return std::make_tuple(getComponentArrayReference<T>()...);
+	}
+
+	template <typename T>
+	T *getComponentArrayReference()
+	{
+		ArchetypeBitSignature signature = TypeInfo<T>().bitRepr();
+		if (!componentPools.contains(signature)) {
+			throw new std::runtime_error("Component Pool contains unregistered type");
+		}
+		return static_cast<ComponentPool<T> *>(componentPools[signature].get())->getComponentArrayAsReference();
 	}
 };
