@@ -2,10 +2,10 @@ name: compile_and_test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main,sonarqubeSetup ]
 
   pull_request:
-    branches: [ main ]
+    branches: [ main,sonarqubeSetup ]
 
   workflow_dispatch:
 
