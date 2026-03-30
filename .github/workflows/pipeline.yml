@@ -2,93 +2,71 @@ name: compile_and_test
 
 on:
   push:
-    branches: [ main,sonarqubeSetup ]
-
+    branches: [ main, 17-add-code-coverage-tool]
   pull_request:
-    branches: [ main,sonarqubeSetup ]
-
+    branches: [ main ]
   workflow_dispatch:
 
 defaults:
   run:
     shell: bash
+
 permissions:
   contents: write
-jobs:
-  build_and_test:
-    name: Build & test game on ${{ matrix.os }} with ${{ matrix.compiler }}.
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        compiler: [ g++-14 ]
-        include:
-          - os: ubuntu-latest
-            compiler: g++-14
-            target: Linux
 
-          - os: windows-latest
-            compiler: cl
-            target: Windows
+jobs:
+  coverage:
+    name: Coverage and SonarScan
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
-      - name: Install build dependencies (Linux)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential g++-14 cmake ninja-build
+          sudo apt-get install -y build-essential g++-14 cmake ninja-build python3-pip
+          pip install gcovr
 
-      - name: Make scripts executable
-        run: chmod +x ./scripts/*.sh
+      - name: Configure coverage build
+        run: |
+          cmake -S . -B build-coverage \
+            -DENABLE_COVERAGE=ON \
+            -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-      - name: Add msbuild to PATH
-        if: ${{ matrix.os == 'windows-latest' }}
-        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Build
+        run: cmake --build build-coverage
 
-      - name: Compile a Build for game
-        run: ./scripts/compile.sh ${{ matrix.compiler }} ${{ matrix.target }}
+      - name: Run tests
+        run: ctest --test-dir build-coverage --output-on-failure
 
-      - name: Run all of Tests.
-        run: ./scripts/test.sh
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    env:
-      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up Python 3.8 for gcovr
-        uses: actions/setup-python@v6.2.0
-        with:
-          python-version: 3.8
-      - name: install gcovr 5.0
+      - name: Generate coverage report
         run: |
-          pip install gcovr==5.0 # 5.1 is not supported
-      - name: Install Build Wrapper
-        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v7
-      - name: Run Build Wrapper
-        run: |
-          cmake -S . -B build -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-14
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
-      - name: Run tests to generate coverage statistics
-        run: |
-          cmake --build build/ --target coverage
-      - name: Collect coverage into one XML report
-        run: |
-          gcovr --sonarqube > coverage.xml
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v7
+          gcovr -r . build-coverage \
+            --gcov-executable gcov-14 \
+            --exclude 'src/test' \
+            --exclude ".*dummy\.cpp" \
+            --exclude 'vcpkg_installed' \
+            --xml -o build-coverage/coverage.xml
+
+      - name: Run SonarScanner
+        uses: sonarsource/sonarqube-scan-action@v6
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Put the name of your token here
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            --define sonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json
-            --Dsonar.coverageReportPaths=${{ github.workspace }}/coverage.xml
+            -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
+            -Dsonar.cfamily.gcov.reportsPath=build-coverage/
+            -Dsonar.projectKey=ACPP-Team04_rpg04
+            -Dsonar.organization=acpp-team04
+            -Dsonar.projectVersion=${{ github.sha }}
+            -Dsonar.sources=src/main
+            -Dsonar.tests=src/test
+            -Dsonar.exclusions=vcpkg_installed/**,build-coverage/**
+            -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
+            -Dsonar.cpp.gcov.reportPaths=build-coverage/coverage.xml
