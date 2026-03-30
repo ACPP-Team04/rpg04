@@ -17,7 +17,6 @@ TEST(EntityID, Unique)
 	int currentCounter = EntityID::IdCounter;
 	std::vector<EntityID> entities = fillNEntities(N);
 
-	size_t currentCounter = EntityID::IdCounter;
 	for (int i = 0; i < N; i++) {
 		EXPECT_EQ(entities[i].getId(), i + currentCounter);
 	}
