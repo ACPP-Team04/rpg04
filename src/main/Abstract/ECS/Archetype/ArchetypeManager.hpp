@@ -1,4 +1,5 @@
 #pragma once
+#include "Abstract/ECS/Entity/EntityTag.hpp"
 #include "Archetype.hpp"
 #include "View.hpp"
 
@@ -15,6 +16,7 @@ struct EntityLocation {
 class ArchetypeManager {
 	std::unordered_map<ArchetypeBitSignature, SharedArchetype> archetypes;
 	std::unordered_map<EntityID, EntityLocation> entityIdToArchetype;
+	std::unordered_map<EntityTag, std::vector<EntityID>> entityTagToEntityId;
 	SharedArchetype getArchetypeBySignature(ArchetypeBitSignature signature) { return this->archetypes[signature]; }
 
 	void addArchtypeBySignature(SharedArchetype archetype)
@@ -43,6 +45,13 @@ class ArchetypeManager {
 		return entityIdToArchetype[entityId].archetype->getArchTypeSignature() == archetype->getArchTypeSignature();
 	}
 
+	void addEntityTag(EntityTag tag, EntityID entity_id)
+	{
+		if (!this->entityTagToEntityId.contains(tag)) {
+			this->entityTagToEntityId.insert({tag, {}});
+		}
+		this->entityTagToEntityId[tag].push_back(entity_id);
+	}
 	template <typename... T>
 	SharedArchetype createArchType()
 	{
@@ -119,12 +128,22 @@ class ArchetypeManager {
 	}
 
 	template <typename... T>
+	EntityID createEntity(EntityTag tag)
+	{
+		EntityID entityId = EntityID();
+		this->addEntityIdsToArchType<T...>(entityId);
+		this->addEntityTag(tag, entityId);
+		return entityId;
+	}
+	template <typename... T>
 	EntityID createEntity()
 	{
 		EntityID entityId = EntityID();
 		this->addEntityIdsToArchType<T...>(entityId);
 		return entityId;
 	}
+
+	std::vector<EntityID> getEntityIdByTag(EntityTag tag) { return this->entityTagToEntityId[tag]; }
 
 	template <typename T>
 	T &getComponent(EntityID entityId)
