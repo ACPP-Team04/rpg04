@@ -1,4 +1,16 @@
+#include "Abstract/ECS/ECSManager.hpp"
 
-int main(){
+#include <SFML/Graphics.hpp>
 
+
+int main()
+{
+	sf::RenderWindow window(sf::VideoMode({800, 600}), "My window");
+	ECSManager ecsManager = ECSManager(window);
+	while (window.isOpen())
+	{
+		ecsManager.update();
+		window.display();
+
+	}
 }
