@@ -3,7 +3,7 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.c
 project(game)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(GTest REQUIRED)
-
+find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS 
     "src/main/*.cpp" 
@@ -14,7 +14,7 @@ list(FILTER GAME_SOURCES EXCLUDE REGEX ".*main\\.cpp$")
 add_library(game-lib ${GAME_SOURCES})
 set_property(TARGET game-lib PROPERTY CXX_STANDARD 20)
 target_include_directories(game-lib PUBLIC src/main)  
-
+target_link_libraries(game-lib PUBLIC sfml-graphics sfml-window sfml-system)
 add_executable(main src/main/Implementation/main.cpp)
 set_property(TARGET main PROPERTY CXX_STANDARD 20)
 target_link_libraries(main PRIVATE game-lib)
@@ -26,7 +26,8 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
 )
 add_executable(tests ${TEST_SOURCES})
 set_property(TARGET tests PROPERTY CXX_STANDARD 23)
-target_link_libraries(tests PRIVATE game-lib GTest::gtest_main) 
+target_link_libraries(tests PRIVATE game-lib GTest::gtest_main)
+
 
 enable_testing()
 add_test(NAME tests COMMAND tests)

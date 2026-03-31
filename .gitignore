@@ -44,3 +44,4 @@
 .vs/
 
 build
+/src/ressources/.venv/
