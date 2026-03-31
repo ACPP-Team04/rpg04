@@ -8,7 +8,8 @@ OS_TARGET=$2
 case "${OS_TARGET}" in
   Linux)
     CMAKE_GENERATOR="Unix Makefiles"
-    CMAKE_EXTRA_FLAGS="-DCMAKE_CXX_COMPILER=${CPP_COMPILER}"
+    C_COMPILER=$(echo "${CPP_COMPILER}" | sed 's/g++/gcc/')
+    CMAKE_EXTRA_FLAGS="-DCMAKE_CXX_COMPILER=${CPP_COMPILER} -DCMAKE_C_COMPILER=${C_COMPILER}"
     ;;
   Windows)
     CMAKE_GENERATOR="Visual Studio 17 2022"
