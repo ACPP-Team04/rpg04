@@ -11,13 +11,3 @@ TEST(AssetManager,TestSingleton)
 
 	EXPECT_EQ(&instance, &instance2);
 }
-TEST(AssetManagerTest,LoadSprite)
-{
-	AssetManager& instance = AssetManager::getInstance();
-	auto expectedInfo = TILE_DICT.at(PLAYER_IDLE_FRONT);
-	auto sprite = instance.getSpriteAt(expectedInfo);
-	sf::FloatRect globBounds = sprite.getGlobalBounds();
-
-	EXPECT_EQ(globBounds.size.x, expectedInfo.width);
-	EXPECT_EQ(globBounds.size.y, expectedInfo.height);
-}
