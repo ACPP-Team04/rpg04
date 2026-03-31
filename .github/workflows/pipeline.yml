@@ -2,10 +2,10 @@ name: compile_and_test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main,sonarqubeSetup ]
 
   pull_request:
-    branches: [ main ]
+    branches: [ main,sonarqubeSetup ]
 
   workflow_dispatch:
 
@@ -56,3 +56,59 @@ jobs:
 
       - name: Run all of Tests.
         run: ./scripts/test.sh
+  coverage:
+    name: Coverage and SonarScan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential g++-14 cmake ninja-build python3-pip
+          pip install gcovr
+
+      - name: Configure coverage build
+        run: |
+          cmake -S . -B build-coverage \
+            -DENABLE_COVERAGE=ON \
+            -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Build
+        run: cmake --build build-coverage
+
+      - name: Run tests
+        run: ctest --test-dir build-coverage --output-on-failure
+
+      - name: Generate coverage report
+        run: |
+          gcovr -r . build-coverage --sonarqube build-coverage/coverage.xml \
+            --gcov-executable gcov-14 \
+            --exclude 'src/test' \
+            --exclude ".*dummy\.cpp" \
+            --exclude 'vcpkg_installed' \
+            --xml -o build-coverage/coverage.xml
+
+      - name: Run SonarScanner
+        uses: sonarsource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
+            -Dsonar.cfamily.gcov.reportsPath=build-coverage/
+            -Dsonar.projectKey=ACPP-Team04_rpg04
+            -Dsonar.organization=acpp-team04
+            -Dsonar.projectVersion=${{ github.sha }}
+            -Dsonar.sources=src/main
+            -Dsonar.tests=src/test
+            -Dsonar.exclusions=vcpkg_installed/**,build-coverage/**
+            -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
+            -Dsonar.cpp.gcov.reportPaths=build-coverage/coverage.xml
+            -Dsonar.coverageReportPaths=build-coverage/coverage.xml
