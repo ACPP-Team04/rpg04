@@ -72,14 +72,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential g++-14 cmake ninja-build python3-pip
           pip install gcovr
-      - name: Install build dependencies (Linux)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential g++-14 cmake ninja-build \
-            libx11-dev libxrandr-dev libxi-dev libudev-dev \
-            libgl1-mesa-dev libflac-dev libvorbis-dev libopenal-dev \
-            libpthread-stubs0-dev
 
       - name: Configure coverage build
         run: |
