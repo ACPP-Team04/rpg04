@@ -1,6 +1,6 @@
 #pragma once
-#include <bitset>
 #include "Abstract/GlobalProperties.hpp"
+#include <bitset>
 enum class BitwiseOperator { OR, AND };
 using bitset = std::bitset<MAX_COMPONENTS>;
 struct TypeId {

@@ -84,4 +84,3 @@ TEST(ArchetypeManager, testQuery)
 	});
 	EXPECT_EQ(3, sum);
 }
-

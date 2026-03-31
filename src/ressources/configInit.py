@@ -28,8 +28,8 @@ def generateEnumOfTiles(data):
         enumId['name'] = name
         column = id % cols
         row = id // cols
-        enumId["PixelX"] = row * tile_w
-        enumId["PixelY"] = column * tile_h
+        enumId["PixelX"] = column * tile_w
+        enumId["PixelY"] = row * tile_h
         enumId['tile_w'] = tile_w
         enumId['tile_h'] = tile_h
         res.append(enumId)
@@ -64,10 +64,10 @@ inline const std::unordered_map<TileType, TileInfo> TILE_DICT = {
             c = tile['PixelY']
             w = tile['tile_w']
             h = tile['tile_h']
-            header_content += f'    {{ {name}, {{ {r}, {c},{w},{h} }},\n'
+            header_content += f'    {{ {name}, {{ {r}, {c},{w},{h} }} }},\n'
 
 
-        header_content += "}};"
+        header_content += "};"
         file.write(header_content)
 
 def createStaticVariables(path):
