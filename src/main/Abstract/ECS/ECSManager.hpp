@@ -5,6 +5,8 @@
 #include "Archetype/ArchetypeManager.hpp"
 #include "System/System.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <TGUI/Backend/SFML-Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 
 struct ECSManager {
 
