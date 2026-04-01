@@ -1,6 +1,7 @@
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 
 #include "../../../ECS/TestComponents.hpp"
+#include "Abstract/ECS/Test1.hpp"
 
 #include <gtest/gtest.h>
 
@@ -84,3 +85,27 @@ TEST(ArchetypeManager, testQuery)
 	});
 	EXPECT_EQ(3, sum);
 }
+
+TEST(ArchetypeManager, addMultiple)
+{
+	ArchetypeManager archetypeManager = ArchetypeManager();
+	EntityID entity_id1 = archetypeManager.createEntity<>();
+
+	archetypeManager.addComponentToEntity<Test1>(entity_id1);
+	archetypeManager.addComponentToEntity<Test2>(entity_id1);
+	EntityID entity_id2 = archetypeManager.createEntity<>();
+
+	archetypeManager.addComponentToEntity<Test1>(entity_id2);
+	archetypeManager.addComponentToEntity<Test2>(entity_id2);
+
+	EntityID entity_id3 = archetypeManager.createEntity<>();
+
+	archetypeManager.addComponentToEntity<Test1>(entity_id3);
+	archetypeManager.addComponentToEntity<Test2>(entity_id3);
+	int counter = 0;
+	archetypeManager.view<Test1, Test2>().each([&](EntityID entityId,Test1 &test1, Test2 &test2) {
+		counter++;
+	});
+	EXPECT_EQ(3, counter);
+}
+

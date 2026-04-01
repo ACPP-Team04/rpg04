@@ -13,6 +13,7 @@ file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
 )
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*main\\.cpp$")
 
+find_package(nlohmann_json CONFIG REQUIRED)
 add_library(game-lib ${GAME_SOURCES})
 set_property(TARGET game-lib PROPERTY CXX_STANDARD 20)
 target_include_directories(game-lib PUBLIC src/main)  
@@ -20,6 +21,7 @@ target_link_libraries(game-lib PUBLIC SFML::Graphics SFML::Window SFML::System)
 add_executable(main src/main/Implementation/main.cpp)
 set_property(TARGET main PROPERTY CXX_STANDARD 20)
 target_link_libraries(main PRIVATE game-lib)
+target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
 
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS

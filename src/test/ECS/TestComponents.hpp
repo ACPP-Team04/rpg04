@@ -5,6 +5,10 @@ template <int N, typename U>
 struct TestComponent : public Component<TestComponent<N, U>> {
   public:
 	U member;
+	void readFromJson(const nlohmann::json &j)
+	{
+
+	}
 };
 
 using Intcomp1 = TestComponent<1, int>;

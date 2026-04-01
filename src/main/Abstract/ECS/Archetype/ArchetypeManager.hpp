@@ -176,15 +176,16 @@ class ArchetypeManager {
 	template <typename... T>
 	void addComponentToEntity(EntityID entityId)
 	{
-		if (!hasArchetype(entityId)) {
-			throw std::runtime_error("Cannot add component to entity because it has no archetype. Create it first!");
-		}
-
 		EntityLocation location = getEntityLocation(entityId);
 		SharedArchetype oldArchetype = location.archetype;
-
 		SharedArchetype newArchetype = oldArchetype->addComponent<T...>();
-		addArchtypeBySignature(newArchetype);
+
+		ArchetypeBitSignature newSig = newArchetype->getArchTypeSignature();
+		if (signatureHasArchetype(newSig)) {
+			newArchetype = getArchetypeBySignature(newSig);
+		} else {
+			addArchtypeBySignature(newArchetype);
+		}
 		this->addEntityIdsToArchType(entityId, newArchetype);
 	}
 };

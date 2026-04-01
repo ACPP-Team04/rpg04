@@ -7,6 +7,9 @@ class Test1 : public Component<Test1> {
 
 	int x{};
 	int y{};
+	void readFromJson(const nlohmann::json &j){
+
+	}
 };
 
 class Test2 : public Component<Test2> {
@@ -15,4 +18,7 @@ class Test2 : public Component<Test2> {
 
 	int x{};
 	int y{};
+	void readFromJson(const nlohmann::json &j){
+
+	}
 };

@@ -8,6 +8,10 @@ class Test3 : public Component<Test3> {
 
 	int x{};
 	int y{};
+
+	void readFromJson(const nlohmann::json &j){
+
+	}
 };
 
 TEST(Archetype, CreateNew)

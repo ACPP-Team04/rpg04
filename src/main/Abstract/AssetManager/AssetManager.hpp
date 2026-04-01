@@ -2,6 +2,7 @@
 #include "Abstract/GlobalProperties.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
 
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <vector>
@@ -18,9 +19,41 @@ struct AssetManager {
 		return instance;
 	}
 
-	sf::Sprite getSpriteAt(TileInfo info)
+	sf::Vector2u getSize(std::vector<std::vector<TileInfo>> info)
 	{
-		return {*this->textureSet, sf::IntRect({info.PixelX, info.PixelY}, {info.width, info.height})};
+		unsigned width = 0;
+		unsigned height = 0;
+		for (unsigned i = 0; i < info.size(); ++i) {
+			for (unsigned j = 0; j < info[i].size(); ++j) {
+				width+=info[i][j].width;
+				height+=info[i][j].height;
+			}
+		}
+		return {width,height};
+	}
+
+	sf::Texture getSpriteAt(TileType type)
+	{
+		auto info = TILE_DICT.at(type);
+		unsigned rowsize = info.size();
+		unsigned colsize = info[0].size();
+		sf::RenderTexture renderTexture;
+		if (!renderTexture.resize(getSize(info))) {
+			throw std::runtime_error("Failed to resize texture");
+		}
+		renderTexture.clear(sf::Color::Transparent);
+		for (unsigned i = 0; i < rowsize; ++i) {
+			for (unsigned j = 0; j < colsize; ++j) {
+				TileInfo tile = info[i][j];
+				sf::Sprite sprite = {*this->textureSet,sf::IntRect({tile.PixelX, tile.PixelY},{tile.width, tile.height})};
+
+				sprite.setPosition({static_cast<float>(j) * tile.width,
+					static_cast<float>(i) * tile.height});
+				renderTexture.draw(sprite);
+			}
+		}
+		renderTexture.display();
+		return renderTexture.getTexture();
 	}
 
   private:
