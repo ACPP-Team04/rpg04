@@ -9,5 +9,4 @@ struct WeaponComponent : Component<WeaponComponent> {
 	WeaponComponent() = default;
 	WeaponType weaponType;
 	ScalingFactor scalingFactor;
-	float baseDamage;
 };
