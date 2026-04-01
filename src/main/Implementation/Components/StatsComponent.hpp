@@ -4,6 +4,7 @@
 struct StatsComponent : Component<StatsComponent> {
   public:
 	StatsComponent() = default;
+	float health{100};
 	float strength{1};
 	float dexterity{1};
 	float faith{1};
