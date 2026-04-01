@@ -1,6 +1,7 @@
 {
-  "dependencies": [
-    "gtest",
-    "sfml"
-  ]
+	"dependencies": [
+		"gtest",
+		"sfml",
+		"tgui"
+	]
 }
