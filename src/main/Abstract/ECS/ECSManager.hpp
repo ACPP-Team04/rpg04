@@ -31,6 +31,7 @@ struct ECSManager {
 	void update()
 	{
 		processEvents();
+		window.clear(sf::Color::Transparent);
 		inputSystem.update();
 		movementSystem.update();
 		renderSystem.update();

@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "gtest",
-    "sfml"
+    "sfml",
+    "nlohmann-json"
   ]
 }

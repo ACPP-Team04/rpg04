@@ -9,7 +9,8 @@ void RenderSystem::update()
 {
 	this->manager.view<RenderComponent, TransformComponent>().each(
 	    [this](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp) {
-		    sf::Sprite sp = AssetManager::getInstance().getSpriteAt(TILE_DICT.at(comp.activeTile));
+	    	sf::Texture tex = AssetManager::getInstance().getSpriteAt(comp.activeTiles);
+		    sf::Sprite sp = sf::Sprite(tex);
 		    sp.setPosition(tcomp.position);
 		    sp.setScale(tcomp.scale);
 		    sp.setRotation(tcomp.rotation);
