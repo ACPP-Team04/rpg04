@@ -7,7 +7,6 @@
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
 
-// Check if there are entities in battleState if yes, deal with their plays
 void CombatSystem::update()
 {
 	auto view = manager.view<BattleManagerComponent>();
@@ -17,11 +16,11 @@ void CombatSystem::update()
 		return;
 	} else {
 		view.each([&](EntityID battleId, BattleManagerComponent &bmc) {
+			EntityID currentAttacker = this->getAttacker(bmc.currentTurnIndex, bmc.participants);
 			if (bmc.isBattleOver) {
-				// do proper cleanup of battle components and set isActiveTurn to false for all entities in battle
+				cleanUpBattle(battleId, currentAttacker);
 				return;
 			}
-			EntityID currentAttacker = this->getAttacker(bmc.currentTurnIndex, bmc.participants);
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			battle.isActiveTurn = true;
 			switch (battle.battleState) {
@@ -45,12 +44,10 @@ void CombatSystem::update()
 				this->passTurn(currentAttacker, bmc.currentTurnIndex, bmc.participants);
 				break;
 			case BattleState::VICTORY:
-				// remove battle component from all entities in battle and set isActiveTurn to false
 				std::cout << "Victory for player" << std::endl;
 				bmc.isBattleOver = true;
 				break;
 			case BattleState::DEFEAT:
-				// remove battle component from all entities in battle and set isActiveTurn to false
 				std::cout << "Defeat! for player" << std::endl;
 				bmc.isBattleOver = true;
 				break;
@@ -89,7 +86,8 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
 		auto &attackerWeapon = manager.getComponent<WeaponComponent>(attacker);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, 5);
-		manager.getComponent<StatsComponent>(defender).health -= damage;
+		auto health = manager.getComponent<StatsComponent>(defender).health;
+		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		break;
 	}
 	case BattleAction::HEAVY_ATTACK: {
@@ -97,7 +95,8 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
 		auto &attackerWeapon = manager.getComponent<WeaponComponent>(attacker);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, 10);
-		manager.getComponent<StatsComponent>(defender).health -= damage;
+		auto health = manager.getComponent<StatsComponent>(defender).health;
+		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		break;
 	}
 
@@ -106,7 +105,8 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
 		auto &attackerWeapon = manager.getComponent<WeaponComponent>(attacker);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, 15);
-		manager.getComponent<StatsComponent>(defender).health -= damage;
+		auto health = manager.getComponent<StatsComponent>(defender).health;
+		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		manager.getComponent<BattleComponent>(attacker).numberOfUltimateAttacksUsed += 1;
 		break;
 	}
@@ -155,7 +155,6 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender)
 
 		return BattleState::NEXT_ROUND;
 	}
-	// need to add a tag here to check if the entity is player or enemy to set the correct battle state
 	if (health <= 0) {
 		return BattleState::VICTORY;
 	}
@@ -177,21 +176,25 @@ EntityID CombatSystem::getAttacker(int currentTurnIndex, const std::vector<Entit
 	}
 	return participants[currentTurnIndex % participants.size()];
 }
-void CombatSystem::cleanupBattle(EntityID battleManagerId, EntityID winningEntity)
+void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntity)
 {
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battleManagerId);
 
-	// DEBUG, until I can get the correct entity with tag
-	bool playerWon = true;
-	std::cout << (playerWon ? "SIEGER: Spieler" : "NIEDERLAGE: Gegner hat gewonnen") << std::endl;
+	bool playerWon = manager.getEntityTag(winningEntity) == EntityTag::PLAYER;
 
+	// Set health back to max and remove battle component from all entities in battle
 	for (EntityID entity : bmc.participants) {
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		auto &stats = manager.getComponent<StatsComponent>(entity);
-		stats.health = stats.maxHP;
+		stats.health = stats.maxHealth;
+		if (entity == winningEntity) {
+			if (playerWon) {
+				stats.experienceLevel += 1;
+				stats.numberOfFightsWon += 1;
+			}
+		}
 	}
-
-	// FIX ME: delete battleManagerEntity
+	// FIX ME: delete battleManagerEntity, needs to be implemented
 	// manager.(battleManagerId);
 }
 
