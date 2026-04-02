@@ -15,6 +15,7 @@ struct ECSManager {
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
+	tgui::Gui gui;
 
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager)
