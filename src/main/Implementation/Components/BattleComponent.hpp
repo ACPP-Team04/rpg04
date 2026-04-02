@@ -23,4 +23,6 @@ struct BattleComponent : Component<BattleComponent> {
 	bool isPlayerTeam;
 	bool isActiveTurn = false;
 	BattleState battleState = BattleState::TURN_START;
+	float actionTimer = 0.0f;
+	float actionDelay = 0.0f;
 };
