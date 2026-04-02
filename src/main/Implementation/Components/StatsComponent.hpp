@@ -2,6 +2,9 @@
 #include "Abstract/ECS/Component/Component.hpp"
 
 struct StatsComponent : Component<StatsComponent> {
+
+	static const float maxHP = 100;
+
   public:
 	StatsComponent() = default;
 	float health{100};
