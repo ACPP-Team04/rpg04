@@ -59,7 +59,6 @@ void CombatSystem::update()
 	}
 }
 
-// add the type of attack as parameter
 void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, BattleAction typeOfAction)
 {
 	auto &attackerBattle = manager.getComponent<BattleComponent>(attacker);
@@ -74,8 +73,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 
 	if (typeOfAction == BattleAction::HEAL and attackerInventory.numberOfHealthPotions > 0) {
 		attackerInventory.numberOfHealthPotions -= 1;
-	}
-	if (typeOfAction == BattleAction::HEAL and attackerInventory.numberOfHealthPotions == 0) {
+	} else if (typeOfAction == BattleAction::HEAL and attackerInventory.numberOfHealthPotions == 0) {
 		std::cout << "No health potions left!" << std::endl;
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;
@@ -139,21 +137,16 @@ void CombatSystem::restoreAP(EntityID restorator)
 
 bool CombatSystem::handleActionDelay(BattleComponent battle)
 {
-	// later add this code to leave time for fighting animations, etc. For now, we just return true to immediately go to
-	// the next state
-	/*
 	float dt = clock.restart().asSeconds();
 
 	battle.actionTimer += dt;
 
 	if (battle.actionTimer >= battle.actionDelay) {
-	    battle.actionTimer = 0.0f;
-	    return true;
+		battle.actionTimer = 0.0f;
+		return true;
 	}
 
 	return false;
-	*/
-	return true;
 }
 BattleState CombatSystem::checkDeathCondition(EntityID defender)
 {
@@ -166,6 +159,7 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender)
 	if (health <= 0) {
 		return BattleState::VICTORY;
 	}
+	throw std::runtime_error("Invalid health value");
 }
 void CombatSystem::passTurn(EntityID &currentEntity, int currentTurnIndex, const std::vector<EntityID> participants)
 {
@@ -183,6 +177,24 @@ EntityID CombatSystem::getAttacker(int currentTurnIndex, const std::vector<Entit
 	}
 	return participants[currentTurnIndex % participants.size()];
 }
+void CombatSystem::cleanupBattle(EntityID battleManagerId, EntityID winningEntity)
+{
+	auto &bmc = manager.getComponent<BattleManagerComponent>(battleManagerId);
+
+	// DEBUG, until I can get the correct entity with tag
+	bool playerWon = true;
+	std::cout << (playerWon ? "SIEGER: Spieler" : "NIEDERLAGE: Gegner hat gewonnen") << std::endl;
+
+	for (EntityID entity : bmc.participants) {
+		manager.removeComponentFromEntity<BattleComponent>(entity);
+		auto &stats = manager.getComponent<StatsComponent>(entity);
+		stats.health = stats.maxHP;
+	}
+
+	// FIX ME: delete battleManagerEntity
+	// manager.(battleManagerId);
+}
+
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
                                          float baseAttackDamage)
 {
