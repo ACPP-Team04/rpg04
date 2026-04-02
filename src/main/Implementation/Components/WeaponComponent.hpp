@@ -9,4 +9,5 @@ struct WeaponComponent : Component<WeaponComponent> {
 	WeaponComponent() = default;
 	WeaponType weaponType;
 	ScalingFactor scalingFactor;
+	void readFromJson(const nlohmann::json &j) override {}
 };

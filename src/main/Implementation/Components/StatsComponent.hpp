@@ -3,8 +3,6 @@
 
 struct StatsComponent : Component<StatsComponent> {
 
-	static const float maxHP = 100;
-
   public:
 	StatsComponent() = default;
 	float health{100};
@@ -12,4 +10,8 @@ struct StatsComponent : Component<StatsComponent> {
 	float dexterity{1};
 	float faith{1};
 	float experience{1};
+	float maxHealth{100};
+	int experienceLevel{1};
+	int numberOfFightsWon{0};
+	void readFromJson(const nlohmann::json &j) override {}
 };

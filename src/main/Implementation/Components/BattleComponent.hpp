@@ -25,4 +25,6 @@ struct BattleComponent : Component<BattleComponent> {
 	BattleState battleState = BattleState::TURN_START;
 	float actionTimer = 0.0f;
 	float actionDelay = 0.0f;
+
+	void readFromJson(const nlohmann::json &j) override {}
 };
