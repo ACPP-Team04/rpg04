@@ -22,7 +22,6 @@ void CombatSystem::update()
 				cleanUpBattle(battleId, currentAttacker);
 				return;
 			}
-			EntityID currentAttacker = this->getAttacker(bmc.currentTurnIndex, bmc.participants);
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			battle.isActiveTurn = true;
 			switch (battle.battleState) {
@@ -142,21 +141,16 @@ void CombatSystem::restoreAP(EntityID restorator)
 
 bool CombatSystem::handleActionDelay(BattleComponent battle)
 {
-	// later add this code to leave time for fighting animations, etc. For now, we just return true to immediately go to
-	// the next state
-	/*
 	float dt = clock.restart().asSeconds();
 
 	battle.actionTimer += dt;
 
 	if (battle.actionTimer >= battle.actionDelay) {
-	    battle.actionTimer = 0.0f;
-	    return true;
+		battle.actionTimer = 0.0f;
+		return true;
 	}
 
 	return false;
-	*/
-	return true;
 }
 BattleState CombatSystem::checkDeathCondition(EntityID defender)
 {
@@ -165,7 +159,6 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender)
 
 		return BattleState::NEXT_ROUND;
 	}
-	// need to add a tag here to check if the entity is player or enemy to set the correct battle state
 	if (health <= 0) {
 		return BattleState::VICTORY;
 	}
