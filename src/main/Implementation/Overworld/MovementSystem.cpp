@@ -4,22 +4,22 @@
 #include "Abstract/Overwordl/Components.hpp"
 
 MovementSystem::MovementSystem(ArchetypeManager &manager) : System(manager) {}
-static float SPEED = 0.1f;
+static float SPEED = 3.0f;
 void MovementSystem::update()
 {
-	this->manager.view<InputComponent, TransformComponent>().each(
-	    [this](EntityID id, InputComponent &input, TransformComponent &transform) {
+	this->manager.view<InputComponent, TransformComponent,MovementComponent>().each(
+	    [this](EntityID id, InputComponent &input, TransformComponent &transform,MovementComponent &movement) {
 		    if (input.moveRight.pressed) {
-			    transform.position.x += SPEED;
+			    transform.position.x += movement.speed;
 		    }
 		    if (input.moveLeft.pressed) {
-			    transform.position.x -= SPEED;
+			    transform.position.x -= movement.speed;
 		    }
 		    if (input.moveUp.pressed) {
-			    transform.position.y -= SPEED;
+			    transform.position.y -= movement.speed;
 		    }
 		    if (input.moveDown.pressed) {
-			    transform.position.y += SPEED;
+			    transform.position.y += movement.speed;
 		    }
 	    });
 }
