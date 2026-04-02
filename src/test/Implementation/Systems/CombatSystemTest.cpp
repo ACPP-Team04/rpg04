@@ -362,3 +362,147 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 	EXPECT_EQ(1, bmc.currentTurnIndex);
 	EXPECT_EQ(false, bmc.isBattleOver);
 }
+
+TEST(CombatSystemTest, cleanUpBattlePlayerWon)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	CombatSystem combatSystem = CombatSystem(manager);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity();
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleManagerComponent>(battle);
+	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
+	auto &bmc = manager.getComponent<BattleManagerComponent>(battle);
+	bmc.participants = {player, enemy};
+	bmc.currentTurnIndex = 0;
+	bmc.isBattleOver = false;
+	statsComponentP.health = 50;
+	combatSystem.cleanUpBattle(battle, player);
+
+	EXPECT_EQ(100, manager.getComponent<StatsComponent>(player).health);
+	EXPECT_EQ(2, manager.getComponent<StatsComponent>(player).experienceLevel);
+	EXPECT_EQ(1, manager.getComponent<StatsComponent>(player).numberOfFightsWon);
+
+	EXPECT_EQ(1, manager.getComponent<StatsComponent>(enemy).experienceLevel);
+	EXPECT_EQ(0, manager.getComponent<StatsComponent>(enemy).numberOfFightsWon);
+}
+
+TEST(CombatSystemTest, cleanUpBattleEnemyWon)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	CombatSystem combatSystem = CombatSystem(manager);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity();
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleManagerComponent>(battle);
+	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
+	auto &bmc = manager.getComponent<BattleManagerComponent>(battle);
+	bmc.participants = {player, enemy};
+	bmc.currentTurnIndex = 0;
+	bmc.isBattleOver = false;
+	statsComponentP.health = 50;
+	combatSystem.cleanUpBattle(battle, enemy);
+
+	EXPECT_EQ(100, manager.getComponent<StatsComponent>(enemy).health);
+	EXPECT_EQ(1, manager.getComponent<StatsComponent>(enemy).experienceLevel);
+	EXPECT_EQ(0, manager.getComponent<StatsComponent>(enemy).numberOfFightsWon);
+
+	EXPECT_EQ(1, manager.getComponent<StatsComponent>(player).experienceLevel);
+	EXPECT_EQ(0, manager.getComponent<StatsComponent>(player).numberOfFightsWon);
+}
+
+TEST(CombatSystemTest, combatSystemPlayerWon)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	CombatSystem combatSystem = CombatSystem(manager);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity();
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleManagerComponent>(battle);
+	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
+	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
+	playerWeapon.scalingFactor = ScalingFactor::C;
+	playerWeapon.weaponType = WeaponType::RANGE;
+
+	auto &bmc = manager.getComponent<BattleManagerComponent>(battle);
+	bmc.participants = {player, enemy};
+	bmc.currentTurnIndex = 0;
+	bmc.isBattleOver = false;
+	statsComponentE.health = 10;
+	battleComponentP.selectedAction = BattleAction::HEAVY_ATTACK;
+	battleComponentP.target = enemy;
+	battleComponentP.battleState = BattleState::SELECTED_ACTION;
+	//
+
+	combatSystem.update();
+	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
+	EXPECT_EQ(0, battleComponentP.AP);
+	EXPECT_EQ(0, statsComponentE.health);
+	EXPECT_EQ(100, statsComponentP.health);
+	combatSystem.update();
+	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
+	combatSystem.update();
+	EXPECT_EQ(BattleState::VICTORY, battleComponentP.battleState);
+	combatSystem.update();
+	combatSystem.update();
+	EXPECT_EQ(100, manager.getComponent<StatsComponent>(player).health);
+	EXPECT_EQ(2, manager.getComponent<StatsComponent>(player).experienceLevel);
+	EXPECT_EQ(1, manager.getComponent<StatsComponent>(player).numberOfFightsWon);
+
+	EXPECT_EQ(0, manager.getComponent<StatsComponent>(enemy).numberOfFightsWon);
+}
+
+TEST(CombatSystemTest, combatSystemEnemyWon)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	CombatSystem combatSystem = CombatSystem(manager);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity();
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleManagerComponent>(battle);
+	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
+	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
+	enemyWeapon.scalingFactor = ScalingFactor::C;
+	enemyWeapon.weaponType = WeaponType::RANGE;
+
+	auto &bmc = manager.getComponent<BattleManagerComponent>(battle);
+	bmc.participants = {enemy, player};
+	bmc.currentTurnIndex = 0;
+	bmc.isBattleOver = false;
+	//
+	statsComponentP.health = 10;
+	battleComponentE.selectedAction = BattleAction::HEAVY_ATTACK;
+	battleComponentE.target = player;
+	battleComponentE.battleState = BattleState::SELECTED_ACTION;
+	//
+
+	combatSystem.update();
+	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentE.battleState);
+	EXPECT_EQ(0, battleComponentE.AP);
+	EXPECT_EQ(0, statsComponentP.health);
+	EXPECT_EQ(100, statsComponentE.health);
+	combatSystem.update();
+	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentE.battleState);
+	combatSystem.update();
+	EXPECT_EQ(BattleState::VICTORY, battleComponentE.battleState);
+	combatSystem.update();
+	combatSystem.update();
+
+	EXPECT_EQ(100, manager.getComponent<StatsComponent>(enemy).health);
+	EXPECT_EQ(1, manager.getComponent<StatsComponent>(player).experienceLevel);
+	EXPECT_EQ(0, manager.getComponent<StatsComponent>(enemy).numberOfFightsWon);
+
+	EXPECT_EQ(0, manager.getComponent<StatsComponent>(enemy).numberOfFightsWon);
+}
