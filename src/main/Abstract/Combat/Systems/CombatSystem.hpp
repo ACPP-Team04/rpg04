@@ -27,7 +27,7 @@ class CombatSystem : public System {
 
 	EntityID getAttacker(int currentTurnIndex, const std::vector<EntityID> participants);
 
-	int getActionCost(BattleAction action);
+	static int getActionCost(BattleAction action);
 
 	sf::Clock clock;
 
