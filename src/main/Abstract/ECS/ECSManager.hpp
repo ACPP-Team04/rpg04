@@ -1,4 +1,5 @@
 #pragma once
+#include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/InputSystem.hpp"
 #include "Abstract/Overwordl/MovementSystem.hpp"
 #include "Abstract/Overwordl/RenderSystem.hpp"
@@ -13,9 +14,10 @@ struct ECSManager {
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
+	CameraSystem cameraSystem;
 
 	ECSManager(sf::RenderWindow &window)
-	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager)
+	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),cameraSystem(manager,window)
 	{
 	}
 
@@ -34,6 +36,7 @@ struct ECSManager {
 		window.clear(sf::Color::Transparent);
 		inputSystem.update();
 		movementSystem.update();
+		cameraSystem.update();
 		renderSystem.update();
 	}
 };

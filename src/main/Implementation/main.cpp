@@ -8,7 +8,7 @@
 int main()
 {
 
-	sf::RenderWindow window(sf::VideoMode({1500, 1600}), "My window");
+	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
 
 	ECSManager ecsManager = ECSManager(window);
 	WorldParser parser = WorldParser(ecsManager.manager,window);
