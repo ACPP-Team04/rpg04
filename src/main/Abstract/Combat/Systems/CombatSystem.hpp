@@ -5,6 +5,7 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <SFML/Graphics.hpp>
 
 class CombatSystem : public System {
   public:
@@ -27,6 +28,10 @@ class CombatSystem : public System {
 	EntityID getAttacker(int currentTurnIndex, const std::vector<EntityID> participants);
 
 	int getActionCost(BattleAction action);
+
+	sf::Clock clock;
+
+	void cleanupBattle(EntityID battleManagerId, EntityID winningEntity);
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
