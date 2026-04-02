@@ -31,7 +31,7 @@ class CombatSystem : public System {
 
 	sf::Clock clock;
 
-	void cleanupBattle(EntityID battleManagerId, EntityID winningEntity);
+	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity);
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
