@@ -239,5 +239,69 @@
             "project"
         ],
         "id": 9
+    },
+    {
+        "name": "SWITCH_LAYER_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "layer",
+                "propertyType": "",
+                "type": "string",
+                "value": "overworld"
+            },
+            {
+                "name": "level",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 10
+    },
+    {
+        "name": "CURRENT_LAYER_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "layer",
+                "propertyType": "",
+                "type": "string",
+                "value": "overworld"
+            },
+            {
+                "name": "level",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 11
     }
 ]

@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+
 struct TransformComponent : public Component<TransformComponent> {
 	sf::Vector2f position;
 	sf::Vector2f scale{1.0f, 1.0f};
@@ -14,12 +16,15 @@ struct TransformComponent : public Component<TransformComponent> {
 
 	void readFromJson(const nlohmann::json &j) override
 	{
-		this->position.x = j.value("x", 0.0f);
-		this->position.y = j.value("y", 0.0f);
+
+		this->position.x = j.value("position_x", 0.0f);
+		this->position.y = j.value("position_y", 0.0f);
 		this->scale.x = j.value("scale_x", 1.0f);
 		this->scale.y = j.value("scale_y", 1.0f);
 		this->rotation = sf::degrees(j.value("rotation", 0.0f));
 	}
+
+
 };
 
 struct KeyState {
@@ -58,6 +63,34 @@ struct CameraComponent : public Component<CameraComponent> {
 	{
 		scaleSize.x = j.value("scale_x", 1.0f);
 		scaleSize.y = j.value("scale_y", 1.0f);
+	}
+};
+
+struct CurrentLayerComponent : public Component<CurrentLayerComponent> {
+	int level;
+	std::string layer;
+	void readFromJson(const nlohmann::json &j) override
+	{
+		level = j.value("level", 0);
+		layer = j.value("layer", "overworld");
+	}
+};
+
+struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
+	int level;
+	std::string layer;
+	void readFromJson(const nlohmann::json &j) override
+	{
+		level = j.value("level", 0);
+		layer = j.value("layer", "overworld");
+	}
+};
+
+struct PartOfLayerComponent : public Component<PartOfLayerComponent> {
+	int level;
+	std::string layer;
+	void readFromJson(const nlohmann::json &j) override
+	{
 	}
 };
 
@@ -157,6 +190,27 @@ struct ObjectLayer {
 	}
 };
 
+struct WorldLayer {
+	std::vector<TileLayer> tileLayers;
+	std::vector<ObjectLayer> objectLayers;
+};
+struct OverworldLayer :WorldLayer {
+};
+
+struct BattleLayer:WorldLayer {
+};
+
+struct LevelLayer {
+	std::vector<OverworldLayer> overworld_layer;
+	std::vector<BattleLayer> battle_layer;
+};
+
+
+static std::string OVERWORLD_LAYER = "overworld";
+static std::string BATTLE_LAYER = "battlelayer";
+static std::string TILE_LAYER = "tilelayer";
+static std::string OBJECT_LAYER = "objectgroup";
+static std::string LEVEL_LAYER_PREFIX = "level";
 struct WorldComponent : public Component<WorldComponent> {
 	int tilewidth;
 	int tileheight;
@@ -164,8 +218,7 @@ struct WorldComponent : public Component<WorldComponent> {
 	int height;
 	unsigned widthPixel;
 	unsigned heightPixel;
-	std::vector<TileLayer> tileLayers;
-	std::vector<ObjectLayer> objectLayers;
+	std::vector<LevelLayer> levelLayers;
 
 	void readFromJson(const nlohmann::json &j) override
 	{
@@ -175,17 +228,65 @@ struct WorldComponent : public Component<WorldComponent> {
 		height = j.value("height", 0);
 		widthPixel = width * tilewidth;
 		heightPixel = height * tileheight;
-		for (auto &layerJson : j["layers"]) {
-			std::string type = layerJson.value("type", "");
-			if (type == "tilelayer") {
-				TileLayer layer;
-				layer.readFromJson(layerJson, j);
-				tileLayers.push_back(std::move(layer));
-			} else if (type == "objectgroup") {
-				ObjectLayer layer;
-				layer.readFromJson(layerJson);
-				objectLayers.push_back(std::move(layer));
+		unfoldLayers(j);
+	}
+
+
+
+	void unfoldLayers(const nlohmann::json &j)
+	{
+		for (const auto &layer : j.value("layers", nlohmann::json::array())) {
+			if (layer.value("type", "") != "group") {
+				continue;
 			}
+			auto levelName = layer.value("name", "");
+			if (!levelName.starts_with(LEVEL_LAYER_PREFIX)){
+				std::cout << levelName << std::endl;
+				throw std::runtime_error(
+					"Invalid layer type. Group layer has to start with Level");
+			}
+
+			LevelLayer levelLayer;
+			auto sublayers = layer.value("layers", nlohmann::json::array());
+			if (sublayers.size() != 2) {
+				throw std::runtime_error(
+
+					"Invalid layer type. Each level needs exactly one BattleLayer and one OverworldLayer");
+			}
+			for (const auto &sublayer : sublayers) {
+				std::string name = sublayer.value("name", "");
+				if (name == BATTLE_LAYER) {
+					BattleLayer battleLayer;
+					for (const auto &l : sublayer.value("layers", nlohmann::json::array())) {
+						setLayer(l, battleLayer, j);
+					}
+					levelLayer.battle_layer.push_back(std::move(battleLayer));
+
+				}
+				else if (name == OVERWORLD_LAYER) {
+					OverworldLayer overworldLayer;
+					for (const auto &l : sublayer.value("layers", nlohmann::json::array())) {
+						setLayer(l, overworldLayer, j);
+					}
+					levelLayer.overworld_layer.push_back(std::move(overworldLayer));
+				}
+			}
+
+			levelLayers.push_back(std::move(levelLayer));
+		}
+	}
+	void setLayer(const nlohmann::json &layerJson, WorldLayer &worldLayer, const nlohmann::json &rootJson)
+	{
+		std::string type = layerJson.value("type", "");
+		if (type == TILE_LAYER) {
+			std::cout << TILE_LAYER << std::endl;
+			TileLayer layer;
+			layer.readFromJson(layerJson, rootJson);
+			worldLayer.tileLayers.push_back(std::move(layer));
+		} else if (type == OBJECT_LAYER) {
+			ObjectLayer layer;
+			layer.readFromJson(layerJson);
+			worldLayer.objectLayers.push_back(std::move(layer));
 		}
 	}
 };

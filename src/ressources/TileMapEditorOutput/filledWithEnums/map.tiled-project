@@ -245,6 +245,66 @@
                 "wangset",
                 "project"
             ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 8,
+            "members": [
+                {
+                    "name": "layer",
+                    "type": "string",
+                    "value": "overworld"
+                },
+                {
+                    "name": "level",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "SWITCH_LAYER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 9,
+            "members": [
+                {
+                    "name": "layer",
+                    "type": "string",
+                    "value": "overworld"
+                },
+                {
+                    "name": "level",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "CURRENT_LAYER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
         }
     ]
 }

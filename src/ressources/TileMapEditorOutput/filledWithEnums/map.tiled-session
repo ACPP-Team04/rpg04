@@ -24,11 +24,18 @@
             }
         },
         "map.tmj": {
+            "expandedGroupLayers": [
+                7,
+                8,
+                3,
+                5,
+                6
+            ],
             "scale": 0.866875,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 299.92790194664747,
-                "y": 151.1175198269647
+                "x": 263.5904830569575,
+                "y": 144.77289113193947
             }
         },
         "map.tmj#Tilesheet_WithEnums": {
@@ -49,7 +56,7 @@
         "map.tmj"
     ],
     "project": "map.tiled-project",
-    "property.type": "CAMERA_COMPONENT",
+    "property.type": "CURRENT_LAYER_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

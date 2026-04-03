@@ -15,7 +15,7 @@
         "Tilesheet_BaseConfig.tsj"
     ],
     "project": "base_configTilset.tiled-project",
-    "property.type": "MOVEMENT_COMPONENT",
+    "property.type": "int",
     "recentFiles": [
         "Tilesheet_BaseConfig.tsj"
     ],

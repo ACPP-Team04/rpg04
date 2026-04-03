@@ -3,6 +3,7 @@
 #include "Abstract/Overwordl/InputSystem.hpp"
 #include "Abstract/Overwordl/MovementSystem.hpp"
 #include "Abstract/Overwordl/RenderSystem.hpp"
+#include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 #include "System/System.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -15,10 +16,11 @@ struct ECSManager {
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
 	CameraSystem cameraSystem;
+	SwitchLayerSystem switchLayerSystem;
 
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window)
+	      cameraSystem(manager, window),switchLayerSystem(manager)
 	{
 	}
 
@@ -37,6 +39,7 @@ struct ECSManager {
 		window.clear(sf::Color::Transparent);
 		inputSystem.update();
 		movementSystem.update();
+		switchLayerSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
 	}

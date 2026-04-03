@@ -1,2645 +1,2285 @@
-{ "columns":45,
- "image":"..\/Tilesheet_edited.png",
- "imageheight":240,
- "imagewidth":720,
- "margin":0,
- "name":"Tilesheet_edited",
- "spacing":0,
- "tilecount":675,
- "tiledversion":"1.12.1",
- "tileheight":16,
- "tiles":[
+{
+    "image": "../Tilesheet_edited.png",
+    "imageheight": 240,
+    "imagewidth": 720,
+    "margin": 0,
+    "name": "Tilesheet_edited",
+    "spacing": 0,
+    "tiledversion": "1.12.1",
+    "type": "tileset",
+    "version": "1.10",
+    "columns": 45,
+    "tilecount": 675,
+    "tileheight": 16,
+    "tilewidth": 16,
+    "tiles": [
         {
-         "id":0,
-         "properties":[
+            "id": 0,
+            "properties": [
                 {
-                 "name":"DEFAULT_DEFAULT_00",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":1,
-                     "variant":"default",
-                     "width":1
+                    "name": "DEFAULT_DEFAULT_00",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "default",
+                        "hasParts": false,
+                        "height": 1,
+                        "width": 1
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"DEFAULT_DEFAULT_00"
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "DEFAULT_DEFAULT_00"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":69,
-         "properties":[
+            "id": 69,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_00",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":true,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_00",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": true,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_00"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_00"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":70,
-         "properties":[
+            "id": 70,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_01",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_01",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_01"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_01"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":71,
-         "properties":[
+            "id": 71,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_02",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_02",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_02"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_02"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":72,
-         "properties":[
+            "id": 72,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_03",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_03",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_03"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_03"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":73,
-         "properties":[
+            "id": 73,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_04",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_04",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_04"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_04"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":114,
-         "properties":[
+            "id": 114,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_10",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_10",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_10"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_10"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":115,
-         "properties":[
+            "id": 115,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_11",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_11",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_11"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_11"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":116,
-         "properties":[
+            "id": 116,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_12",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_12",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_12"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_12"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":117,
-         "properties":[
+            "id": 117,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_13",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_13",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_13"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_13"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":118,
-         "properties":[
+            "id": 118,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_14",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_14",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_14"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_14"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":159,
-         "properties":[
+            "id": 159,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_20",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_20",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_20"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_20"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":160,
-         "properties":[
+            "id": 160,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_21",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_21",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_21"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_21"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":161,
-         "properties":[
+            "id": 161,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_22",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_22",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_22"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_22"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":162,
-         "properties":[
+            "id": 162,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_23",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_23",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_23"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_23"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":163,
-         "properties":[
+            "id": 163,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_24",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_24",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_24"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_24"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":204,
-         "properties":[
+            "id": 204,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_30",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_30",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_30"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_30"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":205,
-         "properties":[
+            "id": 205,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_31",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_31",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_31"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_31"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":206,
-         "properties":[
+            "id": 206,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_32",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_32",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_32"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_32"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":207,
-         "properties":[
+            "id": 207,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_33",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_33",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_33"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_33"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":208,
-         "properties":[
+            "id": 208,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_34",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_34",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_34"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_34"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":249,
-         "properties":[
+            "id": 249,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_40",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_40",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_40"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_40"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":250,
-         "properties":[
+            "id": 250,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_41",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_41",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_41"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_41"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":251,
-         "properties":[
+            "id": 251,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_42",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_42",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_42"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_42"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":252,
-         "properties":[
+            "id": 252,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_43",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_43",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_43"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_43"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":253,
-         "properties":[
+            "id": 253,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_44",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_44",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_44"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_44"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":294,
-         "properties":[
+            "id": 294,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_50",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_50",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_50"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_50"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":295,
-         "properties":[
+            "id": 295,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_51",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_51",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_51"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_51"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":296,
-         "properties":[
+            "id": 296,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_52",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_52",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_52"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_52"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":297,
-         "properties":[
+            "id": 297,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_53",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_53",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_53"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_53"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":298,
-         "properties":[
+            "id": 298,
+            "properties": [
                 {
-                 "name":"HOUSE_1_RED_54",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"red",
-                     "width":5
+                    "name": "HOUSE_1_RED_54",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "red",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"input",
-                 "propertytype":"INPUT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
-                    }
-                }, 
+                    "name": "input",
+                    "propertytype": "INPUT_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"move",
-                 "propertytype":"MOVEMENT_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "speed":5
+                    "name": "move",
+                    "propertytype": "MOVEMENT_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "speed": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_RED_54"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_RED_54"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":339,
-         "properties":[
+            "id": 339,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_00",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":true,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_00",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": true,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_00"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_00"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":340,
-         "properties":[
+            "id": 340,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_01",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_01",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_01"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_01"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":341,
-         "properties":[
+            "id": 341,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_02",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_02",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_02"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_02"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":342,
-         "properties":[
+            "id": 342,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_03",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_03",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_03"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_03"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":343,
-         "properties":[
+            "id": 343,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_04",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_04",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_04"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_04"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":384,
-         "properties":[
+            "id": 384,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_10",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_10",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_10"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_10"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":385,
-         "properties":[
+            "id": 385,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_11",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_11",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_11"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_11"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":386,
-         "properties":[
+            "id": 386,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_12",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_12",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_12"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_12"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":387,
-         "properties":[
+            "id": 387,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_13",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_13",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_13"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_13"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":388,
-         "properties":[
+            "id": 388,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_14",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_14",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_14"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_14"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":429,
-         "properties":[
+            "id": 429,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_20",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_20",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_20"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_20"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":430,
-         "properties":[
+            "id": 430,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_21",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_21",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_21"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_21"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":431,
-         "properties":[
+            "id": 431,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_22",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_22",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_22"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_22"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":432,
-         "properties":[
+            "id": 432,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_23",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_23",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_23"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_23"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":433,
-         "properties":[
+            "id": 433,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_24",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_24",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_24"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_24"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":474,
-         "properties":[
+            "id": 474,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_30",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_30",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_30"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_30"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":475,
-         "properties":[
+            "id": 475,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_31",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_31",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_31"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_31"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":476,
-         "properties":[
+            "id": 476,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_32",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_32",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_32"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_32"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":477,
-         "properties":[
+            "id": 477,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_33",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_33",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_33"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_33"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":478,
-         "properties":[
+            "id": 478,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_34",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_34",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_34"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_34"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":479,
-         "properties":[
+            "id": 479,
+            "properties": [
                 {
-                 "name":"PLAYER_IDLE_00",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":1,
-                     "variant":"idle",
-                     "width":1
+                    "name": "PLAYER_IDLE_00",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "idle",
+                        "hasParts": false,
+                        "height": 1,
+                        "width": 1
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"PLAYER_IDLE_00"
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "PLAYER_IDLE_00"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":519,
-         "properties":[
+            "id": 519,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_40",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_40",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_40"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_40"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":520,
-         "properties":[
+            "id": 520,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_41",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_41",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_41"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_41"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":521,
-         "properties":[
+            "id": 521,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_42",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_42",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_42"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_42"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":522,
-         "properties":[
+            "id": 522,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_43",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_43",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_43"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_43"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":523,
-         "properties":[
+            "id": 523,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_44",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_44",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_44"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_44"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":564,
-         "properties":[
+            "id": 564,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_50",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_50",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_50"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_50"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":565,
-         "properties":[
+            "id": 565,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_51",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_51",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_51"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_51"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":566,
-         "properties":[
+            "id": 566,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_52",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_52",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_52"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_52"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":567,
-         "properties":[
+            "id": 567,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_53",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_53",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_53"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_53"
                     }
-                }]
-        }, 
+                }
+            ]
+        },
         {
-         "id":568,
-         "properties":[
+            "id": 568,
+            "properties": [
                 {
-                 "name":"HOUSE_1_BROWN_54",
-                 "propertytype":"TileConfig",
-                 "type":"class",
-                 "value":
-                    {
-                     "hasParts":false,
-                     "height":6,
-                     "variant":"brown",
-                     "width":5
+                    "name": "HOUSE_1_BROWN_54",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "brown",
+                        "hasParts": false,
+                        "height": 6,
+                        "width": 5
                     }
-                }, 
+                },
                 {
-                 "name":"render_component",
-                 "propertytype":"RENDER_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-                     "activeTile":"HOUSE_1_BROWN_54"
-                    }
-                }, 
+                    "name": "transform_component",
+                    "propertytype": "TRANSFORM_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
                 {
-                 "name":"transform_component",
-                 "propertytype":"TRANSFORM_COMPONENT",
-                 "type":"class",
-                 "value":
-                    {
-
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "activeTile": "HOUSE_1_BROWN_54"
                     }
-                }]
-        }],
- "tilewidth":16,
- "type":"tileset",
- "version":"1.10"
+                }
+            ]
+        }
+    ]
 }

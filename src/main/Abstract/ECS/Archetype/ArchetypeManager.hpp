@@ -3,6 +3,7 @@
 #include "Archetype.hpp"
 #include "View.hpp"
 
+#include <SFML/Window/Keyboard.hpp>
 #include <unordered_map>
 #include <unordered_set>
 
