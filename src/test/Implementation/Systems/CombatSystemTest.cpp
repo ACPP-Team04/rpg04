@@ -8,7 +8,8 @@
 TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -66,7 +67,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -124,7 +126,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -183,7 +186,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -244,9 +248,10 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity();
-	EntityID enemy = manager.createEntity();
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
@@ -306,7 +311,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -366,7 +372,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
@@ -392,7 +399,8 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
@@ -418,7 +426,8 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 TEST(CombatSystemTest, combatSystemPlayerWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
@@ -463,7 +472,8 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 TEST(CombatSystemTest, combatSystemEnemyWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();

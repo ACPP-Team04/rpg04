@@ -9,8 +9,8 @@
 TEST(AISystemTest, executeAILogicHeavyAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
 	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
@@ -36,8 +36,8 @@ TEST(AISystemTest, executeAILogicHeavyAttack)
 TEST(AISystemTest, executeAILogicLightAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
 	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
@@ -63,8 +63,8 @@ TEST(AISystemTest, executeAILogicLightAttack)
 TEST(AISystemTest, executeAILogicHeal)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
 	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
@@ -90,8 +90,8 @@ TEST(AISystemTest, executeAILogicHeal)
 TEST(AISystemTest, executeAILogicRest)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
 	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
@@ -118,8 +118,8 @@ TEST(AISystemTest, executeAILogicRest)
 TEST(AISystemTest, executeAILogicUltimateAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
 	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
 	EntityID battle = manager.createEntity();
