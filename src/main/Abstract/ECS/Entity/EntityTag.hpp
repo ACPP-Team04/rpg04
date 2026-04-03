@@ -1,2 +1,2 @@
 #pragma once
-enum EntityTag { PLAYER, ENEMY };
+enum EntityTag { PLAYER, ENEMY, BATTLEMANAGER };
