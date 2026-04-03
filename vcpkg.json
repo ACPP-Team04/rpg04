@@ -1,7 +1,8 @@
 {
-  "dependencies": [
-    "gtest",
-    "sfml",
-    "nlohmann-json"
-  ]
+	"dependencies": [
+		"gtest",
+		"sfml",
+		"nlohmann-json",
+		"tgui"
+	]
 }

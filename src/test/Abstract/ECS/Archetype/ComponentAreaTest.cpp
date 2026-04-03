@@ -59,9 +59,7 @@ class Test3 : public Component<Test3> {
 	int health{};
 	int stamina{};
 
-	void readFromJson(const nlohmann::json &j){
-
-	}
+	void readFromJson(const nlohmann::json &j) {}
 };
 
 TEST(ComponentArea, registerOneEntity)
