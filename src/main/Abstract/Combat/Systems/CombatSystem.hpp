@@ -1,4 +1,5 @@
 #pragma once
+#include "Abstract/Combat/Systems/AISystem.hpp"
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
@@ -9,7 +10,7 @@
 
 class CombatSystem : public System {
   public:
-	CombatSystem(ArchetypeManager &manager) : System(manager) {};
+	CombatSystem(ArchetypeManager &manager, AISystem &aiSystem) : System(manager), aiSystem(aiSystem) {};
 
 	void update() override;
 
@@ -32,9 +33,11 @@ class CombatSystem : public System {
 	sf::Clock clock;
 
 	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity);
+	static bool validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealthPotions);
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
 	                           float baseAttackDamage);
 	float getMultiplicatorFromScalingFactor(const WeaponComponent &weaponComponent);
+	AISystem &aiSystem;
 };
