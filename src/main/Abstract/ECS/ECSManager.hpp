@@ -1,4 +1,5 @@
 #pragma once
+#include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 #include "Abstract/Overwordl/DialogSystem.hpp"
@@ -22,14 +23,15 @@ struct ECSManager {
 	MovementSystem movementSystem;
 	tgui::Gui gui;
 	CameraSystem cameraSystem;
+	BattleInputSystem battleInputSystem;
+
 	SwitchLayerSystem switchLayerSystem;
 	CollisionSystem collisionSystem;
 	DialogSystem dialogSystem;
 	InteractionSystem interactionSystem;
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
-	      dialogSystem(manager, window), interactionSystem(manager)
+	      cameraSystem(manager, window), gui(window), battleInputSystem(manager, gui)
 	{
 	}
 
@@ -37,6 +39,7 @@ struct ECSManager {
 	void processEvents()
 	{
 		while (const std::optional event = window.pollEvent()) {
+			gui.handleEvent(*event);
 			if (event->is<sf::Event::Closed>())
 				window.close();
 		}
@@ -53,6 +56,8 @@ struct ECSManager {
 		switchLayerSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
+		battleInputSystem.update();
+		gui.draw();
 		dialogSystem.update();
 	}
 };
