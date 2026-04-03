@@ -17,7 +17,8 @@ struct ECSManager {
 	CameraSystem cameraSystem;
 
 	ECSManager(sf::RenderWindow &window)
-	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),cameraSystem(manager,window)
+	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
+	      cameraSystem(manager, window)
 	{
 	}
 

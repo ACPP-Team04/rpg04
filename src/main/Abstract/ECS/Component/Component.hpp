@@ -7,5 +7,5 @@ class Component {
 	Component() = default;
 	virtual ~Component() = default;
 	TypeInfo<T> typeInfo;
-	virtual void readFromJson(const nlohmann::json& j)=0;
+	virtual void readFromJson(const nlohmann::json &j) = 0;
 };

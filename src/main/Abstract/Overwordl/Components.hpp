@@ -19,7 +19,6 @@ struct TransformComponent : public Component<TransformComponent> {
 		this->scale.x = j.value("scale_x", 1.0f);
 		this->scale.y = j.value("scale_y", 1.0f);
 		this->rotation = sf::degrees(j.value("rotation", 0.0f));
-
 	}
 };
 
@@ -32,30 +31,23 @@ struct InputComponent : public Component<InputComponent> {
 
 	void readFromJson(const nlohmann::json &j) override
 	{
-		this->moveUp = KeyState(j.value("up",false));
-		this->moveDown = KeyState(j.value("down",false));
-		this->moveRight = KeyState(j.value("right",false));
-		this->moveLeft = KeyState(j.value("left",false));
-		this->menuButton = KeyState(j.value("button",false));
+		this->moveUp = KeyState(j.value("up", false));
+		this->moveDown = KeyState(j.value("down", false));
+		this->moveRight = KeyState(j.value("right", false));
+		this->moveLeft = KeyState(j.value("left", false));
+		this->menuButton = KeyState(j.value("button", false));
 	}
 };
 
 struct RenderComponent : public Component<RenderComponent> {
 	std::string activeTiles;
-	void readFromJson(const nlohmann::json &j) override
-	{
-		this->activeTiles = j.value("activeTile", "HOUSE1_BROWN");
-	}
+	void readFromJson(const nlohmann::json &j) override { this->activeTiles = j.value("activeTile", "HOUSE1_BROWN"); }
 };
-
 
 struct MovementComponent : public Component<MovementComponent> {
 	float speed;
 
-	void readFromJson(const nlohmann::json &j) override
-	{
-		this->speed = j.value("speed", 1.0f);
-	};
+	void readFromJson(const nlohmann::json &j) override { this->speed = j.value("speed", 1.0f); };
 };
 
 struct CameraComponent : public Component<CameraComponent> {
@@ -77,18 +69,15 @@ struct tileProperty {
 
 	void readFromJson(const nlohmann::json &data)
 	{
-		name = data.value("name","");
-		type = data.value("type","");
-		value = data.value("value",nlohmann::json());
-		propertytype = data.value("propertytype","");
-
+		name = data.value("name", "");
+		type = data.value("type", "");
+		value = data.value("value", nlohmann::json());
+		propertytype = data.value("propertytype", "");
 	}
 };
 
-
-
-template<typename T>
-void readJsonPropertyArray(std::vector<T>& element, const nlohmann::json &j, std::string key)
+template <typename T>
+void readJsonPropertyArray(std::vector<T> &element, const nlohmann::json &j, std::string key)
 {
 
 	auto rawElement = j.value(key, nlohmann::json::array());
@@ -108,14 +97,14 @@ struct Tile {
 		tile = j.value("tile", 0);
 		readJsonPropertyArray<tileProperty>(properties, j, "properties");
 	}
-
 };
 struct TileLayer {
 	int height = 0;
 	int width = 0;
 	std::vector<Tile> tileIds;
 
-	void readFromJson(const nlohmann::json &j, const nlohmann::json &data) {
+	void readFromJson(const nlohmann::json &j, const nlohmann::json &data)
+	{
 		height = j.value("height", 0);
 		width = j.value("width", 0);
 		std::vector<int> tileIdsInt = j["data"].get<std::vector<int>>();
@@ -125,9 +114,9 @@ struct TileLayer {
 			Tile currentTile;
 			currentTile.tile = gid;
 			if (gid != 0) {
-				for (const auto& tileset : data.value("tilesets", nlohmann::json::array())) {
+				for (const auto &tileset : data.value("tilesets", nlohmann::json::array())) {
 					int firstgid = 1;
-					for (const auto& tileData : tileset.value("tiles", nlohmann::json::array())) {
+					for (const auto &tileData : tileset.value("tiles", nlohmann::json::array())) {
 						if (tileData.value("id", 0) == (gid - firstgid)) {
 							readJsonPropertyArray<tileProperty>(currentTile.properties, tileData, "properties");
 						}
@@ -146,7 +135,8 @@ struct ObjectLayerObject {
 	int width;
 	std::vector<tileProperty> properties;
 
-	void readFromJson(const nlohmann::json &j) {
+	void readFromJson(const nlohmann::json &j)
+	{
 		id = j.value("id", 0);
 		x = j.value("x", 0.0f);
 		y = j.value("y", 0.0f);
@@ -162,10 +152,9 @@ struct ObjectLayer {
 	std::vector<ObjectLayerObject> objects;
 	void readFromJson(const nlohmann::json &j)
 	{
-		name = j.value("name","Object1");
-		readJsonPropertyArray<ObjectLayerObject>(objects, j,"objects");
+		name = j.value("name", "Object1");
+		readJsonPropertyArray<ObjectLayerObject>(objects, j, "objects");
 	}
-
 };
 
 struct WorldComponent : public Component<WorldComponent> {
@@ -186,14 +175,13 @@ struct WorldComponent : public Component<WorldComponent> {
 		height = j.value("height", 0);
 		widthPixel = width * tilewidth;
 		heightPixel = height * tileheight;
-		for (auto& layerJson : j["layers"]) {
+		for (auto &layerJson : j["layers"]) {
 			std::string type = layerJson.value("type", "");
 			if (type == "tilelayer") {
 				TileLayer layer;
-				layer.readFromJson(layerJson,j);
+				layer.readFromJson(layerJson, j);
 				tileLayers.push_back(std::move(layer));
-			}
-			else if (type == "objectgroup") {
+			} else if (type == "objectgroup") {
 				ObjectLayer layer;
 				layer.readFromJson(layerJson);
 				objectLayers.push_back(std::move(layer));

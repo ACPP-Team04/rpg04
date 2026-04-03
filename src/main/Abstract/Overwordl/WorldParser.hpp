@@ -6,8 +6,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <nlohmann/json.hpp>
 
-struct WorldParser :System{
+struct WorldParser : System {
 	sf::RenderWindow &window;
-	WorldParser(ArchetypeManager &manager,sf::RenderWindow& window);
+	WorldParser(ArchetypeManager &manager, sf::RenderWindow &window);
 	void update() override;
 };
