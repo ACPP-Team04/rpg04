@@ -25,9 +25,15 @@ void CombatSystem::update()
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			battle.isActiveTurn = true;
 			switch (battle.battleState) {
-			case BattleState::TURN_START:
+			case BattleState::TURN_START: {
+
 				battle.battleState = BattleState::WAITING_FOR_INPUT;
+				auto tag = manager.getEntityTag(currentAttacker);
+				if (tag) {
+					aiSystem.executeAILogic(currentAttacker, bmc.participants);
+				}
 				break;
+			}
 			case BattleState::SELECTED_ACTION:
 				this->executeBattleAction(currentAttacker, battle.target, battle.selectedAction);
 				battle.battleState = BattleState::EXECUTING_ACTION;
@@ -59,7 +65,6 @@ void CombatSystem::update()
 	}
 }
 
-// add the type of attack as parameter
 void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, BattleAction typeOfAction)
 {
 	auto &attackerBattle = manager.getComponent<BattleComponent>(attacker);
@@ -242,4 +247,20 @@ int CombatSystem::getActionCost(BattleAction action)
 	default:
 		return 0;
 	}
+}
+
+bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed,
+                                  int numberOfHealthPotions)
+{
+	int cost = getActionCost(action);
+	if (AP < cost) {
+		return false;
+	}
+	if (action == BattleAction::ULTIMATE_ATTACK && numberOfUltimateAttacksUsed >= 1) {
+		return false;
+	}
+	if (action == BattleAction::HEAL && numberOfHealthPotions <= 0) {
+		return false;
+	}
+	return true;
 }
