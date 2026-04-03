@@ -1,0 +1,27 @@
+{
+    "activeFile": "Tilesheet_BaseConfig.tsj",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "Alle Dateien (*)",
+    "fileStates": {
+        "Tilesheet_BaseConfig.tsj": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput",
+    "last.objectTypesPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/base_config/mainProperty.json",
+    "openFiles": [
+        "Tilesheet_BaseConfig.tsj"
+    ],
+    "project": "base_configTilset.tiled-project",
+    "property.type": "MOVEMENT_COMPONENT",
+    "recentFiles": [
+        "Tilesheet_BaseConfig.tsj"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
