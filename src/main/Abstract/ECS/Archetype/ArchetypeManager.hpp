@@ -189,4 +189,13 @@ class ArchetypeManager {
 		}
 		this->addEntityIdsToArchType(entityId, newArchetype);
 	}
+	EntityTag getEntityTag(EntityID entityId)
+	{
+		for (auto &[tag, entityIds] : this->entityTagToEntityId) {
+			if (std::find(entityIds.begin(), entityIds.end(), entityId) != entityIds.end()) {
+				return tag;
+			}
+		}
+		throw std::runtime_error("No tag found for entity");
+	}
 };
