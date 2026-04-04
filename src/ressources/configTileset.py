@@ -267,19 +267,18 @@ class Tile:
             type='class',
             value=ClassValue(self.tileConfigValueDict(tileConfig)),
         ))
-    def updateRenderComponent(self):
-        activeTile = self.tileConfig.name
+    def updateRenderComponent(self,enumNum):
         hasNoRenderComponent = True
         for prop in self.properties:
-            if prop.property_type == "RENDER_COMPONENT":
+            if prop.property_type == "SPRITE_COMPONENT":
                 hasNoRenderComponent = False
-                prop.value = parse_property_value("class", {"activeTile": activeTile})
+                prop.value = parse_property_value("class", {"texture": int(enumNum)})
         if hasNoRenderComponent:
             prop = TileProperty(
-                name='render_component',
-                property_type="RENDER_COMPONENT",
+                name='SPRITE_COMPONENT',
+                property_type="SPRITE_COMPONENT",
                 type="class",
-                value=parse_property_value("class", {"activeTile":activeTile}),
+                value=parse_property_value("class", {"texture": int(enumNum)}),
             )
             self.properties.append(prop)
 
@@ -333,7 +332,7 @@ class Tileset:
             "tilecount": self.tilecount,
             "tileheight": self.tileheight,
             "tilewidth": self.tilewidth,
-            "tiles": [t.to_dict() for t in self.tiles],
+            "tiles": [t.to_dict() for t in sorted(self.tiles, key=lambda t: t.id)],
         }
 
     def getTileIds(self):
@@ -392,7 +391,7 @@ def loadJsonFile(path):
 
 def tileToEnumParParentName(tile:Tile):
 
-    return f"{tile.tileConfig.name.upper()}{'_' + tile.tileConfig.variant if tile.tileConfig.variant is not None else ''}"
+    return f"{tile.tileConfig.name.upper()}{'_' + tile.tileConfig.variant.upper() if tile.tileConfig.variant is not None else ''}"
 def tileToEnumPartName(tile:Tile,x,y):
     return f'{tileToEnumParParentName(tile).upper()}_{x}{y}'
 
@@ -412,167 +411,121 @@ def getPixelInfo(id,tileset,partWidth,partHeight):
     return [pixelX, pixelY, fullWidth, fullHeight]
 
 
-def getEums(tileSet: Tileset):
+
+def placeTileConfig(tileSet:Tileset):
     enumParts = {}
     enumParent = {}
-    tileIdsWithHasPartsOrNoObject = []
+    idalreadyTaken = []
     for tile in tileSet.tiles:
         if tile.tileConfig is None:
             continue
-
+        if tile.id in idalreadyTaken:
+            continue
         height = tile.tileConfig.height
         width = tile.tileConfig.width
         if (height == 1 and width == 1 and not tile.tileConfig.hasParts):
-            enumParent[tileToEnumParParentName(tile)] = [tile.id,getPixelInfo(tile.id,tileSet,1,1)]
-            tileIdsWithHasPartsOrNoObject.append(tile.id)
-
-        if tile.tileConfig.hasParts:
-            enumParent[tileToEnumParParentName(tile)] = [tile.id,getPixelInfo(tile.id,tileSet,width,height)]
-            tileIdsWithHasPartsOrNoObject.append(tile.id)
+            enumParent[tile.id] = [tileToEnumParParentName(tile),getPixelInfo(tile.id,tileSet,1,1),tile.tileConfig,tile.properties]
+            idalreadyTaken.append(tile.id)
+            continue
+        if (tile.tileConfig.hasParts):
+            enumParent[tile.id] = [tileToEnumParParentName(tile),getPixelInfo(tile.id,tileSet,width,height),tile.tileConfig,tile.properties]
         for y in range(height):
             for x in range(width):
                 actualId = tile.id + x + (y * tileSet.columns)
-                enumParts[tileToEnumPartName(tile, y, x)] = [actualId, getPixelInfo(actualId, tileSet, 1, 1)]
+                enumParts[actualId]= [tileToEnumPartName(tile,y,x),getPixelInfo(actualId,tileSet,1,1),tile.tileConfig,tile.properties]
+                idalreadyTaken.append(actualId)
+    return enumParent,enumParts
 
+import copy
 
+def replaceConfigAndProps(enumParts, tileset: Tileset):
+    for keyId in enumParts.keys():
+        if tileset.get_tile(keyId) is None:
+            tileset.addEmptyTile(keyId)
 
-    return enumParent,enumParts,tileIdsWithHasPartsOrNoObject
-
-def updateTilesSetWithNewConfig(tileSet: Tileset, tileIdsWithHasPartsOrNoObject, enumParts):
-    for tile in tileSet.tiles:
-        if tile.tileConfig is None:
+    for idx, keyId in enumerate(enumParts.keys()):
+        tile = tileset.get_tile(keyId)
+        if tile is None:
             continue
-        if tile.id not in tileIdsWithHasPartsOrNoObject:
-            tile.deleteTileConfigConfig()
-    for name, info in enumParts.items():
-        actualId = info[0]
-        if tileSet.get_tile(actualId) is None:
-            tileSet.addEmptyTile(actualId)
+        entry = enumParts[keyId]
+        enumName = entry[0]
+        parentConfig = entry[2]
+        tile.properties = copy.deepcopy(entry[3])
+        newConfig = TileConfig(
+            name=enumName,
+            variant=parentConfig.variant,
+            hasParts=parentConfig.hasParts,
+            height=parentConfig.height,
+            width=parentConfig.width,
+        )
+        tile.replaceTileConfig(newConfig)
+        tile.updateRenderComponent(idx)
 
-    id_to_name: dict[int, str] = {info[0]: name for name, info in enumParts.items()}
+def flatEnumDicts(enumDicts, offset=0):
+    return [
+        {"name": enumDicts[key][0], "number": idx + offset, "pixelInfo": enumDicts[key][1]}
+        for idx, key in enumerate(enumDicts.keys())
+    ]
 
-    hasParts_tiles = [t for t in tileSet.tiles
-                      if t.tileConfig is not None and t.tileConfig.hasParts]
+def flattenAndConcatEnums(enumParts, enumParents):
+    parts = flatEnumDicts(enumParts)
+    parents = flatEnumDicts(enumParents, offset=len(enumParts))
+    return parts + parents
 
-    for tile in hasParts_tiles:
-        height = tile.tileConfig.height
-        width = tile.tileConfig.width
-        for y in range(height):
-            for x in range(width):
-                actualId = tile.id + x + (y * tileSet.columns)
-                partName = id_to_name.get(actualId)
-                if partName is None:
-                    continue
-                partTile = tileSet.get_tile(actualId)
-                if partTile is None:
-                    partTile = Tile(actualId, [], None)
-                    tileSet.tiles.append(partTile)
-                partTile.replaceTileConfig(TileConfig(
-                    hasParts=(actualId==tile.id), name=partName,
-                    variant=tile.tileConfig.variant,
-                    height=height, width=width,
-                ))
+def generateTileEnums(flatEnums,header):
 
-    for tile in tileSet.tiles:
-        if tile.tileConfig is None or tile.tileConfig.hasParts:
-            continue
-        partName = id_to_name.get(tile.id)
-        if partName is not None:
-            tile.replaceTileConfig(TileConfig(
-                name=partName,
-                variant=tile.tileConfig.variant,
-                hasParts=False,
-                height=tile.tileConfig.height,
-                width=tile.tileConfig.width,
-            ))
-
-def copyParamFromParentObject(tileset: Tileset):
-    for tile in tileset.tiles:
-        if tile.tileConfig is None or not tile.tileConfig.hasParts:
-            continue
-        propsToCopy =[]
-        for p in tile.properties:
-            if p.property_type is None or (p.property_type in ['TileConfig', 'RENDER_COMPONENT']):
-                continue
-            propsToCopy.append(p)
-
-
-        height = tile.tileConfig.height
-        width = tile.tileConfig.width
-        for y in range(height):
-            for x in range(width):
-                actualId = tile.id + x + (y * tileset.columns)
-                childTile = tileset.get_tile(actualId)
-                if childTile is None:
-                    continue
-                for prop in propsToCopy:
-                    if childTile.get_property(prop.name) is None:
-                        childTile.properties.append(prop)
-def generateENUMFile(enumParent, enumParts, path):
-    allEnums = {**enumParts, **enumParent}
-
-    with open(path, "w") as file:
-        header_content = """#pragma once
-#include <string>
-#include <unordered_map>
-
+    header+= """
 struct TileInfo {
     int pixelX;
     int pixelY;
     int width;
     int height;
-};
+    };
 
 enum TileType {
 """
-        alreadIn = []
-        allCEnums = []
-        for name in enumParts.keys():
-            i = enumParts[name][0]
-            header_content += f"    {name.upper()} = {i},\n"
-            alreadIn.append(i)
-            allCEnums.append(name)
+    for key in flatEnums:
+        header+=f"{key['name'].upper()} = {key['number']},\n"
 
-        for name in enumParent.keys():
-            i = enumParent[name][0]
-            if i in alreadIn:
-                continue
-            header_content += f"    {name.upper()} = {i},\n"
-            allCEnums.append(name)
+    header+="""};"""
+    return header
 
-        header_content += "};\n\n"
+def generateTilEnumMap(flatEnums, header):
+    header += "inline const std::unordered_map<TileType, TileInfo> TILE_DICT = {\n"
+    for key in flatEnums:
+        name = key['name']
+        values = key['pixelInfo']
+        header += f'    {{ {name.upper()}, {{{values[0]}, {values[1]}, {values[2]}, {values[3]}}}}},\n'
+    header += "};\n"
+    return header
 
-        header_content += "inline const std::unordered_map<std::string, TileInfo> TILE_DICT = {\n"
-        for i, (name, data) in enumerate(allEnums.items()):
-            values = data[1]
-            header_content += f'    {{ "{name.upper()}", {{{values[0]}, {values[1]}, {values[2]}, {values[3]}}}}},\n'
-        header_content += "};\n\n"
+def generateAllCusomEnums(customEnums, header):
+    for name in customEnums.keys():
+        header += f"\nenum {name.upper()} {{\n"
+        for idx, enumValue in enumerate(customEnums[name]):
+            header += f"    {enumValue} = {idx},\n"
+        header += "};\n"
+    return header
+def generateEnumFile(flatTileEnums,customEnums,path):
+    with open(path, "w") as file:
+        header = """#pragma once
+#include <string>
+#include <unordered_map>
+"""
+        header = generateTileEnums(flatTileEnums,header)
+        header = generateAllCusomEnums(customEnums,header)
+        header = generateTilEnumMap(flatTileEnums,header)
+        file.write(header)
 
-        header_content += "inline const std::unordered_map<TileType, std::string> TILE_ENUM_ID_TO_STRING = {\n"
-        for name in allCEnums:
-            header_content += f'    {{ {name.upper()}, "{name.upper()}" }},\n'
-        header_content += "};\n"
-
-        file.write(header_content)
-
-def updateTilSetWithPartsAndEnums(tileSet:Tileset):
-    enumParent,enumParts,tileIdsWithHasPartsOrNoObject = getEums(tileSet)
-
-
-    updateTilesSetWithNewConfig(tileSet,tileIdsWithHasPartsOrNoObject,enumParts)
-    copyParamFromParentObject(tileSet)
-    tileSet.updateRenderComponent()
-    tileSet.tiles.sort(key=lambda t: t.id)
-    resultEnums = []
-
-    for name in sorted(enumParts):
-        resultEnums.append(name.upper())
-    for name in sorted(enumParent):
-        resultEnums.append(name.upper())
-
-    return resultEnums,enumParent,enumParts
-
-
+def extractCustomeEnums(customProperties:CustomProperties):
+    result = {}
+    for customProperty in customProperties.get_all_of_type("enum"):
+        if customProperty.name == "TileInfoEnum":
+            continue
+        result[customProperty.name] = []
+        for idx,enumNames in enumerate(customProperty.values):
+            result[customProperty.name].append(enumNames)
+    return result
 
 
 
@@ -583,8 +536,6 @@ PROPERTYES_FILLED_ENUMS_JSON = "./TileMapEditorOutput/filledWithEnums/properties
 CPATH = "../main/Abstract/TILE_ENUMS.hpp"
 tileset = Tileset.from_dict(loadJsonFile(TILEJSONFILE))
 customProperties = CustomProperties.from_dict(loadJsonFile(PROPERTYES_BASE_JSON))
-resultEnums,enumParent,enumParts = updateTilSetWithPartsAndEnums(tileSet=tileset)
-
 mode = ""
 if len(sys.argv) == 2:
     mode = sys.argv[1]
@@ -592,9 +543,12 @@ if mode != "update":
     print("Execute with python configTileset.py <update>")
 if mode =="update":
     print("update")
-    customProperties.get("TileInfoEnum").values = resultEnums
+    enumParent,enumParts = placeTileConfig(tileset)
+    replaceConfigAndProps(enumParts=enumParts,tileset=tileset)
+    resultTileEnums = flattenAndConcatEnums(enumParts=enumParts,enumParents=enumParent)
+    customProperties.get("TileInfoEnum").values = [val['name'] for val in resultTileEnums]
     customProperties.to_file(PROPERTYES_FILLED_ENUMS_JSON,4)
+    generateEnumFile(resultTileEnums,extractCustomeEnums(customProperties),CPATH)
     tileset.to_file(TILEJSONOUTPUTFILE,4)
     print("--------------Updated TILESET")
-    generateENUMFile(enumParent,enumParts,CPATH)
     print("--------------Updated TILE_ENUMS.hpp")

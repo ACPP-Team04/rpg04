@@ -5,7 +5,6 @@
 
 struct SwitchLayerSystem : System {
 
-
 	SwitchLayerSystem(ArchetypeManager &manager);
 	void update() override;
 };

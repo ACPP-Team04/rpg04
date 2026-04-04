@@ -16,8 +16,8 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<RenderComponent>("RENDER_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<CurrentLayerComponent>("CURRENT_LAYER_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<SwitchLayerComponent>("SWITCH_LAYER_COMPONENT");
-	
-
+	ComponentRegistry::getInstance().registerComponent<SpriteComponent>("SPRITE_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<CollisionComponent>("COLLISION_COMPONENT");
 }
 
 int main()

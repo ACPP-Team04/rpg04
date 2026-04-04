@@ -41,17 +41,61 @@
             ]
         },
         {
+            "id": 14,
+            "name": "COLLISION_ACTION",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "KEEP_POSITION",
+                "PREV_POSITION"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 13,
+            "members": [
+                {
+                    "name": "action",
+                    "propertyType": "COLLISION_ACTION",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "isStatic",
+                    "type": "bool",
+                    "value": false
+                }
+            ],
+            "name": "COLLISION_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
             "color": "#ffa0a0a4",
             "drawFill": true,
             "id": 11,
             "members": [
                 {
                     "name": "layer",
-                    "type": "string",
-                    "value": "overworld"
+                    "propertyType": "LayerType",
+                    "type": "int",
+                    "value": 0
                 },
                 {
                     "name": "level",
+                    "propertyType": "LEVEL_NAME",
                     "type": "int",
                     "value": 0
                 }
@@ -93,6 +137,60 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 16,
+            "members": [
+                {
+                    "name": "layerType",
+                    "propertyType": "LayerType",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "levelName",
+                    "propertyType": "LEVEL_NAME",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "LayerConfig",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 18,
+            "name": "LayerType",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "OVERWORLD",
+                "BATTLEWORLD"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 23,
+            "name": "LEVEL_NAME",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "LEVEL1",
+                "LEVEL2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 3,
             "members": [
                 {
@@ -120,14 +218,34 @@
             "drawFill": true,
             "id": 9,
             "members": [
-                {
-                    "name": "activeTile",
-                    "propertyType": "TileInfoEnum",
-                    "type": "string",
-                    "value": "DEFAULT"
-                }
             ],
             "name": "RENDER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 15,
+            "members": [
+                {
+                    "name": "texture",
+                    "propertyType": "TileInfoEnum",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "SPRITE_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",
@@ -148,11 +266,13 @@
             "members": [
                 {
                     "name": "layer",
-                    "type": "string",
-                    "value": "overworld"
+                    "propertyType": "LayerType",
+                    "type": "int",
+                    "value": 0
                 },
                 {
                     "name": "level",
+                    "propertyType": "LEVEL_NAME",
                     "type": "int",
                     "value": 0
                 }
@@ -214,7 +334,7 @@
         {
             "id": 6,
             "name": "TileInfoEnum",
-            "storageType": "string",
+            "storageType": "int",
             "type": "enum",
             "values": [
                 "DEFAULT"
@@ -228,6 +348,26 @@
             "members": [
             ],
             "name": "TRANSFORM_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 24,
+            "members": [
+            ],
+            "name": "ANIMATION_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",

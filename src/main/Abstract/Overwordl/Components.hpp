@@ -8,11 +8,11 @@
 #include <unordered_set>
 #include <vector>
 
-
 struct TransformComponent : public Component<TransformComponent> {
 	sf::Vector2f position;
 	sf::Vector2f scale{1.0f, 1.0f};
 	sf::Angle rotation = sf::Angle::Zero;
+	sf::Vector2f previousPosition;
 
 	void readFromJson(const nlohmann::json &j) override
 	{
@@ -23,8 +23,6 @@ struct TransformComponent : public Component<TransformComponent> {
 		this->scale.y = j.value("scale_y", 1.0f);
 		this->rotation = sf::degrees(j.value("rotation", 0.0f));
 	}
-
-
 };
 
 struct KeyState {
@@ -44,9 +42,18 @@ struct InputComponent : public Component<InputComponent> {
 	}
 };
 
+struct SpriteComponent : public Component<SpriteComponent> {
+	TileType textureId;
+
+	void readFromJson(const nlohmann::json &j) override
+	{
+		this->textureId = static_cast<TileType>(j.value("texture", 0));
+	}
+};
+
 struct RenderComponent : public Component<RenderComponent> {
-	std::string activeTiles;
-	void readFromJson(const nlohmann::json &j) override { this->activeTiles = j.value("activeTile", "HOUSE1_BROWN"); }
+
+	void readFromJson(const nlohmann::json &j) override {}
 };
 
 struct MovementComponent : public Component<MovementComponent> {
@@ -67,33 +74,40 @@ struct CameraComponent : public Component<CameraComponent> {
 };
 
 struct CurrentLayerComponent : public Component<CurrentLayerComponent> {
-	int level;
-	std::string layer;
+	LEVEL_NAME level;
+	LAYERTYPE layer;
 	void readFromJson(const nlohmann::json &j) override
 	{
-		level = j.value("level", 0);
-		layer = j.value("layer", "overworld");
+		level = (LEVEL_NAME)j.value("level", 0);
+		layer = (LAYERTYPE)j.value("layer", 0);
 	}
 };
 
 struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
-	int level;
-	std::string layer;
+	LEVEL_NAME level;
+	LAYERTYPE layer;
 	void readFromJson(const nlohmann::json &j) override
 	{
-		level = j.value("level", 0);
-		layer = j.value("layer", "overworld");
+		level = (LEVEL_NAME)j.value("level", 0);
+		layer = (LAYERTYPE)j.value("layer", 0);
 	}
 };
 
 struct PartOfLayerComponent : public Component<PartOfLayerComponent> {
-	int level;
-	std::string layer;
-	void readFromJson(const nlohmann::json &j) override
-	{
-	}
+	LEVEL_NAME level;
+	LAYERTYPE layer;
+	void readFromJson(const nlohmann::json &j) override {}
 };
 
+struct CollisionComponent : public Component<CollisionComponent> {
+	COLLISION_ACTION action;
+	bool isStatic;
+	void readFromJson(const nlohmann::json &j) override
+	{
+		action = (COLLISION_ACTION)j.value("action", 0);
+		isStatic = j.value("isStatic", false);
+	}
+};
 struct tileProperty {
 	std::string name;
 	std::string type;
@@ -194,23 +208,13 @@ struct WorldLayer {
 	std::vector<TileLayer> tileLayers;
 	std::vector<ObjectLayer> objectLayers;
 };
-struct OverworldLayer :WorldLayer {
-};
-
-struct BattleLayer:WorldLayer {
-};
-
 struct LevelLayer {
-	std::vector<OverworldLayer> overworld_layer;
-	std::vector<BattleLayer> battle_layer;
+	std::unordered_map<LAYERTYPE, WorldLayer> layers;
 };
 
-
-static std::string OVERWORLD_LAYER = "overworld";
-static std::string BATTLE_LAYER = "battlelayer";
 static std::string TILE_LAYER = "tilelayer";
 static std::string OBJECT_LAYER = "objectgroup";
-static std::string LEVEL_LAYER_PREFIX = "level";
+
 struct WorldComponent : public Component<WorldComponent> {
 	int tilewidth;
 	int tileheight;
@@ -218,7 +222,7 @@ struct WorldComponent : public Component<WorldComponent> {
 	int height;
 	unsigned widthPixel;
 	unsigned heightPixel;
-	std::vector<LevelLayer> levelLayers;
+	std::unordered_map<LEVEL_NAME, LevelLayer> levelLayers;
 
 	void readFromJson(const nlohmann::json &j) override
 	{
@@ -228,51 +232,39 @@ struct WorldComponent : public Component<WorldComponent> {
 		height = j.value("height", 0);
 		widthPixel = width * tilewidth;
 		heightPixel = height * tileheight;
-		unfoldLayers(j);
+		unfoldLayers(j, j);
 	}
 
+	template <typename T>
+	static T parseLevelConfig(std::vector<tileProperty> &properties, const std::string &key)
+	{
+		for (const auto &prop : properties) {
+			if (prop.propertytype == "LayerConfig") {
+				return (T)prop.value.value(key, 0);
+			}
+		}
+		throw std::runtime_error("LayerConfig property not found for key: " + key);
+	}
 
-
-	void unfoldLayers(const nlohmann::json &j)
+	void unfoldLayers(const nlohmann::json &j, const nlohmann::json &rootJson)
 	{
 		for (const auto &layer : j.value("layers", nlohmann::json::array())) {
-			if (layer.value("type", "") != "group") {
+			if (layer.value("type", "") != OBJECT_LAYER && layer.value("type", "") != TILE_LAYER) {
+				unfoldLayers(layer, rootJson);
 				continue;
 			}
-			auto levelName = layer.value("name", "");
-			if (!levelName.starts_with(LEVEL_LAYER_PREFIX)){
-				std::cout << levelName << std::endl;
-				throw std::runtime_error(
-					"Invalid layer type. Group layer has to start with Level");
+			std::vector<tileProperty> properties;
+			readJsonPropertyArray(properties, layer, "properties");
+			if (properties.empty()) {
+				// TODO  create here a log warning
+				continue;
 			}
+			auto layerName = parseLevelConfig<LEVEL_NAME>(properties, "levelName");
+			auto layerType = parseLevelConfig<LAYERTYPE>(properties, "layerType");
 
-			LevelLayer levelLayer;
-			auto sublayers = layer.value("layers", nlohmann::json::array());
-			if (sublayers.size() != 2) {
-				throw std::runtime_error(
-
-					"Invalid layer type. Each level needs exactly one BattleLayer and one OverworldLayer");
-			}
-			for (const auto &sublayer : sublayers) {
-				std::string name = sublayer.value("name", "");
-				if (name == BATTLE_LAYER) {
-					BattleLayer battleLayer;
-					for (const auto &l : sublayer.value("layers", nlohmann::json::array())) {
-						setLayer(l, battleLayer, j);
-					}
-					levelLayer.battle_layer.push_back(std::move(battleLayer));
-
-				}
-				else if (name == OVERWORLD_LAYER) {
-					OverworldLayer overworldLayer;
-					for (const auto &l : sublayer.value("layers", nlohmann::json::array())) {
-						setLayer(l, overworldLayer, j);
-					}
-					levelLayer.overworld_layer.push_back(std::move(overworldLayer));
-				}
-			}
-
-			levelLayers.push_back(std::move(levelLayer));
+			WorldLayer worldLayer;
+			setLayer(layer, worldLayer, rootJson);
+			setLayer(layer, levelLayers[layerName].layers[layerType], rootJson);
 		}
 	}
 	void setLayer(const nlohmann::json &layerJson, WorldLayer &worldLayer, const nlohmann::json &rootJson)

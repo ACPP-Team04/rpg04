@@ -11,36 +11,38 @@ using json = nlohmann::json;
 WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {}
 
 void addComponent(EntityID &entity_id, int xLayerPostion, int yLayerPosition, tileProperty tile_property,
-				  ArchetypeManager &manager)
+                  ArchetypeManager &manager)
 {
 	tile_property.value["position_x"] = xLayerPostion;
 	tile_property.value["position_y"] = yLayerPosition;
-
-	ComponentRegistry& componentRegistry = ComponentRegistry::getInstance();
+	std::cout << "Adding: " << tile_property.propertytype << std::endl;
+	ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
 	auto func = componentRegistry.getCreationFunctions(tile_property.propertytype);
 	if (func) {
 		func(manager, entity_id, tile_property.value);
 	}
-	std::cout << tile_property.propertytype << std::endl;
 }
 
-void addPartLayerComponent(ArchetypeManager &manager,EntityID &entity_id, int level, std::string layer)
+void addPartLayerComponent(ArchetypeManager &manager, EntityID &entity_id, LEVEL_NAME level, LAYERTYPE layer)
 {
+
 	manager.addComponentToEntity<PartOfLayerComponent>(entity_id);
 	manager.getComponent<PartOfLayerComponent>(entity_id).layer = layer;
 	manager.getComponent<PartOfLayerComponent>(entity_id).level = level;
 }
 
-void createEntities(const ObjectLayerObject& obj, ArchetypeManager &manager, int level, const std::string& layer)
+void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEVEL_NAME level, LAYERTYPE layer)
 {
 	EntityID entity = manager.createEntity();
 	addPartLayerComponent(manager, entity, level, layer);
-	for (const tileProperty& prop : obj.properties) {
+
+	for (const tileProperty &prop : obj.properties) {
 		addComponent(entity, obj.x, obj.y, prop, manager);
 	}
 }
 
-void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, const WorldComponent &component, int level, const std::string& layer)
+void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, const WorldComponent &component,
+                       LEVEL_NAME level, LAYERTYPE layer)
 {
 	for (const auto &tileLayer : worldLayer.tileLayers) {
 		for (int y = 0; y < component.height; ++y) {
@@ -75,16 +77,9 @@ void WorldParser::update()
 	                            {static_cast<float>(component.widthPixel), static_cast<float>(component.heightPixel)}));
 	window.setView(view);
 
-	int level = 0;
-	for (const auto &layer : component.levelLayers) {
-		for (WorldLayer obj : layer.overworld_layer) {
-			intializeEntities(obj, manager, component,level,OVERWORLD_LAYER);
-		}
-		for (WorldLayer obj : layer.battle_layer) {
-			intializeEntities(obj, manager, component,level,BATTLE_LAYER);
+	for (const auto &[levelName, levelLayer] : component.levelLayers) {
+		for (const auto &[layerType, layer] : levelLayer.layers) {
+			intializeEntities(layer, manager, component, levelName, layerType);
 		}
 	}
-
-
 }
-

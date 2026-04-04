@@ -17,22 +17,11 @@
             "id": 0,
             "properties": [
                 {
-                    "name": "DEFAULT_DEFAULT_00",
+                    "name": "default",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
-                        "variant": "default",
-                        "hasParts": false,
-                        "height": 1,
-                        "width": 1
-                    }
-                },
-                {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
-                    "type": "class",
-                    "value": {
-                        "activeTile": "DEFAULT_DEFAULT_00"
+                        "variant": "default"
                     }
                 }
             ]
@@ -72,11 +61,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_00"
+                        "texture": 0
                     }
                 }
             ]
@@ -90,7 +79,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -116,11 +105,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_01"
+                        "texture": 1
                     }
                 }
             ]
@@ -134,7 +123,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -160,11 +149,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_02"
+                        "texture": 2
                     }
                 }
             ]
@@ -178,7 +167,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -204,11 +193,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_03"
+                        "texture": 3
                     }
                 }
             ]
@@ -222,7 +211,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -248,11 +237,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_04"
+                        "texture": 4
                     }
                 }
             ]
@@ -266,7 +255,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -292,11 +281,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_10"
+                        "texture": 5
                     }
                 }
             ]
@@ -310,7 +299,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -336,11 +325,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_11"
+                        "texture": 6
                     }
                 }
             ]
@@ -354,7 +343,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -380,11 +369,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_12"
+                        "texture": 7
                     }
                 }
             ]
@@ -398,7 +387,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -424,11 +413,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_13"
+                        "texture": 8
                     }
                 }
             ]
@@ -442,7 +431,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -468,11 +457,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_14"
+                        "texture": 9
                     }
                 }
             ]
@@ -486,7 +475,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -512,11 +501,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_20"
+                        "texture": 10
                     }
                 }
             ]
@@ -530,7 +519,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -556,11 +545,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_21"
+                        "texture": 11
                     }
                 }
             ]
@@ -574,7 +563,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -600,11 +589,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_22"
+                        "texture": 12
                     }
                 }
             ]
@@ -618,7 +607,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -644,11 +633,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_23"
+                        "texture": 13
                     }
                 }
             ]
@@ -662,7 +651,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -688,11 +677,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_24"
+                        "texture": 14
                     }
                 }
             ]
@@ -706,7 +695,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -732,11 +721,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_30"
+                        "texture": 15
                     }
                 }
             ]
@@ -750,7 +739,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -776,11 +765,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_31"
+                        "texture": 16
                     }
                 }
             ]
@@ -794,7 +783,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -820,11 +809,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_32"
+                        "texture": 17
                     }
                 }
             ]
@@ -838,7 +827,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -864,11 +853,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_33"
+                        "texture": 18
                     }
                 }
             ]
@@ -882,7 +871,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -908,11 +897,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_34"
+                        "texture": 19
                     }
                 }
             ]
@@ -926,7 +915,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -952,11 +941,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_40"
+                        "texture": 20
                     }
                 }
             ]
@@ -970,7 +959,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -996,11 +985,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_41"
+                        "texture": 21
                     }
                 }
             ]
@@ -1014,7 +1003,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1040,11 +1029,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_42"
+                        "texture": 22
                     }
                 }
             ]
@@ -1058,7 +1047,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1084,11 +1073,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_43"
+                        "texture": 23
                     }
                 }
             ]
@@ -1102,7 +1091,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1128,11 +1117,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_44"
+                        "texture": 24
                     }
                 }
             ]
@@ -1146,7 +1135,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1172,11 +1161,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_50"
+                        "texture": 25
                     }
                 }
             ]
@@ -1190,7 +1179,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1216,11 +1205,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_51"
+                        "texture": 26
                     }
                 }
             ]
@@ -1234,7 +1223,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1260,11 +1249,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_52"
+                        "texture": 27
                     }
                 }
             ]
@@ -1278,7 +1267,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1304,11 +1293,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_53"
+                        "texture": 28
                     }
                 }
             ]
@@ -1322,7 +1311,7 @@
                     "type": "class",
                     "value": {
                         "variant": "red",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
@@ -1348,11 +1337,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_RED_54"
+                        "texture": 29
                     }
                 }
             ]
@@ -1360,6 +1349,14 @@
         {
             "id": 339,
             "properties": [
+                {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
                 {
                     "name": "HOUSE_1_BROWN_00",
                     "propertytype": "TileConfig",
@@ -1372,17 +1369,23 @@
                     }
                 },
                 {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
+                },
+                {
                     "name": "transform_component",
                     "propertytype": "TRANSFORM_COMPONENT",
                     "type": "class",
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_00"
+                        "texture": 30
                     }
                 }
             ]
@@ -1391,15 +1394,29 @@
             "id": 340,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_01",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1408,11 +1425,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_01"
+                        "texture": 31
                     }
                 }
             ]
@@ -1421,15 +1438,29 @@
             "id": 341,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_02",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1438,11 +1469,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_02"
+                        "texture": 32
                     }
                 }
             ]
@@ -1451,15 +1482,29 @@
             "id": 342,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_03",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1468,11 +1513,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_03"
+                        "texture": 33
                     }
                 }
             ]
@@ -1481,15 +1526,29 @@
             "id": 343,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_04",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1498,11 +1557,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_04"
+                        "texture": 34
                     }
                 }
             ]
@@ -1511,15 +1570,29 @@
             "id": 384,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_10",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1528,11 +1601,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_10"
+                        "texture": 35
                     }
                 }
             ]
@@ -1541,15 +1614,29 @@
             "id": 385,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_11",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1558,11 +1645,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_11"
+                        "texture": 36
                     }
                 }
             ]
@@ -1571,15 +1658,29 @@
             "id": 386,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_12",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1588,11 +1689,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_12"
+                        "texture": 37
                     }
                 }
             ]
@@ -1601,15 +1702,29 @@
             "id": 387,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_13",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1618,11 +1733,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_13"
+                        "texture": 38
                     }
                 }
             ]
@@ -1631,15 +1746,29 @@
             "id": 388,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_14",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1648,11 +1777,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_14"
+                        "texture": 39
                     }
                 }
             ]
@@ -1661,15 +1790,29 @@
             "id": 429,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_20",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1678,11 +1821,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_20"
+                        "texture": 40
                     }
                 }
             ]
@@ -1691,15 +1834,29 @@
             "id": 430,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_21",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1708,11 +1865,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_21"
+                        "texture": 41
                     }
                 }
             ]
@@ -1721,15 +1878,29 @@
             "id": 431,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_22",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1738,11 +1909,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_22"
+                        "texture": 42
                     }
                 }
             ]
@@ -1751,15 +1922,29 @@
             "id": 432,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_23",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1768,11 +1953,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_23"
+                        "texture": 43
                     }
                 }
             ]
@@ -1781,15 +1966,29 @@
             "id": 433,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_24",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1798,11 +1997,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_24"
+                        "texture": 44
                     }
                 }
             ]
@@ -1811,15 +2010,29 @@
             "id": 474,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_30",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1828,11 +2041,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_30"
+                        "texture": 45
                     }
                 }
             ]
@@ -1841,15 +2054,29 @@
             "id": 475,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_31",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1858,11 +2085,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_31"
+                        "texture": 46
                     }
                 }
             ]
@@ -1871,15 +2098,29 @@
             "id": 476,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_32",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1888,11 +2129,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_32"
+                        "texture": 47
                     }
                 }
             ]
@@ -1901,15 +2142,29 @@
             "id": 477,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_33",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1918,11 +2173,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_33"
+                        "texture": 48
                     }
                 }
             ]
@@ -1931,15 +2186,29 @@
             "id": 478,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_34",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -1948,11 +2217,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_34"
+                        "texture": 49
                     }
                 }
             ]
@@ -1961,22 +2230,11 @@
             "id": 479,
             "properties": [
                 {
-                    "name": "PLAYER_IDLE_00",
+                    "name": "player",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
-                        "variant": "idle",
-                        "hasParts": false,
-                        "height": 1,
-                        "width": 1
-                    }
-                },
-                {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
-                    "type": "class",
-                    "value": {
-                        "activeTile": "PLAYER_IDLE_00"
+                        "variant": "idle"
                     }
                 }
             ]
@@ -1985,15 +2243,29 @@
             "id": 519,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_40",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2002,11 +2274,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_40"
+                        "texture": 50
                     }
                 }
             ]
@@ -2015,15 +2287,29 @@
             "id": 520,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_41",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2032,11 +2318,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_41"
+                        "texture": 51
                     }
                 }
             ]
@@ -2045,15 +2331,29 @@
             "id": 521,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_42",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2062,11 +2362,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_42"
+                        "texture": 52
                     }
                 }
             ]
@@ -2075,15 +2375,29 @@
             "id": 522,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_43",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2092,11 +2406,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_43"
+                        "texture": 53
                     }
                 }
             ]
@@ -2105,15 +2419,29 @@
             "id": 523,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_44",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2122,11 +2450,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_44"
+                        "texture": 54
                     }
                 }
             ]
@@ -2135,15 +2463,29 @@
             "id": 564,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_50",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2152,11 +2494,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_50"
+                        "texture": 55
                     }
                 }
             ]
@@ -2165,15 +2507,29 @@
             "id": 565,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_51",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2182,11 +2538,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_51"
+                        "texture": 56
                     }
                 }
             ]
@@ -2195,15 +2551,29 @@
             "id": 566,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_52",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2212,11 +2582,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_52"
+                        "texture": 57
                     }
                 }
             ]
@@ -2225,15 +2595,29 @@
             "id": 567,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_53",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2242,11 +2626,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_53"
+                        "texture": 58
                     }
                 }
             ]
@@ -2255,15 +2639,29 @@
             "id": 568,
             "properties": [
                 {
+                    "name": "collision",
+                    "propertytype": "COLLISION_COMPONENT",
+                    "type": "class",
+                    "value": {
+                        "isStatic": true
+                    }
+                },
+                {
                     "name": "HOUSE_1_BROWN_54",
                     "propertytype": "TileConfig",
                     "type": "class",
                     "value": {
                         "variant": "brown",
-                        "hasParts": false,
+                        "hasParts": true,
                         "height": 6,
                         "width": 5
                     }
+                },
+                {
+                    "name": "render_component",
+                    "propertytype": "RENDER_COMPONENT",
+                    "type": "class",
+                    "value": {}
                 },
                 {
                     "name": "transform_component",
@@ -2272,11 +2670,11 @@
                     "value": {}
                 },
                 {
-                    "name": "render_component",
-                    "propertytype": "RENDER_COMPONENT",
+                    "name": "SPRITE_COMPONENT",
+                    "propertytype": "SPRITE_COMPONENT",
                     "type": "class",
                     "value": {
-                        "activeTile": "HOUSE_1_BROWN_54"
+                        "texture": 59
                     }
                 }
             ]

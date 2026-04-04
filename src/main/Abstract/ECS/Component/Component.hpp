@@ -9,5 +9,4 @@ class Component {
 	virtual ~Component() = default;
 	TypeInfo<T> typeInfo;
 	virtual void readFromJson(const nlohmann::json &j) = 0;
-
 };

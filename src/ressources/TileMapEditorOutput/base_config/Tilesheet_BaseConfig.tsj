@@ -69,6 +69,15 @@
          "id":339,
          "properties":[
                 {
+                 "name":"collision",
+                 "propertytype":"COLLISION_COMPONENT",
+                 "type":"class",
+                 "value":
+                    {
+                     "isStatic":true
+                    }
+                }, 
+                {
                  "name":"house_1",
                  "propertytype":"TileConfig",
                  "type":"class",
@@ -78,6 +87,15 @@
                      "height":6,
                      "variant":"brown",
                      "width":5
+                    }
+                }, 
+                {
+                 "name":"render_component",
+                 "propertytype":"RENDER_COMPONENT",
+                 "type":"class",
+                 "value":
+                    {
+
                     }
                 }, 
                 {
