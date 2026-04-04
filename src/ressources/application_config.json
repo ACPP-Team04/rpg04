@@ -1,6 +1,7 @@
 {
   "MAX_COMPONENTS": 64,
   "SPRITE_SHEET_PATH":"../src/ressources/TileMapEditorOutput/Tilesheet_edited.png",
-  "MAP":"../src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj"
+  "MAP":"../src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj",
+  "FONT":"../src/ressources/COMICATE.TTF"
 }
 

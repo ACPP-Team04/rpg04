@@ -39,11 +39,20 @@ void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEV
 	for (const tileProperty &prop : obj.properties) {
 		addComponent(entity, obj.x, obj.y, prop, manager);
 	}
+	if (manager.hasComponent<RenderComponent>(entity))
+	{
+		manager.getComponent<RenderComponent>(entity).z_layer = 1;
+	}
 }
 
 void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, const WorldComponent &component,
                        LEVEL_NAME level, LAYERTYPE layer)
 {
+	for (const auto &objLayer : worldLayer.objectLayers) {
+		for (const auto &obj : objLayer.objects) {
+			createEntities(obj, manager, level, layer);
+		}
+	}
 	for (const auto &tileLayer : worldLayer.tileLayers) {
 		for (int y = 0; y < component.height; ++y) {
 			for (int x = 0; x < component.width; ++x) {
@@ -53,12 +62,12 @@ void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, 
 				for (const tileProperty &prop : tileLayer.tileIds[flatIndex].properties) {
 					addComponent(entity, x * component.tilewidth, y * component.tileheight, prop, manager);
 				}
+
+				if (manager.hasComponent<RenderComponent>(entity))
+				{
+					manager.getComponent<RenderComponent>(entity).z_layer = 0;
+				}
 			}
-		}
-	}
-	for (const auto &objLayer : worldLayer.objectLayers) {
-		for (const auto &obj : objLayer.objects) {
-			createEntities(obj, manager, level, layer);
 		}
 	}
 }

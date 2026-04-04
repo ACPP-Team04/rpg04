@@ -1,7 +1,9 @@
 #pragma once
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
+#include "Abstract/Overwordl/DialogSystem.hpp"
 #include "Abstract/Overwordl/InputSystem.hpp"
+#include "Abstract/Overwordl/InteractionSystem.hpp"
 #include "Abstract/Overwordl/MovementSystem.hpp"
 #include "Abstract/Overwordl/RenderSystem.hpp"
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
@@ -19,10 +21,11 @@ struct ECSManager {
 	CameraSystem cameraSystem;
 	SwitchLayerSystem switchLayerSystem;
 	CollisionSystem collisionSystem;
-
+	DialogSystem dialogSystem;
+	InteractionSystem interactionSystem;
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), switchLayerSystem(manager),collisionSystem(manager)
+	      cameraSystem(manager, window), switchLayerSystem(manager),collisionSystem(manager),dialogSystem(manager,window),interactionSystem(manager)
 	{
 	}
 
@@ -40,10 +43,13 @@ struct ECSManager {
 		processEvents();
 		window.clear(sf::Color::Transparent);
 		inputSystem.update();
+		interactionSystem.update();
 		movementSystem.update();
 		collisionSystem.update();
+
 		switchLayerSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
+		dialogSystem.update();
 	}
 };

@@ -152,6 +152,20 @@ class ArchetypeManager {
 		EntityLocation location = getEntityLocation(entityId);
 		return std::get<0>(location.archetype->getComponentArrays<T>(location.index));
 	}
+	template <typename T>
+	bool hasComponent(EntityID entityId)
+	{
+		try {
+			getComponent<T>(entityId);
+			return true;
+		}
+		catch (std::exception* e) {
+			return false;
+		}
+		catch (std::exception& e) {
+			return false;
+		}
+	}
 
 	template <typename... T>
 	void removeComponentFromEntity(EntityID entityId)

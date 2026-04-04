@@ -117,6 +117,48 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 17,
+            "members": [
+                {
+                    "name": "characterSize",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "dialogSentences",
+                    "type": "string",
+                    "value": "[]"
+                },
+                {
+                    "name": "fillColor",
+                    "propertyType": "Color",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "startsWithButton",
+                    "propertyType": "Keys",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "DIALOG_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 2,
             "members": [
             ],
@@ -133,6 +175,117 @@
                 "wangset",
                 "project"
             ]
+        },
+        {
+            "id": 18,
+            "name": "Keys",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "Unknown",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "Q",
+                "R",
+                "S",
+                "T",
+                "U",
+                "V",
+                "W",
+                "X",
+                "Y",
+                "Z",
+                "Num0",
+                "Num1",
+                "Num2",
+                "Num3",
+                "Num4",
+                "Num5",
+                "Num6",
+                "Num7",
+                "Num8",
+                "Num9",
+                "Escape",
+                "LControl",
+                "LShift",
+                "LAlt",
+                "LSystem",
+                "RControl",
+                "RShift",
+                "RAlt",
+                "RSystem",
+                "Menu",
+                "LBracket",
+                "RBracket",
+                "Semicolon",
+                "Comma",
+                "Period",
+                "Apostrophe",
+                "Slash",
+                "Backslash",
+                "Grave",
+                "Equal",
+                "Hyphen",
+                "Space",
+                "Enter",
+                "Backspace",
+                "Tab",
+                "PageUp",
+                "PageDown",
+                "End",
+                "Home",
+                "Insert",
+                "Delete",
+                "Add",
+                "Subtract",
+                "Multiply",
+                "Divide",
+                "Left",
+                "Right",
+                "Up",
+                "Down",
+                "Numpad0",
+                "Numpad1",
+                "Numpad2",
+                "Numpad3",
+                "Numpad4",
+                "Numpad5",
+                "Numpad6",
+                "Numpad7",
+                "Numpad8",
+                "Numpad9",
+                "F1",
+                "F2",
+                "F3",
+                "F4",
+                "F5",
+                "F6",
+                "F7",
+                "F8",
+                "F9",
+                "F10",
+                "F11",
+                "F12",
+                "F13",
+                "F14",
+                "F15",
+                "Pause"
+            ],
+            "valuesAsFlags": false
         },
         {
             "color": "#ffa0a0a4",
@@ -200,6 +353,26 @@
                 }
             ],
             "name": "MOVEMENT_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 16,
+            "members": [
+            ],
+            "name": "NPC_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",
@@ -423,6 +596,37 @@
                 "wangset",
                 "project"
             ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 19,
+            "members": [
+            ],
+            "name": "INTERACTION_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 20,
+            "name": "Color",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "WHITE",
+                "RED"
+            ],
+            "valuesAsFlags": false
         }
     ]
 }

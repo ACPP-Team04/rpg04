@@ -2,6 +2,7 @@
 #include "Abstract/GlobalProperties.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
 
+#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -25,6 +26,8 @@ struct AssetManager {
 
 		return {*this->textureSet, sf::IntRect({tile.pixelX, tile.pixelY}, {tile.width, tile.height})};
 	}
+
+
 
   private:
 	std::shared_ptr<sf::Texture> textureSet;

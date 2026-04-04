@@ -2,6 +2,7 @@
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
 
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <nlohmann/json_fwd.hpp>
 #include <unordered_map>
@@ -27,10 +28,11 @@ struct TransformComponent : public Component<TransformComponent> {
 
 struct KeyState {
 	bool pressed = false;
+	bool justPressed = false;
 };
 
 struct InputComponent : public Component<InputComponent> {
-	KeyState moveUp, moveDown, moveRight, moveLeft, menuButton;
+	KeyState moveUp, moveDown, moveRight, moveLeft, menuButton, interact;
 
 	void readFromJson(const nlohmann::json &j) override
 	{
@@ -39,6 +41,7 @@ struct InputComponent : public Component<InputComponent> {
 		this->moveRight = KeyState(j.value("right", false));
 		this->moveLeft = KeyState(j.value("left", false));
 		this->menuButton = KeyState(j.value("button", false));
+		this->interact = KeyState(j.value("interact", false));
 	}
 };
 
@@ -53,6 +56,7 @@ struct SpriteComponent : public Component<SpriteComponent> {
 
 struct RenderComponent : public Component<RenderComponent> {
 
+	int z_layer;
 	void readFromJson(const nlohmann::json &j) override {}
 };
 
@@ -70,6 +74,66 @@ struct CameraComponent : public Component<CameraComponent> {
 	{
 		scaleSize.x = j.value("scale_x", 1.0f);
 		scaleSize.y = j.value("scale_y", 1.0f);
+	}
+};
+
+struct NPC_Component : public Component<NPC_Component> {
+
+	void readFromJson(const nlohmann::json &j) override
+	{
+
+	}
+};
+
+struct DialogComponent : public Component<DialogComponent> {
+	std::vector<std::string> sentences;
+	sf::Keyboard::Key startsWith;
+	COLOR color;
+	int characterSize;
+	std::string currentSentence;
+	int senetnceId;
+	bool isActive;
+	void readFromJson(const nlohmann::json &j) override
+	{
+		std::string raw = j.value("dialogSentences", "[]");
+		auto parsed = nlohmann::json::parse(raw);
+		for (const auto &sentence : parsed) {
+			sentences.push_back(sentence.get<std::string>());
+		}
+		startsWith = (sf::Keyboard::Key)j.value("startsWithButton",0);
+		color = (COLOR)j.value("fillColor", 0);
+		characterSize = j.value("characterSize",10);
+		currentSentence = this->sentences.back();
+	}
+
+	std::string getKeyAsString(sf::Keyboard::Key key)
+	{
+		if (key == sf::Keyboard::Key::F) {
+			return "F";
+		}
+		else return "G";
+	}
+
+	std::string getSentence()
+	{
+		return currentSentence;
+	}
+
+	void nextSentence()
+	{
+		int newSentence = senetnceId%sentences.size();
+		currentSentence = sentences[newSentence];
+		senetnceId++;
+	}
+};
+
+struct InteractionComponent : public Component<InteractionComponent> {
+
+	bool isActive;
+
+	void readFromJson(const nlohmann::json &j) override
+	{
+		isActive = false;
 	}
 };
 
