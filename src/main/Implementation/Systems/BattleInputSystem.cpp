@@ -11,7 +11,6 @@ BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui) 
 
 void BattleInputSystem::connectCallbacks()
 {
-	// Light Attack
 	ui.getButton("BtnLight")->onPress([this]() {
 		auto player = manager.getEntityIdByTag(EntityTag::PLAYER)[0];
 		auto &b = manager.getComponent<BattleComponent>(player);
@@ -56,17 +55,13 @@ void BattleInputSystem::update()
 		return;
 	EntityID playerId = players[0];
 
-	/*
-	if (!manager.hasComponent<BattleComponent>(playerId)) {
-	    ui.setVisible(false);
-	    return;
-	}
-	*/
+	// Fix me: add check for current world != battleWorld, then return
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
 	auto &inv = manager.getComponent<InventoryComponent>(playerId);
+	ui.setHUDVisible(true);
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
-	ui.setVisible(showMenu);
+	ui.setActionPanelVisible(showMenu);
 
 	if (showMenu) {
 		ui.updateStats(stats.health, stats.maxHealth, battle.AP);
@@ -84,6 +79,24 @@ void BattleInputSystem::update()
 		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, inv.numberOfHealthPotions));
 		ui.getButton("BtnRest")->setEnabled(true);
 	}
+	auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
+	auto &bmc = manager.getComponent<BattleManagerComponent>(bmcId);
+
+	// later logic for enemy HP bar
+	/*
+	for (EntityID id : bmc.participants) {
+	    if (manager.getEntityTag(id) == EntityTag::ENEMY) {
+	        if (!ui.hasEnemyBar(id))
+	            ui.createEnemyBar(id);
+
+	        auto &stats = manager.getComponent<StatsComponent>(id);
+	        // auto &transform = manager.getComponent<TransformComponent>(id);
+	        // sf::Vector2f screenPos = window.mapCoordsToPixel(transform.position);
+
+	        // ui.updateEnemyBar(id, stats.health, stats.maxHealth, screenPos);
+	    }
+	}
+	*/
 }
 
 EntityID BattleInputSystem::selectTarget(std::vector<EntityID> participants, EntityID playerId)
