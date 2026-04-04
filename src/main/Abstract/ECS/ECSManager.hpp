@@ -1,5 +1,7 @@
 #pragma once
+#include "Abstract/Combat/Systems/AISystem.hpp"
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
+#include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/InputSystem.hpp"
 #include "Abstract/Overwordl/MovementSystem.hpp"
@@ -20,10 +22,13 @@ struct ECSManager {
 	tgui::Gui gui;
 	CameraSystem cameraSystem;
 	BattleInputSystem battleInputSystem;
+	AISystem aiSystem;
+	CombatSystem combatSystem;
 
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), gui(window), battleInputSystem(manager, gui)
+	      cameraSystem(manager, window), gui(window), battleInputSystem(manager, gui), aiSystem(manager),
+	      combatSystem(manager, aiSystem)
 	{
 	}
 
@@ -46,6 +51,7 @@ struct ECSManager {
 		cameraSystem.update();
 		renderSystem.update();
 		battleInputSystem.update();
+		combatSystem.update();
 		gui.draw();
 	}
 };
