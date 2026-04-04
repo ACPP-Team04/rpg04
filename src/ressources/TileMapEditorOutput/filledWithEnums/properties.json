@@ -1,0 +1,421 @@
+[
+    {
+        "name": "CAMERA_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "scale_x",
+                "propertyType": "",
+                "type": "float",
+                "value": 1.0
+            },
+            {
+                "name": "scale_y",
+                "propertyType": "",
+                "type": "float",
+                "value": 1.0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 1
+    },
+    {
+        "name": "INPUT_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 2
+    },
+    {
+        "name": "MOVEMENT_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "speed",
+                "propertyType": "",
+                "type": "float",
+                "value": 1.0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 3
+    },
+    {
+        "name": "TileConfig",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "hasParts",
+                "propertyType": "",
+                "type": "bool",
+                "value": false
+            },
+            {
+                "name": "height",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "variant",
+                "propertyType": "",
+                "type": "string",
+                "value": ""
+            },
+            {
+                "name": "width",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 5
+    },
+    {
+        "name": "TileInfoEnum",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "HOUSE_1_RED_00",
+            "HOUSE_1_RED_01",
+            "HOUSE_1_RED_02",
+            "HOUSE_1_RED_03",
+            "HOUSE_1_RED_04",
+            "HOUSE_1_RED_10",
+            "HOUSE_1_RED_11",
+            "HOUSE_1_RED_12",
+            "HOUSE_1_RED_13",
+            "HOUSE_1_RED_14",
+            "HOUSE_1_RED_20",
+            "HOUSE_1_RED_21",
+            "HOUSE_1_RED_22",
+            "HOUSE_1_RED_23",
+            "HOUSE_1_RED_24",
+            "HOUSE_1_RED_30",
+            "HOUSE_1_RED_31",
+            "HOUSE_1_RED_32",
+            "HOUSE_1_RED_33",
+            "HOUSE_1_RED_34",
+            "HOUSE_1_RED_40",
+            "HOUSE_1_RED_41",
+            "HOUSE_1_RED_42",
+            "HOUSE_1_RED_43",
+            "HOUSE_1_RED_44",
+            "HOUSE_1_RED_50",
+            "HOUSE_1_RED_51",
+            "HOUSE_1_RED_52",
+            "HOUSE_1_RED_53",
+            "HOUSE_1_RED_54",
+            "HOUSE_1_BROWN_00",
+            "HOUSE_1_BROWN_01",
+            "HOUSE_1_BROWN_02",
+            "HOUSE_1_BROWN_03",
+            "HOUSE_1_BROWN_04",
+            "HOUSE_1_BROWN_10",
+            "HOUSE_1_BROWN_11",
+            "HOUSE_1_BROWN_12",
+            "HOUSE_1_BROWN_13",
+            "HOUSE_1_BROWN_14",
+            "HOUSE_1_BROWN_20",
+            "HOUSE_1_BROWN_21",
+            "HOUSE_1_BROWN_22",
+            "HOUSE_1_BROWN_23",
+            "HOUSE_1_BROWN_24",
+            "HOUSE_1_BROWN_30",
+            "HOUSE_1_BROWN_31",
+            "HOUSE_1_BROWN_32",
+            "HOUSE_1_BROWN_33",
+            "HOUSE_1_BROWN_34",
+            "HOUSE_1_BROWN_40",
+            "HOUSE_1_BROWN_41",
+            "HOUSE_1_BROWN_42",
+            "HOUSE_1_BROWN_43",
+            "HOUSE_1_BROWN_44",
+            "HOUSE_1_BROWN_50",
+            "HOUSE_1_BROWN_51",
+            "HOUSE_1_BROWN_52",
+            "HOUSE_1_BROWN_53",
+            "HOUSE_1_BROWN_54",
+            "DEFAULT_DEFAULT",
+            "HOUSE_1_RED",
+            "HOUSE_1_BROWN",
+            "PLAYER_IDLE"
+        ],
+        "id": 6
+    },
+    {
+        "name": "TRANSFORM_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 7
+    },
+    {
+        "name": "RENDER_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 9
+    },
+    {
+        "name": "SWITCH_LAYER_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "layer",
+                "propertyType": "LayerType",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "level",
+                "propertyType": "LEVEL_NAME",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 10
+    },
+    {
+        "name": "CURRENT_LAYER_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "layer",
+                "propertyType": "LayerType",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "level",
+                "propertyType": "LEVEL_NAME",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 11
+    },
+    {
+        "name": "COLLISION_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "action",
+                "propertyType": "COLLISION_ACTION",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "isStatic",
+                "propertyType": "",
+                "type": "bool",
+                "value": false
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 13
+    },
+    {
+        "name": "COLLISION_ACTION",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "KEEP_POSITION",
+            "PREV_POSITION"
+        ],
+        "id": 14
+    },
+    {
+        "name": "SPRITE_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "texture",
+                "propertyType": "TileInfoEnum",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 15
+    },
+    {
+        "name": "LayerConfig",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "layerType",
+                "propertyType": "LayerType",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "levelName",
+                "propertyType": "LEVEL_NAME",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 16
+    },
+    {
+        "name": "LayerType",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "OVERWORLD",
+            "BATTLEWORLD"
+        ],
+        "id": 18
+    },
+    {
+        "name": "LEVEL_NAME",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "LEVEL1",
+            "LEVEL2"
+        ],
+        "id": 23
+    }
+]

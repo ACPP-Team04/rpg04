@@ -7,9 +7,16 @@ RenderSystem::RenderSystem(ArchetypeManager &manager, sf::RenderWindow &window) 
 
 void RenderSystem::update()
 {
-	this->manager.view<RenderComponent, TransformComponent>().each(
-	    [this](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp) {
-	    	sf::Sprite sp = AssetManager::getInstance().getSpriteAt(comp.activeTiles);
+	CurrentLayerComponent currentLayer;
+	this->manager.view<CurrentLayerComponent>().each(
+	    [&](const EntityID &id, auto &component) { currentLayer = component; });
+	this->manager.view<PartOfLayerComponent, RenderComponent, TransformComponent, SpriteComponent>().each(
+	    [&](const EntityID &id, PartOfLayerComponent &partComp, RenderComponent &comp, TransformComponent &tcomp,
+	        SpriteComponent &scomp) {
+		    if (currentLayer.layer != partComp.layer || currentLayer.level != partComp.level) {
+			    return;
+		    }
+		    sf::Sprite sp = AssetManager::getInstance().getSpriteAt(scomp.textureId);
 		    sp.setPosition(tcomp.position);
 		    sp.setScale(tcomp.scale);
 		    sp.setRotation(tcomp.rotation);

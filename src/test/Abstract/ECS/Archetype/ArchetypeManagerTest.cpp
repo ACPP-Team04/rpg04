@@ -103,8 +103,6 @@ TEST(ArchetypeManager, addMultiple)
 	archetypeManager.addComponentToEntity<Test1>(entity_id3);
 	archetypeManager.addComponentToEntity<Test2>(entity_id3);
 	int counter = 0;
-	archetypeManager.view<Test1, Test2>().each([&](EntityID entityId,Test1 &test1, Test2 &test2) {
-		counter++;
-	});
+	archetypeManager.view<Test1, Test2>().each([&](EntityID entityId, Test1 &test1, Test2 &test2) { counter++; });
 	EXPECT_EQ(3, counter);
 }

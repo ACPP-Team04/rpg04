@@ -19,11 +19,11 @@ struct AssetManager {
 		return instance;
 	}
 
-	sf::Sprite getSpriteAt(const std::string& spriteName)
+	sf::Sprite getSpriteAt(TileType tileType)
 	{
-		auto tile = TILE_DICT.at(spriteName);
+		auto tile = TILE_DICT.at(tileType);
 
-		return {*this->textureSet,sf::IntRect({tile.PixelX, tile.PixelY},{tile.width, tile.height})};
+		return {*this->textureSet, sf::IntRect({tile.pixelX, tile.pixelY}, {tile.width, tile.height})};
 	}
 
   private:

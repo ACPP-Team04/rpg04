@@ -1,8 +1,10 @@
 #pragma once
 #include "Abstract/Overwordl/CameraSystem.hpp"
+#include "Abstract/Overwordl/CollisionSystem.hpp"
 #include "Abstract/Overwordl/InputSystem.hpp"
 #include "Abstract/Overwordl/MovementSystem.hpp"
 #include "Abstract/Overwordl/RenderSystem.hpp"
+#include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 #include "System/System.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -18,10 +20,13 @@ struct ECSManager {
 	MovementSystem movementSystem;
 	tgui::Gui gui;
 	CameraSystem cameraSystem;
+	SwitchLayerSystem switchLayerSystem;
+	CollisionSystem collisionSystem;
 
 
 	ECSManager(sf::RenderWindow &window)
-	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),cameraSystem(manager,window)
+	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
+	      cameraSystem(manager, window), switchLayerSystem(manager),collisionSystem(manager)
 	{
 	}
 
@@ -40,6 +45,8 @@ struct ECSManager {
 		window.clear(sf::Color::Transparent);
 		inputSystem.update();
 		movementSystem.update();
+		collisionSystem.update();
+		switchLayerSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
 	}
