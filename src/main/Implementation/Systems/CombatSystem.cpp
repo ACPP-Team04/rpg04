@@ -6,6 +6,10 @@
 #include "Implementation/Components/InventoryComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
+auto combatLog = spdlog::stdout_color_mt("combat");
 
 // Check if there are entities in battleState if yes, deal with their plays
 void CombatSystem::update()
@@ -13,7 +17,7 @@ void CombatSystem::update()
 	auto view = manager.view<BattleManagerComponent>();
 
 	if (view.archetypes.size() == 0) {
-		std::cout << "No BattleManagerComponent found" << std::endl;
+		spdlog::get("combat")->warn("No BattleManagerComponent found");
 		return;
 	} else {
 		view.each([&](EntityID battleId, BattleManagerComponent &bmc) {
@@ -29,8 +33,10 @@ void CombatSystem::update()
 
 				battle.battleState = BattleState::WAITING_FOR_INPUT;
 				auto tag = manager.getEntityTag(currentAttacker);
-				if (tag) {
-					aiSystem.executeAILogic(currentAttacker, bmc.participants);
+				if (tag.has_value()) {
+					if (tag.value() == EntityTag::ENEMY) {
+						aiSystem.executeAILogic(currentAttacker, bmc.participants);
+					}
 				}
 				break;
 			}
@@ -52,12 +58,12 @@ void CombatSystem::update()
 				break;
 			case BattleState::VICTORY:
 				// remove battle component from all entities in battle and set isActiveTurn to false
-				std::cout << "Victory for player" << std::endl;
+				spdlog::get("combat")->debug("Victory for player");
 				bmc.isBattleOver = true;
 				break;
 			case BattleState::DEFEAT:
 				// remove battle component from all entities in battle and set isActiveTurn to false
-				std::cout << "Defeat! for player" << std::endl;
+				spdlog::get("combat")->debug("Defeat! for player");
 				bmc.isBattleOver = true;
 				break;
 			}
@@ -71,7 +77,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	auto &attackerInventory = manager.getComponent<InventoryComponent>(attacker);
 	int cost = getActionCost(typeOfAction);
 	if (attackerBattle.AP < cost) {
-		std::cout << "Not enough AP to do this action" << std::endl;
+		spdlog::get("combat")->warn("Not enough AP to do this action");
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;
 	}
@@ -80,12 +86,12 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	if (typeOfAction == BattleAction::HEAL and attackerInventory.numberOfHealthPotions > 0) {
 		attackerInventory.numberOfHealthPotions -= 1;
 	} else if (typeOfAction == BattleAction::HEAL and attackerInventory.numberOfHealthPotions == 0) {
-		std::cout << "No health potions left!" << std::endl;
+		spdlog::get("combat")->warn("No health potions left!");
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;
 	}
 	if (typeOfAction == BattleAction::ULTIMATE_ATTACK and attackerBattle.numberOfUltimateAttacksUsed >= 1) {
-		std::cout << "No ultimate attacks left!" << std::endl;
+		spdlog::get("combat")->warn("No ultimate attacks left!");
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;
 	}
@@ -130,6 +136,15 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		break;
 	}
 	}
+	spdlog::get("combat")->info(
+	    "Entity {} attacks Entity {} with {}!", static_cast<int>(manager.getEntityTag(attacker).value()),
+	    static_cast<int>(manager.getEntityTag(defender).value()), static_cast<int>(typeOfAction));
+	spdlog::get("combat")->debug(
+	    "Entity {} has {} HP and {} AP left!", static_cast<int>(manager.getEntityTag(defender).value()),
+	    manager.getComponent<StatsComponent>(defender).health, manager.getComponent<BattleComponent>(defender).AP);
+	spdlog::get("combat")->debug(
+	    "Entity {} has {} HP and {} AP left!", static_cast<int>(manager.getEntityTag(attacker).value()),
+	    manager.getComponent<StatsComponent>(attacker).health, manager.getComponent<BattleComponent>(attacker).AP);
 }
 
 void CombatSystem::takeHealAction(EntityID healer)
@@ -171,12 +186,14 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender)
 }
 void CombatSystem::passTurn(EntityID &currentEntity, int currentTurnIndex, const std::vector<EntityID> participants)
 {
-	std::cout << "Passing turn from entity " << currentEntity.getId() << std::endl;
+
 	manager.getComponent<BattleComponent>(currentEntity).isActiveTurn = false;
 	EntityID nextId = this->getAttacker(currentTurnIndex, participants);
 	auto &nextBattleComponent = manager.getComponent<BattleComponent>(nextId);
 	nextBattleComponent.battleState = BattleState::TURN_START;
 	nextBattleComponent.isActiveTurn = true;
+	// spdlog::get("combat")->debug("Passing turn from entity {} to {}", manager.getEntityTag(currentEntity).value(),
+	//                            manager.getEntityTag(nextId).value());
 }
 EntityID CombatSystem::getAttacker(int currentTurnIndex, const std::vector<EntityID> participants)
 {
@@ -189,8 +206,8 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 {
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battleManagerId);
 
-	bool playerWon = manager.getEntityTag(winningEntity) == EntityTag::PLAYER;
-
+	bool playerWon = manager.getEntityTag(winningEntity).value() == EntityTag::PLAYER;
+	spdlog::get("combat")->debug("Has the player won? {}", playerWon);
 	// Set health back to max and remove battle component from all entities in battle
 	for (EntityID entity : bmc.participants) {
 		manager.removeComponentFromEntity<BattleComponent>(entity);
@@ -205,6 +222,8 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 	}
 	// FIX ME: delete battleManagerEntity, needs to be implemented
 	// manager.(battleManagerId);
+	manager.removeComponentFromEntity<BattleManagerComponent>(battleManagerId);
+	spdlog::get("combat")->debug("Cleanup is done");
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
