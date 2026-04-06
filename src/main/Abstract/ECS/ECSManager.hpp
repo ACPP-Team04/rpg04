@@ -10,6 +10,8 @@
 #include "Archetype/ArchetypeManager.hpp"
 #include "System/System.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <TGUI/Backend/SFML-Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 
 struct ECSManager {
 
@@ -18,6 +20,7 @@ struct ECSManager {
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
+	tgui::Gui gui;
 	CameraSystem cameraSystem;
 	SwitchLayerSystem switchLayerSystem;
 	CollisionSystem collisionSystem;
