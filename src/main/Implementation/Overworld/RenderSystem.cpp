@@ -5,8 +5,8 @@
 
 RenderSystem::RenderSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
-
-void render(WorldComponent &world,PartOfLayerComponent partComp, TransformComponent &tcomp, sf::RenderWindow &window, SpriteComponent &scomp)
+void render(WorldComponent &world, PartOfLayerComponent partComp, TransformComponent &tcomp, sf::RenderWindow &window,
+            SpriteComponent &scomp)
 {
 	if (world.currentLayer != partComp.layer || world.currentLevel != partComp.level) {
 		return;
@@ -20,21 +20,20 @@ void render(WorldComponent &world,PartOfLayerComponent partComp, TransformCompon
 void RenderSystem::update()
 {
 	WorldComponent world;
-	this->manager.view<WorldComponent>().each(
-	    [&](const EntityID &id, auto &component) { world = component; });
+	this->manager.view<WorldComponent>().each([&](const EntityID &id, auto &component) { world = component; });
 
 	this->manager.view<PartOfLayerComponent, RenderComponent, TransformComponent, SpriteComponent>().each(
-		[&](const EntityID &id, PartOfLayerComponent &partComp, RenderComponent &comp, TransformComponent &tcomp,
-			SpriteComponent &scomp) {
-			if (comp.z_layer == 0) {
-				render(world,partComp,tcomp,window,scomp);
-			}
-		});
+	    [&](const EntityID &id, PartOfLayerComponent &partComp, RenderComponent &comp, TransformComponent &tcomp,
+	        SpriteComponent &scomp) {
+		    if (comp.z_layer == 0) {
+			    render(world, partComp, tcomp, window, scomp);
+		    }
+	    });
 	this->manager.view<PartOfLayerComponent, RenderComponent, TransformComponent, SpriteComponent>().each(
-		[&](const EntityID &id, PartOfLayerComponent &partComp, RenderComponent &comp, TransformComponent &tcomp,
-			SpriteComponent &scomp) {
-			if (comp.z_layer) {
-				render(world,partComp,tcomp,window,scomp);
-			}
-		});
+	    [&](const EntityID &id, PartOfLayerComponent &partComp, RenderComponent &comp, TransformComponent &tcomp,
+	        SpriteComponent &scomp) {
+		    if (comp.z_layer) {
+			    render(world, partComp, tcomp, window, scomp);
+		    }
+	    });
 }

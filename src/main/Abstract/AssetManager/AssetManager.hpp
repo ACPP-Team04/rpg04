@@ -27,8 +27,6 @@ struct AssetManager {
 		return {*this->textureSet, sf::IntRect({tile.pixelX, tile.pixelY}, {tile.width, tile.height})};
 	}
 
-
-
   private:
 	std::shared_ptr<sf::Texture> textureSet;
 	AssetManager()
