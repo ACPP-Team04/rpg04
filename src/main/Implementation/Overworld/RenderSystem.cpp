@@ -6,9 +6,9 @@
 RenderSystem::RenderSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
 
-void render(CurrentLayerComponent &currentLayer,PartOfLayerComponent partComp, TransformComponent &tcomp, sf::RenderWindow &window, SpriteComponent &scomp)
+void render(WorldComponent &world,PartOfLayerComponent partComp, TransformComponent &tcomp, sf::RenderWindow &window, SpriteComponent &scomp)
 {
-	if (currentLayer.layer != partComp.layer || currentLayer.level != partComp.level) {
+	if (world.currentLayer != partComp.layer || world.currentLevel != partComp.level) {
 		return;
 	}
 	sf::Sprite sp = AssetManager::getInstance().getSpriteAt(scomp.textureId);
@@ -19,22 +19,22 @@ void render(CurrentLayerComponent &currentLayer,PartOfLayerComponent partComp, T
 }
 void RenderSystem::update()
 {
-	CurrentLayerComponent currentLayer;
-	this->manager.view<CurrentLayerComponent>().each(
-	    [&](const EntityID &id, auto &component) { currentLayer = component; });
+	WorldComponent world;
+	this->manager.view<WorldComponent>().each(
+	    [&](const EntityID &id, auto &component) { world = component; });
 
 	this->manager.view<PartOfLayerComponent, RenderComponent, TransformComponent, SpriteComponent>().each(
 		[&](const EntityID &id, PartOfLayerComponent &partComp, RenderComponent &comp, TransformComponent &tcomp,
 			SpriteComponent &scomp) {
 			if (comp.z_layer == 0) {
-				render(currentLayer,partComp,tcomp,window,scomp);
+				render(world,partComp,tcomp,window,scomp);
 			}
 		});
 	this->manager.view<PartOfLayerComponent, RenderComponent, TransformComponent, SpriteComponent>().each(
 		[&](const EntityID &id, PartOfLayerComponent &partComp, RenderComponent &comp, TransformComponent &tcomp,
 			SpriteComponent &scomp) {
 			if (comp.z_layer) {
-				render(currentLayer,partComp,tcomp,window,scomp);
+				render(world,partComp,tcomp,window,scomp);
 			}
 		});
 }

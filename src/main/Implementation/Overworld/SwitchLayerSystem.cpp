@@ -12,8 +12,8 @@ static bool isNear(sf::Vector2f a, sf::Vector2f b, float radius = 16.0f)
 }
 void SwitchLayerSystem::update()
 {
-	CurrentLayerComponent *currentLayer = nullptr;
-	this->manager.view<CurrentLayerComponent>().each(
+	WorldComponent *currentLayer = nullptr;
+	this->manager.view<WorldComponent>().each(
 	    [&](const EntityID &id, auto &component) { currentLayer = &component; });
 	if (!currentLayer)
 		return;
@@ -25,19 +25,17 @@ void SwitchLayerSystem::update()
 	if (switchPoints.empty())
 		return;
 
-	std::cout << "SwitchLayerSystem::switchPoints size: " << switchPoints.size() << std::endl;
 	this->manager.view<InputComponent, PartOfLayerComponent, TransformComponent>().each(
 	    [&](EntityID &id, auto &input, auto &partOfLayer, auto &transform) {
-		    if (partOfLayer.layer != currentLayer->layer || partOfLayer.level != currentLayer->level)
+		    if (partOfLayer.layer != currentLayer->currentLayer || partOfLayer.level != currentLayer->currentLevel)
 			    return;
 
 		    for (auto &[switchLayer, switchPos] : switchPoints) {
 			    if (isNear(transform.position, switchPos->position)) {
-				    currentLayer->level = switchLayer->level;
-				    currentLayer->layer = switchLayer->layer;
+				    currentLayer->currentLevel = switchLayer->level;
+				    currentLayer->currentLayer = switchLayer->layer;
 				    partOfLayer.level = switchLayer->level;
 				    partOfLayer.layer = switchLayer->layer;
-				    std::cout << "Switched to: " << currentLayer->layer << " " << currentLayer->level << std::endl;
 			    }
 		    }
 	    });

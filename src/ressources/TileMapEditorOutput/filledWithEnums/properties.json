@@ -264,38 +264,6 @@
         "id": 10
     },
     {
-        "name": "CURRENT_LAYER_COMPONENT",
-        "type": "class",
-        "color": "#ffa0a0a4",
-        "drawFill": true,
-        "members": [
-            {
-                "name": "layer",
-                "propertyType": "LayerType",
-                "type": "int",
-                "value": 0
-            },
-            {
-                "name": "level",
-                "propertyType": "LEVEL_NAME",
-                "type": "int",
-                "value": 0
-            }
-        ],
-        "useAs": [
-            "property",
-            "map",
-            "layer",
-            "object",
-            "tile",
-            "tileset",
-            "wangcolor",
-            "wangset",
-            "project"
-        ],
-        "id": 11
-    },
-    {
         "name": "COLLISION_COMPONENT",
         "type": "class",
         "color": "#ffa0a0a4",
@@ -457,9 +425,9 @@
             },
             {
                 "name": "fillColor",
-                "propertyType": "Color",
-                "type": "int",
-                "value": 0
+                "propertyType": "",
+                "type": "color",
+                "value": "#fff7f7f7"
             },
             {
                 "name": "startsWithButton",
@@ -612,14 +580,22 @@
         "id": 28
     },
     {
-        "name": "Color",
-        "type": "enum",
-        "valuesAsFlags": false,
-        "storageType": "int",
-        "values": [
-            "WHITE",
-            "RED"
+        "name": "PLAYER_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
         ],
-        "id": 29
+        "id": 30
     }
 ]

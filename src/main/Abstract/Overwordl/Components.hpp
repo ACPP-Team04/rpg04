@@ -1,6 +1,7 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
+#include "Abstract/Utils/Color.hpp"
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -85,10 +86,18 @@ struct NPC_Component : public Component<NPC_Component> {
 	}
 };
 
+struct PlayerComponent : public Component<PlayerComponent> {
+
+	void readFromJson(const nlohmann::json &j) override
+	{
+
+	}
+};
+
 struct DialogComponent : public Component<DialogComponent> {
 	std::vector<std::string> sentences;
 	sf::Keyboard::Key startsWith;
-	COLOR color;
+	sf::Color color;
 	int characterSize;
 	std::string currentSentence;
 	int senetnceId;
@@ -100,8 +109,8 @@ struct DialogComponent : public Component<DialogComponent> {
 		for (const auto &sentence : parsed) {
 			sentences.push_back(sentence.get<std::string>());
 		}
-		startsWith = (sf::Keyboard::Key)j.value("startsWithButton",0);
-		color = (COLOR)j.value("fillColor", 0);
+		startsWith = static_cast<sf::Keyboard::Key>(j.value("startsWithButton", 0));
+		color = parseColorString(j.value("fillColor", "#f7f7f7"));
 		characterSize = j.value("characterSize",10);
 		currentSentence = this->sentences.back();
 	}
@@ -134,16 +143,6 @@ struct InteractionComponent : public Component<InteractionComponent> {
 	void readFromJson(const nlohmann::json &j) override
 	{
 		isActive = false;
-	}
-};
-
-struct CurrentLayerComponent : public Component<CurrentLayerComponent> {
-	LEVEL_NAME level;
-	LAYERTYPE layer;
-	void readFromJson(const nlohmann::json &j) override
-	{
-		level = (LEVEL_NAME)j.value("level", 0);
-		layer = (LAYERTYPE)j.value("layer", 0);
 	}
 };
 
@@ -287,6 +286,9 @@ struct WorldComponent : public Component<WorldComponent> {
 	unsigned widthPixel;
 	unsigned heightPixel;
 	std::unordered_map<LEVEL_NAME, LevelLayer> levelLayers;
+	LEVEL_NAME currentLevel = (LEVEL_NAME)0;
+	LAYERTYPE currentLayer = (LAYERTYPE)0;
+
 
 	void readFromJson(const nlohmann::json &j) override
 	{

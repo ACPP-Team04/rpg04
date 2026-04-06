@@ -194,11 +194,6 @@ enum KEYS {
     F15 = 100,
     Pause = 101,
 };
-
-enum COLOR {
-    WHITE = 0,
-    RED = 1,
-};
 inline const std::unordered_map<TileType, TileInfo> TILE_DICT = {
     { HOUSE_1_RED_00, {384, 16, 16, 16}},
     { HOUSE_1_RED_01, {400, 16, 16, 16}},

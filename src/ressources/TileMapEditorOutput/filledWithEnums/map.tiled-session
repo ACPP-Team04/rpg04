@@ -25,18 +25,17 @@
         },
         "map.tmj": {
             "expandedGroupLayers": [
-                6,
-                2,
-                7,
+                5,
                 8,
+                6,
                 3,
-                4,
-                5
+                2,
+                7
             ],
             "scale": 0.8799,
-            "selectedLayer": 0,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 292.6468916922378,
+                "x": 190.36254119786344,
                 "y": 73.30378452096829
             }
         },
@@ -58,7 +57,7 @@
         "map.tmj"
     ],
     "project": "map.tiled-project",
-    "property.type": "SWITCH_LAYER_COMPONENT",
+    "property.type": "PLAYER_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

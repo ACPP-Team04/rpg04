@@ -46,7 +46,6 @@ struct ECSManager {
 		interactionSystem.update();
 		movementSystem.update();
 		collisionSystem.update();
-
 		switchLayerSystem.update();
 		cameraSystem.update();
 		renderSystem.update();

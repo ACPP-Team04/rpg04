@@ -72,49 +72,6 @@
         ]
     },
     {
-        "id": 29,
-        "name": "Color",
-        "storageType": "int",
-        "type": "enum",
-        "values": [
-            "WHITE",
-            "RED"
-        ],
-        "valuesAsFlags": false
-    },
-    {
-        "color": "#ffa0a0a4",
-        "drawFill": true,
-        "id": 11,
-        "members": [
-            {
-                "name": "layer",
-                "propertyType": "LayerType",
-                "type": "int",
-                "value": 0
-            },
-            {
-                "name": "level",
-                "propertyType": "LEVEL_NAME",
-                "type": "int",
-                "value": 0
-            }
-        ],
-        "name": "CURRENT_LAYER_COMPONENT",
-        "type": "class",
-        "useAs": [
-            "property",
-            "map",
-            "layer",
-            "object",
-            "tile",
-            "tileset",
-            "wangcolor",
-            "wangset",
-            "project"
-        ]
-    },
-    {
         "color": "#ffa0a0a4",
         "drawFill": true,
         "id": 26,
@@ -132,9 +89,8 @@
             },
             {
                 "name": "fillColor",
-                "propertyType": "Color",
-                "type": "int",
-                "value": 0
+                "type": "color",
+                "value": "#fff7f7f7"
             },
             {
                 "name": "startsWithButton",
@@ -394,6 +350,26 @@
         "members": [
         ],
         "name": "NPC_COMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 30,
+        "members": [
+        ],
+        "name": "PLAYER_COMPONENT",
         "type": "class",
         "useAs": [
             "property",

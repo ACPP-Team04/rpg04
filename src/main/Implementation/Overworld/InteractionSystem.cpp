@@ -16,7 +16,7 @@ void InteractionSystem::update()
 	});
 
 	EntityID player;
-	this->manager.view<CurrentLayerComponent>().each([&](EntityID entity, CurrentLayerComponent & icomp) {
+	this->manager.view<PlayerComponent>().each([&](EntityID entity, PlayerComponent & icomp) {
 		player = entity;
 	});
 

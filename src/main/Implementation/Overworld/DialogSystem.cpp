@@ -42,8 +42,9 @@ void DialogSystem::update()
 
 		text.setString(dialog);
 		text.setCharacterSize(component.characterSize);
-		text.setFillColor(sf::Color::White);
+		text.setFillColor(component.color);
 		text.setPosition(transform.position);
+		window.draw(text);
 
 
 	});

@@ -14,13 +14,13 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<WorldComponent>("WORLD_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InputComponent>("INPUT_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<RenderComponent>("RENDER_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<CurrentLayerComponent>("CURRENT_LAYER_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<SwitchLayerComponent>("SWITCH_LAYER_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<SpriteComponent>("SPRITE_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<CollisionComponent>("COLLISION_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<NPC_Component>("NPC_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
 }
 
 int main()
