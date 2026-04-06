@@ -404,7 +404,7 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
 	statsComponentP.health = 50;
-	combatSystem.cleanUpBattle(battle, player);
+	combatSystem.cleanUpBattle(battle, player, BattleState::VICTORY);
 
 	EXPECT_EQ(100, manager.getComponent<StatsComponent>(player).health);
 	EXPECT_EQ(2, manager.getComponent<StatsComponent>(player).experienceLevel);
@@ -431,7 +431,7 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
 	statsComponentP.health = 50;
-	combatSystem.cleanUpBattle(battle, enemy);
+	combatSystem.cleanUpBattle(battle, enemy, BattleState::DEFEAT);
 
 	EXPECT_EQ(100, manager.getComponent<StatsComponent>(enemy).health);
 	EXPECT_EQ(1, manager.getComponent<StatsComponent>(enemy).experienceLevel);
@@ -480,7 +480,10 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::VICTORY, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::STATS_DISTRIBUTION, battleComponentP.battleState);
+	// Simulating stats distribution imput
+	battleComponentP.battleState = BattleState::VICTORY;
+	//
 	combatSystem.update();
 	combatSystem.update();
 	EXPECT_EQ(100, manager.getComponent<StatsComponent>(player).health);
@@ -530,7 +533,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentE.battleState);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::VICTORY, battleComponentE.battleState);
+	EXPECT_EQ(BattleState::DEFEAT, battleComponentE.battleState);
 	combatSystem.update();
 	combatSystem.update();
 
