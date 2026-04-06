@@ -3,22 +3,17 @@
 
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 #include "Abstract/Overwordl/Components.hpp"
-InteractionSystem::InteractionSystem(ArchetypeManager&manager):System(manager)
-{
-}
+InteractionSystem::InteractionSystem(ArchetypeManager &manager) : System(manager) {}
 
 void InteractionSystem::update()
 {
 
 	std::vector<EntityID> entitiesWithCollision;
-	this->manager.view<InteractionComponent>().each([&](EntityID entity, InteractionComponent & icomp) {
-		entitiesWithCollision.push_back(entity);
-	});
+	this->manager.view<InteractionComponent>().each(
+	    [&](EntityID entity, InteractionComponent &icomp) { entitiesWithCollision.push_back(entity); });
 
 	EntityID player;
-	this->manager.view<PlayerComponent>().each([&](EntityID entity, PlayerComponent & icomp) {
-		player = entity;
-	});
+	this->manager.view<PlayerComponent>().each([&](EntityID entity, PlayerComponent &icomp) { player = entity; });
 
 	auto &spriteA = manager.getComponent<SpriteComponent>(player);
 	auto &transformA = manager.getComponent<TransformComponent>(player);
@@ -29,14 +24,12 @@ void InteractionSystem::update()
 
 		auto a = getSptiteWithPostion(spriteA, transformA);
 		auto b = getSptiteWithPostion(spriteB, transformB);
-		bool collides = isColliding(a,b);
+		bool collides = isColliding(a, b);
 
 		if (collides) {
 			manager.getComponent<InteractionComponent>(interactionEntity).isActive = true;
-		}
-		else {
+		} else {
 			manager.getComponent<InteractionComponent>(interactionEntity).isActive = false;
 		}
 	}
-
 }

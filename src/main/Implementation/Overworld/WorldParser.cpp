@@ -39,8 +39,7 @@ void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEV
 	for (const tileProperty &prop : obj.properties) {
 		addComponent(entity, obj.x, obj.y, prop, manager);
 	}
-	if (manager.hasComponent<RenderComponent>(entity))
-	{
+	if (manager.hasComponent<RenderComponent>(entity)) {
 		manager.getComponent<RenderComponent>(entity).z_layer = 1;
 	}
 }
@@ -63,8 +62,7 @@ void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, 
 					addComponent(entity, x * component.tilewidth, y * component.tileheight, prop, manager);
 				}
 
-				if (manager.hasComponent<RenderComponent>(entity))
-				{
+				if (manager.hasComponent<RenderComponent>(entity)) {
 					manager.getComponent<RenderComponent>(entity).z_layer = 0;
 				}
 			}

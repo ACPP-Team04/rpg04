@@ -22,6 +22,6 @@ void MovementSystem::update()
 		    if (input.moveDown.pressed) {
 			    transform.position.y += movement.speed;
 		    }
-		    transform.previousPosition =prevPosition;
+		    transform.previousPosition = prevPosition;
 	    });
 }

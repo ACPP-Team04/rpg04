@@ -13,8 +13,7 @@ static bool isNear(sf::Vector2f a, sf::Vector2f b, float radius = 16.0f)
 void SwitchLayerSystem::update()
 {
 	WorldComponent *currentLayer = nullptr;
-	this->manager.view<WorldComponent>().each(
-	    [&](const EntityID &id, auto &component) { currentLayer = &component; });
+	this->manager.view<WorldComponent>().each([&](const EntityID &id, auto &component) { currentLayer = &component; });
 	if (!currentLayer)
 		return;
 

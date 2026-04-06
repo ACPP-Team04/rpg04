@@ -8,10 +8,9 @@
 
 CollisionSystem::CollisionSystem(ArchetypeManager &manager) : System(manager) {}
 
-
 sf::Sprite getSptiteWithPostion(SpriteComponent &sprite, TransformComponent &transform)
 {
-	sf::Sprite sfmlSprite =AssetManager::getInstance().getSpriteAt(sprite.textureId);
+	sf::Sprite sfmlSprite = AssetManager::getInstance().getSpriteAt(sprite.textureId);
 	sfmlSprite.setPosition(transform.position);
 	sfmlSprite.setPosition(transform.position);
 	sfmlSprite.setScale(transform.scale);
@@ -43,13 +42,11 @@ void CollisionSystem::update()
 {
 	std::vector<EntityID> entities;
 	this->manager.view<CollisionComponent, TransformComponent, SpriteComponent>().each(
-		[&](const auto &entityA, auto &collisionA, auto &transformA, auto &spriteA) {
-			entities.push_back(entityA);
-		});
+	    [&](const auto &entityA, auto &collisionA, auto &transformA, auto &spriteA) { entities.push_back(entityA); });
 
 	for (int i = 0; i < entities.size(); i++) {
 		for (int j = 0; j < entities.size(); j++) {
-			if (j==i) {
+			if (j == i) {
 				continue;
 			}
 
@@ -63,11 +60,11 @@ void CollisionSystem::update()
 
 			auto a = getSptiteWithPostion(spriteA, transformA);
 			auto b = getSptiteWithPostion(spriteB, transformB);
-			bool collides = isColliding(a,b);
+			bool collides = isColliding(a, b);
 
 			if (collides) {
-				resolveCollision(collisionA,transformA);
-				resolveCollision(collisionB,transformB);
+				resolveCollision(collisionA, transformA);
+				resolveCollision(collisionB, transformB);
 			}
 		}
 	}

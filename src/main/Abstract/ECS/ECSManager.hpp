@@ -28,7 +28,8 @@ struct ECSManager {
 	InteractionSystem interactionSystem;
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), switchLayerSystem(manager),collisionSystem(manager),dialogSystem(manager,window),interactionSystem(manager)
+	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
+	      dialogSystem(manager, window), interactionSystem(manager)
 	{
 	}
 

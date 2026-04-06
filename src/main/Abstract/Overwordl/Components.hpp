@@ -80,18 +80,12 @@ struct CameraComponent : public Component<CameraComponent> {
 
 struct NPC_Component : public Component<NPC_Component> {
 
-	void readFromJson(const nlohmann::json &j) override
-	{
-
-	}
+	void readFromJson(const nlohmann::json &j) override {}
 };
 
 struct PlayerComponent : public Component<PlayerComponent> {
 
-	void readFromJson(const nlohmann::json &j) override
-	{
-
-	}
+	void readFromJson(const nlohmann::json &j) override {}
 };
 
 struct DialogComponent : public Component<DialogComponent> {
@@ -111,7 +105,7 @@ struct DialogComponent : public Component<DialogComponent> {
 		}
 		startsWith = static_cast<sf::Keyboard::Key>(j.value("startsWithButton", 0));
 		color = parseColorString(j.value("fillColor", "#f7f7f7"));
-		characterSize = j.value("characterSize",10);
+		characterSize = j.value("characterSize", 10);
 		currentSentence = this->sentences.back();
 	}
 
@@ -119,18 +113,15 @@ struct DialogComponent : public Component<DialogComponent> {
 	{
 		if (key == sf::Keyboard::Key::F) {
 			return "F";
-		}
-		else return "G";
+		} else
+			return "G";
 	}
 
-	std::string getSentence()
-	{
-		return currentSentence;
-	}
+	std::string getSentence() { return currentSentence; }
 
 	void nextSentence()
 	{
-		int newSentence = senetnceId%sentences.size();
+		int newSentence = senetnceId % sentences.size();
 		currentSentence = sentences[newSentence];
 		senetnceId++;
 	}
@@ -140,10 +131,7 @@ struct InteractionComponent : public Component<InteractionComponent> {
 
 	bool isActive;
 
-	void readFromJson(const nlohmann::json &j) override
-	{
-		isActive = false;
-	}
+	void readFromJson(const nlohmann::json &j) override { isActive = false; }
 };
 
 struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
@@ -288,7 +276,6 @@ struct WorldComponent : public Component<WorldComponent> {
 	std::unordered_map<LEVEL_NAME, LevelLayer> levelLayers;
 	LEVEL_NAME currentLevel = (LEVEL_NAME)0;
 	LAYERTYPE currentLayer = (LAYERTYPE)0;
-
 
 	void readFromJson(const nlohmann::json &j) override
 	{

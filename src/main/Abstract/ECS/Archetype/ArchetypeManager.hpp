@@ -158,11 +158,9 @@ class ArchetypeManager {
 		try {
 			getComponent<T>(entityId);
 			return true;
-		}
-		catch (std::exception* e) {
+		} catch (std::exception *e) {
 			return false;
-		}
-		catch (std::exception& e) {
+		} catch (std::exception &e) {
 			return false;
 		}
 	}
