@@ -2,6 +2,7 @@
 #include "Abstract/Combat/Systems/AISystem.hpp"
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
+#include "Abstract/Combat/Systems/StatsDistributorSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 #include "Abstract/Overwordl/DialogSystem.hpp"
@@ -28,6 +29,7 @@ struct ECSManager {
 	BattleInputSystem battleInputSystem;
 	AISystem aiSystem;
 	CombatSystem combatSystem;
+	StatsDistributorSystem statsDistributorSystem;
 
 	SwitchLayerSystem switchLayerSystem;
 	CollisionSystem collisionSystem;
@@ -36,7 +38,7 @@ struct ECSManager {
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), gui(window), battleInputSystem(manager, gui), aiSystem(manager),
-	      combatSystem(manager, aiSystem)
+	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui)
 	{
 	}
 
@@ -63,6 +65,7 @@ struct ECSManager {
 		renderSystem.update();
 		battleInputSystem.update();
 		combatSystem.update();
+		statsDistributorSystem.update();
 		gui.draw();
 		dialogSystem.update();
 	}
