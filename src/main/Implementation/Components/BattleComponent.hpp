@@ -11,7 +11,8 @@ enum class BattleState {
 	WAITING_FOR_INPUT,
 	NEXT_ROUND,
 	VICTORY,
-	DEFEAT
+	DEFEAT,
+	STATS_DISTRIBUTION
 };
 struct BattleComponent : Component<BattleComponent> {
   public:
