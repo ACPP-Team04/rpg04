@@ -22,11 +22,11 @@ void CombatSystem::update()
 	} else {
 		view.each([&](EntityID battleId, BattleManagerComponent &bmc) {
 			EntityID currentAttacker = this->getAttacker(bmc.currentTurnIndex, bmc.participants);
+			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			if (bmc.isBattleOver) {
-				cleanUpBattle(battleId, currentAttacker);
+				cleanUpBattle(battleId, currentAttacker, battle.battleState);
 				return;
 			}
-			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			battle.isActiveTurn = true;
 			switch (battle.battleState) {
 			case BattleState::TURN_START: {
@@ -49,15 +49,21 @@ void CombatSystem::update()
 					battle.battleState = BattleState::CHECK_DEATH;
 				}
 				break;
-			case BattleState::CHECK_DEATH:
-				battle.battleState = this->checkDeathCondition(battle.target);
+			case BattleState::CHECK_DEATH: {
+
+				auto result = this->checkDeathCondition(battle.target, currentAttacker);
+				if (result == BattleState::VICTORY) {
+					battle.battleState = BattleState::STATS_DISTRIBUTION;
+				} else {
+					battle.battleState = result;
+				}
 				break;
+			}
 			case BattleState::NEXT_ROUND:
 				bmc.currentTurnIndex++;
 				this->passTurn(currentAttacker, bmc.currentTurnIndex, bmc.participants);
 				break;
 			case BattleState::VICTORY:
-				// remove battle component from all entities in battle and set isActiveTurn to false
 				spdlog::get("combat")->debug("Victory for player");
 				bmc.isBattleOver = true;
 				break;
@@ -65,6 +71,8 @@ void CombatSystem::update()
 				// remove battle component from all entities in battle and set isActiveTurn to false
 				spdlog::get("combat")->debug("Defeat! for player");
 				bmc.isBattleOver = true;
+				break;
+			case BattleState::STATS_DISTRIBUTION:
 				break;
 			}
 		});
@@ -159,7 +167,7 @@ void CombatSystem::restoreAP(EntityID restorator)
 	battleComponent.AP += 2;
 }
 
-bool CombatSystem::handleActionDelay(BattleComponent battle)
+bool CombatSystem::handleActionDelay(BattleComponent &battle)
 {
 	float dt = clock.restart().asSeconds();
 
@@ -172,17 +180,16 @@ bool CombatSystem::handleActionDelay(BattleComponent battle)
 
 	return false;
 }
-BattleState CombatSystem::checkDeathCondition(EntityID defender)
+BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attacker)
 {
-	float health = manager.getComponent<StatsComponent>(defender).health;
-	if (health > 0) {
+	float healthDefender = manager.getComponent<StatsComponent>(defender).health;
+	bool playerIsAttacking = (manager.getEntityTag(attacker).value() == EntityTag::PLAYER);
 
-		return BattleState::NEXT_ROUND;
+	if (healthDefender <= 0) {
+		return playerIsAttacking ? BattleState::VICTORY : BattleState::DEFEAT;
 	}
-	if (health <= 0) {
-		return BattleState::VICTORY;
-	}
-	throw std::runtime_error("Invalid health value");
+
+	return BattleState::NEXT_ROUND;
 }
 void CombatSystem::passTurn(EntityID &currentEntity, int currentTurnIndex, const std::vector<EntityID> participants)
 {
@@ -202,28 +209,25 @@ EntityID CombatSystem::getAttacker(int currentTurnIndex, const std::vector<Entit
 	}
 	return participants[currentTurnIndex % participants.size()];
 }
-void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntity)
+void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState)
 {
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battleManagerId);
 
-	bool playerWon = manager.getEntityTag(winningEntity).value() == EntityTag::PLAYER;
-	spdlog::get("combat")->debug("Has the player won? {}", playerWon);
 	// Set health back to max and remove battle component from all entities in battle
 	for (EntityID entity : bmc.participants) {
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		auto &stats = manager.getComponent<StatsComponent>(entity);
 		stats.health = stats.maxHealth;
-		if (entity == winningEntity) {
-			if (playerWon) {
-				stats.experienceLevel += 1;
-				stats.numberOfFightsWon += 1;
-			}
+		if (entity == winningEntity && battleState == BattleState::VICTORY) {
+			stats.experienceLevel += 1;
+			stats.numberOfFightsWon += 1;
 		}
 	}
 	// FIX ME: delete battleManagerEntity, needs to be implemented
 	// manager.(battleManagerId);
 	manager.removeComponentFromEntity<BattleManagerComponent>(battleManagerId);
 	spdlog::get("combat")->debug("Cleanup is done");
+	// if deat display the game over screen
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
