@@ -20,9 +20,9 @@ class CombatSystem : public System {
 
 	void restoreAP(EntityID restorator);
 
-	bool handleActionDelay(BattleComponent battle);
+	bool handleActionDelay(BattleComponent &battle);
 
-	BattleState checkDeathCondition(EntityID defender);
+	BattleState checkDeathCondition(EntityID defender, EntityID attacker);
 
 	void passTurn(EntityID &currentEntity, int currentTurnIndex, const std::vector<EntityID> participants);
 
@@ -32,7 +32,7 @@ class CombatSystem : public System {
 
 	sf::Clock clock;
 
-	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity);
+	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState);
 	static bool validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealthPotions);
 
   private:
