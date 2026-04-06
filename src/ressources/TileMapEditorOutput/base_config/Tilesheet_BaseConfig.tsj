@@ -109,6 +109,19 @@
                 }]
         }, 
         {
+         "id":452,
+         "properties":[
+                {
+                 "name":"healingPack",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+                     "variant":"idle"
+                    }
+                }]
+        }, 
+        {
          "id":479,
          "properties":[
                 {

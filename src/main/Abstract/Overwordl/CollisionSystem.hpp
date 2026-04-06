@@ -9,7 +9,3 @@ struct CollisionSystem : public System {
 	CollisionSystem(ArchetypeManager &manager);
 	void update() override;
 };
-
-sf::Sprite getSptiteWithPostion(SpriteComponent &sprite, TransformComponent &transform);
-
-bool isColliding(sf::Sprite &spriteA, sf::Sprite &spriteB);

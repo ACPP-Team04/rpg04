@@ -1,35 +1,66 @@
 
 #include "Abstract/Overwordl/InteractionSystem.hpp"
 
-#include "Abstract/Overwordl/CollisionSystem.hpp"
+#include "Abstract/MathUtils.hpp"
 #include "Abstract/Overwordl/Components.hpp"
+
+#include <cfloat>
+
 InteractionSystem::InteractionSystem(ArchetypeManager &manager) : System(manager) {}
+
 
 void InteractionSystem::update()
 {
+	EntityID *player;
+	bool playerFound = false;
+	this->manager.view<PlayerComponent, InputComponent, CollisionComponent, BoundIngBoxComponent>()
+		.each([&](auto& entity, auto& component, auto& input, auto& collision, auto& bounds) {
+			player = &entity;
+			playerFound = true;
+		});
 
-	std::vector<EntityID> entitiesWithCollision;
-	this->manager.view<InteractionComponent>().each(
-	    [&](EntityID entity, InteractionComponent &icomp) { entitiesWithCollision.push_back(entity); });
+	if (!playerFound) return;
 
-	EntityID player;
-	this->manager.view<PlayerComponent>().each([&](EntityID entity, PlayerComponent &icomp) { player = entity; });
+	EntityID nearestInteractionEntity;
+	float smallestDistance = FLT_MAX;
+	bool candidateFound = false;
+	this->manager.view<InteractionComponent, BoundIngBoxComponent>()
+		.each([&](auto& interactableEntity, InteractionComponent& component, BoundIngBoxComponent& bb) {
+			component.inRange = false;
 
-	auto &spriteA = manager.getComponent<SpriteComponent>(player);
-	auto &transformA = manager.getComponent<TransformComponent>(player);
+			auto& playerBB = manager.getComponent<BoundIngBoxComponent>(*player);
+			if (!isinRadius(playerBB, bb, component.focusRadius)) {
+				component.isActive = false;
+				return;
+			}
+			float newCandidateDistance = distance(playerBB.bounds,bb.bounds);
+			if (distance(playerBB.bounds,bb.bounds) < smallestDistance) {
+				smallestDistance = newCandidateDistance;
+				nearestInteractionEntity = interactableEntity;
+				candidateFound = true;
+			}
 
-	for (EntityID interactionEntity : entitiesWithCollision) {
-		auto &spriteB = manager.getComponent<SpriteComponent>(interactionEntity);
-		auto &transformB = manager.getComponent<TransformComponent>(interactionEntity);
+		});
 
-		auto a = getSptiteWithPostion(spriteA, transformA);
-		auto b = getSptiteWithPostion(spriteB, transformB);
-		bool collides = isColliding(a, b);
+	if (!candidateFound) return;
 
-		if (collides) {
-			manager.getComponent<InteractionComponent>(interactionEntity).isActive = true;
-		} else {
-			manager.getComponent<InteractionComponent>(interactionEntity).isActive = false;
+	auto& component = manager.getComponent<InteractionComponent>(nearestInteractionEntity);
+
+	if (component.trigger == INTERACTION_TRIGGER::onEnter) {
+		component.isActive = true;
+		return;
+	}
+
+	if (component.trigger == INTERACTION_TRIGGER::byInteractionKey) {
+		auto& inputComponent = manager.getComponent<InputComponent>(*player);
+		component.inRange = true;
+		if (inputComponent.interact.justPressed) {
+			component.isActive = true;
 		}
+		if (component.inRange && !component.isActive) {
+			std::cout << "Press interact" << std::endl;
+			return;
+		}
+
 	}
 }

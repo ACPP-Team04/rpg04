@@ -91,12 +91,6 @@
                 "name": "fillColor",
                 "type": "color",
                 "value": "#fff7f7f7"
-            },
-            {
-                "name": "startsWithButton",
-                "propertyType": "Keys",
-                "type": "int",
-                "value": 0
             }
         ],
         "name": "DIALOG_COMPONENT",
@@ -134,10 +128,39 @@
         ]
     },
     {
+        "id": 35,
+        "name": "INTERACTION_ACTION",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "START_DIALOG",
+            "PICK_ITEM",
+            "DOOR_INTERACTION"
+        ],
+        "valuesAsFlags": false
+    },
+    {
         "color": "#ffa0a0a4",
         "drawFill": true,
         "id": 28,
         "members": [
+            {
+                "name": "action",
+                "propertyType": "INTERACTION_ACTION",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "focusRadius",
+                "type": "float",
+                "value": 64
+            },
+            {
+                "name": "trigger",
+                "propertyType": "INTERACTION_TRIGGER",
+                "type": "int",
+                "value": 1
+            }
         ],
         "name": "INTERACTION_COMPONENT",
         "type": "class",
@@ -152,6 +175,148 @@
             "wangset",
             "project"
         ]
+    },
+    {
+        "id": 34,
+        "name": "INTERACTION_TRIGGER",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "onEnter",
+            "byInteractionKey"
+        ],
+        "valuesAsFlags": false
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 53,
+        "members": [
+        ],
+        "name": "INVENTORY_COMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 40,
+        "members": [
+        ],
+        "name": "ITEM_HEALING_COMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 42,
+        "members": [
+            {
+                "name": "KEY_ID",
+                "propertyType": "ITEM_KEYS",
+                "type": "string",
+                "value": "KEY1"
+            }
+        ],
+        "name": "ITEM_KEY_KOMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "id": 43,
+        "name": "ITEM_KEYS",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "KEY1",
+            "KEY2"
+        ],
+        "valuesAsFlags": false
+    },
+    {
+        "id": 39,
+        "name": "ITEM_TYPE",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "WEAPON",
+            "HEALING",
+            "KEY"
+        ],
+        "valuesAsFlags": false
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 41,
+        "members": [
+            {
+                "name": "name",
+                "type": "string",
+                "value": "LIGHTSWORD"
+            },
+            {
+                "name": "weapon_type",
+                "propertyType": "ITEM_WEAPONS_TYPE",
+                "type": "string",
+                "value": "MELEEY"
+            }
+        ],
+        "name": "ITEM_WEAPON_COMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "id": 44,
+        "name": "ITEM_WEAPONS_TYPE",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "MELEEY",
+            "DISTANCE"
+        ],
+        "valuesAsFlags": false
     },
     {
         "id": 27,
@@ -386,6 +551,26 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
+        "id": 51,
+        "members": [
+        ],
+        "name": "PLAYER_STATS_COMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
         "id": 9,
         "members": [
         ],
@@ -428,6 +613,49 @@
             "wangset",
             "project"
         ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 52,
+        "members": [
+            {
+                "name": "stat",
+                "propertyType": "STATS",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "value",
+                "type": "float",
+                "value": 0
+            }
+        ],
+        "name": "STAT_CONFIG",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "id": 50,
+        "name": "STATS",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "STRENGTH",
+            "DEXTERITY",
+            "FAITH"
+        ],
+        "valuesAsFlags": false
     },
     {
         "color": "#ffa0a0a4",

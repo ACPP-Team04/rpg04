@@ -23,27 +23,23 @@ void DialogSystem::update()
 	this->manager
 	    .view<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
 	          SpriteComponent>()
-	    .each([&](auto &entity, auto &interactioncomp, auto &npccomponent, DialogComponent &component, auto &transform,
+	    .each([&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp, auto &transform,
 	              auto &render, auto &sprite) {
-		    if (!interactioncomp.isActive) {
-			    component.isActive = false;
-			    return;
-		    }
 
-		    std::string dialog;
-		    if (input->interact.justPressed) {
-			    component.isActive = true;
-			    component.nextSentence();
-		    }
-
-		    if (component.isActive) {
-			    dialog = component.currentSentence;
-		    }
-
-		    text.setString(dialog);
-		    text.setCharacterSize(component.characterSize);
-		    text.setFillColor(component.color);
-		    text.setPosition(transform.position);
-		    window.draw(text);
+	              	if (!interactioncomp.isActive) {
+		   dialogComp.isActive = false;
+		   return;
+	   }
+	   if (!dialogComp.isActive) {
+		   dialogComp.isActive = true;
+	   }
+	   if (input->interact.justPressed) {
+		   dialogComp.nextSentence();
+	   }
+	   text.setString(dialogComp.currentSentence);
+	   text.setCharacterSize(dialogComp.characterSize);
+	   text.setFillColor(dialogComp.color);
+	   text.setPosition(transform.position);
+	   window.draw(text);
 	    });
 }

@@ -189,6 +189,7 @@
             "DEFAULT_DEFAULT",
             "HOUSE_1_RED",
             "HOUSE_1_BROWN",
+            "HEALINGPACK_IDLE",
             "PLAYER_IDLE"
         ],
         "id": 6
@@ -428,12 +429,6 @@
                 "propertyType": "",
                 "type": "color",
                 "value": "#fff7f7f7"
-            },
-            {
-                "name": "startsWithButton",
-                "propertyType": "Keys",
-                "type": "int",
-                "value": 0
             }
         ],
         "useAs": [
@@ -565,7 +560,26 @@
         "type": "class",
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "members": [],
+        "members": [
+            {
+                "name": "action",
+                "propertyType": "INTERACTION_ACTION",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "focusRadius",
+                "propertyType": "",
+                "type": "float",
+                "value": 64.0
+            },
+            {
+                "name": "trigger",
+                "propertyType": "INTERACTION_TRIGGER",
+                "type": "int",
+                "value": 1
+            }
+        ],
         "useAs": [
             "property",
             "map",
@@ -597,5 +611,221 @@
             "project"
         ],
         "id": 30
+    },
+    {
+        "name": "INTERACTION_TRIGGER",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "onEnter",
+            "byInteractionKey"
+        ],
+        "id": 34
+    },
+    {
+        "name": "INTERACTION_ACTION",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "START_DIALOG",
+            "PICK_ITEM",
+            "DOOR_INTERACTION"
+        ],
+        "id": 35
+    },
+    {
+        "name": "ITEM_TYPE",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "WEAPON",
+            "HEALING",
+            "KEY"
+        ],
+        "id": 39
+    },
+    {
+        "name": "ITEM_HEALING_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 40
+    },
+    {
+        "name": "ITEM_WEAPON_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "name",
+                "propertyType": "",
+                "type": "string",
+                "value": "LIGHTSWORD"
+            },
+            {
+                "name": "weapon_type",
+                "propertyType": "ITEM_WEAPONS_TYPE",
+                "type": "string",
+                "value": "MELEEY"
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 41
+    },
+    {
+        "name": "ITEM_KEY_KOMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "KEY_ID",
+                "propertyType": "ITEM_KEYS",
+                "type": "string",
+                "value": "KEY1"
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 42
+    },
+    {
+        "name": "ITEM_KEYS",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "string",
+        "values": [
+            "KEY1",
+            "KEY2"
+        ],
+        "id": 43
+    },
+    {
+        "name": "ITEM_WEAPONS_TYPE",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "string",
+        "values": [
+            "MELEEY",
+            "DISTANCE"
+        ],
+        "id": 44
+    },
+    {
+        "name": "STATS",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "STRENGTH",
+            "DEXTERITY",
+            "FAITH"
+        ],
+        "id": 50
+    },
+    {
+        "name": "PLAYER_STATS_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 51
+    },
+    {
+        "name": "STAT_CONFIG",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "stat",
+                "propertyType": "STATS",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "value",
+                "propertyType": "",
+                "type": "float",
+                "value": 0.0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 52
+    },
+    {
+        "name": "INVENTORY_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 53
     }
 ]

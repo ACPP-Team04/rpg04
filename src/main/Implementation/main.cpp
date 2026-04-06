@@ -21,6 +21,9 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<BoundIngBoxComponent>("BOUNDING_BOX_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<ItemHealingComponent>("ITEM_HEALING_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<InventoryComponent>("INVENTORY_COMPONENT");
 }
 
 int main()

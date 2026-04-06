@@ -3,6 +3,7 @@
 #include "Abstract/TILE_ENUMS.hpp"
 #include "Abstract/Utils/Color.hpp"
 
+#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <nlohmann/json_fwd.hpp>
@@ -55,6 +56,22 @@ struct SpriteComponent : public Component<SpriteComponent> {
 	}
 };
 
+struct ItemHealingComponent : public Component<ItemHealingComponent> {
+	void readFromJson(const nlohmann::json &j) override
+	{
+
+	}
+};
+
+struct InventoryComponent : public Component<InventoryComponent> {
+	std::vector<EntityID> inventory;
+
+	void readFromJson(const nlohmann::json &j) override
+	{
+
+	}
+};
+
 struct RenderComponent : public Component<RenderComponent> {
 
 	int z_layer;
@@ -90,7 +107,6 @@ struct PlayerComponent : public Component<PlayerComponent> {
 
 struct DialogComponent : public Component<DialogComponent> {
 	std::vector<std::string> sentences;
-	sf::Keyboard::Key startsWith;
 	sf::Color color;
 	int characterSize;
 	std::string currentSentence;
@@ -103,18 +119,9 @@ struct DialogComponent : public Component<DialogComponent> {
 		for (const auto &sentence : parsed) {
 			sentences.push_back(sentence.get<std::string>());
 		}
-		startsWith = static_cast<sf::Keyboard::Key>(j.value("startsWithButton", 0));
 		color = parseColorString(j.value("fillColor", "#f7f7f7"));
 		characterSize = j.value("characterSize", 10);
 		currentSentence = this->sentences.back();
-	}
-
-	std::string getKeyAsString(sf::Keyboard::Key key)
-	{
-		if (key == sf::Keyboard::Key::F) {
-			return "F";
-		} else
-			return "G";
 	}
 
 	std::string getSentence() { return currentSentence; }
@@ -127,11 +134,33 @@ struct DialogComponent : public Component<DialogComponent> {
 	}
 };
 
+
+
+
 struct InteractionComponent : public Component<InteractionComponent> {
 
-	bool isActive;
+	bool isActive = false;
+	INTERACTION_TRIGGER trigger;
+	INTERACTION_ACTION action;
+	bool inRange = false;
+	float focusRadius;
 
-	void readFromJson(const nlohmann::json &j) override { isActive = false; }
+	void readFromJson(const nlohmann::json &j) override
+	{
+		isActive = false;
+		trigger = j.value("trigger", INTERACTION_TRIGGER());
+		action = j.value("action", INTERACTION_ACTION());
+		focusRadius = j.value("focusRadius", 1.0f);
+	}
+};
+
+struct TexRenderComponent : public Component<TexRenderComponent> {
+	sf::Text text;
+
+	void readFromJson(const nlohmann::json &j) override
+	{
+
+	}
 };
 
 struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
@@ -139,8 +168,8 @@ struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
 	LAYERTYPE layer;
 	void readFromJson(const nlohmann::json &j) override
 	{
-		level = (LEVEL_NAME)j.value("level", 0);
-		layer = (LAYERTYPE)j.value("layer", 0);
+		level = j.value("level", LEVEL_NAME());
+		layer = j.value("layer", LAYERTYPE());
 	}
 };
 
@@ -157,6 +186,14 @@ struct CollisionComponent : public Component<CollisionComponent> {
 	{
 		action = (COLLISION_ACTION)j.value("action", 0);
 		isStatic = j.value("isStatic", false);
+	}
+};
+
+struct BoundIngBoxComponent: public Component<BoundIngBoxComponent> {
+	sf::FloatRect bounds;
+	void readFromJson(const nlohmann::json &j) override
+	{
+
 	}
 };
 struct tileProperty {

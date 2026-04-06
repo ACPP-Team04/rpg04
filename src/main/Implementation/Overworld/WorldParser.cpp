@@ -23,6 +23,11 @@ void addComponent(EntityID &entity_id, int xLayerPostion, int yLayerPosition, ti
 	}
 }
 
+void addBoundingBox(ArchetypeManager &manager,EntityID &entity_id)
+{
+	manager.addComponentToEntity<BoundIngBoxComponent>(entity_id);
+}
+
 void addPartLayerComponent(ArchetypeManager &manager, EntityID &entity_id, LEVEL_NAME level, LAYERTYPE layer)
 {
 
@@ -35,13 +40,14 @@ void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEV
 {
 	EntityID entity = manager.createEntity();
 	addPartLayerComponent(manager, entity, level, layer);
-
+	addBoundingBox(manager,entity);
 	for (const tileProperty &prop : obj.properties) {
 		addComponent(entity, obj.x, obj.y, prop, manager);
 	}
 	if (manager.hasComponent<RenderComponent>(entity)) {
 		manager.getComponent<RenderComponent>(entity).z_layer = 1;
 	}
+
 }
 
 void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, const WorldComponent &component,
@@ -58,6 +64,7 @@ void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, 
 				int flatIndex = x + (y * component.width);
 				EntityID entity = manager.createEntity();
 				addPartLayerComponent(manager, entity, level, layer);
+				addBoundingBox(manager,entity);
 				for (const tileProperty &prop : tileLayer.tileIds[flatIndex].properties) {
 					addComponent(entity, x * component.tilewidth, y * component.tileheight, prop, manager);
 				}
