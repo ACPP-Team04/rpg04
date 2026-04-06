@@ -7,8 +7,9 @@ MovementSystem::MovementSystem(ArchetypeManager &manager) : System(manager) {}
 static float SPEED = 3.0f;
 void MovementSystem::update()
 {
-	this->manager.view<InputComponent, TransformComponent,MovementComponent>().each(
-	    [this](EntityID id, InputComponent &input, TransformComponent &transform,MovementComponent &movement) {
+	this->manager.view<InputComponent, TransformComponent, MovementComponent>().each(
+	    [this](EntityID id, InputComponent &input, TransformComponent &transform, MovementComponent &movement) {
+		    sf::Vector2f prevPosition = transform.position;
 		    if (input.moveRight.pressed) {
 			    transform.position.x += movement.speed;
 		    }
@@ -21,5 +22,6 @@ void MovementSystem::update()
 		    if (input.moveDown.pressed) {
 			    transform.position.y += movement.speed;
 		    }
+		    transform.previousPosition =prevPosition;
 	    });
 }

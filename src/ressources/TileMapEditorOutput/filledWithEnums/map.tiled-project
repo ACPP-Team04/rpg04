@@ -1,0 +1,640 @@
+{
+    "automappingRulesFile": "",
+    "commands": [
+    ],
+    "compatibilityVersion": 1100,
+    "extensionsPath": "extensions",
+    "folders": [
+        "."
+    ],
+    "properties": [
+    ],
+    "propertyTypes": [
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 1,
+            "members": [
+                {
+                    "name": "scale_x",
+                    "type": "float",
+                    "value": 1
+                },
+                {
+                    "name": "scale_y",
+                    "type": "float",
+                    "value": 1
+                }
+            ],
+            "name": "CAMERA_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 11,
+            "name": "COLLISION_ACTION",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "KEEP_POSITION",
+                "PREV_POSITION"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 10,
+            "members": [
+                {
+                    "name": "action",
+                    "propertyType": "COLLISION_ACTION",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "isStatic",
+                    "type": "bool",
+                    "value": false
+                }
+            ],
+            "name": "COLLISION_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 9,
+            "members": [
+                {
+                    "name": "layer",
+                    "propertyType": "LayerType",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "level",
+                    "propertyType": "LEVEL_NAME",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "CURRENT_LAYER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 17,
+            "members": [
+                {
+                    "name": "characterSize",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "dialogSentences",
+                    "type": "string",
+                    "value": "[]"
+                },
+                {
+                    "name": "fillColor",
+                    "type": "color",
+                    "value": "#fff7f7f7"
+                },
+                {
+                    "name": "startsWithButton",
+                    "propertyType": "Keys",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "DIALOG_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 2,
+            "members": [
+            ],
+            "name": "INPUT_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 19,
+            "members": [
+            ],
+            "name": "INTERACTION_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 18,
+            "name": "Keys",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "Unknown",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "Q",
+                "R",
+                "S",
+                "T",
+                "U",
+                "V",
+                "W",
+                "X",
+                "Y",
+                "Z",
+                "Num0",
+                "Num1",
+                "Num2",
+                "Num3",
+                "Num4",
+                "Num5",
+                "Num6",
+                "Num7",
+                "Num8",
+                "Num9",
+                "Escape",
+                "LControl",
+                "LShift",
+                "LAlt",
+                "LSystem",
+                "RControl",
+                "RShift",
+                "RAlt",
+                "RSystem",
+                "Menu",
+                "LBracket",
+                "RBracket",
+                "Semicolon",
+                "Comma",
+                "Period",
+                "Apostrophe",
+                "Slash",
+                "Backslash",
+                "Grave",
+                "Equal",
+                "Hyphen",
+                "Space",
+                "Enter",
+                "Backspace",
+                "Tab",
+                "PageUp",
+                "PageDown",
+                "End",
+                "Home",
+                "Insert",
+                "Delete",
+                "Add",
+                "Subtract",
+                "Multiply",
+                "Divide",
+                "Left",
+                "Right",
+                "Up",
+                "Down",
+                "Numpad0",
+                "Numpad1",
+                "Numpad2",
+                "Numpad3",
+                "Numpad4",
+                "Numpad5",
+                "Numpad6",
+                "Numpad7",
+                "Numpad8",
+                "Numpad9",
+                "F1",
+                "F2",
+                "F3",
+                "F4",
+                "F5",
+                "F6",
+                "F7",
+                "F8",
+                "F9",
+                "F10",
+                "F11",
+                "F12",
+                "F13",
+                "F14",
+                "F15",
+                "Pause"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 13,
+            "members": [
+                {
+                    "name": "layerType",
+                    "propertyType": "LayerType",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "levelName",
+                    "propertyType": "LEVEL_NAME",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "LayerConfig",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 14,
+            "name": "LayerType",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "OVERWORLD",
+                "BATTLEWORLD"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 15,
+            "name": "LEVEL_NAME",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "LEVEL1",
+                "LEVEL2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 3,
+            "members": [
+                {
+                    "name": "speed",
+                    "type": "float",
+                    "value": 1
+                }
+            ],
+            "name": "MOVEMENT_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 16,
+            "members": [
+            ],
+            "name": "NPC_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 4,
+            "members": [
+            ],
+            "name": "RENDER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 12,
+            "members": [
+                {
+                    "name": "texture",
+                    "propertyType": "TileInfoEnum",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "SPRITE_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 8,
+            "members": [
+                {
+                    "name": "layer",
+                    "propertyType": "LayerType",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "level",
+                    "propertyType": "LEVEL_NAME",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "SWITCH_LAYER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 5,
+            "members": [
+                {
+                    "name": "hasParts",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "height",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "variant",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "width",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "TileConfig",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 6,
+            "name": "TileInfoEnum",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "HOUSE_1_RED_00",
+                "HOUSE_1_RED_01",
+                "HOUSE_1_RED_02",
+                "HOUSE_1_RED_03",
+                "HOUSE_1_RED_04",
+                "HOUSE_1_RED_10",
+                "HOUSE_1_RED_11",
+                "HOUSE_1_RED_12",
+                "HOUSE_1_RED_13",
+                "HOUSE_1_RED_14",
+                "HOUSE_1_RED_20",
+                "HOUSE_1_RED_21",
+                "HOUSE_1_RED_22",
+                "HOUSE_1_RED_23",
+                "HOUSE_1_RED_24",
+                "HOUSE_1_RED_30",
+                "HOUSE_1_RED_31",
+                "HOUSE_1_RED_32",
+                "HOUSE_1_RED_33",
+                "HOUSE_1_RED_34",
+                "HOUSE_1_RED_40",
+                "HOUSE_1_RED_41",
+                "HOUSE_1_RED_42",
+                "HOUSE_1_RED_43",
+                "HOUSE_1_RED_44",
+                "HOUSE_1_RED_50",
+                "HOUSE_1_RED_51",
+                "HOUSE_1_RED_52",
+                "HOUSE_1_RED_53",
+                "HOUSE_1_RED_54",
+                "HOUSE_1_BROWN_00",
+                "HOUSE_1_BROWN_01",
+                "HOUSE_1_BROWN_02",
+                "HOUSE_1_BROWN_03",
+                "HOUSE_1_BROWN_04",
+                "HOUSE_1_BROWN_10",
+                "HOUSE_1_BROWN_11",
+                "HOUSE_1_BROWN_12",
+                "HOUSE_1_BROWN_13",
+                "HOUSE_1_BROWN_14",
+                "HOUSE_1_BROWN_20",
+                "HOUSE_1_BROWN_21",
+                "HOUSE_1_BROWN_22",
+                "HOUSE_1_BROWN_23",
+                "HOUSE_1_BROWN_24",
+                "HOUSE_1_BROWN_30",
+                "HOUSE_1_BROWN_31",
+                "HOUSE_1_BROWN_32",
+                "HOUSE_1_BROWN_33",
+                "HOUSE_1_BROWN_34",
+                "HOUSE_1_BROWN_40",
+                "HOUSE_1_BROWN_41",
+                "HOUSE_1_BROWN_42",
+                "HOUSE_1_BROWN_43",
+                "HOUSE_1_BROWN_44",
+                "HOUSE_1_BROWN_50",
+                "HOUSE_1_BROWN_51",
+                "HOUSE_1_BROWN_52",
+                "HOUSE_1_BROWN_53",
+                "HOUSE_1_BROWN_54",
+                "DEFAULT_DEFAULT",
+                "HOUSE_1_RED",
+                "HOUSE_1_BROWN",
+                "PLAYER_IDLE"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 7,
+            "members": [
+            ],
+            "name": "TRANSFORM_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 21,
+            "members": [
+            ],
+            "name": "PLAYER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        }
+    ]
+}
