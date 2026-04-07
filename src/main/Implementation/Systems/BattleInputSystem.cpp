@@ -2,10 +2,19 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/System/System.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
+#include <Abstract/Overwordl/Components.hpp>
+#include <Abstract/TILE_ENUMS.hpp>
+#include <Abstract/Utils/WorldUtlis.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
-BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), ui(gui)
+BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui)
+    : System(manager), ui(gui) {
+
+      };
+
+void BattleInputSystem::init()
 {
+	ui.setupLayout();
 	connectCallbacks();
 }
 
@@ -50,12 +59,14 @@ void BattleInputSystem::connectCallbacks()
 
 void BattleInputSystem::update()
 {
+	if (!(WorldUtils::isCurrentLayer(manager, LAYERTYPE::BATTLEWORLD))) {
+		return;
+	}
 	auto players = manager.getEntityIdByTag(EntityTag::PLAYER);
 	if (players.empty())
 		return;
 	EntityID playerId = players[0];
 
-	// Fix me: add check for current world != battleWorld, then return
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
 	auto &inv = manager.getComponent<InventoryComponent>(playerId);

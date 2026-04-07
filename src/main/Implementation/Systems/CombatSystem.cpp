@@ -6,14 +6,19 @@
 #include "Implementation/Components/InventoryComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/TILE_ENUMS.hpp>
+#include <Abstract/Utils/WorldUtlis.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 auto combatLog = spdlog::stdout_color_mt("combat");
 
-// Check if there are entities in battleState if yes, deal with their plays
 void CombatSystem::update()
 {
+	if (!(WorldUtils::isCurrentLayer(manager, LAYERTYPE::BATTLEWORLD))) {
+		return;
+	}
+
 	auto view = manager.view<BattleManagerComponent>();
 
 	if (view.archetypes.size() == 0) {

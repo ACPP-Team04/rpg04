@@ -1,9 +1,14 @@
 #include "Abstract/Combat/Systems/StatsDistributorSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
+#include <Abstract/TILE_ENUMS.hpp>
+#include <Abstract/Utils/WorldUtlis.hpp>
 StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), gui(gui) {}
 
 void StatsDistributorSystem::update()
 {
+	if (!(WorldUtils::isCurrentLayer(manager, LAYERTYPE::BATTLEWORLD))) {
+		return;
+	}
 	auto players = manager.getEntityIdByTag(EntityTag::PLAYER);
 	if (players.empty())
 		return;
