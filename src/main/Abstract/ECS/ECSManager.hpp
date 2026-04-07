@@ -17,14 +17,15 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 
+// Call escManager.init() after construction to initialize the battle UI layout and callbacks
 struct ECSManager {
 
 	sf::RenderWindow &window;
+	tgui::Gui gui;
 	ArchetypeManager manager = ArchetypeManager();
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
-	tgui::Gui gui;
 	CameraSystem cameraSystem;
 	BattleInputSystem battleInputSystem;
 	AISystem aiSystem;
@@ -35,9 +36,11 @@ struct ECSManager {
 	CollisionSystem collisionSystem;
 	DialogSystem dialogSystem;
 	InteractionSystem interactionSystem;
+
 	ECSManager(sf::RenderWindow &window)
-	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), gui(window), battleInputSystem(manager, gui), aiSystem(manager),
+	    : window(window), renderSystem(manager, window), gui(window), inputSystem(manager, window),
+	      movementSystem(manager), switchLayerSystem(manager), collisionSystem(manager), dialogSystem(manager, window),
+	      interactionSystem(manager), cameraSystem(manager, window), battleInputSystem(manager, gui), aiSystem(manager),
 	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui)
 	{
 	}
@@ -51,6 +54,8 @@ struct ECSManager {
 				window.close();
 		}
 	}
+
+	void init() { battleInputSystem.init(); }
 
 	void update()
 	{
@@ -66,7 +71,7 @@ struct ECSManager {
 		battleInputSystem.update();
 		combatSystem.update();
 		statsDistributorSystem.update();
-		gui.draw();
 		dialogSystem.update();
+		gui.draw();
 	}
 };

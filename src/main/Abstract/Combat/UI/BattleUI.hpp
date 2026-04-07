@@ -11,14 +11,14 @@ class BattleUI {
 	std::unordered_map<EntityID, tgui::ProgressBar::Ptr> enemyBars;
 
   public:
-	BattleUI(tgui::Gui &gui) : gui(gui) { setupLayout(); }
+	BattleUI(tgui::Gui &gui) : gui(gui) {};
 
 	void setupLayout()
 	{
 		hudPanel = tgui::Panel::create({"250", "80"});
-		hudPanel->setPosition("5%", "55%");
-		gui.add(hudPanel, "BattleHUD");
 
+		gui.add(hudPanel, "BattleHUD");
+		hudPanel->setPosition("5%", "55%");
 		auto hpBar = tgui::ProgressBar::create();
 		hpBar->setSize("90%", "30px");
 		hpBar->setPosition("5%", "10%");

@@ -15,5 +15,6 @@ class BattleInputSystem : public System {
 	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui);
 
 	void update() override;
+	void init();
 	EntityID selectTarget(std::vector<EntityID> participants, EntityID playerId);
 };
