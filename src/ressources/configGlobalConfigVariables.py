@@ -1,8 +1,9 @@
 import json
 import pandas as pd
 import sys
-APPLICATIONFILE = "./application_config.json"
-APPLICATIONCFILE ="../main/Abstract/GlobalProperties.hpp"
+import os
+APPLICATIONFILE = os.path.abspath("./application_config.json")
+APPLICATIONCFILE = os.path.abspath("../main/Abstract/GlobalProperties.hpp")
 def loadJsonFile(path):
     with open(path, 'r') as f:
         return json.load(f)

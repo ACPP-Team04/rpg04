@@ -1,5 +1,4 @@
 #pragma once
-#include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 
 struct InventoryComponent : Component<InventoryComponent> {
