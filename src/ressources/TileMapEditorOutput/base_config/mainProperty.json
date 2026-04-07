@@ -50,11 +50,6 @@
                 "propertyType": "COLLISION_ACTION",
                 "type": "int",
                 "value": 0
-            },
-            {
-                "name": "isStatic",
-                "type": "bool",
-                "value": false
             }
         ],
         "name": "COLLISION_COMPONENT",
@@ -94,31 +89,6 @@
             }
         ],
         "name": "DIALOG_COMPONENT",
-        "type": "class",
-        "useAs": [
-            "property",
-            "map",
-            "layer",
-            "object",
-            "tile",
-            "tileset",
-            "wangcolor",
-            "wangset",
-            "project"
-        ]
-    },
-    {
-        "color": "#ffa0a0a4",
-        "drawFill": true,
-        "id": 58,
-        "members": [
-            {
-                "name": "open",
-                "type": "int",
-                "value": 0
-            }
-        ],
-        "name": "DOOR_COMPONENT",
         "type": "class",
         "useAs": [
             "property",
@@ -242,10 +212,21 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 40,
+        "id": 61,
         "members": [
+            {
+                "name": "itemType",
+                "propertyType": "ITEM_TYPE",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "value": "gun35"
+            }
         ],
-        "name": "ITEM_HEALING_COMPONENT",
+        "name": "ITEM_COMPONENT",
         "type": "class",
         "useAs": [
             "property",
@@ -262,16 +243,15 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 42,
+        "id": 62,
         "members": [
             {
-                "name": "KEY_ID",
-                "propertyType": "ITEM_KEYS",
+                "name": "healAmount",
                 "type": "int",
                 "value": 0
             }
         ],
-        "name": "ITEM_KEY_KOMPONENT",
+        "name": "ITEM_HEALSTATS_COMPONENT",
         "type": "class",
         "useAs": [
             "property",
@@ -284,17 +264,6 @@
             "wangset",
             "project"
         ]
-    },
-    {
-        "id": 43,
-        "name": "ITEM_KEYS",
-        "storageType": "int",
-        "type": "enum",
-        "values": [
-            "KEY1",
-            "KEY2"
-        ],
-        "valuesAsFlags": false
     },
     {
         "id": 39,
@@ -304,7 +273,7 @@
         "values": [
             "WEAPON",
             "HEALING",
-            "KEY"
+            "COLLECTABLE"
         ],
         "valuesAsFlags": false
     },
@@ -314,18 +283,13 @@
         "id": 41,
         "members": [
             {
-                "name": "name",
-                "type": "string",
-                "value": "LIGHTSWORD"
-            },
-            {
                 "name": "weapon_type",
                 "propertyType": "ITEM_WEAPONS_TYPE",
                 "type": "string",
                 "value": "MELEEY"
             }
         ],
-        "name": "ITEM_WEAPON_COMPONENT",
+        "name": "ITEM_WEAPON_STATS_COMPONENT",
         "type": "class",
         "useAs": [
             "property",
@@ -525,10 +489,9 @@
                 "value": false
             },
             {
-                "name": "key",
-                "propertyType": "ITEM_KEYS",
+                "name": "keyId",
                 "type": "int",
-                "value": 0
+                "value": 1
             }
         ],
         "name": "LOCKED_COMPONENT",

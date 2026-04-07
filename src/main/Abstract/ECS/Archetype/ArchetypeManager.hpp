@@ -144,6 +144,14 @@ class ArchetypeManager {
 		return entityId;
 	}
 
+	template <typename... T>
+	EntityID createEntityWithId(int id)
+	{
+		auto entityId = EntityID(id);
+		this->addEntityIdsToArchType<T...>(entityId);
+		return entityId;
+	}
+
 	std::vector<EntityID> getEntityIdByTag(EntityTag tag) { return this->entityTagToEntityId[tag]; }
 
 	template <typename T>

@@ -22,10 +22,12 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BoundIngBoxComponent>("BOUNDING_BOX_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<ItemHealingComponent>("ITEM_HEALING_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<ItemComponent>("ITEM_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<ITEM_WEAPON_STATS_KOMPONENT>("ITEM_WEAPON_STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InventoryComponent>("INVENTORY_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<ItemKeyComponent>("ITEM_KEY_KOMPONENT");
+	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
+
 }
 
 int main()

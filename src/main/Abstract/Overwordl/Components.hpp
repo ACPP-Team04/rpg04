@@ -56,28 +56,41 @@ struct SpriteComponent : public Component<SpriteComponent> {
 	}
 };
 
-struct ItemHealingComponent : public Component<ItemHealingComponent> {
+struct ItemComponent : public Component<ItemComponent> {
 	ITEM_TYPE itemType;
-	void readFromJson(const nlohmann::json &j) override { itemType = HEALING; }
-};
-struct ItemKeyComponent : public Component<ItemKeyComponent> {
-	ITEM_TYPE itemType;
-	ITEM_KEYS key;
+
 	void readFromJson(const nlohmann::json &j) override
 	{
-		key = j.value("key", ITEM_KEYS());
-		itemType = KEY;
+		itemType = j.value("itemType", ITEM_TYPE());
+	}
+};
+
+struct ITEM_HEALSTATS_COMPONENT : public Component<ITEM_HEALSTATS_COMPONENT> {
+	int healAmount;
+	void readFromJson(const nlohmann::json &j) override
+	{
+		healAmount = j.value("healAmount", 1);
+	}
+};
+
+struct ITEM_WEAPON_STATS_KOMPONENT : public Component<ITEM_WEAPON_STATS_KOMPONENT> {
+	std::string name;
+	ITEM_WEAPONS_TYPE type;
+	void readFromJson(const nlohmann::json &j) override
+	{
+		type = j.value("type", ITEM_WEAPONS_TYPE());
+		name = j.value("name", name);
 	}
 };
 
 struct IsLockedComponent : public Component<IsLockedComponent> {
 	bool isLocked;
-	ITEM_KEYS key;
+	int keyId;
 
 	void readFromJson(const nlohmann::json &j) override
 	{
 		isLocked = j.value("isLocked", true);
-		key = j.value("key", ITEM_KEYS());
+		keyId = j.value("keyId", 0);
 	}
 };
 
@@ -186,11 +199,9 @@ struct PartOfLayerComponent : public Component<PartOfLayerComponent> {
 
 struct CollisionComponent : public Component<CollisionComponent> {
 	COLLISION_ACTION action;
-	bool isStatic;
 	void readFromJson(const nlohmann::json &j) override
 	{
 		action = (COLLISION_ACTION)j.value("action", 0);
-		isStatic = j.value("isStatic", false);
 	}
 };
 

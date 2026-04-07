@@ -1,6 +1,7 @@
 {
     "activeFile": "map.tmj",
     "expandedProjectPaths": [
+        "."
     ],
     "file.lastUsedOpenFilter": "Alle Dateien (*)",
     "fileStates": {
@@ -25,19 +26,20 @@
         },
         "map.tmj": {
             "expandedGroupLayers": [
-                2,
-                6,
                 7,
-                5,
                 8,
+                2,
+                12,
+                3,
+                5,
                 4,
-                3
+                6
             ],
-            "scale": 0.8799,
+            "scale": 0.7446,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 131.2649164677804,
-                "y": 165.3596999659052
+                "x": 381.412839108246,
+                "y": 273.3011012624228
             }
         },
         "map.tmj#Tilesheet_WithEnums": {
@@ -49,6 +51,7 @@
     },
     "last.externalTilesetPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums",
     "last.imagePath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput",
+    "last.objectTemplatePath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums",
     "last.objectTypesPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/properties.json",
     "map.lastUsedFormat": "json",
     "map.tileHeight": 16,
@@ -58,7 +61,7 @@
         "map.tmj"
     ],
     "project": "map.tiled-project",
-    "property.type": "RENDER_COMPONENT",
+    "property.type": "ITEM_HEALSTATS_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

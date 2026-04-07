@@ -10,9 +10,9 @@ void ItemSystem::update()
 	std::vector<EntityID> entities;
 
 	this->manager.view<PlayerComponent, InventoryComponent>().each(
-	    [&](auto entity, PlayerComponent &player, InventoryComponent &inventory) { entities.push_back(entity); });
-	this->manager.view<InteractionComponent, ItemHealingComponent>().each(
-	    [&](auto entity, InteractionComponent &interaction, ItemHealingComponent &item) {
+	    [&](auto &entity, PlayerComponent &player, InventoryComponent &inventory) { entities.push_back(entity); });
+	this->manager.view<InteractionComponent, ItemComponent>().each(
+	    [&](auto &entity, InteractionComponent &interaction, ItemComponent &item) {
 		    if (!interaction.isActive) {
 			    return;
 		    }
@@ -27,20 +27,4 @@ void ItemSystem::update()
 			    }
 		    }
 	    });
-	this->manager.view<InteractionComponent, ItemKeyComponent>().each(
-		[&](auto entity, InteractionComponent &interaction, ItemKeyComponent &item) {
-			if (!interaction.isActive) {
-				return;
-			}
-			if (interaction.action == INTERACTION_ACTION::PICK_ITEM) {
-				for (auto player : entities) {
-					if (!this->manager.getComponent<InputComponent>(player).interact.justPressed) {
-						continue;
-					}
-					this->manager.getComponent<InventoryComponent>(player).inventory.push_back(entity);
-					this->manager.removeComponentFromEntity<RenderComponent>(entity);
-					this->manager.removeComponentFromEntity<InteractionComponent>(entity);
-				}
-			}
-		});
 }

@@ -1347,6 +1347,17 @@
             ]
         },
         {
+            "id": 316,
+            "properties": [
+                {
+                    "name": "shotgun",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {}
+                }
+            ]
+        },
+        {
             "id": 339,
             "properties": [
                 {
@@ -1567,6 +1578,17 @@
             ]
         },
         {
+            "id": 361,
+            "properties": [
+                {
+                    "name": "gun",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {}
+                }
+            ]
+        },
+        {
             "id": 384,
             "properties": [
                 {
@@ -1783,6 +1805,17 @@
                     "value": {
                         "texture": 39
                     }
+                }
+            ]
+        },
+        {
+            "id": 406,
+            "properties": [
+                {
+                    "name": "knife",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {}
                 }
             ]
         },

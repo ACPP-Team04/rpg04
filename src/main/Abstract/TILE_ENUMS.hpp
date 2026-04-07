@@ -72,10 +72,13 @@ HOUSE_1_BROWN_53 = 58,
 HOUSE_1_BROWN_54 = 59,
 DEFAULT_DEFAULT = 60,
 HOUSE_1_RED = 61,
-HOUSE_1_BROWN = 62,
-HEALINGPACK_IDLE = 63,
-PLAYER_IDLE = 64,
-CONFIG_ = 65,
+SHOTGUN_ = 62,
+HOUSE_1_BROWN = 63,
+GUN_ = 64,
+KNIFE_ = 65,
+HEALINGPACK_IDLE = 66,
+PLAYER_IDLE = 67,
+CONFIG_ = 68,
 };
 enum COLLISION_ACTION {
     KEEP_POSITION = 0,
@@ -211,12 +214,7 @@ enum INTERACTION_ACTION {
 enum ITEM_TYPE {
     WEAPON = 0,
     HEALING = 1,
-    KEY = 2,
-};
-
-enum ITEM_KEYS {
-    KEY1 = 0,
-    KEY2 = 1,
+    COLLECTABLE = 2,
 };
 
 enum ITEM_WEAPONS_TYPE {
@@ -297,7 +295,10 @@ inline const std::unordered_map<TileType, TileInfo> TILE_DICT = {
     { HOUSE_1_BROWN_54, {448, 192, 16, 16}},
     { DEFAULT_DEFAULT, {0, 0, 16, 16}},
     { HOUSE_1_RED, {384, 16, 80, 96}},
+    { SHOTGUN_, {16, 112, 16, 16}},
     { HOUSE_1_BROWN, {384, 112, 80, 96}},
+    { GUN_, {16, 128, 16, 16}},
+    { KNIFE_, {16, 144, 16, 16}},
     { HEALINGPACK_IDLE, {32, 160, 16, 16}},
     { PLAYER_IDLE, {464, 160, 16, 16}},
     { CONFIG_, {16, 176, 16, 16}},

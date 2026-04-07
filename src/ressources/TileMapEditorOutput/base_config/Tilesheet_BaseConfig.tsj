@@ -66,6 +66,19 @@
                 }]
         }, 
         {
+         "id":316,
+         "properties":[
+                {
+                 "name":"shotgun",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+
+                    }
+                }]
+        }, 
+        {
          "id":339,
          "properties":[
                 {
@@ -101,6 +114,32 @@
                 {
                  "name":"transform_component",
                  "propertytype":"TRANSFORM_COMPONENT",
+                 "type":"class",
+                 "value":
+                    {
+
+                    }
+                }]
+        }, 
+        {
+         "id":361,
+         "properties":[
+                {
+                 "name":"gun",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+
+                    }
+                }]
+        }, 
+        {
+         "id":406,
+         "properties":[
+                {
+                 "name":"knife",
+                 "propertytype":"TileConfig",
                  "type":"class",
                  "value":
                     {

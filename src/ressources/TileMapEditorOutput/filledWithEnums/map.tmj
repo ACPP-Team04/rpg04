@@ -241,16 +241,7 @@
                                  "opacity":1,
                                  "properties":[
                                         {
-                                         "name":"asas",
-                                         "propertytype":"RENDER_COMPONENT",
-                                         "type":"class",
-                                         "value":
-                                            {
-
-                                            }
-                                        }, 
-                                        {
-                                         "name":"coll",
+                                         "name":"collision",
                                          "propertytype":"COLLISION_COMPONENT",
                                          "type":"class",
                                          "value":
@@ -268,24 +259,6 @@
                                              "dialogSentences":"[\"Hallo Ich bin jona\", \"Hallo?\"]",
                                              "fillColor":"#ffff0feb",
                                              "startsWithButton":6
-                                            }
-                                        }, 
-                                        {
-                                         "name":"dsds",
-                                         "propertytype":"SPRITE_COMPONENT",
-                                         "type":"class",
-                                         "value":
-                                            {
-                                             "texture":64
-                                            }
-                                        }, 
-                                        {
-                                         "name":"dswd",
-                                         "propertytype":"TRANSFORM_COMPONENT",
-                                         "type":"class",
-                                         "value":
-                                            {
-
                                             }
                                         }, 
                                         {
@@ -308,6 +281,33 @@
                                             {
 
                                             }
+                                        }, 
+                                        {
+                                         "name":"render",
+                                         "propertytype":"RENDER_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }, 
+                                        {
+                                         "name":"sprite",
+                                         "propertytype":"SPRITE_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "texture":67
+                                            }
+                                        }, 
+                                        {
+                                         "name":"transform",
+                                         "propertytype":"TRANSFORM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
                                         }],
                                  "rotation":0,
                                  "type":"",
@@ -315,18 +315,6 @@
                                  "width":0,
                                  "x":82.9639731787703,
                                  "y":203.432208205478
-                                }, 
-                                {
-                                 "height":0,
-                                 "id":6,
-                                 "name":"",
-                                 "opacity":1,
-                                 "rotation":0,
-                                 "type":"",
-                                 "visible":true,
-                                 "width":0,
-                                 "x":0,
-                                 "y":0
                                 }, 
                                 {
                                  "height":0,
@@ -347,8 +335,17 @@
                                             }
                                         }, 
                                         {
+                                         "name":"item",
+                                         "propertytype":"ITEM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "itemType":2,
+                                             "name":"key1"
+                                            }
+                                        }, 
+                                        {
                                          "name":"itemhealing",
-                                         "propertytype":"ITEM_HEALING_COMPONENT",
                                          "type":"class",
                                          "value":
                                             {
@@ -370,7 +367,7 @@
                                          "type":"class",
                                          "value":
                                             {
-                                             "texture":63
+                                             "texture":56
                                             }
                                         }, 
                                         {
@@ -408,8 +405,17 @@
                                             }
                                         }, 
                                         {
+                                         "name":"item",
+                                         "propertytype":"ITEM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "itemType":0,
+                                             "name":"gun35"
+                                            }
+                                        }, 
+                                        {
                                          "name":"itemKey",
-                                         "propertytype":"ITEM_KEY_KOMPONENT",
                                          "type":"class",
                                          "value":
                                             {
@@ -437,6 +443,15 @@
                                         {
                                          "name":"transform",
                                          "propertytype":"TRANSFORM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }, 
+                                        {
+                                         "name":"weaponstats",
+                                         "propertytype":"ITEM_WEAPON_STATS_COMPONENT",
                                          "type":"class",
                                          "value":
                                             {
@@ -475,7 +490,8 @@
                                          "value":
                                             {
                                              "isLocked":true,
-                                             "key":0
+                                             "key":0,
+                                             "keyId":10
                                             }
                                         }, 
                                         {
@@ -521,6 +537,77 @@
                                  "width":0,
                                  "x":103.420843277645,
                                  "y":260.256847369019
+                                }, 
+                                {
+                                 "height":0,
+                                 "id":15,
+                                 "name":"",
+                                 "opacity":1,
+                                 "properties":[
+                                        {
+                                         "name":"healstats",
+                                         "propertytype":"ITEM_HEALSTATS_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "healAmount":1
+                                            }
+                                        }, 
+                                        {
+                                         "name":"inter",
+                                         "propertytype":"INTERACTION_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "action":1,
+                                             "focusRadius":64,
+                                             "interactionKey":5,
+                                             "trigger":1
+                                            }
+                                        }, 
+                                        {
+                                         "name":"itemsd",
+                                         "propertytype":"ITEM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "itemType":1,
+                                             "name":"healbottle"
+                                            }
+                                        }, 
+                                        {
+                                         "name":"render",
+                                         "propertytype":"RENDER_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }, 
+                                        {
+                                         "name":"sprite",
+                                         "propertytype":"SPRITE_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "texture":64
+                                            }
+                                        }, 
+                                        {
+                                         "name":"transform",
+                                         "propertytype":"TRANSFORM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }],
+                                 "rotation":0,
+                                 "type":"",
+                                 "visible":true,
+                                 "width":0,
+                                 "x":168.200931924082,
+                                 "y":101.147857711104
                                 }],
                          "opacity":1,
                          "properties":[
@@ -690,7 +777,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":15,
+ "nextobjectid":16,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",

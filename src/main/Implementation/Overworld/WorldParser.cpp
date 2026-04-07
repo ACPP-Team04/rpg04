@@ -38,7 +38,7 @@ void addPartLayerComponent(ArchetypeManager &manager, EntityID &entity_id, LEVEL
 
 void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEVEL_NAME level, LAYERTYPE layer)
 {
-	EntityID entity = manager.createEntity();
+	EntityID entity = manager.createEntityWithId(obj.id);
 	addPartLayerComponent(manager, entity, level, layer);
 	addBoundingBox(manager, entity);
 	for (const tileProperty &prop : obj.properties) {

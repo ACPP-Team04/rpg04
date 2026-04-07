@@ -188,7 +188,10 @@
             "HOUSE_1_BROWN_54",
             "DEFAULT_DEFAULT",
             "HOUSE_1_RED",
+            "SHOTGUN_",
             "HOUSE_1_BROWN",
+            "GUN_",
+            "KNIFE_",
             "HEALINGPACK_IDLE",
             "PLAYER_IDLE",
             "CONFIG_"
@@ -276,12 +279,6 @@
                 "propertyType": "COLLISION_ACTION",
                 "type": "int",
                 "value": 0
-            },
-            {
-                "name": "isStatic",
-                "propertyType": "",
-                "type": "bool",
-                "value": false
             }
         ],
         "useAs": [
@@ -650,41 +647,16 @@
         "values": [
             "WEAPON",
             "HEALING",
-            "KEY"
+            "COLLECTABLE"
         ],
         "id": 39
     },
     {
-        "name": "ITEM_HEALING_COMPONENT",
-        "type": "class",
-        "color": "#ffa0a0a4",
-        "drawFill": true,
-        "members": [],
-        "useAs": [
-            "property",
-            "map",
-            "layer",
-            "object",
-            "tile",
-            "tileset",
-            "wangcolor",
-            "wangset",
-            "project"
-        ],
-        "id": 40
-    },
-    {
-        "name": "ITEM_WEAPON_COMPONENT",
+        "name": "ITEM_WEAPON_STATS_COMPONENT",
         "type": "class",
         "color": "#ffa0a0a4",
         "drawFill": true,
         "members": [
-            {
-                "name": "name",
-                "propertyType": "",
-                "type": "string",
-                "value": "LIGHTSWORD"
-            },
             {
                 "name": "weapon_type",
                 "propertyType": "ITEM_WEAPONS_TYPE",
@@ -704,43 +676,6 @@
             "project"
         ],
         "id": 41
-    },
-    {
-        "name": "ITEM_KEY_KOMPONENT",
-        "type": "class",
-        "color": "#ffa0a0a4",
-        "drawFill": true,
-        "members": [
-            {
-                "name": "KEY_ID",
-                "propertyType": "ITEM_KEYS",
-                "type": "int",
-                "value": 0
-            }
-        ],
-        "useAs": [
-            "property",
-            "map",
-            "layer",
-            "object",
-            "tile",
-            "tileset",
-            "wangcolor",
-            "wangset",
-            "project"
-        ],
-        "id": 42
-    },
-    {
-        "name": "ITEM_KEYS",
-        "type": "enum",
-        "valuesAsFlags": false,
-        "storageType": "int",
-        "values": [
-            "KEY1",
-            "KEY2"
-        ],
-        "id": 43
     },
     {
         "name": "ITEM_WEAPONS_TYPE",
@@ -847,32 +782,6 @@
         "id": 57
     },
     {
-        "name": "DOOR_COMPONENT",
-        "type": "class",
-        "color": "#ffa0a0a4",
-        "drawFill": true,
-        "members": [
-            {
-                "name": "open",
-                "propertyType": "",
-                "type": "int",
-                "value": 0
-            }
-        ],
-        "useAs": [
-            "property",
-            "map",
-            "layer",
-            "object",
-            "tile",
-            "tileset",
-            "wangcolor",
-            "wangset",
-            "project"
-        ],
-        "id": 58
-    },
-    {
         "name": "LOCKED_COMPONENT",
         "type": "class",
         "color": "#ffa0a0a4",
@@ -885,10 +794,10 @@
                 "value": false
             },
             {
-                "name": "key",
-                "propertyType": "ITEM_KEYS",
+                "name": "keyId",
+                "propertyType": "",
                 "type": "int",
-                "value": 0
+                "value": 1
             }
         ],
         "useAs": [
@@ -903,5 +812,63 @@
             "project"
         ],
         "id": 60
+    },
+    {
+        "name": "ITEM_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "itemType",
+                "propertyType": "ITEM_TYPE",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "name",
+                "propertyType": "",
+                "type": "string",
+                "value": "gun35"
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 61
+    },
+    {
+        "name": "ITEM_HEALSTATS_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "healAmount",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 62
     }
 ]

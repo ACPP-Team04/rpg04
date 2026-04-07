@@ -25,6 +25,9 @@ class EntityID {
 	inline static int IdCounter = 0;
 
 	int getId() const { return this->id; }
+	EntityID(int explicitId) : id(explicitId) {
+		if (explicitId >= IdCounter) IdCounter = explicitId + 1;
+	}
 
   private:
 	int id;

@@ -6,13 +6,12 @@
 
 DoorSystem::DoorSystem(ArchetypeManager &manager) : System(manager) {}
 
-bool inventoryHasKey(ArchetypeManager &manager, InventoryComponent &comp, ITEM_KEYS key)
+bool inventoryHasKey(ArchetypeManager &manager, InventoryComponent &comp, int keyItem)
 {
 	for (auto &item : comp.inventory) {
-		if (!manager.hasComponent<ItemKeyComponent>(item))
-			continue;
-		if (manager.getComponent<ItemKeyComponent>(item).key == key)
+		if (keyItem == item.getId()) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -36,7 +35,7 @@ void DoorSystem::update()
 
 		    if (icomp.action == DOOR_INTERACTION) {
 			    if (lcomp.isLocked) {
-				    if (inventoryHasKey(manager, *comp, lcomp.key)) {
+				    if (inventoryHasKey(manager, *comp, lcomp.keyId)) {
 					    lcomp.isLocked = false;
 					    icomp.action = INTERACTION_ACTION::SWITCH_LAYER;
 				    } else {

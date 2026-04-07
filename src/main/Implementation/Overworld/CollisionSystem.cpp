@@ -11,8 +11,6 @@ CollisionSystem::CollisionSystem(ArchetypeManager &manager) : System(manager) {}
 
 void resolveCollision(CollisionComponent &collision, TransformComponent &transform, sf::FloatRect overlap)
 {
-	if (collision.isStatic)
-		return;
 	switch (collision.action) {
 	case COLLISION_ACTION::PREV_POSITION: {
 		transform.position = transform.previousPosition;
