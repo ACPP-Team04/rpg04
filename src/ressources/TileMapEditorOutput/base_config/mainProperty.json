@@ -110,6 +110,31 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
+        "id": 58,
+        "members": [
+            {
+                "name": "open",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "name": "DOOR_COMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
         "id": 2,
         "members": [
         ],
@@ -135,7 +160,8 @@
         "values": [
             "START_DIALOG",
             "PICK_ITEM",
-            "DOOR_INTERACTION"
+            "DOOR_INTERACTION",
+            "SWITCH_LAYER"
         ],
         "valuesAsFlags": false
     },
@@ -241,8 +267,8 @@
             {
                 "name": "KEY_ID",
                 "propertyType": "ITEM_KEYS",
-                "type": "string",
-                "value": "KEY1"
+                "type": "int",
+                "value": 0
             }
         ],
         "name": "ITEM_KEY_KOMPONENT",
@@ -262,7 +288,7 @@
     {
         "id": 43,
         "name": "ITEM_KEYS",
-        "storageType": "string",
+        "storageType": "int",
         "type": "enum",
         "values": [
             "KEY1",
@@ -487,6 +513,37 @@
             "LEVEL2"
         ],
         "valuesAsFlags": false
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 60,
+        "members": [
+            {
+                "name": "isLocked",
+                "type": "bool",
+                "value": false
+            },
+            {
+                "name": "key",
+                "propertyType": "ITEM_KEYS",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "name": "LOCKED_COMPONENT",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
     },
     {
         "id": 57,

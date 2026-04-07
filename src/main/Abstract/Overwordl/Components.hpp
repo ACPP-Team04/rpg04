@@ -57,19 +57,34 @@ struct SpriteComponent : public Component<SpriteComponent> {
 };
 
 struct ItemHealingComponent : public Component<ItemHealingComponent> {
+	ITEM_TYPE itemType;
+	void readFromJson(const nlohmann::json &j) override { itemType = HEALING; }
+};
+struct ItemKeyComponent : public Component<ItemKeyComponent> {
+	ITEM_TYPE itemType;
+	ITEM_KEYS key;
 	void readFromJson(const nlohmann::json &j) override
 	{
+		key = j.value("key", ITEM_KEYS());
+		itemType = KEY;
+	}
+};
 
+struct IsLockedComponent : public Component<IsLockedComponent> {
+	bool isLocked;
+	ITEM_KEYS key;
+
+	void readFromJson(const nlohmann::json &j) override
+	{
+		isLocked = j.value("isLocked", true);
+		key = j.value("key", ITEM_KEYS());
 	}
 };
 
 struct InventoryComponent : public Component<InventoryComponent> {
 	std::vector<EntityID> inventory;
 
-	void readFromJson(const nlohmann::json &j) override
-	{
-
-	}
+	void readFromJson(const nlohmann::json &j) override {}
 };
 
 struct RenderComponent : public Component<RenderComponent> {
@@ -134,9 +149,6 @@ struct DialogComponent : public Component<DialogComponent> {
 	}
 };
 
-
-
-
 struct InteractionComponent : public Component<InteractionComponent> {
 
 	bool isActive = false;
@@ -155,7 +167,6 @@ struct InteractionComponent : public Component<InteractionComponent> {
 		interactionKey = j.value("interactionKey", sf::Keyboard::Key());
 	}
 };
-
 
 struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
 	LEVEL_NAME level;
@@ -183,12 +194,9 @@ struct CollisionComponent : public Component<CollisionComponent> {
 	}
 };
 
-struct BoundIngBoxComponent: public Component<BoundIngBoxComponent> {
+struct BoundIngBoxComponent : public Component<BoundIngBoxComponent> {
 	sf::FloatRect bounds;
-	void readFromJson(const nlohmann::json &j) override
-	{
-
-	}
+	void readFromJson(const nlohmann::json &j) override {}
 };
 struct tileProperty {
 	std::string name;
@@ -286,7 +294,6 @@ struct ObjectLayer {
 	}
 };
 
-
 struct WorldLayer {
 	std::vector<TileLayer> tileLayers;
 	std::vector<ObjectLayer> objectLayers;
@@ -308,7 +315,7 @@ struct WorldComponent : public Component<WorldComponent> {
 	std::unordered_map<LEVEL_NAME, LevelLayer> levelLayers;
 	LEVEL_NAME currentLevel = (LEVEL_NAME)0;
 	LAYERTYPE currentLayer = (LAYERTYPE)0;
-	std::unordered_map<LAYERTYPE,MENUS> menus;
+	std::unordered_map<LAYERTYPE, MENUS> menus;
 	bool menuOpened = false;
 
 	void readFromJson(const nlohmann::json &j) override
@@ -333,10 +340,7 @@ struct WorldComponent : public Component<WorldComponent> {
 		throw std::runtime_error("LayerConfig property not found for key: " + key);
 	}
 
-	void register_menu(LAYERTYPE layer, MENUS menu)
-	{
-		this->menus.insert(std::make_pair(layer, menu));
-	}
+	void register_menu(LAYERTYPE layer, MENUS menu) { this->menus.insert(std::make_pair(layer, menu)); }
 
 	void unfoldLayers(const nlohmann::json &j, const nlohmann::json &rootJson)
 	{

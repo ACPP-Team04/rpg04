@@ -23,24 +23,22 @@ void DialogSystem::update()
 	this->manager
 	    .view<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
 	          SpriteComponent>()
-	    .each([&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp, auto &transform,
-	              auto &render, auto &sprite) {
-
-
-	    	if (!interactioncomp.isActive) {
-		   dialogComp.isActive = false;
-		   return;
-	   }
-	   if (!dialogComp.isActive) {
-		   dialogComp.isActive = true;
-	   }
-	   if (input->interact.justPressed) {
-		   dialogComp.nextSentence();
-	   }
-	   text.setString(dialogComp.currentSentence);
-	   text.setCharacterSize(dialogComp.characterSize);
-	   text.setFillColor(dialogComp.color);
-	   text.setPosition(transform.position);
-	   window.draw(text);
+	    .each([&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp,
+	              auto &transform, auto &render, auto &sprite) {
+		    if (!interactioncomp.isActive) {
+			    dialogComp.isActive = false;
+			    return;
+		    }
+		    if (!dialogComp.isActive) {
+			    dialogComp.isActive = true;
+		    }
+		    if (input->interact.justPressed) {
+			    dialogComp.nextSentence();
+		    }
+		    text.setString(dialogComp.currentSentence);
+		    text.setCharacterSize(dialogComp.characterSize);
+		    text.setFillColor(dialogComp.color);
+		    text.setPosition(transform.position);
+		    window.draw(text);
 	    });
 }

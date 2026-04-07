@@ -133,6 +133,19 @@
                      "variant":"idle"
                     }
                 }]
+        }, 
+        {
+         "id":496,
+         "properties":[
+                {
+                 "name":"config",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+
+                    }
+                }]
         }],
  "tilewidth":16,
  "type":"tileset",

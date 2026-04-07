@@ -4,12 +4,6 @@
 
 SwitchLayerSystem::SwitchLayerSystem(ArchetypeManager &manager) : System(manager) {}
 
-static bool isNear(sf::Vector2f a, sf::Vector2f b, float radius = 16.0f)
-{
-	float dx = a.x - b.x;
-	float dy = a.y - b.y;
-	return (dx * dx + dy * dy) <= (radius * radius);
-}
 void SwitchLayerSystem::update()
 {
 	WorldComponent *currentLayer = nullptr;
@@ -17,25 +11,37 @@ void SwitchLayerSystem::update()
 	if (!currentLayer)
 		return;
 
-	std::vector<std::pair<SwitchLayerComponent *, TransformComponent *>> switchPoints;
-	this->manager.view<SwitchLayerComponent, TransformComponent>().each(
-	    [&](const EntityID &id, auto &component, auto &position) { switchPoints.push_back({&component, &position}); });
+	std::vector<std::pair<SwitchLayerComponent *, InteractionComponent>> switchPoints;
+
+	this->manager.view<SwitchLayerComponent, InteractionComponent>().each(
+	    [&](const EntityID &id, SwitchLayerComponent &lcomp, InteractionComponent &icomp) {
+	    	if (lcomp.layer == currentLayer->currentLayer && lcomp.level == currentLayer->currentLevel) {
+			    return;
+		    }
+	    	if (icomp.action != INTERACTION_ACTION::SWITCH_LAYER) {
+	    		return;
+	    	}
+		    if (!icomp.isActive) {
+			    return;
+		    }
+
+		    switchPoints.emplace_back(&lcomp, icomp);
+	    });
 
 	if (switchPoints.empty())
 		return;
 
-	this->manager.view<InputComponent, PartOfLayerComponent, TransformComponent>().each(
-	    [&](EntityID &id, auto &input, auto &partOfLayer, auto &transform) {
+	this->manager.view<PlayerComponent, PartOfLayerComponent>().each(
+	    [&](EntityID &id, auto &player, auto &partOfLayer) {
+
 		    if (partOfLayer.layer != currentLayer->currentLayer || partOfLayer.level != currentLayer->currentLevel)
 			    return;
 
 		    for (auto &[switchLayer, switchPos] : switchPoints) {
-			    if (isNear(transform.position, switchPos->position)) {
-				    currentLayer->currentLevel = switchLayer->level;
-				    currentLayer->currentLayer = switchLayer->layer;
-				    partOfLayer.level = switchLayer->level;
-				    partOfLayer.layer = switchLayer->layer;
-			    }
+			    currentLayer->currentLevel = switchLayer->level;
+			    currentLayer->currentLayer = switchLayer->layer;
+			    partOfLayer.level = switchLayer->level;
+			    partOfLayer.layer = switchLayer->layer;
 		    }
 	    });
 }

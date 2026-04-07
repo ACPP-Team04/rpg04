@@ -4,6 +4,7 @@
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 
 #include "Abstract/Overwordl/DialogSystem.hpp"
+#include "Abstract/Overwordl/DoorSystem.hpp"
 #include "Abstract/Overwordl/InputSystem.hpp"
 #include "Abstract/Overwordl/InteractionSystem.hpp"
 #include "Abstract/Overwordl/ItemSystem.hpp"
@@ -15,7 +16,6 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
-
 
 struct ECSManager {
 
@@ -32,14 +32,14 @@ struct ECSManager {
 	CollisionSystem collisionSystem;
 	BoundingBoxSystem boundingBoxSystem;
 	MenuSystem menuSystem;
-	ItemSystem	item_system;
-
+	ItemSystem item_system;
+	DoorSystem door_system;
 
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
-	      dialogSystem(manager, window), interactionSystem(manager),boundingBoxSystem(manager),
-	item_system(manager),menuSystem(manager,gui)
+	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
+	      menuSystem(manager, gui),door_system(manager)
 	{
 		gui.setWindow(window);
 	}
@@ -52,14 +52,12 @@ struct ECSManager {
 			if (event->is<sf::Event::Closed>())
 				window.close();
 		}
-
 	}
 	bool checkMenu()
 	{
 		bool menuOpened = false;
-		this->manager.view<WorldComponent>().each([&](auto entityId, WorldComponent &worldComponent) {
-			menuOpened = worldComponent.menuOpened;
-		});
+		this->manager.view<WorldComponent>().each(
+		    [&](auto entityId, WorldComponent &worldComponent) { menuOpened = worldComponent.menuOpened; });
 		return menuOpened;
 	}
 
@@ -79,12 +77,11 @@ struct ECSManager {
 		collisionSystem.update();
 		boundingBoxSystem.update();
 		interactionSystem.update();
+		door_system.update();
 		switchLayerSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
 		dialogSystem.update();
 		item_system.update();
-
-
 	}
 };

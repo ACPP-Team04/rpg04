@@ -4,8 +4,8 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 struct MenuSystem : System {
 
-	MenuSystem(ArchetypeManager& manager, tgui::Gui &gui);
+	MenuSystem(ArchetypeManager &manager, tgui::Gui &gui);
 
 	void update() override;
-	tgui::Gui& gui;
+	tgui::Gui &gui;
 };

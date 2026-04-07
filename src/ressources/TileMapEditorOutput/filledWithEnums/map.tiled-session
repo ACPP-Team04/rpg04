@@ -30,13 +30,14 @@
                 7,
                 5,
                 8,
+                4,
                 3
             ],
             "scale": 0.8799,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 236.95874531196725,
-                "y": 156.2677576997386
+                "x": 131.2649164677804,
+                "y": 165.3596999659052
             }
         },
         "map.tmj#Tilesheet_WithEnums": {
@@ -57,7 +58,7 @@
         "map.tmj"
     ],
     "project": "map.tiled-project",
-    "property.type": "COLLISION_COMPONENT",
+    "property.type": "RENDER_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

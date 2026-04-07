@@ -14,18 +14,13 @@ sf::Sprite getSpriteWithPosition(SpriteComponent &sprite, TransformComponent &tr
 	sfmlSprite.setRotation(transform.rotation);
 	return sfmlSprite;
 }
-BoundingBoxSystem::BoundingBoxSystem(ArchetypeManager &manager):System(manager)
-{
-
-}
+BoundingBoxSystem::BoundingBoxSystem(ArchetypeManager &manager) : System(manager) {}
 
 void BoundingBoxSystem::update()
 {
-	this->manager.view<SpriteComponent, TransformComponent, BoundIngBoxComponent>()
-			.each([&](auto& entity, auto& sprite, auto& transform, auto& bb) {
-				auto s = getSpriteWithPosition(sprite, transform);
-				bb.bounds = s.getGlobalBounds();
-			});
-
-
+	this->manager.view<SpriteComponent, TransformComponent, BoundIngBoxComponent>().each(
+	    [&](auto &entity, auto &sprite, auto &transform, auto &bb) {
+		    auto s = getSpriteWithPosition(sprite, transform);
+		    bb.bounds = s.getGlobalBounds();
+	    });
 }

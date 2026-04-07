@@ -152,6 +152,42 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 35,
+            "members": [
+                {
+                    "name": "open",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "DOOR_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 36,
+            "name": "DOOR_ENTRANCE_CONDITION",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "BY_KEY",
+                "NO_CONDITION"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 2,
             "members": [
             ],
@@ -177,7 +213,8 @@
             "values": [
                 "START_DIALOG",
                 "PICK_ITEM",
-                "DOOR_INTERACTION"
+                "DOOR_INTERACTION",
+                "SWITCH_LAYER"
             ],
             "valuesAsFlags": false
         },
@@ -283,8 +320,8 @@
                 {
                     "name": "KEY_ID",
                     "propertyType": "ITEM_KEYS",
-                    "type": "string",
-                    "value": "KEY1"
+                    "type": "int",
+                    "value": 0
                 }
             ],
             "name": "ITEM_KEY_KOMPONENT",
@@ -304,7 +341,7 @@
         {
             "id": 28,
             "name": "ITEM_KEYS",
-            "storageType": "string",
+            "storageType": "int",
             "type": "enum",
             "values": [
                 "KEY1",
@@ -527,6 +564,48 @@
             "values": [
                 "LEVEL1",
                 "LEVEL2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 37,
+            "members": [
+                {
+                    "name": "isLocked",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "key",
+                    "propertyType": "ITEM_KEYS",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "LOCKED_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 34,
+            "name": "Menus",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "Menu1",
+                "Menu2"
             ],
             "valuesAsFlags": false
         },
@@ -846,7 +925,8 @@
                 "HOUSE_1_RED",
                 "HOUSE_1_BROWN",
                 "HEALINGPACK_IDLE",
-                "PLAYER_IDLE"
+                "PLAYER_IDLE",
+                "CONFIG_"
             ],
             "valuesAsFlags": false
         },

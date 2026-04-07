@@ -190,7 +190,8 @@
             "HOUSE_1_RED",
             "HOUSE_1_BROWN",
             "HEALINGPACK_IDLE",
-            "PLAYER_IDLE"
+            "PLAYER_IDLE",
+            "CONFIG_"
         ],
         "id": 6
     },
@@ -636,7 +637,8 @@
         "values": [
             "START_DIALOG",
             "PICK_ITEM",
-            "DOOR_INTERACTION"
+            "DOOR_INTERACTION",
+            "SWITCH_LAYER"
         ],
         "id": 35
     },
@@ -712,8 +714,8 @@
             {
                 "name": "KEY_ID",
                 "propertyType": "ITEM_KEYS",
-                "type": "string",
-                "value": "KEY1"
+                "type": "int",
+                "value": 0
             }
         ],
         "useAs": [
@@ -733,7 +735,7 @@
         "name": "ITEM_KEYS",
         "type": "enum",
         "valuesAsFlags": false,
-        "storageType": "string",
+        "storageType": "int",
         "values": [
             "KEY1",
             "KEY2"
@@ -843,5 +845,63 @@
             "Menu2"
         ],
         "id": 57
+    },
+    {
+        "name": "DOOR_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "open",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 58
+    },
+    {
+        "name": "LOCKED_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "isLocked",
+                "propertyType": "",
+                "type": "bool",
+                "value": false
+            },
+            {
+                "name": "key",
+                "propertyType": "ITEM_KEYS",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 60
     }
 ]

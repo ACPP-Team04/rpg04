@@ -75,6 +75,7 @@ HOUSE_1_RED = 61,
 HOUSE_1_BROWN = 62,
 HEALINGPACK_IDLE = 63,
 PLAYER_IDLE = 64,
+CONFIG_ = 65,
 };
 enum COLLISION_ACTION {
     KEEP_POSITION = 0,
@@ -204,6 +205,7 @@ enum INTERACTION_ACTION {
     START_DIALOG = 0,
     PICK_ITEM = 1,
     DOOR_INTERACTION = 2,
+    SWITCH_LAYER = 3,
 };
 
 enum ITEM_TYPE {
@@ -298,4 +300,5 @@ inline const std::unordered_map<TileType, TileInfo> TILE_DICT = {
     { HOUSE_1_BROWN, {384, 112, 80, 96}},
     { HEALINGPACK_IDLE, {32, 160, 16, 16}},
     { PLAYER_IDLE, {464, 160, 16, 16}},
+    { CONFIG_, {16, 176, 16, 16}},
 };

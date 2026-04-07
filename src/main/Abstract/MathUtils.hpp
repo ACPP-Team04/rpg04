@@ -1,10 +1,7 @@
 #pragma once
+#include "Abstract/Overwordl/Components.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <cmath>
-#include "Abstract/Overwordl/Components.hpp"
-
-
-
 
 static bool collides(const sf::FloatRect &bounds, const sf::FloatRect &bounds2)
 {
@@ -23,7 +20,7 @@ static float distance(const sf::FloatRect &bounds, const sf::FloatRect &bounds2)
 	float dx = centerA.x - centerB.x;
 	float dy = centerA.y - centerB.y;
 
-	return std::sqrt((dx*dx + dy*dy));
+	return std::sqrt((dx * dx + dy * dy));
 }
 
 static sf::Rect<float> collidesOverlap(const sf::FloatRect &rectA, const sf::FloatRect &rect)
@@ -31,13 +28,13 @@ static sf::Rect<float> collidesOverlap(const sf::FloatRect &rectA, const sf::Flo
 	return rectA.findIntersection(rect).value();
 }
 
-static bool isinRadius(const sf::FloatRect rectA, const sf::FloatRect rectB, const float & radius)
+static bool isinRadius(const sf::FloatRect rectA, const sf::FloatRect rectB, const float &radius)
 {
 
-	return distance(rectA,rectB) <= radius;
+	return distance(rectA, rectB) <= radius;
 }
 
-static bool isinRadius(const BoundIngBoxComponent& rectA, const BoundIngBoxComponent& rectB, const float & radius)
+static bool isinRadius(const BoundIngBoxComponent &rectA, const BoundIngBoxComponent &rectB, const float &radius)
 {
-	return isinRadius(rectA.bounds,rectB.bounds,radius);
+	return isinRadius(rectA.bounds, rectB.bounds, radius);
 }
