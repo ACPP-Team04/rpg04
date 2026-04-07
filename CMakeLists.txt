@@ -14,17 +14,19 @@ file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
 )
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*main\\.cpp$")
 
+find_package(magic_enum CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 add_library(game-lib ${GAME_SOURCES})
 set_property(TARGET game-lib PROPERTY CXX_STANDARD 20)
 target_include_directories(game-lib PUBLIC src/main)  
 target_link_libraries(game-lib PUBLIC SFML::Graphics SFML::Window SFML::System)
 target_link_libraries(game-lib PRIVATE TGUI::TGUI)
+target_link_libraries(game-lib PRIVATE magic_enum::magic_enum)
 add_executable(main src/main/Implementation/main.cpp)
 set_property(TARGET main PROPERTY CXX_STANDARD 20)
 target_link_libraries(main PRIVATE game-lib)
 target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
-
+target_link_libraries(main PRIVATE magic_enum::magic_enum)
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
         "src/test/*.cpp"
@@ -33,7 +35,7 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
 add_executable(tests ${TEST_SOURCES})
 set_property(TARGET tests PROPERTY CXX_STANDARD 23)
 target_link_libraries(tests PRIVATE game-lib GTest::gtest_main)
-
+target_link_libraries(tests PRIVATE magic_enum::magic_enum)
 if(ENABLE_COVERAGE)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(game-lib PRIVATE -O0 -g --coverage)

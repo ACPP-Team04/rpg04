@@ -96,4 +96,7 @@ void WorldParser::update()
 			intializeEntities(layer, manager, component, levelName, layerType);
 		}
 	}
+
+	component.register_menu(OVERWORLD,MENUS::Menu1);
+	component.register_menu(BATTLEWORLD,MENUS::Menu2);
 }

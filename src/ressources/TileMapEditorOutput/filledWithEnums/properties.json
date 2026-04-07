@@ -450,7 +450,6 @@
         "valuesAsFlags": false,
         "storageType": "int",
         "values": [
-            "Unknown",
             "A",
             "B",
             "C",
@@ -572,6 +571,12 @@
                 "propertyType": "",
                 "type": "float",
                 "value": 64.0
+            },
+            {
+                "name": "interactionKey",
+                "propertyType": "Keys",
+                "type": "int",
+                "value": 6
             },
             {
                 "name": "trigger",
@@ -827,5 +832,16 @@
             "project"
         ],
         "id": 53
+    },
+    {
+        "name": "Menus",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "Menu1",
+            "Menu2"
+        ],
+        "id": 57
     }
 ]

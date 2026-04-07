@@ -34,7 +34,7 @@
         "Tilesheet_BaseConfig.tsj"
     ],
     "project": "base_configTilset.tiled-project",
-    "property.type": "TileConfig",
+    "property.type": "Keys",
     "recentFiles": [
         "Tilesheet_BaseConfig.tsj",
         "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj",

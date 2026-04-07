@@ -156,6 +156,12 @@
                 "value": 64
             },
             {
+                "name": "interactionKey",
+                "propertyType": "Keys",
+                "type": "int",
+                "value": 6
+            },
+            {
                 "name": "trigger",
                 "propertyType": "INTERACTION_TRIGGER",
                 "type": "int",
@@ -324,7 +330,6 @@
         "storageType": "int",
         "type": "enum",
         "values": [
-            "Unknown",
             "A",
             "B",
             "C",
@@ -480,6 +485,17 @@
         "values": [
             "LEVEL1",
             "LEVEL2"
+        ],
+        "valuesAsFlags": false
+    },
+    {
+        "id": 57,
+        "name": "Menus",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "Menu1",
+            "Menu2"
         ],
         "valuesAsFlags": false
     },

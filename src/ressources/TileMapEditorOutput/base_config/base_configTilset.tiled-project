@@ -167,6 +167,12 @@
                     "value": 64
                 },
                 {
+                    "name": "interactionKey",
+                    "propertyType": "Keys",
+                    "type": "int",
+                    "value": 6
+                },
+                {
                     "name": "trigger",
                     "propertyType": "INTERACTION_TRIGGER",
                     "type": "int",
@@ -197,6 +203,26 @@
                 "byInteractionKey"
             ],
             "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 53,
+            "members": [
+            ],
+            "name": "INVENTORY_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
         },
         {
             "color": "#ffa0a0a4",
@@ -315,7 +341,6 @@
             "storageType": "int",
             "type": "enum",
             "values": [
-                "Unknown",
                 "A",
                 "B",
                 "C",
@@ -471,6 +496,17 @@
             "values": [
                 "LEVEL1",
                 "LEVEL2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 57,
+            "name": "Menus",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "Menu1",
+                "Menu2"
             ],
             "valuesAsFlags": false
         },
@@ -737,26 +773,6 @@
             "members": [
             ],
             "name": "TRANSFORM_COMPONENT",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset",
-                "project"
-            ]
-        },
-        {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
-            "id": 53,
-            "members": [
-            ],
-            "name": "INVENTORY_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",

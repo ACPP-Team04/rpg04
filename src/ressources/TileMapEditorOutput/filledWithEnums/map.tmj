@@ -243,6 +243,7 @@
                                             {
                                              "action":0,
                                              "focusRadius":64,
+                                             "interactionKey":5,
                                              "trigger":1
                                             }
                                         }, 
@@ -336,6 +337,7 @@
                                             {
                                              "action":0,
                                              "focusRadius":64,
+                                             "interactionKey":5,
                                              "trigger":1
                                             }
                                         }, 
@@ -381,6 +383,7 @@
                                             {
                                              "action":1,
                                              "focusRadius":64,
+                                             "interactionKey":5,
                                              "trigger":1
                                             }
                                         }, 

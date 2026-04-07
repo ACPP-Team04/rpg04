@@ -1,6 +1,6 @@
 
 #include "Abstract/Overwordl/InteractionSystem.hpp"
-
+#include <magic_enum/magic_enum.hpp>
 #include "Abstract/MathUtils.hpp"
 #include "Abstract/Overwordl/Components.hpp"
 
@@ -58,7 +58,7 @@ void InteractionSystem::update()
 			component.isActive = true;
 		}
 		if (component.inRange && !component.isActive) {
-			std::cout << "Press interact" << std::endl;
+			std::cout << magic_enum::enum_name(component.interactionKey) << std::endl;
 			return;
 		}
 

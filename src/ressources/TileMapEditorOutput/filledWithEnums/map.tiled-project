@@ -198,6 +198,12 @@
                     "value": 64
                 },
                 {
+                    "name": "interactionKey",
+                    "propertyType": "Keys",
+                    "type": "int",
+                    "value": 6
+                },
+                {
                     "name": "trigger",
                     "propertyType": "INTERACTION_TRIGGER",
                     "type": "int",
@@ -228,6 +234,26 @@
                 "byInteractionKey"
             ],
             "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 33,
+            "members": [
+            ],
+            "name": "INVENTORY_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
         },
         {
             "color": "#ffa0a0a4",
@@ -346,7 +372,6 @@
             "storageType": "int",
             "type": "enum",
             "values": [
-                "Unknown",
                 "A",
                 "B",
                 "C",
@@ -832,26 +857,6 @@
             "members": [
             ],
             "name": "TRANSFORM_COMPONENT",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset",
-                "project"
-            ]
-        },
-        {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
-            "id": 33,
-            "members": [
-            ],
-            "name": "INVENTORY_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",

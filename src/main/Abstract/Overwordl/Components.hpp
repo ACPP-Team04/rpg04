@@ -142,6 +142,7 @@ struct InteractionComponent : public Component<InteractionComponent> {
 	bool isActive = false;
 	INTERACTION_TRIGGER trigger;
 	INTERACTION_ACTION action;
+	sf::Keyboard::Key interactionKey;
 	bool inRange = false;
 	float focusRadius;
 
@@ -151,17 +152,10 @@ struct InteractionComponent : public Component<InteractionComponent> {
 		trigger = j.value("trigger", INTERACTION_TRIGGER());
 		action = j.value("action", INTERACTION_ACTION());
 		focusRadius = j.value("focusRadius", 1.0f);
+		interactionKey = j.value("interactionKey", sf::Keyboard::Key());
 	}
 };
 
-struct TexRenderComponent : public Component<TexRenderComponent> {
-	sf::Text text;
-
-	void readFromJson(const nlohmann::json &j) override
-	{
-
-	}
-};
 
 struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
 	LEVEL_NAME level;
@@ -292,6 +286,7 @@ struct ObjectLayer {
 	}
 };
 
+
 struct WorldLayer {
 	std::vector<TileLayer> tileLayers;
 	std::vector<ObjectLayer> objectLayers;
@@ -313,6 +308,8 @@ struct WorldComponent : public Component<WorldComponent> {
 	std::unordered_map<LEVEL_NAME, LevelLayer> levelLayers;
 	LEVEL_NAME currentLevel = (LEVEL_NAME)0;
 	LAYERTYPE currentLayer = (LAYERTYPE)0;
+	std::unordered_map<LAYERTYPE,MENUS> menus;
+	bool menuOpened = false;
 
 	void readFromJson(const nlohmann::json &j) override
 	{
@@ -334,6 +331,11 @@ struct WorldComponent : public Component<WorldComponent> {
 			}
 		}
 		throw std::runtime_error("LayerConfig property not found for key: " + key);
+	}
+
+	void register_menu(LAYERTYPE layer, MENUS menu)
+	{
+		this->menus.insert(std::make_pair(layer, menu));
 	}
 
 	void unfoldLayers(const nlohmann::json &j, const nlohmann::json &rootJson)

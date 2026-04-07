@@ -26,7 +26,8 @@ void DialogSystem::update()
 	    .each([&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp, auto &transform,
 	              auto &render, auto &sprite) {
 
-	              	if (!interactioncomp.isActive) {
+
+	    	if (!interactioncomp.isActive) {
 		   dialogComp.isActive = false;
 		   return;
 	   }

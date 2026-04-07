@@ -3,6 +3,7 @@
 		"gtest",
 		"sfml",
 		"nlohmann-json",
-		"tgui"
+		"tgui",
+		"magic-enum"
 	]
 }
