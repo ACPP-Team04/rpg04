@@ -19,7 +19,7 @@ struct tileProperty {
 
 	void readFromJson(const nlohmann::json &data)
 	{
-		std::cout<<data<<std::endl;
+		std::cout << data << std::endl;
 		name = data.value("name", "");
 		type = data.value("type", "");
 		value = data.value("value", nlohmann::json());

@@ -26,8 +26,7 @@ void BattleInputSystem::connectCallbacks()
 	EntityID playerId;
 	if (player.has_value()) {
 		playerId = player.value();
-	}
-	else {
+	} else {
 		return;
 	}
 
