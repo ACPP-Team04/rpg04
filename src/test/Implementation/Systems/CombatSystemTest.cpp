@@ -7,7 +7,10 @@
 
 TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 {
+
 	ArchetypeManager manager = ArchetypeManager();
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
@@ -69,6 +72,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
@@ -131,6 +136,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
@@ -197,6 +204,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
@@ -263,6 +272,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
@@ -327,6 +338,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
@@ -390,6 +403,8 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
@@ -418,6 +433,8 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
@@ -445,6 +462,8 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
@@ -497,6 +516,8 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
