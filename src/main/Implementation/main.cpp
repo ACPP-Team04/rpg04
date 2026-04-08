@@ -1,3 +1,4 @@
+#include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
 
@@ -46,6 +47,9 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<InventoryComponent>("INVENTORY_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<BattleComponent>("BATTLE_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
+
 
 }
 
@@ -53,13 +57,12 @@ int main()
 {
 
 	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
-
-	ECSManager ecsManager = ECSManager(window);
-	ecsManager.init();
 	registerComponents();
+	ECSManager ecsManager = ECSManager(window);
 	WorldParser parser = WorldParser(ecsManager.manager,window);
 	window.clear(sf::Color::Transparent);
 	parser.update();
+	ecsManager.init();
 
 	window.setFramerateLimit(60);
 	while (window.isOpen())

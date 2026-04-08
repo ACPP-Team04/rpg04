@@ -27,6 +27,9 @@ void BattleInputSystem::connectCallbacks()
 	if (player.has_value()) {
 		playerId = player.value();
 	}
+	else {
+		return;
+	}
 
 	ui.getButton("BtnLight")->onPress([&]() {
 		auto &b = manager.getComponent<BattleComponent>(playerId);

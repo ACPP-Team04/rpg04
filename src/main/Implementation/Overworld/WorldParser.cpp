@@ -24,6 +24,7 @@ void addComponent(EntityID &entity_id, int xLayerPostion, int yLayerPosition, ti
 	if (func) {
 		func(manager, entity_id, tile_property.value);
 	}
+	std::cout << "Added: " << tile_property.propertytype << std::endl;
 }
 
 void addBoundingBox(ArchetypeManager &manager, EntityID &entity_id)
