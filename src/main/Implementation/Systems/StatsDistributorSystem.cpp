@@ -6,9 +6,6 @@ StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::
 
 void StatsDistributorSystem::update()
 {
-	if (!(WorldUtils::isCurrentLayer(manager, LAYERTYPE::BATTLEWORLD))) {
-		return;
-	}
 	auto players = manager.getEntityIdByTag(EntityTag::PLAYER);
 	if (players.empty())
 		return;

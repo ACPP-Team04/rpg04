@@ -26,7 +26,7 @@ void ItemSystem::update()
 				    if (!this->manager.getComponent<InputComponent>(player).interact.justPressed) {
 					    continue;
 				    }
-				    this->manager.getComponent<InventoryComponent>(player).inventory.push_back(entity);
+				    this->manager.getComponent<InventoryComponent>(player).addItem(entity, item.itemType);
 				    this->manager.removeComponentFromEntity<RenderComponent>(entity);
 				    this->manager.removeComponentFromEntity<InteractionComponent>(entity);
 			    }

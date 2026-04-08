@@ -629,7 +629,8 @@
             "START_DIALOG",
             "PICK_ITEM",
             "DOOR_INTERACTION",
-            "SWITCH_LAYER"
+            "SWITCH_LAYER",
+            "START_BATTLE"
         ],
         "id": 35
     },

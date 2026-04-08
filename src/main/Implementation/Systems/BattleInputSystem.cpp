@@ -1,8 +1,10 @@
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/System/System.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include <Abstract/Overwordl/Components.hpp>
+
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
@@ -59,7 +61,9 @@ void BattleInputSystem::connectCallbacks()
 
 void BattleInputSystem::update()
 {
-	if (!(WorldUtils::isCurrentLayer(manager, LAYERTYPE::BATTLEWORLD))) {
+	auto view = manager.view<BattleManagerComponent>();
+
+	if (view.archetypes.size() == 0) {
 		return;
 	}
 	auto players = manager.getEntityIdByTag(EntityTag::PLAYER);
@@ -70,6 +74,14 @@ void BattleInputSystem::update()
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
 	auto &inv = manager.getComponent<InventoryComponent>(playerId);
+	std::vector<EntityID> healPositions;
+	for (auto &item : inv.inventory) {
+		bool IsHealItem = this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(item);
+		if (IsHealItem) {
+			healPositions.push_back(item);
+		}
+	}
+	int numberOfHealPotions = healPositions.size();
 	ui.setHUDVisible(true);
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 	ui.setActionPanelVisible(showMenu);
@@ -79,15 +91,15 @@ void BattleInputSystem::update()
 
 		ui.getButton("BtnLight")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, inv.numberOfHealthPotions));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
 		ui.getButton("BtnHeavy")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::HEAVY_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, inv.numberOfHealthPotions));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
 		ui.getButton("BtnUltimate")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::ULTIMATE_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, inv.numberOfHealthPotions));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
 		ui.getButton("BtnHeal")->setEnabled(CombatSystem::validateAction(
-		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, inv.numberOfHealthPotions));
+		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
 		ui.getButton("BtnRest")->setEnabled(true);
 	}
 	auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;

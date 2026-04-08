@@ -1,6 +1,6 @@
 #pragma once
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
-#include <Abstract/Overwordl/Components.hpp>
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 class WorldUtils {
   public:

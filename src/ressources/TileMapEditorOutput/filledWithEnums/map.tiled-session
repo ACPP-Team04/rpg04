@@ -36,10 +36,10 @@
                 12
             ],
             "scale": 1.0258,
-            "selectedLayer": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 103.33398323259894,
-                "y": 259.7972314291285
+                "x": 188.14583739520373,
+                "y": 269.5457204133359
             }
         },
         "map.tmj#Tilesheet_WithEnums": {
@@ -61,7 +61,7 @@
         "map.tmj"
     ],
     "project": "map.tiled-project",
-    "property.type": "ITEM_HEALSTATS_COMPONENT",
+    "property.type": "INTERACTION_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

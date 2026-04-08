@@ -55,6 +55,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
 
 	ECSManager ecsManager = ECSManager(window);
+	ecsManager.init();
 	registerComponents();
 	WorldParser parser = WorldParser(ecsManager.manager,window);
 	window.clear(sf::Color::Transparent);

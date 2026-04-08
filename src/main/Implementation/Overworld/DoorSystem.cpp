@@ -11,12 +11,7 @@ DoorSystem::DoorSystem(ArchetypeManager &manager) : System(manager) {}
 
 bool inventoryHasKey(ArchetypeManager &manager, InventoryComponent &comp, int keyItem)
 {
-	for (auto &item : comp.inventory) {
-		if (keyItem == item.getId()) {
-			return true;
-		}
-	}
-	return false;
+	return comp.containsItem(keyItem);
 }
 void DoorSystem::update()
 {

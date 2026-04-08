@@ -4,7 +4,7 @@
 		"sfml",
 		"nlohmann-json",
 		"tgui",
-		"magic-enum"
-		"spdlog",
+		"magic-enum",
+		"spdlog"
 	]
 }

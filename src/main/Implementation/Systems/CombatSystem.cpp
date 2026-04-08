@@ -2,8 +2,9 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/InventoryComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
 #include <Abstract/TILE_ENUMS.hpp>
@@ -15,9 +16,6 @@ auto combatLog = spdlog::stdout_color_mt("combat");
 
 void CombatSystem::update()
 {
-	if (!(WorldUtils::isCurrentLayer(manager, LAYERTYPE::BATTLEWORLD))) {
-		return;
-	}
 
 	auto view = manager.view<BattleManagerComponent>();
 
@@ -96,9 +94,20 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	}
 	attackerBattle.AP -= cost;
 
-	if (typeOfAction == BattleAction::HEAL and attackerInventory.numberOfHealthPotions > 0) {
-		attackerInventory.numberOfHealthPotions -= 1;
-	} else if (typeOfAction == BattleAction::HEAL and attackerInventory.numberOfHealthPotions == 0) {
+	std::vector<EntityID> healPositions;
+	std::vector<EntityID> removedHealPositions;
+	for (auto &item : attackerInventory.inventory) {
+		bool IsHealItem = this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(item);
+		if (IsHealItem) {
+			healPositions.push_back(item);
+		}
+	}
+
+	if (typeOfAction == BattleAction::HEAL and healPositions.size() > 0) {
+		EntityID removedPosition = healPositions.back();
+		healPositions.pop_back();
+		std::erase(attackerInventory.inventory, removedPosition);
+	} else if (typeOfAction == BattleAction::HEAL and healPositions.size() == 0) {
 		spdlog::get("combat")->warn("No health potions left!");
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;

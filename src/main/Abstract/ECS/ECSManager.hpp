@@ -1,9 +1,9 @@
 #pragma once
-#include "Abstract/Overwordl/BoundingBoxSystem.hpp"
 #include "Abstract/Combat/Systems/AISystem.hpp"
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/Combat/Systems/StatsDistributorSystem.hpp"
+#include "Abstract/Overwordl/BoundingBoxSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 
@@ -16,6 +16,7 @@
 #include "Abstract/Overwordl/MenuSystem.hpp"
 #include "Abstract/Overwordl/MovementSystem.hpp"
 #include "Abstract/Overwordl/RenderSystem.hpp"
+#include "Abstract/Overwordl/SwitchBattleModeSystem.hpp"
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 
@@ -45,13 +46,14 @@ struct ECSManager {
 	MenuSystem menuSystem;
 	ItemSystem item_system;
 	DoorSystem door_system;
+	SwitchBattleModeSystem switch_battle_mode_system;
 
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
-	      menuSystem(manager, gui), door_system(manager),battleInputSystem(manager, gui), aiSystem(manager),
-	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui)
+	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui), aiSystem(manager),
+	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui), switch_battle_mode_system(manager)
 	{
 		gui.setWindow(window);
 	}
@@ -81,11 +83,6 @@ struct ECSManager {
 		window.clear(sf::Color::Transparent);
 		boundingBoxSystem.update();
 		inputSystem.update();
-		menuSystem.update();
-		if (checkMenu()) {
-			gui.draw();
-			return;
-		}
 		movementSystem.update();
 		boundingBoxSystem.update();
 		collisionSystem.update();
@@ -96,6 +93,7 @@ struct ECSManager {
 		boundingBoxSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
+		switch_battle_mode_system.update();
 		battleInputSystem.update();
 		combatSystem.update();
 		statsDistributorSystem.update();

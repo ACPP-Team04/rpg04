@@ -3,8 +3,10 @@
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/InventoryComponent.hpp"
+
 #include "Implementation/Components/StatsComponent.hpp"
 
 AISystem::AISystem(ArchetypeManager &manager) : System(manager) {};
@@ -20,9 +22,16 @@ void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 			break;
 		}
 	}
+	int numberOfHealthPotions = 0;
+	for (auto &item : aiInventory.inventory) {
+		bool IsHealItem = this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(item);
+		if (IsHealItem) {
+			numberOfHealthPotions += 1;
+		}
+	}
 	aiBattle.target = target;
 
-	if (aiStats.health < 30 && aiInventory.numberOfHealthPotions >= 1) {
+	if (aiStats.health < 30 && numberOfHealthPotions >= 1) {
 		aiBattle.selectedAction = BattleAction::HEAL;
 	} else if (aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK)) {
 		aiBattle.selectedAction = BattleAction::HEAVY_ATTACK;

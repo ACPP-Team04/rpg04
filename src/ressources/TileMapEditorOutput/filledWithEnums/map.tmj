@@ -630,7 +630,7 @@
                  "name":"overworld",
                  "opacity":1,
                  "type":"group",
-                 "visible":true,
+                 "visible":false,
                  "x":0,
                  "y":0
                 }, 
@@ -746,6 +746,58 @@
                                  "width":1.13649278327082,
                                  "x":187.521309239686,
                                  "y":269.348789635186
+                                }, 
+                                {
+                                 "height":0,
+                                 "id":16,
+                                 "name":"",
+                                 "opacity":1,
+                                 "properties":[
+                                        {
+                                         "name":"interaction",
+                                         "propertytype":"INTERACTION_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "action":4,
+                                             "focusRadius":64,
+                                             "interactionKey":5,
+                                             "trigger":0
+                                            }
+                                        }, 
+                                        {
+                                         "name":"render",
+                                         "propertytype":"RENDER_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }, 
+                                        {
+                                         "name":"sprite",
+                                         "propertytype":"SPRITE_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "texture":67
+                                            }
+                                        }, 
+                                        {
+                                         "name":"transform",
+                                         "propertytype":"TRANSFORM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }],
+                                 "rotation":0,
+                                 "type":"",
+                                 "visible":true,
+                                 "width":0,
+                                 "x":128.680054591538,
+                                 "y":58.4909339052447
                                 }],
                          "opacity":1,
                          "properties":[
@@ -779,7 +831,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":16,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
