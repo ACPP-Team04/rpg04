@@ -80,6 +80,7 @@ struct ECSManager {
 		interactionSystem.update();
 		door_system.update();
 		switchLayerSystem.update();
+		boundingBoxSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
 		dialogSystem.update();

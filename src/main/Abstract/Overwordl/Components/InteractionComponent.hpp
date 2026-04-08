@@ -12,6 +12,7 @@ struct InteractionComponent : public Component<InteractionComponent> {
 	sf::Keyboard::Key interactionKey;
 	bool inRange = false;
 	float focusRadius;
+	bool mustLeaveRadius = false;
 
 	void readFromJson(const nlohmann::json &j) override
 	{

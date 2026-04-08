@@ -243,14 +243,8 @@
         "drawFill": true,
         "members": [
             {
-                "name": "layer",
-                "propertyType": "LayerType",
-                "type": "int",
-                "value": 0
-            },
-            {
-                "name": "level",
-                "propertyType": "LEVEL_NAME",
+                "name": "destination",
+                "propertyType": "",
                 "type": "int",
                 "value": 0
             }

@@ -3,11 +3,9 @@
 #include "Abstract/TILE_ENUMS.hpp"
 
 struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
-	LEVEL_NAME level;
-	LAYERTYPE layer;
+	int destination;
 	void readFromJson(const nlohmann::json &j) override
 	{
-		level = j.value("level", LEVEL_NAME());
-		layer = j.value("layer", LAYERTYPE());
+		destination = j.value("destination", 0);
 	}
 };

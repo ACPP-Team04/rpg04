@@ -4,6 +4,7 @@
 #include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/SwitchLayerComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 SwitchLayerSystem::SwitchLayerSystem(ArchetypeManager &manager) : System(manager) {}
@@ -19,9 +20,6 @@ void SwitchLayerSystem::update()
 
 	this->manager.view<SwitchLayerComponent, InteractionComponent>().each(
 	    [&](const EntityID &id, SwitchLayerComponent &lcomp, InteractionComponent &icomp) {
-		    if (lcomp.layer == currentLayer->currentLayer && lcomp.level == currentLayer->currentLevel) {
-			    return;
-		    }
 		    if (icomp.action != INTERACTION_ACTION::SWITCH_LAYER) {
 			    return;
 		    }
@@ -41,10 +39,17 @@ void SwitchLayerSystem::update()
 			    return;
 
 		    for (auto &[switchLayer, switchPos] : switchPoints) {
-			    currentLayer->currentLevel = switchLayer->level;
-			    currentLayer->currentLayer = switchLayer->layer;
-			    partOfLayer.level = switchLayer->level;
-			    partOfLayer.layer = switchLayer->layer;
+			    int destination = switchLayer->destination;
+		    	PartOfLayerComponent &destinationP = this->manager.getComponent<PartOfLayerComponent>(destination);
+		    	TransformComponent &transform = this->manager.getComponent<TransformComponent>(destination);
+		    	partOfLayer.layer = destinationP.layer;
+		    	partOfLayer.level = destinationP.level;
+		    	this->manager.getComponent<TransformComponent>(id).position = transform.position;
+		    	currentLayer->currentLevel = destinationP.level;
+		    	currentLayer->currentLayer = destinationP.layer;
+		    	if (this->manager.hasComponent<SwitchLayerComponent>(destination)) {
+		    		this->manager.getComponent<InteractionComponent>(destination).mustLeaveRadius=true;
+		    	}
 		    }
 	    });
 }

@@ -699,14 +699,7 @@
         "id": 10,
         "members": [
             {
-                "name": "layer",
-                "propertyType": "LayerType",
-                "type": "int",
-                "value": 0
-            },
-            {
-                "name": "level",
-                "propertyType": "LEVEL_NAME",
+                "name": "destination",
                 "type": "int",
                 "value": 0
             }
