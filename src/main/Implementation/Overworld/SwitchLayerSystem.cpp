@@ -40,16 +40,16 @@ void SwitchLayerSystem::update()
 
 		    for (auto &[switchLayer, switchPos] : switchPoints) {
 			    int destination = switchLayer->destination;
-		    	PartOfLayerComponent &destinationP = this->manager.getComponent<PartOfLayerComponent>(destination);
-		    	TransformComponent &transform = this->manager.getComponent<TransformComponent>(destination);
-		    	partOfLayer.layer = destinationP.layer;
-		    	partOfLayer.level = destinationP.level;
-		    	this->manager.getComponent<TransformComponent>(id).position = transform.position;
-		    	currentLayer->currentLevel = destinationP.level;
-		    	currentLayer->currentLayer = destinationP.layer;
-		    	if (this->manager.hasComponent<SwitchLayerComponent>(destination)) {
-		    		this->manager.getComponent<InteractionComponent>(destination).mustLeaveRadius=true;
-		    	}
+			    PartOfLayerComponent &destinationP = this->manager.getComponent<PartOfLayerComponent>(destination);
+			    TransformComponent &transform = this->manager.getComponent<TransformComponent>(destination);
+			    partOfLayer.layer = destinationP.layer;
+			    partOfLayer.level = destinationP.level;
+			    this->manager.getComponent<TransformComponent>(id).position = transform.position;
+			    currentLayer->currentLevel = destinationP.level;
+			    currentLayer->currentLayer = destinationP.layer;
+			    if (this->manager.hasComponent<SwitchLayerComponent>(destination)) {
+				    this->manager.getComponent<InteractionComponent>(destination).mustLeaveRadius = true;
+			    }
 		    }
 	    });
 }

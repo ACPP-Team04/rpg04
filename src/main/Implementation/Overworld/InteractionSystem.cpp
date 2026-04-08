@@ -35,11 +35,11 @@ void InteractionSystem::update()
 		    auto &playerBB = manager.getComponent<BoundIngBoxComponent>(*player);
 		    if (!isinRadius(playerBB, bb, component.focusRadius)) {
 			    component.isActive = false;
-		    	component.mustLeaveRadius = false;
+			    component.mustLeaveRadius = false;
 			    return;
 		    }
-	    	if (component.mustLeaveRadius)
-	    		return;
+		    if (component.mustLeaveRadius)
+			    return;
 		    float newCandidateDistance = distance(playerBB.bounds, bb.bounds);
 		    if (distance(playerBB.bounds, bb.bounds) < smallestDistance) {
 			    smallestDistance = newCandidateDistance;
