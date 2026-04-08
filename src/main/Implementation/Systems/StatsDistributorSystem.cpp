@@ -6,6 +6,10 @@ StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::
 
 void StatsDistributorSystem::update()
 {
+	auto view = manager.view<BattleManagerComponent>();
+	if (view.archetypes.size() == 0) {
+		return;
+	}
 	auto player = WorldUtils::getPlayer(manager);
 	if (!player.has_value()) {
 		return;

@@ -30,38 +30,75 @@ void BattleInputSystem::connectCallbacks()
 		return;
 	}
 
-	ui.getButton("BtnLight")->onPress([&]() {
-		auto &b = manager.getComponent<BattleComponent>(playerId);
-		b.selectedAction = BattleAction::LIGHT_ATTACK;
-		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
-		b.battleState = BattleState::SELECTED_ACTION;
+	ui.getButton("BtnLight")->onPress([this]() {
+		auto player = WorldUtils::getPlayer(manager);
+		EntityID playerId;
+		if (player.has_value()) {
+			playerId = player.value();
+		}
+		if (manager.hasComponent<BattleComponent>(playerId)) {
+			auto &b = manager.getComponent<BattleComponent>(playerId);
+			b.selectedAction = BattleAction::LIGHT_ATTACK;
+			b.target =
+			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
+			b.battleState = BattleState::SELECTED_ACTION;
+		}
 	});
 	ui.getButton("BtnHeavy")->onPress([&]() {
-		auto &b = manager.getComponent<BattleComponent>(playerId);
-		b.selectedAction = BattleAction::HEAVY_ATTACK;
-		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
-		b.battleState = BattleState::SELECTED_ACTION;
+		auto player = WorldUtils::getPlayer(manager);
+		EntityID playerId;
+		if (player.has_value()) {
+			playerId = player.value();
+		}
+		if (manager.hasComponent<BattleComponent>(playerId)) {
+			auto &b = manager.getComponent<BattleComponent>(playerId);
+			b.selectedAction = BattleAction::HEAVY_ATTACK;
+			b.target =
+			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
+			b.battleState = BattleState::SELECTED_ACTION;
+		}
 	});
-	ui.getButton("BtnUltimate")->onPress([&]() {
-		auto player = playerId;
-		auto &b = manager.getComponent<BattleComponent>(player);
-		b.selectedAction = BattleAction::ULTIMATE_ATTACK;
-		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
-		b.battleState = BattleState::SELECTED_ACTION;
+	ui.getButton("BtnUltimate")->onPress([this]() {
+		auto player = WorldUtils::getPlayer(manager);
+		EntityID playerId;
+		if (player.has_value()) {
+			playerId = player.value();
+		}
+		if (manager.hasComponent<BattleComponent>(playerId)) {
+			auto &b = manager.getComponent<BattleComponent>(playerId);
+			b.selectedAction = BattleAction::ULTIMATE_ATTACK;
+			b.target =
+			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
+			b.battleState = BattleState::SELECTED_ACTION;
+		}
 	});
-	ui.getButton("BtnHeal")->onPress([&]() {
-		auto player = playerId;
-		auto &b = manager.getComponent<BattleComponent>(player);
-		b.selectedAction = BattleAction::HEAL;
-		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
-		b.battleState = BattleState::SELECTED_ACTION;
+	ui.getButton("BtnHeal")->onPress([this]() {
+		auto player = WorldUtils::getPlayer(manager);
+		EntityID playerId;
+		if (player.has_value()) {
+			playerId = player.value();
+		}
+		if (manager.hasComponent<BattleComponent>(playerId)) {
+			auto &b = manager.getComponent<BattleComponent>(playerId);
+			b.selectedAction = BattleAction::HEAL;
+			b.target =
+			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
+			b.battleState = BattleState::SELECTED_ACTION;
+		}
 	});
-	ui.getButton("BtnRest")->onPress([&]() {
-		auto player = playerId;
-		auto &b = manager.getComponent<BattleComponent>(player);
-		b.selectedAction = BattleAction::REST;
-		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
-		b.battleState = BattleState::SELECTED_ACTION;
+	ui.getButton("BtnRest")->onPress([this]() {
+		auto player = WorldUtils::getPlayer(manager);
+		EntityID playerId;
+		if (player.has_value()) {
+			playerId = player.value();
+		}
+		if (manager.hasComponent<BattleComponent>(playerId)) {
+			auto &b = manager.getComponent<BattleComponent>(playerId);
+			b.selectedAction = BattleAction::REST;
+			b.target =
+			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
+			b.battleState = BattleState::SELECTED_ACTION;
+		}
 	});
 }
 
@@ -70,6 +107,7 @@ void BattleInputSystem::update()
 	auto view = manager.view<BattleManagerComponent>();
 
 	if (view.archetypes.size() == 0) {
+		ui.setHUDVisible(false);
 		return;
 	}
 	auto player = WorldUtils::getPlayer(manager);

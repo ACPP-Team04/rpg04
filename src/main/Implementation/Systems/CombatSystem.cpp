@@ -18,17 +18,16 @@ void CombatSystem::update()
 {
 
 	auto view = manager.view<BattleManagerComponent>();
-	auto player = WorldUtils::getPlayer(manager);
-	EntityID playerId;
-	if (player.has_value()) {
-		playerId = player.value();
-	}
-
 	if (view.archetypes.size() == 0) {
-		spdlog::get("combat")->warn("No BattleManagerComponent found");
+		// spdlog::get("combat")->warn("No BattleManagerComponent found");
 		return;
 	} else {
 		view.each([&](EntityID battleId, BattleManagerComponent &bmc) {
+			auto player = WorldUtils::getPlayer(manager);
+			EntityID playerId;
+			if (player.has_value()) {
+				playerId = player.value();
+			}
 			EntityID currentAttacker = this->getAttacker(bmc.currentTurnIndex, bmc.participants);
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			if (bmc.isBattleOver) {
