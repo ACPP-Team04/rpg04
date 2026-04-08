@@ -7,6 +7,6 @@ struct BattleManagerComponent : public Component<BattleManagerComponent> {
 	std::vector<EntityID> participants;
 	int currentTurnIndex = 0;
 	bool isBattleOver = false;
-
+	int playerXpReward = 1;
 	void readFromJson(const nlohmann::json &j) override {}
 };

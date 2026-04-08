@@ -1,5 +1,9 @@
 #pragma once
 #include "Abstract/Overwordl/BoundingBoxSystem.hpp"
+#include "Abstract/Combat/Systems/AISystem.hpp"
+#include "Abstract/Combat/Systems/BattleInputSystem.hpp"
+#include "Abstract/Combat/Systems/CombatSystem.hpp"
+#include "Abstract/Combat/Systems/StatsDistributorSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 
@@ -18,15 +22,21 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
+// Call escManager.init() after construction to initialize the battle UI layout and callbacks
 struct ECSManager {
 
 	sf::RenderWindow &window;
+	tgui::Gui gui;
 	ArchetypeManager manager = ArchetypeManager();
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
-	tgui::Gui gui;
 	CameraSystem cameraSystem;
+	BattleInputSystem battleInputSystem;
+	AISystem aiSystem;
+	CombatSystem combatSystem;
+	StatsDistributorSystem statsDistributorSystem;
+
 	SwitchLayerSystem switchLayerSystem;
 	DialogSystem dialogSystem;
 	InteractionSystem interactionSystem;
@@ -40,7 +50,8 @@ struct ECSManager {
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
-	      menuSystem(manager, gui), door_system(manager)
+	      menuSystem(manager, gui), door_system(manager),battleInputSystem(manager, gui), aiSystem(manager),
+	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui)
 	{
 		gui.setWindow(window);
 	}
@@ -61,6 +72,8 @@ struct ECSManager {
 		    [&](auto entityId, WorldComponent &worldComponent) { menuOpened = worldComponent.menuOpened; });
 		return menuOpened;
 	}
+
+	void init() { battleInputSystem.init(); }
 
 	void update()
 	{
@@ -83,7 +96,11 @@ struct ECSManager {
 		boundingBoxSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
+		battleInputSystem.update();
+		combatSystem.update();
+		statsDistributorSystem.update();
 		dialogSystem.update();
 		item_system.update();
+		gui.draw();
 	}
 };

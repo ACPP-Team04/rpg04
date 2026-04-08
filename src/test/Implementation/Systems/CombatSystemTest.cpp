@@ -7,20 +7,27 @@
 
 TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 {
+
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
-	EntityID player = manager.createEntity();
-	EntityID enemy = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
-	combatSystem.update();
-
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	combatSystem.update();
 
 	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
 	playerWeapon.scalingFactor = ScalingFactor::A;
@@ -29,12 +36,10 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
 	enemyWeapon.scalingFactor = ScalingFactor::B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
-
 	combatSystem.update();
-	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
-	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+
 	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
 	EXPECT_EQ(true, battleComponentP.isActiveTurn);
 	EXPECT_EQ(false, battleComponentE.isActiveTurn);
@@ -66,19 +71,26 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
-	EntityID player = manager.createEntity();
-	EntityID enemy = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
-	combatSystem.update();
-
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentE.battleManagerId = battle;
+	battleComponentP.battleManagerId = battle;
+
+	combatSystem.update();
 
 	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
 	playerWeapon.scalingFactor = ScalingFactor::B;
@@ -89,10 +101,10 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	combatSystem.update();
-	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
-	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
 	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
 	EXPECT_EQ(true, battleComponentP.isActiveTurn);
 	EXPECT_EQ(false, battleComponentE.isActiveTurn);
@@ -124,19 +136,26 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
-	EntityID player = manager.createEntity();
-	EntityID enemy = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
-	combatSystem.update();
-
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentE.battleManagerId = battle;
+	battleComponentP.battleManagerId = battle;
+
+	combatSystem.update();
 
 	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
 	playerWeapon.scalingFactor = ScalingFactor::C;
@@ -147,10 +166,11 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	combatSystem.update();
-	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
-	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
 	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
 	EXPECT_EQ(true, battleComponentP.isActiveTurn);
 	EXPECT_EQ(false, battleComponentE.isActiveTurn);
@@ -183,19 +203,25 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
-	EntityID player = manager.createEntity();
-	EntityID enemy = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
-	combatSystem.update();
-
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	combatSystem.update();
 
 	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
 	playerWeapon.scalingFactor = ScalingFactor::C;
@@ -206,11 +232,12 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	combatSystem.update();
-	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
-	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	auto &inventoryComponentP = manager.getComponent<InventoryComponent>(player);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
 	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
 	EXPECT_EQ(true, battleComponentP.isActiveTurn);
 	EXPECT_EQ(false, battleComponentE.isActiveTurn);
@@ -244,19 +271,25 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
-	EntityID player = manager.createEntity();
-	EntityID enemy = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
-	combatSystem.update();
-
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	combatSystem.update();
 
 	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
 	playerWeapon.scalingFactor = ScalingFactor::C;
@@ -267,8 +300,6 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	combatSystem.update();
-	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
-	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	statsComponentP.health = 89;
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
@@ -306,19 +337,26 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
-	EntityID player = manager.createEntity();
-	EntityID enemy = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	EntityID player = manager.createEntity(EntityTag::PLAYER);
+	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
-	combatSystem.update();
 
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	combatSystem.update();
 
 	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
 	playerWeapon.scalingFactor = ScalingFactor::C;
@@ -329,8 +367,6 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	combatSystem.update();
-	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
-	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	auto &inventoryComponentP = manager.getComponent<InventoryComponent>(player);
@@ -366,20 +402,24 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
-	EntityID battle = manager.createEntity();
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
+
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
 	statsComponentP.health = 50;
-	combatSystem.cleanUpBattle(battle, player);
+	combatSystem.cleanUpBattle(battle, player, BattleState::VICTORY);
 
 	EXPECT_EQ(100, manager.getComponent<StatsComponent>(player).health);
 	EXPECT_EQ(2, manager.getComponent<StatsComponent>(player).experienceLevel);
@@ -392,10 +432,13 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
-	EntityID battle = manager.createEntity();
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
@@ -405,7 +448,7 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
 	statsComponentP.health = 50;
-	combatSystem.cleanUpBattle(battle, enemy);
+	combatSystem.cleanUpBattle(battle, enemy, BattleState::DEFEAT);
 
 	EXPECT_EQ(100, manager.getComponent<StatsComponent>(enemy).health);
 	EXPECT_EQ(1, manager.getComponent<StatsComponent>(enemy).experienceLevel);
@@ -418,16 +461,20 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 TEST(CombatSystemTest, combatSystemPlayerWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
-	EntityID battle = manager.createEntity();
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(player);
 	playerWeapon.scalingFactor = ScalingFactor::C;
 	playerWeapon.weaponType = WeaponType::RANGE;
@@ -440,6 +487,8 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	battleComponentP.selectedAction = BattleAction::HEAVY_ATTACK;
 	battleComponentP.target = enemy;
 	battleComponentP.battleState = BattleState::SELECTED_ACTION;
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
 	//
 
 	combatSystem.update();
@@ -450,7 +499,10 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::VICTORY, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::STATS_DISTRIBUTION, battleComponentP.battleState);
+	// Simulating stats distribution imput
+	battleComponentP.battleState = BattleState::VICTORY;
+	//
 	combatSystem.update();
 	combatSystem.update();
 	EXPECT_EQ(100, manager.getComponent<StatsComponent>(player).health);
@@ -463,16 +515,22 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 TEST(CombatSystemTest, combatSystemEnemyWon)
 {
 	ArchetypeManager manager = ArchetypeManager();
-	CombatSystem combatSystem = CombatSystem(manager);
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	manager.getComponent<WorldComponent>(world).currentLayer = LAYERTYPE::BATTLEWORLD;
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
 	EntityID player = manager.createEntity(EntityTag::PLAYER);
 	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
-	EntityID battle = manager.createEntity();
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
 	enemyWeapon.scalingFactor = ScalingFactor::C;
 	enemyWeapon.weaponType = WeaponType::RANGE;
@@ -496,7 +554,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentE.battleState);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::VICTORY, battleComponentE.battleState);
+	EXPECT_EQ(BattleState::DEFEAT, battleComponentE.battleState);
 	combatSystem.update();
 	combatSystem.update();
 

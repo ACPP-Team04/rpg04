@@ -2,6 +2,7 @@
 #include "Abstract/ECS/Entity/EntityTag.hpp"
 #include "Archetype.hpp"
 #include "View.hpp"
+#include <optional>
 
 #include <SFML/Window/Keyboard.hpp>
 #include <unordered_map>
@@ -209,13 +210,13 @@ class ArchetypeManager {
 		}
 		this->addEntityIdsToArchType(entityId, newArchetype);
 	}
-	EntityTag getEntityTag(EntityID entityId)
+	std::optional<EntityTag> getEntityTag(EntityID entityId)
 	{
 		for (auto &[tag, entityIds] : this->entityTagToEntityId) {
 			if (std::find(entityIds.begin(), entityIds.end(), entityId) != entityIds.end()) {
 				return tag;
 			}
 		}
-		throw std::runtime_error("No tag found for entity");
+		return std::nullopt;
 	}
 };

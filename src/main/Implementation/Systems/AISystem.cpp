@@ -15,7 +15,7 @@ void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 	InventoryComponent &aiInventory = manager.getComponent<InventoryComponent>(aiId);
 	EntityID target;
 	for (EntityID p : participants) {
-		if (!(aiId != p)) {
+		if (aiId != p) {
 			target = p;
 			break;
 		}

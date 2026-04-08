@@ -1,4 +1,5 @@
 #pragma once
+#include "Abstract/Combat/Systems/AISystem.hpp"
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
@@ -9,7 +10,7 @@
 
 class CombatSystem : public System {
   public:
-	CombatSystem(ArchetypeManager &manager) : System(manager) {};
+	CombatSystem(ArchetypeManager &manager, AISystem &aiSystem) : System(manager), aiSystem(aiSystem) {};
 
 	void update() override;
 
@@ -19,9 +20,9 @@ class CombatSystem : public System {
 
 	void restoreAP(EntityID restorator);
 
-	bool handleActionDelay(BattleComponent battle);
+	bool handleActionDelay(BattleComponent &battle);
 
-	BattleState checkDeathCondition(EntityID defender);
+	BattleState checkDeathCondition(EntityID defender, EntityID attacker);
 
 	void passTurn(EntityID &currentEntity, int currentTurnIndex, const std::vector<EntityID> participants);
 
@@ -31,10 +32,12 @@ class CombatSystem : public System {
 
 	sf::Clock clock;
 
-	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity);
+	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState);
+	static bool validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealthPotions);
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
 	                           float baseAttackDamage);
 	float getMultiplicatorFromScalingFactor(const WeaponComponent &weaponComponent);
+	AISystem &aiSystem;
 };
