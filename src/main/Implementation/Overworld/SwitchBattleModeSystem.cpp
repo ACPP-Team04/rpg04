@@ -36,7 +36,7 @@ void SwitchBattleModeSystem::update()
 	this->manager.addComponentToEntity<BattleComponent>(*player);
 	this->manager.addComponentToEntity<BattleComponent>(*interActor);
 
-	this->manager.createEntity<BattleManagerComponent>();
+	this->manager.createEntity<BattleManagerComponent>(EntityTag::BATTLEMANAGER);
 
 	EntityID *battleManager = nullptr;
 	this->manager.view<BattleManagerComponent>().each([&](auto &entity, BattleManagerComponent &component) {

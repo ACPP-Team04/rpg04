@@ -6,10 +6,11 @@ StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::
 
 void StatsDistributorSystem::update()
 {
-	auto players = manager.getEntityIdByTag(EntityTag::PLAYER);
-	if (players.empty())
+	auto player = WorldUtils::getPlayer(manager);
+	if (!player.has_value()) {
 		return;
-	EntityID playerId = players[0];
+	}
+	EntityID playerId = player.value();
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 
 	if (battle.battleState == BattleState::STATS_DISTRIBUTION) {

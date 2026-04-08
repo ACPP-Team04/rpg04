@@ -18,6 +18,11 @@ void CombatSystem::update()
 {
 
 	auto view = manager.view<BattleManagerComponent>();
+	auto player = WorldUtils::getPlayer(manager);
+	EntityID playerId;
+	if (player.has_value()) {
+		playerId = player.value();
+	}
 
 	if (view.archetypes.size() == 0) {
 		spdlog::get("combat")->warn("No BattleManagerComponent found");
@@ -35,12 +40,10 @@ void CombatSystem::update()
 			case BattleState::TURN_START: {
 
 				battle.battleState = BattleState::WAITING_FOR_INPUT;
-				auto tag = manager.getEntityTag(currentAttacker);
-				if (tag.has_value()) {
-					if (tag.value() == EntityTag::ENEMY) {
-						aiSystem.executeAILogic(currentAttacker, bmc.participants);
-					}
+				if (currentAttacker != playerId) {
+					aiSystem.executeAILogic(currentAttacker, bmc.participants);
 				}
+
 				break;
 			}
 			case BattleState::SELECTED_ACTION:
@@ -158,15 +161,14 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		break;
 	}
 	}
-	spdlog::get("combat")->info(
-	    "Entity {} attacks Entity {} with {}!", static_cast<int>(manager.getEntityTag(attacker).value()),
-	    static_cast<int>(manager.getEntityTag(defender).value()), static_cast<int>(typeOfAction));
-	spdlog::get("combat")->debug(
-	    "Entity {} has {} HP and {} AP left!", static_cast<int>(manager.getEntityTag(defender).value()),
-	    manager.getComponent<StatsComponent>(defender).health, manager.getComponent<BattleComponent>(defender).AP);
-	spdlog::get("combat")->debug(
-	    "Entity {} has {} HP and {} AP left!", static_cast<int>(manager.getEntityTag(attacker).value()),
-	    manager.getComponent<StatsComponent>(attacker).health, manager.getComponent<BattleComponent>(attacker).AP);
+	spdlog::get("combat")->info("Entity {} attacks Entity {} with {}!", attacker.getId(), defender.getId(),
+	                            static_cast<int>(typeOfAction));
+	spdlog::get("combat")->debug("Entity {} has {} HP and {} AP left!", defender.getId(),
+	                             manager.getComponent<StatsComponent>(defender).health,
+	                             manager.getComponent<BattleComponent>(defender).AP);
+	spdlog::get("combat")->debug("Entity {} has {} HP and {} AP left!", attacker.getId(),
+	                             manager.getComponent<StatsComponent>(attacker).health,
+	                             manager.getComponent<BattleComponent>(attacker).AP);
 }
 
 void CombatSystem::takeHealAction(EntityID healer)
@@ -197,7 +199,12 @@ bool CombatSystem::handleActionDelay(BattleComponent &battle)
 BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attacker)
 {
 	float healthDefender = manager.getComponent<StatsComponent>(defender).health;
-	bool playerIsAttacking = (manager.getEntityTag(attacker).value() == EntityTag::PLAYER);
+	auto player = WorldUtils::getPlayer(manager);
+	EntityID playerId;
+	if (player.has_value()) {
+		playerId = player.value();
+	}
+	bool playerIsAttacking = attacker == playerId;
 
 	if (healthDefender <= 0) {
 		return playerIsAttacking ? BattleState::VICTORY : BattleState::DEFEAT;
@@ -213,8 +220,6 @@ void CombatSystem::passTurn(EntityID &currentEntity, int currentTurnIndex, const
 	auto &nextBattleComponent = manager.getComponent<BattleComponent>(nextId);
 	nextBattleComponent.battleState = BattleState::TURN_START;
 	nextBattleComponent.isActiveTurn = true;
-	// spdlog::get("combat")->debug("Passing turn from entity {} to {}", manager.getEntityTag(currentEntity).value(),
-	//                            manager.getEntityTag(nextId).value());
 }
 EntityID CombatSystem::getAttacker(int currentTurnIndex, const std::vector<EntityID> participants)
 {

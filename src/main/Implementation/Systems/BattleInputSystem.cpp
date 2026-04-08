@@ -3,8 +3,8 @@
 #include "Abstract/ECS/System/System.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
@@ -22,36 +22,40 @@ void BattleInputSystem::init()
 
 void BattleInputSystem::connectCallbacks()
 {
-	ui.getButton("BtnLight")->onPress([this]() {
-		auto player = manager.getEntityIdByTag(EntityTag::PLAYER)[0];
-		auto &b = manager.getComponent<BattleComponent>(player);
+	auto player = WorldUtils::getPlayer(manager);
+	EntityID playerId;
+	if (player.has_value()) {
+		playerId = player.value();
+	}
+
+	ui.getButton("BtnLight")->onPress([&]() {
+		auto &b = manager.getComponent<BattleComponent>(playerId);
 		b.selectedAction = BattleAction::LIGHT_ATTACK;
-		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
+		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
 		b.battleState = BattleState::SELECTED_ACTION;
 	});
-	ui.getButton("BtnHeavy")->onPress([this]() {
-		auto player = manager.getEntityIdByTag(EntityTag::PLAYER)[0];
-		auto &b = manager.getComponent<BattleComponent>(player);
+	ui.getButton("BtnHeavy")->onPress([&]() {
+		auto &b = manager.getComponent<BattleComponent>(playerId);
 		b.selectedAction = BattleAction::HEAVY_ATTACK;
-		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
+		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
 		b.battleState = BattleState::SELECTED_ACTION;
 	});
-	ui.getButton("BtnUltimate")->onPress([this]() {
-		auto player = manager.getEntityIdByTag(EntityTag::PLAYER)[0];
+	ui.getButton("BtnUltimate")->onPress([&]() {
+		auto player = playerId;
 		auto &b = manager.getComponent<BattleComponent>(player);
 		b.selectedAction = BattleAction::ULTIMATE_ATTACK;
 		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
 		b.battleState = BattleState::SELECTED_ACTION;
 	});
-	ui.getButton("BtnHeal")->onPress([this]() {
-		auto player = manager.getEntityIdByTag(EntityTag::PLAYER)[0];
+	ui.getButton("BtnHeal")->onPress([&]() {
+		auto player = playerId;
 		auto &b = manager.getComponent<BattleComponent>(player);
 		b.selectedAction = BattleAction::HEAL;
 		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
 		b.battleState = BattleState::SELECTED_ACTION;
 	});
-	ui.getButton("BtnRest")->onPress([this]() {
-		auto player = manager.getEntityIdByTag(EntityTag::PLAYER)[0];
+	ui.getButton("BtnRest")->onPress([&]() {
+		auto player = playerId;
 		auto &b = manager.getComponent<BattleComponent>(player);
 		b.selectedAction = BattleAction::REST;
 		b.target = selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, player);
@@ -66,10 +70,11 @@ void BattleInputSystem::update()
 	if (view.archetypes.size() == 0) {
 		return;
 	}
-	auto players = manager.getEntityIdByTag(EntityTag::PLAYER);
-	if (players.empty())
-		return;
-	EntityID playerId = players[0];
+	auto player = WorldUtils::getPlayer(manager);
+	EntityID playerId;
+	if (player.has_value()) {
+		playerId = player.value();
+	}
 
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
