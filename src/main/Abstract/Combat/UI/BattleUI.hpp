@@ -19,6 +19,8 @@ class BattleUI {
 
 		gui.add(hudPanel, "BattleHUD");
 		hudPanel->setPosition("5%", "55%");
+		gui.add(hudPanel, "BattleHUD");
+
 		auto hpBar = tgui::ProgressBar::create();
 		hpBar->setSize("90%", "30px");
 		hpBar->setPosition("5%", "10%");
