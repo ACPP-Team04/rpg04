@@ -4,9 +4,13 @@
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/Combat/Systems/StatsDistributorSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
+#include "Abstract/Overwordl/CollisionSystem.hpp"
+#include "Abstract/Overwordl/DialogSystem.hpp"
 #include "Abstract/Overwordl/InputSystem.hpp"
+#include "Abstract/Overwordl/InteractionSystem.hpp"
 #include "Abstract/Overwordl/MovementSystem.hpp"
 #include "Abstract/Overwordl/RenderSystem.hpp"
+#include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 #include "System/System.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -26,13 +30,18 @@ struct ECSManager {
 	AISystem aiSystem;
 	CombatSystem combatSystem;
 	StatsDistributorSystem statsDistributorSystem;
-
+  DialogSystem dialogSystem;
+	InteractionSystem interactionSystem;
+  SwitchLayerSystem switchLayerSystem;
+	CollisionSystem collisionSystem;
+  
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), gui(window), battleInputSystem(manager, gui), aiSystem(manager),
 	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui)
-	{
-	}
+	
+	
+	
 
 	~ECSManager() = default;
 	void processEvents()
@@ -49,12 +58,16 @@ struct ECSManager {
 		processEvents();
 		window.clear(sf::Color::Transparent);
 		inputSystem.update();
+		interactionSystem.update();
 		movementSystem.update();
+		collisionSystem.update();
+		switchLayerSystem.update();
 		cameraSystem.update();
 		renderSystem.update();
 		battleInputSystem.update();
 		combatSystem.update();
 		statsDistributorSystem.update();
 		gui.draw();
+		dialogSystem.update();
 	}
 };

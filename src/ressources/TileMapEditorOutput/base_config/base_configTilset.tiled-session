@@ -1,0 +1,48 @@
+{
+    "activeFile": "Tilesheet_BaseConfig.tsj",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "Alle Dateien (*)",
+    "fileStates": {
+        "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/Tilesheet_WithEnums.tsj": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj": {
+            "expandedGroupLayers": [
+                2,
+                3
+            ],
+            "scale": 0.9282291666666665,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 193.37896981259118,
+                "y": 54.40466838738638
+            }
+        },
+        "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj#Tilesheet_edited": {
+            "scaleInDock": 1
+        },
+        "Tilesheet_BaseConfig.tsj": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.784
+        }
+    },
+    "last.imagePath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput",
+    "last.objectTypesPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/base_config/mainProperty.json",
+    "openFiles": [
+        "Tilesheet_BaseConfig.tsj"
+    ],
+    "project": "base_configTilset.tiled-project",
+    "property.type": "color",
+    "recentFiles": [
+        "Tilesheet_BaseConfig.tsj",
+        "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj",
+        "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/Tilesheet_WithEnums.tsj"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

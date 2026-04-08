@@ -10,11 +10,10 @@ enum class TileObject {
 };
 
 std::vector<std::vector<TileType>> car = {
-	{CAR_PART_00, CAR_PART_01},
+    {CAR_PART_00, CAR_PART_01},
 };
 
-
-inline std::unordered_map<TileObject,std::vector<std::vector<TileType>>> TILET()
+inline std::unordered_map<TileObject, std::vector<std::vector<TileType>>> TILET()
 {
-	return {TileObject::CAR,car};
+	return {TileObject::CAR, car};
 }

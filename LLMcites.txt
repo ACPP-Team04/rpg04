@@ -1,0 +1,164 @@
+[1]
+prompt:
+Please create a Python class from the JSON schema.
+I need the following columns: `columns`, `tilecount`, `tileheight`, and `tilewidth`,
+along with their properties. The properties should be standard types like bool, int, float, and class.
+output:
+from __future__ import annotations
+from dataclasses import dataclass, field
+from typing import Any
+import json
+
+
+# ---------------------------------------------------------------------------
+# Property value types
+# ---------------------------------------------------------------------------
+
+@dataclass
+class ClassValue:
+    data: dict[str, Any]
+
+    def to_dict(self) -> dict:
+        return self.data
+
+    def __repr__(self) -> str:
+        return f"ClassValue({self.data})"
+
+
+PropertyValue = bool | int | float | str | ClassValue
+
+
+def parse_property_value(prop_type: str, raw_value: Any) -> PropertyValue:
+    match prop_type:
+        case "bool":
+            return bool(raw_value)
+        case "int":
+            return int(raw_value)
+        case "float":
+            return float(raw_value)
+        case "class":
+            return ClassValue(raw_value if isinstance(raw_value, dict) else {})
+        case _:
+            return str(raw_value)
+
+
+def serialize_property_value(value: PropertyValue) -> Any:
+    if isinstance(value, ClassValue):
+        return value.to_dict()
+    return value
+
+
+# ---------------------------------------------------------------------------
+# Property
+# ---------------------------------------------------------------------------
+
+@dataclass
+class TileProperty:
+    name: str
+    property_type: str
+    type: str
+    value: PropertyValue
+
+    @staticmethod
+    def from_dict(d: dict) -> TileProperty:
+        raw_type = d.get("type", "string")
+        return TileProperty(
+            name=d["name"],
+            property_type=d.get("propertytype", ""),
+            type=raw_type,
+            value=parse_property_value(raw_type, d.get("value")),
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "propertytype": self.property_type,
+            "type": self.type,
+            "value": serialize_property_value(self.value),
+        }
+
+
+# ---------------------------------------------------------------------------
+# Tile
+# ---------------------------------------------------------------------------
+
+@dataclass
+class Tile:
+    id: int
+    properties: list[TileProperty] = field(default_factory=list)
+
+    def get_property(self, name: str) -> TileProperty | None:
+        return next((p for p in self.properties if p.name == name), None)
+
+    @staticmethod
+    def from_dict(d: dict) -> Tile:
+        return Tile(
+            id=d["id"],
+            properties=[TileProperty.from_dict(p) for p in d.get("properties", [])],
+        )
+
+    def to_dict(self) -> dict:
+        d: dict[str, Any] = {"id": self.id}
+        if self.properties:
+            d["properties"] = [p.to_dict() for p in self.properties]
+        return d
+
+
+# ---------------------------------------------------------------------------
+# Tileset
+# ---------------------------------------------------------------------------
+
+@dataclass
+class Tileset:
+    columns: int
+    tilecount: int
+    tileheight: int
+    tilewidth: int
+    tiles: list[Tile] = field(default_factory=list)
+
+    # --- Deserialization ---------------------------------------------------
+
+    @staticmethod
+    def from_dict(d: dict) -> Tileset:
+        return Tileset(
+            columns=d["columns"],
+            tilecount=d["tilecount"],
+            tileheight=d["tileheight"],
+            tilewidth=d["tilewidth"],
+            tiles=[Tile.from_dict(t) for t in d.get("tiles", [])],
+        )
+
+    @staticmethod
+    def from_json(json_str: str) -> Tileset:
+        return Tileset.from_dict(json.loads(json_str))
+
+    @staticmethod
+    def from_file(path: str) -> Tileset:
+        with open(path, encoding="utf-8") as f:
+            return Tileset.from_dict(json.load(f))
+
+    # --- Serialization ----------------------------------------------------
+
+    def to_dict(self) -> dict:
+        return {
+            "columns": self.columns,
+            "tilecount": self.tilecount,
+            "tileheight": self.tileheight,
+            "tilewidth": self.tilewidth,
+            "tiles": [t.to_dict() for t in self.tiles],
+        }
+
+    def to_json(self, indent: int = 1) -> str:
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
+
+    def to_file(self, path: str, indent: int = 1) -> None:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(self.to_dict(), f, indent=indent, ensure_ascii=False)
+
+    # --- Helpers ----------------------------------------------------------
+
+    def get_tile(self, tile_id: int) -> Tile | None:
+        return next((t for t in self.tiles if t.id == tile_id), None)
+
+    def tiles_with_property(self, name: str) -> list[Tile]:
+        return [t for t in self.tiles if t.get_property(name) is not None]

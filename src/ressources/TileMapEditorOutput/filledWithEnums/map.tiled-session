@@ -1,0 +1,76 @@
+{
+    "activeFile": "map.tmj",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "Alle Dateien (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "Tilesheet_WithEnums.tsj": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tilesheet_withEnums.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map": {
+            "scale": 0.866875,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 239.942321557318,
+                "y": 227.2530641672675
+            }
+        },
+        "map.tmj": {
+            "expandedGroupLayers": [
+                5,
+                8,
+                6,
+                3,
+                2,
+                7
+            ],
+            "scale": 0.8799,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 190.36254119786344,
+                "y": 73.30378452096829
+            }
+        },
+        "map.tmj#Tilesheet_WithEnums": {
+            "scaleInDock": 1
+        },
+        "map.tmj#Tilesheet_edited": {
+            "scaleInDock": 1
+        }
+    },
+    "last.externalTilesetPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums",
+    "last.imagePath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput",
+    "last.objectTypesPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/properties.json",
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "Tilesheet_WithEnums.tsj",
+        "map.tmj"
+    ],
+    "project": "map.tiled-project",
+    "property.type": "PLAYER_COMPONENT",
+    "recentFiles": [
+        "Tilesheet_WithEnums.tsj",
+        "map.tmj",
+        "map",
+        "Tilesheet_withEnums.tsx"
+    ],
+    "textEdit.monospace": true,
+    "tileset.lastUsedFilter": "JSON-Kachelsatz-Dateien (*.tsj *.json)",
+    "tileset.lastUsedFormat": "json",
+    "tileset.margin": 0,
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
