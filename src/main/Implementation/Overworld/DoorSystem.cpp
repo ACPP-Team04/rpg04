@@ -1,6 +1,9 @@
 #include "Abstract/Overwordl/DoorSystem.hpp"
 
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/IsLockedComponent.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
 
 #include <mutex>
 
@@ -28,7 +31,7 @@ void DoorSystem::update()
 		return;
 	}
 	this->manager.view<InteractionComponent, IsLockedComponent>().each(
-	[&](EntityID id, InteractionComponent &icomp, IsLockedComponent &lcomp)  {
+	    [&](EntityID id, InteractionComponent &icomp, IsLockedComponent &lcomp) {
 		    if (!icomp.isActive) {
 			    return;
 		    }
@@ -41,10 +44,9 @@ void DoorSystem::update()
 				    } else {
 					    std::cout << "Door is closed!!!" << std::endl;
 				    }
+			    } else {
+				    std::cout << "Door open!!!" << std::endl;
 			    }
-		    	else {
-		    		std::cout << "Door open!!!" << std::endl;
-		    	}
 		    }
 	    });
 }

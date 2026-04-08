@@ -3,7 +3,10 @@
 
 #include "Abstract/AssetManager/AssetManager.hpp"
 #include "Abstract/MathUtils.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+
+#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
+#include "Abstract/Overwordl/Components/CollisionComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 

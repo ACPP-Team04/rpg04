@@ -1,7 +1,7 @@
 
 #include "Abstract/Overwordl/InputSystem.hpp"
 
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
 
 InputSystem::InputSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager) {}
 auto updateKey = [](KeyState &key, bool isDown) {

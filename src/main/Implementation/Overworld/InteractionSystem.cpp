@@ -1,7 +1,11 @@
 
 #include "Abstract/Overwordl/InteractionSystem.hpp"
 #include "Abstract/MathUtils.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/CollisionComponent.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
+
 #include <magic_enum/magic_enum.hpp>
 
 #include <cfloat>

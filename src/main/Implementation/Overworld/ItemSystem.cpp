@@ -1,7 +1,12 @@
 #pragma once
 #include "Abstract/Overwordl/ItemSystem.hpp"
 
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemComponent.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Overwordl/Components/RenderComponent.hpp"
 
 ItemSystem::ItemSystem(ArchetypeManager &manager) : System(manager) {}
 

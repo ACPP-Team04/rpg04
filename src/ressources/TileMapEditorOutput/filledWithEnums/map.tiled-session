@@ -26,20 +26,20 @@
         },
         "map.tmj": {
             "expandedGroupLayers": [
-                7,
                 8,
                 2,
                 12,
-                3,
+                7,
+                6,
                 5,
                 4,
-                6
+                3
             ],
             "scale": 0.7446,
-            "selectedLayer": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 381.412839108246,
-                "y": 273.3011012624228
+                "x": 165.86086489390277,
+                "y": 101.39672307279073
             }
         },
         "map.tmj#Tilesheet_WithEnums": {

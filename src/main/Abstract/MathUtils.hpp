@@ -1,5 +1,7 @@
 #pragma once
-#include "Abstract/Overwordl/Components.hpp"
+
+#include "Overwordl/Components/BoundingBoxComponent.hpp"
+
 #include <SFML/Graphics/Sprite.hpp>
 #include <cmath>
 

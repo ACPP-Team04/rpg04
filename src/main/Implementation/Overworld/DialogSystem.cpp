@@ -2,7 +2,13 @@
 
 #include "Abstract/AssetManager/AssetManager.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/DialogComponent.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/NPC_COMPONENT.hpp"
+#include "Abstract/Overwordl/Components/RenderComponent.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

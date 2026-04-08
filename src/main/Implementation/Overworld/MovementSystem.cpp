@@ -1,7 +1,9 @@
 
 #include "Abstract/Overwordl/MovementSystem.hpp"
 
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/MovementComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
 
 MovementSystem::MovementSystem(ArchetypeManager &manager) : System(manager) {}
 static float SPEED = 3.0f;

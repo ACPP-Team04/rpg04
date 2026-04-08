@@ -3,6 +3,7 @@
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/DialogSystem.hpp"
 #include "Abstract/Overwordl/DoorSystem.hpp"
 #include "Abstract/Overwordl/InputSystem.hpp"
@@ -39,7 +40,7 @@ struct ECSManager {
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
-	      menuSystem(manager, gui),door_system(manager)
+	      menuSystem(manager, gui), door_system(manager)
 	{
 		gui.setWindow(window);
 	}

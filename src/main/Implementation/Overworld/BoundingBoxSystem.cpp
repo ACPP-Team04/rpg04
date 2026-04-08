@@ -1,7 +1,9 @@
 #include "Abstract/Overwordl/BoundingBoxSystem.hpp"
 
 #include "Abstract/AssetManager/AssetManager.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
 
 #include <SFML/Graphics/Sprite.hpp>
 

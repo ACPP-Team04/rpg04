@@ -2,7 +2,11 @@
 #include "Abstract/Overwordl/MenuSystem.hpp"
 
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>

@@ -1,6 +1,8 @@
 #include "Abstract/Overwordl/CameraSystem.hpp"
 
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/CameraComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 CameraSystem::CameraSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 

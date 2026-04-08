@@ -1,6 +1,10 @@
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Overwordl/Components/SwitchLayerComponent.hpp"
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 SwitchLayerSystem::SwitchLayerSystem(ArchetypeManager &manager) : System(manager) {}
 
@@ -15,12 +19,12 @@ void SwitchLayerSystem::update()
 
 	this->manager.view<SwitchLayerComponent, InteractionComponent>().each(
 	    [&](const EntityID &id, SwitchLayerComponent &lcomp, InteractionComponent &icomp) {
-	    	if (lcomp.layer == currentLayer->currentLayer && lcomp.level == currentLayer->currentLevel) {
+		    if (lcomp.layer == currentLayer->currentLayer && lcomp.level == currentLayer->currentLevel) {
 			    return;
 		    }
-	    	if (icomp.action != INTERACTION_ACTION::SWITCH_LAYER) {
-	    		return;
-	    	}
+		    if (icomp.action != INTERACTION_ACTION::SWITCH_LAYER) {
+			    return;
+		    }
 		    if (!icomp.isActive) {
 			    return;
 		    }
@@ -33,7 +37,6 @@ void SwitchLayerSystem::update()
 
 	this->manager.view<PlayerComponent, PartOfLayerComponent>().each(
 	    [&](EntityID &id, auto &player, auto &partOfLayer) {
-
 		    if (partOfLayer.layer != currentLayer->currentLayer || partOfLayer.level != currentLayer->currentLevel)
 			    return;
 

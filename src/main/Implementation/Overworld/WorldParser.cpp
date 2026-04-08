@@ -1,7 +1,10 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
+#include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
+#include "Abstract/Overwordl/Components/RenderComponent.hpp"
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <fstream>

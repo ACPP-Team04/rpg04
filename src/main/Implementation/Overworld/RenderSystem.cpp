@@ -1,7 +1,11 @@
 #include "Abstract/Overwordl/RenderSystem.hpp"
 
 #include "Abstract/AssetManager/AssetManager.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
+#include "Abstract/Overwordl/Components/RenderComponent.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 RenderSystem::RenderSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
