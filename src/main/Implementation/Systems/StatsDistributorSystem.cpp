@@ -14,6 +14,9 @@ void StatsDistributorSystem::update()
 	if (!player.has_value()) {
 		return;
 	}
+	if (!manager.hasComponent<BattleComponent>(player.value())) {
+		return;
+	}
 	EntityID playerId = player.value();
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 
