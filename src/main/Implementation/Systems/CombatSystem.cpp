@@ -104,24 +104,22 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	}
 	attackerBattle.AP -= cost;
 
-	std::vector<EntityID> healPositions;
-	std::vector<EntityID> removedHealPositions;
-	for (auto &item : attackerInventory.inventory) {
-		bool IsHealItem = this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(item);
-		if (IsHealItem) {
-			healPositions.push_back(item);
+	if (typeOfAction == BattleAction::HEAL) {
+		auto healItemsSet = attackerInventory.getItems(ITEM_TYPE::HEALING);
+
+		if (healItemsSet.empty()) {
+			spdlog::get("combat")->warn("No health potions left!");
+			attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
+			return;
 		}
+		EntityID itemEntity = *healItemsSet.begin();
+
+		auto &stats = manager.getComponent<StatsComponent>(attacker);
+		attackerInventory.removeItem(itemEntity, ITEM_TYPE::HEALING);
+		manager.destroyEntity(itemEntity);
+		spdlog::get("combat")->info("Healed successfully");
 	}
 
-	if (typeOfAction == BattleAction::HEAL and healPositions.size() > 0) {
-		EntityID removedPosition = healPositions.back();
-		healPositions.pop_back();
-		std::erase(attackerInventory.inventory, removedPosition);
-	} else if (typeOfAction == BattleAction::HEAL and healPositions.size() == 0) {
-		spdlog::get("combat")->warn("No health potions left!");
-		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
-		return;
-	}
 	if (typeOfAction == BattleAction::ULTIMATE_ATTACK and attackerBattle.numberOfUltimateAttacksUsed >= 1) {
 		spdlog::get("combat")->warn("No ultimate attacks left!");
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;

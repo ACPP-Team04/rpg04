@@ -4,15 +4,17 @@
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
-#include "Implementation/Components/InventoryComponent.hpp"
+
+#include <Abstract/Overwordl/Components/InventoryComponent.hpp>
+#include <Abstract/Overwordl/Components/ItemHealstatsComponent.hpp>
 #include <gtest/gtest.h>
 TEST(AISystemTest, executeAILogicHeavyAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -38,8 +40,8 @@ TEST(AISystemTest, executeAILogicLightAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -65,8 +67,8 @@ TEST(AISystemTest, executeAILogicHeal)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -76,6 +78,10 @@ TEST(AISystemTest, executeAILogicHeal)
 
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	InventoryComponent &inventoryComponetE = manager.getComponent<InventoryComponent>(enemy);
+
+	auto healingPack = manager.createEntity<ITEM_HEALSTATS_COMPONENT>();
+	inventoryComponetE.addItem(healingPack, ITEM_TYPE::HEALING);
 	battleComponentE.AP = 2;
 	statsComponentE.health = 20;
 
@@ -92,8 +98,8 @@ TEST(AISystemTest, executeAILogicRest)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -120,8 +126,8 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);

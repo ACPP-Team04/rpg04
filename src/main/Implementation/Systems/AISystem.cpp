@@ -23,10 +23,11 @@ void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 		}
 	}
 	int numberOfHealthPotions = 0;
-	for (auto &item : aiInventory.inventory) {
-		bool IsHealItem = this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(item);
-		if (IsHealItem) {
-			numberOfHealthPotions += 1;
+	for (auto const &[type, entitySet] : aiInventory.items) {
+		for (EntityID id : entitySet) {
+			if (this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(id)) {
+				numberOfHealthPotions++;
+			}
 		}
 	}
 	aiBattle.target = target;
