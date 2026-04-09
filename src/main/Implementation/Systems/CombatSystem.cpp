@@ -7,6 +7,9 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Overwordl/Components/MovementComponent.hpp>
+#include <Abstract/Overwordl/Components/RenderComponent.hpp>
+#include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -16,10 +19,9 @@ auto combatLog = spdlog::stdout_color_mt("combat");
 
 void CombatSystem::update()
 {
-
 	auto view = manager.view<BattleManagerComponent>();
 	if (view.archetypes.size() == 0) {
-		// spdlog::get("combat")->warn("No BattleManagerComponent found");
+		spdlog::get("combat")->info("No BattleManagerComponent found");
 		return;
 	} else {
 		view.each([&](EntityID battleId, BattleManagerComponent &bmc) {
@@ -32,6 +34,13 @@ void CombatSystem::update()
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			if (bmc.isBattleOver) {
 				cleanUpBattle(battleId, currentAttacker, battle.battleState);
+				spdlog::get("combat")->info("Cleanup is done");
+				auto playerOpt = WorldUtils::getPlayer(manager);
+				if (playerOpt.has_value()) {
+					spdlog::get("combat")->info("Player is here!");
+				} else {
+					spdlog::error("Player was accidentally DESTROYED!");
+				}
 				return;
 			}
 			battle.isActiveTurn = true;
@@ -73,8 +82,7 @@ void CombatSystem::update()
 				bmc.isBattleOver = true;
 				break;
 			case BattleState::DEFEAT:
-				// remove battle component from all entities in battle and set isActiveTurn to false
-				spdlog::get("combat")->debug("Defeat! for player");
+				spdlog::get("combat")->info("Defeat! for player");
 				bmc.isBattleOver = true;
 				break;
 			case BattleState::STATS_DISTRIBUTION:
@@ -230,22 +238,39 @@ EntityID CombatSystem::getAttacker(int currentTurnIndex, const std::vector<Entit
 void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState)
 {
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battleManagerId);
+	auto playerID = WorldUtils::getPlayer(manager);
+	std::vector<EntityID> defeatedEnemies;
 
-	// Set health back to max and remove battle component from all entities in battle
-	for (EntityID entity : bmc.participants) {
+	manager.addComponentToEntity<MovementComponent>(playerID.value());
+	auto &move = manager.getComponent<MovementComponent>(playerID.value());
+	move.speed = 3.0f;
+
+	auto participantsCopy = bmc.participants;
+	for (EntityID entity : participantsCopy) {
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		auto &stats = manager.getComponent<StatsComponent>(entity);
 		stats.health = stats.maxHealth;
 		if (entity == winningEntity && battleState == BattleState::VICTORY) {
 			stats.experienceLevel += 1;
 			stats.numberOfFightsWon += 1;
+		} else if (entity != playerID.value()) {
+			defeatedEnemies.push_back(entity);
 		}
 	}
-	// FIX ME: delete battleManagerEntity, needs to be implemented
-	// manager.(battleManagerId);
-	manager.removeComponentFromEntity<BattleManagerComponent>(battleManagerId);
-	spdlog::get("combat")->debug("Cleanup is done");
-	// if deat display the game over screen
+	manager.destroyEntity(battleManagerId);
+
+	if (battleState == BattleState::VICTORY) {
+		for (EntityID defeatedEnemy : defeatedEnemies) {
+			manager.destroyEntity(defeatedEnemy);
+		}
+		spdlog::get("combat")->info("You won the battle!");
+
+	} else if (battleState == BattleState::DEFEAT) {
+		// port away from enemy
+		auto &trans = manager.getComponent<TransformComponent>(playerID.value());
+		trans.position = {0, 1};
+		spdlog::get("combat")->info("You lost the battle! Game over");
+	}
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
