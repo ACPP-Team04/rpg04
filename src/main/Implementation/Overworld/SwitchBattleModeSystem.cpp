@@ -6,6 +6,9 @@
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Overwordl/Components/InventoryComponent.hpp>
+#include <Abstract/Overwordl/Components/MovementComponent.hpp>
+#include <spdlog/spdlog.h>
 
 SwitchBattleModeSystem::SwitchBattleModeSystem(ArchetypeManager &manager) : System(manager) {}
 
@@ -32,19 +35,41 @@ void SwitchBattleModeSystem::update()
 
 	if (player == nullptr)
 		return;
+	icomp->isActive = false;
 
+	if (manager.hasComponent<BattleComponent>(*player))
+		return;
+
+	this->manager.removeComponentFromEntity<MovementComponent>(*player);
 	this->manager.addComponentToEntity<BattleComponent>(*player);
 	this->manager.addComponentToEntity<BattleComponent>(*interActor);
 
 	this->manager.createEntity<BattleManagerComponent>(EntityTag::BATTLEMANAGER);
 
-	EntityID *battleManager = nullptr;
-	this->manager.view<BattleManagerComponent>().each([&](auto &entity, BattleManagerComponent &component) {
-		battleManager = &entity;
+	EntityID battleManagerId = 0;
+	bool found = false;
+
+	this->manager.view<BattleManagerComponent>().each([&](auto entity, BattleManagerComponent &component) {
+		battleManagerId = entity;
 		component.participants = {*player, *interActor};
+		found = true;
 	});
-	this->manager.getComponent<BattleComponent>(*player).battleManagerId = *battleManager;
-	this->manager.getComponent<BattleComponent>(*interActor).battleManagerId = *battleManager;
+
+	if (found) {
+		this->manager.getComponent<BattleComponent>(*player).battleManagerId = battleManagerId;
+		this->manager.getComponent<BattleComponent>(*interActor).battleManagerId = battleManagerId;
+	} else {
+		spdlog::error("BattleManager not found in view!");
+	}
 	this->manager.addComponentToEntity<WeaponComponent>(*player);
 	this->manager.addComponentToEntity<WeaponComponent>(*interActor);
+
+	// DEBUG: Add stats component to enemy and player
+	this->manager.addComponentToEntity<StatsComponent>(*player);
+	this->manager.addComponentToEntity<StatsComponent>(*interActor);
+	// DEBUG: Add inventory for enemy
+	this->manager.addComponentToEntity<InventoryComponent>(*interActor);
+	this->manager.getComponent<StatsComponent>(*interActor).health = 10;
+	spdlog::get("combat")->info("Switched to battle mode");
+	//
 }
