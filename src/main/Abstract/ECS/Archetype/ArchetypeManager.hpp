@@ -221,4 +221,22 @@ class ArchetypeManager {
 		}
 		return std::nullopt;
 	}
+
+	void destroyEntity(EntityID entityId)
+	{
+		if (!hasArchetype(entityId)) {
+			return;
+		}
+		EntityLocation location = getEntityLocation(entityId);
+		removeEntityIdFromArchetype(entityId, location.archetype);
+
+		for (auto &[tag, ids] : entityTagToEntityId) {
+			auto it = std::find(ids.begin(), ids.end(), entityId);
+			if (it != ids.end()) {
+				ids.erase(it);
+				break;
+			}
+		}
+		deleteEntityLocation(entityId);
+	}
 };
