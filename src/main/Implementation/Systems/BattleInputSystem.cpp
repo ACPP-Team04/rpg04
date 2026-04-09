@@ -44,7 +44,7 @@ void BattleInputSystem::connectCallbacks()
 			b.battleState = BattleState::SELECTED_ACTION;
 		}
 	});
-	ui.getButton("BtnHeavy")->onPress([&]() {
+	ui.getButton("BtnHeavy")->onPress([this]() {
 		auto player = WorldUtils::getPlayer(manager);
 		EntityID playerId;
 		if (player.has_value()) {
@@ -107,15 +107,18 @@ void BattleInputSystem::update()
 	auto view = manager.view<BattleManagerComponent>();
 
 	if (view.archetypes.size() == 0) {
-		ui.setHUDVisible(false);
 		return;
 	}
 	auto player = WorldUtils::getPlayer(manager);
-	EntityID playerId;
-	if (player.has_value()) {
-		playerId = player.value();
+	if (!player.has_value()) {
+		return;
 	}
+	EntityID playerId = player.value();
 
+	if (!manager.hasComponent<BattleComponent>(playerId)) {
+		ui.setHUDVisible(false);
+		return;
+	}
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
 	auto &inv = manager.getComponent<InventoryComponent>(playerId);
@@ -147,8 +150,8 @@ void BattleInputSystem::update()
 		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
 		ui.getButton("BtnRest")->setEnabled(true);
 	}
-	auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
-	auto &bmc = manager.getComponent<BattleManagerComponent>(bmcId);
+	// auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
+	// auto &bmc = manager.getComponent<BattleManagerComponent>(bmcId);
 
 	// later logic for enemy HP bar
 	/*
