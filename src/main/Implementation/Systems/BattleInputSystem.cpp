@@ -5,12 +5,13 @@
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
+#include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
-BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui)
-    : System(manager), ui(gui) {
+BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window)
+    : System(manager), ui(gui), window(window) {
 
       };
 
@@ -150,24 +151,21 @@ void BattleInputSystem::update()
 		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
 		ui.getButton("BtnRest")->setEnabled(true);
 	}
-	// auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
-	// auto &bmc = manager.getComponent<BattleManagerComponent>(bmcId);
+	auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
+	auto &bmc = manager.getComponent<BattleManagerComponent>(bmcId);
 
-	// later logic for enemy HP bar
-	/*
 	for (EntityID id : bmc.participants) {
-	    if (manager.getEntityTag(id) == EntityTag::ENEMY) {
-	        if (!ui.hasEnemyBar(id))
-	            ui.createEnemyBar(id);
+		if (id != playerId) {
+			if (!ui.hasEnemyBar(id))
+				ui.createEnemyBar(id);
 
-	        auto &stats = manager.getComponent<StatsComponent>(id);
-	        // auto &transform = manager.getComponent<TransformComponent>(id);
-	        // sf::Vector2f screenPos = window.mapCoordsToPixel(transform.position);
-
-	        // ui.updateEnemyBar(id, stats.health, stats.maxHealth, screenPos);
-	    }
+			auto &stats = manager.getComponent<StatsComponent>(id);
+			auto &transform = manager.getComponent<TransformComponent>(id);
+			sf::Vector2i pixelPos = window.mapCoordsToPixel(transform.position);
+			sf::Vector2f screenPos = sf::Vector2f(pixelPos);
+			ui.updateEnemyBar(id, stats.health, stats.maxHealth, screenPos);
+		}
 	}
-	*/
 }
 
 EntityID BattleInputSystem::selectTarget(std::vector<EntityID> participants, EntityID playerId)

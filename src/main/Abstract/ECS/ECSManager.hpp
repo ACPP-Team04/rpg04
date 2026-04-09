@@ -52,7 +52,7 @@ struct ECSManager {
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
-	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui), aiSystem(manager),
+	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
 	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui), switch_battle_mode_system(manager)
 	{
 		gui.setWindow(window);
