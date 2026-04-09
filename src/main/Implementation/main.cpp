@@ -25,7 +25,6 @@
 
 #include <SFML/Graphics.hpp>
 
-
 void registerComponents()
 {
 	ComponentRegistry::getInstance().registerComponent<TransformComponent>("TRANSFORM_COMPONENT");
@@ -49,8 +48,8 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleComponent>("BATTLE_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
-
-
+	ComponentRegistry::getInstance().registerComponent<WeaponComponent>("WEAPON_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
 }
 
 int main()
@@ -59,14 +58,12 @@ int main()
 	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
 	registerComponents();
 	ECSManager ecsManager = ECSManager(window);
-	WorldParser parser = WorldParser(ecsManager.manager,window);
+	WorldParser parser = WorldParser(ecsManager.manager, window);
 	window.clear(sf::Color::Transparent);
 	parser.update();
 	ecsManager.init();
-
 	window.setFramerateLimit(60);
-	while (window.isOpen())
-	{
+	while (window.isOpen()) {
 		ecsManager.update();
 
 		window.display();
