@@ -24,6 +24,6 @@ class WorldUtils {
 	{
 		std::vector<EntityID> result;
 		manager.view<PlayerComponent>().each([&](auto &entity, auto &component) { result.push_back(entity); });
-		return {};
+		return result;
 	}
 };
