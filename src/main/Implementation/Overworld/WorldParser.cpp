@@ -56,11 +56,6 @@ void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEV
 void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, const WorldComponent &component,
                        LEVEL_NAME level, LAYERTYPE layer)
 {
-	for (const auto &objLayer : worldLayer.objectLayers) {
-		for (const auto &obj : objLayer.objects) {
-			createEntities(obj, manager, level, layer);
-		}
-	}
 	for (const auto &tileLayer : worldLayer.tileLayers) {
 		for (int y = 0; y < component.height; ++y) {
 			for (int x = 0; x < component.width; ++x) {
@@ -80,6 +75,12 @@ void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, 
 	}
 }
 
+struct ObjectJob {
+	const ObjectLayerObject *data;
+	LEVEL_NAME level;
+	LAYERTYPE layer;
+};
+
 void WorldParser::update()
 {
 	std::ifstream f(MAP);
@@ -94,8 +95,27 @@ void WorldParser::update()
 	                            {static_cast<float>(component.widthPixel), static_cast<float>(component.heightPixel)}));
 	window.setView(view);
 
-	for (const auto &[levelName, levelLayer] : component.levelLayers) {
-		for (const auto &[layerType, layer] : levelLayer.layers) {
+	std::vector<ObjectJob> allObjectJobs;
+
+	for (auto &[levelName, levelLayer] : component.levelLayers) {
+		for (auto &[layerType, layer] : levelLayer.layers) {
+			for (const auto &objLayer : layer.objectLayers) {
+				for (const auto &obj : objLayer.objects) {
+					allObjectJobs.push_back({&obj, levelName, layerType});
+				}
+			}
+		}
+	}
+
+	std::sort(allObjectJobs.begin(), allObjectJobs.end(),
+	          [](const ObjectJob &a, const ObjectJob &b) { return a.data->id < b.data->id; });
+
+	for (const auto &job : allObjectJobs) {
+		createEntities(*(job.data), manager, job.level, job.layer);
+	}
+
+	for (auto &[levelName, levelLayer] : component.levelLayers) {
+		for (auto &[layerType, layer] : levelLayer.layers) {
 			intializeEntities(layer, manager, component, levelName, layerType);
 		}
 	}
