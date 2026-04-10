@@ -89,12 +89,14 @@ class ArchetypeManager {
 
 	void addEntityIdsToArchType(EntityID entityId, SharedArchetype newArchType)
 	{
+		if (signatureHasArchetype(newArchType->getArchTypeSignature())) {
+			newArchType = getArchetypeBySignature(newArchType->getArchTypeSignature());
+		}
 		if (!hasArchetype(entityId)) {
 			size_t location = newArchType->registerEntity(entityId);
 			setEntityLocation(entityId, {newArchType, location});
 			return;
 		}
-
 		if (isEntityInArchetype(entityId, newArchType)) {
 			return;
 		}
