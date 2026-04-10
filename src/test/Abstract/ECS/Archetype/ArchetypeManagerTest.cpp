@@ -114,7 +114,6 @@ TEST(ArchetypeManager, addMultiple)
 
 TEST(ArchetypeManagerTest, ProvenDataCorruption)
 {
-	spdlog::set_level(spdlog::level::debug);
 	ArchetypeManager manager;
 
 	std::vector<EntityID> dummies;
@@ -123,7 +122,7 @@ TEST(ArchetypeManagerTest, ProvenDataCorruption)
 	}
 
 	auto playerID = manager.createEntity<StatsComponent, PlayerComponent, MovementComponent>();
-	spdlog::get("combat")->debug("Created player with ID: {}", playerID.getId());
+
 	EXPECT_EQ(true, WorldUtils::getPlayer(manager).has_value());
 	auto player = WorldUtils::getPlayer(manager);
 	EntityID playerId;
