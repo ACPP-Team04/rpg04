@@ -18,51 +18,39 @@ void SwitchBattleModeSystem::update()
 
 	InteractionComponent *icomp = nullptr;
 	EntityID *interActor = nullptr;
-	this->manager.view<InteractionComponent>().each([&](auto &entity, InteractionComponent &component) {
-		if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
-			return;
-		}
+	WorldUtils::viewInCurrentLayer<InteractionComponent>(manager, [&](auto &entity, InteractionComponent &component) {
 		if (!component.isActive) {
 			return;
 		}
 		if (component.action == INTERACTION_ACTION::START_BATTLE) {
 			interActor = &entity;
 			icomp = &component;
-			return;
 		}
 	});
 
 	if (icomp == nullptr)
 		return;
-	EntityID *player = nullptr;
-	this->manager.view<PlayerComponent>().each([&](auto &entity, PlayerComponent &component) { player = &entity; });
+	EntityID player = WorldUtils::getPlayer(manager).value();
 
-	if (player == nullptr)
-		return;
 	icomp->isActive = false;
 
-	if (manager.hasComponent<BattleComponent>(*player))
+	if (manager.hasComponent<BattleComponent>(player))
 		return;
 
-	this->manager.removeComponentFromEntity<MovementComponent>(*player);
-	this->manager.addComponentToEntity<BattleComponent>(*player);
+	this->manager.removeComponentFromEntity<MovementComponent>(player);
+	this->manager.addComponentToEntity<BattleComponent>(player);
 	this->manager.addComponentToEntity<BattleComponent>(*interActor);
 
-	EntityID bManager =
-	    this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>(EntityTag::BATTLEMANAGER);
-	WorldComponent *world = nullptr;
-	manager.view<WorldComponent>().each([&](auto id, auto &comp) { world = &comp; });
-
+	EntityID bManager =this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>(EntityTag::BATTLEMANAGER);
+	WorldComponent *world =WorldUtils::getWorld(manager);
 	if (world == nullptr) {
 		return;
 	}
-
 	this->manager.getComponent<PartOfLayerComponent>(bManager).layer = world->currentLayer;
 	this->manager.getComponent<PartOfLayerComponent>(bManager).level = world->currentLevel;
 
 	EntityID battleManagerId = 0;
 	bool found = false;
-
 	this->manager.view<BattleManagerComponent>().each([&](auto entity, BattleManagerComponent &component) {
 		if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
 			return;
@@ -72,21 +60,25 @@ void SwitchBattleModeSystem::update()
 		found = true;
 	});
 
-	if (found) {
-		this->manager.getComponent<BattleComponent>(*player).battleManagerId = battleManagerId;
-		this->manager.getComponent<BattleComponent>(*interActor).battleManagerId = battleManagerId;
-	} else {
-		spdlog::error("BattleManager not found in view!");
-	}
-	this->manager.addComponentToEntity<WeaponComponent>(*player);
-	this->manager.addComponentToEntity<WeaponComponent>(*interActor);
+	this->manager.getComponent<BattleManagerComponent>(bManager).participants.push_back(player);
+	this->manager.getComponent<BattleManagerComponent>(bManager).participants.push_back(*interActor);
 
-	// DEBUG: Add stats component to enemy and player
-	this->manager.addComponentToEntity<StatsComponent>(*player);
-	this->manager.addComponentToEntity<StatsComponent>(*interActor);
-	// DEBUG: Add inventory for enemy
-	this->manager.addComponentToEntity<InventoryComponent>(*interActor);
-	this->manager.getComponent<StatsComponent>(*interActor).health = 10;
+	this->manager.getComponent<BattleComponent>(player).battleManagerId = battleManagerId;
+	this->manager.getComponent<BattleComponent>(*interActor).battleManagerId = battleManagerId;
+
+	for (auto& entity:{player, *interActor}) {
+		if (!this->manager.hasComponent<BattleComponent>(entity)) {
+			throw std::runtime_error("Batteling entity does not have a battle component");
+		}
+		if (!this->manager.hasComponent<StatsComponent>(entity)) {
+			throw std::runtime_error("Batteling entity does not have a stat component");
+		}
+		if (!this->manager.hasComponent<InventoryComponent>(entity)) {
+			throw std::runtime_error("Batteling entity does not have a inventory component");
+		}
+
+
+	}
 	spdlog::get("combat")->info("Switched to battle mode");
 	//
 }

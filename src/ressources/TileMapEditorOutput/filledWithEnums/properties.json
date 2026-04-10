@@ -653,10 +653,40 @@
         "drawFill": true,
         "members": [
             {
+                "name": "heavyAttackBaseDmg",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "lightAttackBaseDmg",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "scaleStat",
+                "propertyType": "STATS",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "scalingFactor",
+                "propertyType": "WEAPON_SCALING_FACTOR",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "ultimateAttackBaseDmg",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
                 "name": "weapon_type",
                 "propertyType": "ITEM_WEAPONS_TYPE",
-                "type": "string",
-                "value": "MELEEY"
+                "type": "int",
+                "value": 0
             }
         ],
         "useAs": [
@@ -676,10 +706,10 @@
         "name": "ITEM_WEAPONS_TYPE",
         "type": "enum",
         "valuesAsFlags": false,
-        "storageType": "string",
+        "storageType": "int",
         "values": [
-            "MELEEY",
-            "DISTANCE"
+            "DISTANCE",
+            "MELEE"
         ],
         "id": 44
     },
@@ -691,16 +721,48 @@
         "values": [
             "STRENGTH",
             "DEXTERITY",
-            "FAITH"
+            "FAITH",
+            "MAX_HEALTH"
         ],
         "id": 50
     },
     {
-        "name": "PLAYER_STATS_COMPONENT",
+        "name": "STATS_COMPONENT",
         "type": "class",
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "members": [],
+        "members": [
+            {
+                "name": "currentHealth",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "dexterity",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "faith",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "maxHealth",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "strength",
+                "propertyType": "",
+                "type": "int",
+                "value": 0
+            }
+        ],
         "useAs": [
             "property",
             "map",
@@ -865,5 +927,68 @@
             "project"
         ],
         "id": 62
+    },
+    {
+        "name": "WEAPON_SCALING_FACTOR",
+        "type": "enum",
+        "valuesAsFlags": false,
+        "storageType": "int",
+        "values": [
+            "SCALE_A",
+            "SCALE_B",
+            "SCALE_C"
+        ],
+        "id": 63
+    },
+    {
+        "name": "W",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 64
+    },
+    {
+        "name": "EQUIPMENT_COMPONENT",
+        "type": "class",
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "members": [
+            {
+                "name": "healing",
+                "propertyType": "",
+                "type": "int",
+                "value": 1000
+            },
+            {
+                "name": "weapon",
+                "propertyType": "ITEM_WEAPON_STATS_COMPONENT",
+                "type": "class",
+                "value": {}
+            }
+        ],
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ],
+        "id": 65
     }
 ]

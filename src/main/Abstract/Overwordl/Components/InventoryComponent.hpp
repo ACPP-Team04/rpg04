@@ -7,6 +7,8 @@ struct InventoryComponent : public Component<InventoryComponent> {
 	std::vector<EntityID> inventory;
 	std::unordered_map<ITEM_TYPE, std::unordered_set<EntityID>> items;
 
+	std::unordered_map<ITEM_TYPE,EntityID> equiped;
+
 	void readFromJson(const nlohmann::json &j) override {}
 
 	void addItem(EntityID entity, ITEM_TYPE item)
@@ -16,12 +18,17 @@ struct InventoryComponent : public Component<InventoryComponent> {
 		}
 
 		items[item].insert(entity);
+		equiped[item] = entity;
 	}
 
 	void removeItem(EntityID entity, ITEM_TYPE item)
 	{
 		if (items.contains(item)) {
 			items[item].erase(entity);
+
+			if (getEquippedItem(item)==entity) {
+				equiped.erase(item);
+			}
 		}
 	}
 
@@ -43,4 +50,40 @@ struct InventoryComponent : public Component<InventoryComponent> {
 		}
 		return false;
 	}
+
+	bool containsItem(EntityID entity) const
+	{
+		for (auto &item : items) {
+			if (item.second.contains(entity)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	void equip(EntityID itemId,ITEM_TYPE item)
+	{
+		if (containsItem(itemId)) {
+			this->equiped[item] = itemId;
+		}
+		else {
+			throw std::runtime_error("Inventory does not have this item to equip");
+		}
+
+	}
+
+	EntityID getEquippedItem(ITEM_TYPE item)
+	{
+		if (items.contains(item)) {
+			if (equiped.contains(item)) {
+				return equiped[item];
+			}
+		}
+		else {
+			throw std::runtime_error("No equipment");
+		}
+
+	}
+
 };

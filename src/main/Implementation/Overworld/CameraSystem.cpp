@@ -7,23 +7,20 @@
 
 CameraSystem::CameraSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
+
+sf::Vector2f getCameraSize(WorldComponent &world, CameraComponent &camera)
+{
+	return {(float)world.widthPixel * camera.scaleSize.x, (float)world.heightPixel * camera.scaleSize.y};
+}
 void CameraSystem::update()
 {
-	WorldComponent world;
-
-	this->manager.view<WorldComponent>().each(
-	    [&](const EntityID &entity_id, WorldComponent &component) { world = component; });
-	this->manager.view<CameraComponent, TransformComponent>().each(
+	WorldComponent *world = WorldUtils::getWorld(manager);
+	WorldUtils::viewInCurrentLayer<CameraComponent, TransformComponent>(manager,
 	    [&](EntityID &e, CameraComponent &camera, TransformComponent &transform) {
-		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, e)) {
-			    return;
-		    }
 		    camera.center = transform.position;
-
 		    sf::View cameraView;
 		    cameraView.setCenter(camera.center);
-		    cameraView.setSize(
-		        {(float)world.widthPixel * camera.scaleSize.x, (float)world.heightPixel * camera.scaleSize.y});
+		    cameraView.setSize(getCameraSize(*world, camera));
 		    window.setView(cameraView);
 	    });
 }

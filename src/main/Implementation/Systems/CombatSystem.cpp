@@ -14,6 +14,7 @@
 #include <Abstract/Utils/WorldUtlis.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
+#include <sys/stat.h>
 
 auto combatLog = spdlog::stdout_color_mt("combat");
 
@@ -179,7 +180,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 void CombatSystem::takeHealAction(EntityID healer)
 {
 	StatsComponent &statsComponent = manager.getComponent<StatsComponent>(healer);
-	statsComponent.health = std::min(100.0f, statsComponent.health + 10);
+	statsComponent.health = std::min(100.0f, statsComponent.health + 10.0f);
 }
 
 void CombatSystem::restoreAP(EntityID restorator)
@@ -247,7 +248,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 	for (EntityID entity : participantsCopy) {
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		auto &stats = manager.getComponent<StatsComponent>(entity);
-		stats.health = stats.maxHealth;
+		stats.health = stats.getStat(STATS::MAX_HEALTH);
 		if (entity == winningEntity && battleState == BattleState::VICTORY) {
 			stats.experienceLevel += 1;
 			stats.numberOfFightsWon += 1;
@@ -275,30 +276,17 @@ float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, c
                                          float baseAttackDamage)
 {
 	if (weaponComponent.weaponType == WeaponType::MELEE) {
-		return baseAttackDamage + statsComponent.strength * getMultiplicatorFromScalingFactor(weaponComponent);
+		return weaponComponent.lightAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent,weaponComponent);
 	}
 	if (weaponComponent.weaponType == WeaponType::RANGE) {
-		return baseAttackDamage + statsComponent.dexterity * getMultiplicatorFromScalingFactor(weaponComponent);
+		return weaponComponent.heavyAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent,weaponComponent);
 	}
 	throw std::runtime_error("Invalid weapon type");
 }
 
-float CombatSystem::getMultiplicatorFromScalingFactor(const WeaponComponent &weaponComponent)
+float CombatSystem::getMultiplicatorFromScalingFactor(StatsComponent stats,const WeaponComponent &weaponComponent)
 {
-	switch (weaponComponent.scalingFactor) {
-
-	case ScalingFactor::A:
-		return 3.0f;
-
-	case ScalingFactor::B:
-		return 2.0f;
-
-	case ScalingFactor::C:
-		return 1.0f;
-
-	default:
-		throw std::runtime_error("Invalid scaling factor");
-	}
+	return stats.getStat(weaponComponent.scalingStat)*weaponComponent.getScalingFactor();
 }
 
 int CombatSystem::getActionCost(BattleAction action)

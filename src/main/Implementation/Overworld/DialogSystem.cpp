@@ -20,21 +20,14 @@ DialogSystem::DialogSystem(ArchetypeManager &manager, sf::RenderWindow &window) 
 
 void DialogSystem::update()
 {
-
-	InputComponent *input;
-	this->manager.view<InputComponent>().each([&](EntityID id, auto &inputComponent) { input = &inputComponent; });
+	InputComponent &input = WorldUtils::getPlayersComponent<InputComponent>(manager).value();
 
 	sf::Font font;
 	font.openFromFile(FONT);
 	sf::Text text(font);
-	this->manager
-	    .view<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
-	          SpriteComponent>()
-	    .each([&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp,
+	WorldUtils::viewInCurrentLayer<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
+	          SpriteComponent>(manager,[&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp,
 	              auto &transform, auto &render, auto &sprite) {
-		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
-			    return;
-		    }
 		    if (!interactioncomp.isActive) {
 			    dialogComp.isActive = false;
 			    return;
@@ -42,7 +35,7 @@ void DialogSystem::update()
 		    if (!dialogComp.isActive) {
 			    dialogComp.isActive = true;
 		    }
-		    if (input->interact.justPressed) {
+		    if (input.interact.justPressed) {
 			    dialogComp.nextSentence();
 		    }
 		    text.setString(dialogComp.currentSentence);

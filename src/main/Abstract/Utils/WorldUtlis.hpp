@@ -20,6 +20,34 @@ class WorldUtils {
 		return (world && world->currentLayer == targetType && world->currentLevel == level_name);
 	}
 
+	static WorldComponent *getWorld(ArchetypeManager &manager)
+	{
+		WorldComponent *world = nullptr;
+
+		manager.view<WorldComponent>().each([&](auto id, auto &comp) {
+			world = &comp;
+		});
+
+		return world;
+	}
+
+	static bool isPartOfCurrentLayer(ArchetypeManager &manager, const EntityID &entity)
+	{
+		const auto &pComp = manager.getComponent<PartOfLayerComponent>(entity);
+		return isCurrentLayer(manager, pComp.layer, pComp.level);
+	}
+	template <typename ...T, typename Function>
+	static void viewInCurrentLayer(ArchetypeManager &manager,Function &&function)
+	{
+
+		manager.view<T...>().each([&](auto &entity, T&... components) {
+			if (!isPartOfCurrentLayer(manager, entity)) {
+				return;
+			}
+			function(entity, components...);
+		});
+	}
+
 	static std::optional<EntityID> getPlayer(ArchetypeManager &manager)
 	{
 		auto players = getPlayers(manager);
@@ -31,13 +59,21 @@ class WorldUtils {
 	static std::vector<EntityID> getPlayers(ArchetypeManager &manager)
 	{
 		std::vector<EntityID> result;
-		manager.view<PlayerComponent>().each([&](auto &entity, auto &component) { result.push_back(entity); });
+		viewInCurrentLayer<PlayerComponent>(manager,[&](auto &entity, auto &component) { result.push_back(entity); });
 		return result;
 	}
 
-	static bool isPartOfCurrentLayer(ArchetypeManager &manager, const EntityID &entity)
+
+	template <typename T>
+	static std::optional<std::reference_wrapper<T>> getPlayersComponent(ArchetypeManager &manager)
 	{
-		const auto &pComp = manager.getComponent<PartOfLayerComponent>(entity);
-		return isCurrentLayer(manager, pComp.layer, pComp.level);
+		auto player = getPlayer(manager);
+		if (!player.has_value()) {
+			throw std::runtime_error("No player found");
+		}
+		if (!manager.hasComponent<T>(player.value())) {
+			return std::nullopt;
+		}
+		return std::ref(manager.getComponent<T>(player.value()));
 	}
 };

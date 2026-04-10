@@ -2,8 +2,12 @@
 
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
+#include "Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -80,6 +84,29 @@ struct ObjectJob {
 	LEVEL_NAME level;
 	LAYERTYPE layer;
 };
+
+void parseRawEquipmentComponent(ArchetypeManager &manager,const WorldComponent &component)
+{
+	std::vector<EntityID> entityIds;
+	manager.view<InventoryComponent,START_EQUIPMENT_COMPONENT>().each([&](auto &entity,InventoryComponent &icomp,START_EQUIPMENT_COMPONENT &eqipComp) {
+		entityIds.push_back(entity.getId());
+		EntityID weapon = manager.createEntity<ItemComponent,WeaponComponent>();
+		manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
+		manager.getComponent<WeaponComponent>(weapon).readFromJson(eqipComp.rawWeaponComponent);
+		EntityID healing = manager.createEntity<ItemComponent,ITEM_HEALSTATS_COMPONENT>();
+		manager.getComponent<ItemComponent>(healing).itemType = ITEM_TYPE::HEALING;
+		manager.getComponent<ITEM_HEALSTATS_COMPONENT>(healing).healAmount=eqipComp.healing;
+
+		icomp.addItem(weapon,ITEM_TYPE::WEAPON);
+		icomp.addItem(healing,ITEM_TYPE::HEALING);
+
+	});
+
+	for (const auto &entity : entityIds) {
+		manager.removeComponentFromEntity<START_EQUIPMENT_COMPONENT>(entity);
+	}
+
+}
 
 void WorldParser::update()
 {

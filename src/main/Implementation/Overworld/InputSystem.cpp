@@ -11,10 +11,7 @@ auto updateKey = [](KeyState &key, bool isDown) {
 };
 void InputSystem::update()
 {
-	manager.view<InputComponent>().each([this](const EntityID &id, InputComponent &comp) {
-		if (!WorldUtils::isPartOfCurrentLayer(this->manager, id)) {
-			return;
-		}
+	WorldUtils::viewInCurrentLayer<InputComponent>(manager,[&](const EntityID &id, InputComponent &comp) {
 		updateKey(comp.moveLeft, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A));
 		updateKey(comp.moveRight, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D));
 		updateKey(comp.moveDown, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S));

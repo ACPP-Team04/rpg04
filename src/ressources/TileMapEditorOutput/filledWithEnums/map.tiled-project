@@ -362,10 +362,37 @@
             "id": 26,
             "members": [
                 {
+                    "name": "heavyAttackBaseDmg",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "lightAttackBaseDmg",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "scaleStat",
+                    "propertyType": "STATS",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "scalingFactor",
+                    "propertyType": "WEAPON_SCALING_FACTOR",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "ultimateAttackBaseDmg",
+                    "type": "int",
+                    "value": 0
+                },
+                {
                     "name": "weapon_type",
                     "propertyType": "ITEM_WEAPONS_TYPE",
-                    "type": "string",
-                    "value": "MELEEY"
+                    "type": "int",
+                    "value": 0
                 }
             ],
             "name": "ITEM_WEAPON_STATS_COMPONENT",
@@ -385,11 +412,11 @@
         {
             "id": 29,
             "name": "ITEM_WEAPONS_TYPE",
-            "storageType": "string",
+            "storageType": "int",
             "type": "enum",
             "values": [
-                "MELEEY",
-                "DISTANCE"
+                "DISTANCE",
+                "MELEE"
             ],
             "valuesAsFlags": false
         },
@@ -768,9 +795,55 @@
             "values": [
                 "STRENGTH",
                 "DEXTERITY",
-                "FAITH"
+                "FAITH",
+                "MAX_HEALTH"
             ],
             "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 41,
+            "members": [
+                {
+                    "name": "currentHealth",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "dexterity",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "faith",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "maxHealth",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "strength",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "STATS_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
         },
         {
             "color": "#ffa0a0a4",
@@ -922,6 +995,70 @@
             "members": [
             ],
             "name": "TRANSFORM_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 42,
+            "name": "WEAPON_SCALING_FACTOR",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "SCALE_A",
+                "SCALE_B",
+                "SCALE_C"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 43,
+            "members": [
+            ],
+            "name": "W",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 44,
+            "members": [
+                {
+                    "name": "healing",
+                    "type": "int",
+                    "value": 1000
+                },
+                {
+                    "name": "weapon",
+                    "propertyType": "ITEM_WEAPON_STATS_COMPONENT",
+                    "type": "class",
+                    "value": {
+                    }
+                }
+            ],
+            "name": "EQUIPMENT_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",

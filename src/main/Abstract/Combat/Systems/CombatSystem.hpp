@@ -38,6 +38,6 @@ class CombatSystem : public System {
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
 	                           float baseAttackDamage);
-	float getMultiplicatorFromScalingFactor(const WeaponComponent &weaponComponent);
+	float getMultiplicatorFromScalingFactor(const StatsComponent stats,const WeaponComponent &weaponComponent);
 	AISystem &aiSystem;
 };

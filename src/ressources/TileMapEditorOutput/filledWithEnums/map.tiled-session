@@ -26,20 +26,20 @@
         },
         "map.tmj": {
             "expandedGroupLayers": [
-                2,
-                8,
-                5,
-                3,
-                6,
                 4,
-                7,
-                12
+                5,
+                8,
+                6,
+                3,
+                12,
+                2,
+                7
             ],
             "scale": 1.0258,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 188.14583739520373,
-                "y": 269.5457204133359
+                "x": 128.19263014232797,
+                "y": 58.978358354455054
             }
         },
         "map.tmj#Tilesheet_WithEnums": {
@@ -61,7 +61,7 @@
         "map.tmj"
     ],
     "project": "map.tiled-project",
-    "property.type": "INTERACTION_COMPONENT",
+    "property.type": "EQUIPMENT_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

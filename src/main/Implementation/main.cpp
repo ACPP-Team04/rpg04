@@ -12,7 +12,6 @@
 #include "Abstract/Overwordl/Components/IsLockedComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
-#include "Abstract/Overwordl/Components/ItemWeaponStatsComponent.hpp"
 #include "Abstract/Overwordl/Components/MovementComponent.hpp"
 #include "Abstract/Overwordl/Components/NPC_COMPONENT.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
@@ -42,13 +41,12 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BoundIngBoxComponent>("BOUNDING_BOX_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ItemComponent>("ITEM_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<ITEM_WEAPON_STATS_KOMPONENT>("ITEM_WEAPON_STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InventoryComponent>("INVENTORY_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleComponent>("BATTLE_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
-	ComponentRegistry::getInstance().registerComponent<WeaponComponent>("WEAPON_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<WeaponComponent>("ITEM_WEAPON_STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
 }
 

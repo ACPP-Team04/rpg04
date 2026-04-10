@@ -27,11 +27,8 @@ void resolveCollision(CollisionComponent &collision, TransformComponent &transfo
 void CollisionSystem::update()
 {
 	std::vector<EntityID> entities;
-	this->manager.view<CollisionComponent, BoundIngBoxComponent, TransformComponent>().each(
+	WorldUtils::viewInCurrentLayer<CollisionComponent, BoundIngBoxComponent, TransformComponent>(manager,
 	    [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) {
-		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entityA)) {
-			    return;
-		    }
 		    entities.push_back(entityA);
 	    });
 
