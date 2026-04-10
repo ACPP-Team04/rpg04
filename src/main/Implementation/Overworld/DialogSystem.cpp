@@ -9,6 +9,7 @@
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/Components/SpriteComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -31,6 +32,9 @@ void DialogSystem::update()
 	          SpriteComponent>()
 	    .each([&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp,
 	              auto &transform, auto &render, auto &sprite) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
+			    return;
+		    }
 		    if (!interactioncomp.isActive) {
 			    dialogComp.isActive = false;
 			    return;

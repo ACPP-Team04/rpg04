@@ -4,6 +4,7 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
 #include <Abstract/Overwordl/Components/InventoryComponent.hpp>
@@ -18,6 +19,9 @@ void SwitchBattleModeSystem::update()
 	InteractionComponent *icomp = nullptr;
 	EntityID *interActor = nullptr;
 	this->manager.view<InteractionComponent>().each([&](auto &entity, InteractionComponent &component) {
+		if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
+			return;
+		}
 		if (!component.isActive) {
 			return;
 		}
@@ -44,12 +48,25 @@ void SwitchBattleModeSystem::update()
 	this->manager.addComponentToEntity<BattleComponent>(*player);
 	this->manager.addComponentToEntity<BattleComponent>(*interActor);
 
-	this->manager.createEntity<BattleManagerComponent>(EntityTag::BATTLEMANAGER);
+	EntityID bManager =
+	    this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>(EntityTag::BATTLEMANAGER);
+	WorldComponent *world = nullptr;
+	manager.view<WorldComponent>().each([&](auto id, auto &comp) { world = &comp; });
+
+	if (world == nullptr) {
+		return;
+	}
+
+	this->manager.getComponent<PartOfLayerComponent>(bManager).layer = world->currentLayer;
+	this->manager.getComponent<PartOfLayerComponent>(bManager).level = world->currentLevel;
 
 	EntityID battleManagerId = 0;
 	bool found = false;
 
 	this->manager.view<BattleManagerComponent>().each([&](auto entity, BattleManagerComponent &component) {
+		if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
+			return;
+		}
 		battleManagerId = entity;
 		component.participants = {*player, *interActor};
 		found = true;

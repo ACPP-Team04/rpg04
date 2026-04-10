@@ -6,6 +6,7 @@
 #include "Abstract/Overwordl/Components/SwitchLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 SwitchLayerSystem::SwitchLayerSystem(ArchetypeManager &manager) : System(manager) {}
 
@@ -20,6 +21,9 @@ void SwitchLayerSystem::update()
 
 	this->manager.view<SwitchLayerComponent, InteractionComponent>().each(
 	    [&](const EntityID &id, SwitchLayerComponent &lcomp, InteractionComponent &icomp) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, id)) {
+			    return;
+		    }
 		    if (icomp.action != INTERACTION_ACTION::SWITCH_LAYER) {
 			    return;
 		    }
@@ -35,6 +39,9 @@ void SwitchLayerSystem::update()
 
 	this->manager.view<PlayerComponent, PartOfLayerComponent>().each(
 	    [&](EntityID &id, auto &player, auto &partOfLayer) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, id)) {
+			    return;
+		    }
 		    if (partOfLayer.layer != currentLayer->currentLayer || partOfLayer.level != currentLayer->currentLevel)
 			    return;
 

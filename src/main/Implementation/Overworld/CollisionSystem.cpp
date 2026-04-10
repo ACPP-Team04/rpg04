@@ -7,6 +7,7 @@
 #include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/CollisionComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -27,7 +28,12 @@ void CollisionSystem::update()
 {
 	std::vector<EntityID> entities;
 	this->manager.view<CollisionComponent, BoundIngBoxComponent, TransformComponent>().each(
-	    [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) { entities.push_back(entityA); });
+	    [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entityA)) {
+			    return;
+		    }
+		    entities.push_back(entityA);
+	    });
 
 	for (int i = 0; i < entities.size(); i++) {
 		for (int j = 0; j < entities.size(); j++) {

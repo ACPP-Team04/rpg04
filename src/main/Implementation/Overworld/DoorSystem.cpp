@@ -4,6 +4,7 @@
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/IsLockedComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 #include <mutex>
 
@@ -27,6 +28,9 @@ void DoorSystem::update()
 	}
 	this->manager.view<InteractionComponent, IsLockedComponent>().each(
 	    [&](EntityID id, InteractionComponent &icomp, IsLockedComponent &lcomp) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, id)) {
+			    return;
+		    }
 		    if (!icomp.isActive) {
 			    return;
 		    }

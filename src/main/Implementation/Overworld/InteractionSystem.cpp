@@ -5,6 +5,7 @@
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 #include <magic_enum/magic_enum.hpp>
 
@@ -18,6 +19,9 @@ void InteractionSystem::update()
 	bool playerFound = false;
 	this->manager.view<PlayerComponent, InputComponent, CollisionComponent, BoundIngBoxComponent>().each(
 	    [&](auto &entity, auto &component, auto &input, auto &collision, auto &bounds) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
+			    return;
+		    }
 		    player = &entity;
 		    playerFound = true;
 	    });
@@ -30,6 +34,12 @@ void InteractionSystem::update()
 	bool candidateFound = false;
 	this->manager.view<InteractionComponent, BoundIngBoxComponent>().each(
 	    [&](auto &interactableEntity, InteractionComponent &component, BoundIngBoxComponent &bb) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, interactableEntity)) {
+			    component.inRange = false;
+			    component.isActive = false;
+			    component.mustLeaveRadius = false;
+			    return;
+		    }
 		    component.inRange = false;
 
 		    auto &playerBB = manager.getComponent<BoundIngBoxComponent>(*player);

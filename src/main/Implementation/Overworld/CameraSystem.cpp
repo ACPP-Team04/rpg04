@@ -3,6 +3,7 @@
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 CameraSystem::CameraSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
@@ -14,6 +15,9 @@ void CameraSystem::update()
 	    [&](const EntityID &entity_id, WorldComponent &component) { world = component; });
 	this->manager.view<CameraComponent, TransformComponent>().each(
 	    [&](EntityID &e, CameraComponent &camera, TransformComponent &transform) {
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, e)) {
+			    return;
+		    }
 		    camera.center = transform.position;
 
 		    sf::View cameraView;
