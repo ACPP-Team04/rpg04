@@ -96,7 +96,7 @@ struct ECSManager {
 		switch_battle_mode_system.update();
 		battleInputSystem.update();
 		combatSystem.update();
-
+		boundingBoxSystem.update();
 		statsDistributorSystem.update();
 		dialogSystem.update();
 		item_system.update();
