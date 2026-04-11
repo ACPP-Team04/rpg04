@@ -62,6 +62,16 @@
                                  "opacity":1,
                                  "properties":[
                                         {
+                                         "name":"cam",
+                                         "propertytype":"CAMERA_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "scale_x":1,
+                                             "scale_y":1
+                                            }
+                                        }, 
+                                        {
                                          "name":"collision",
                                          "propertytype":"COLLISION_COMPONENT",
                                          "type":"class",
@@ -885,6 +895,67 @@
                                  "width":0,
                                  "x":128.680054591538,
                                  "y":58.4909339052447
+                                }, 
+                                {
+                                 "height":0,
+                                 "id":17,
+                                 "name":"",
+                                 "opacity":1,
+                                 "properties":[
+                                        {
+                                         "name":"interact",
+                                         "propertytype":"INTERACTION_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "action":4,
+                                             "focusRadius":65,
+                                             "interactionKey":26,
+                                             "trigger":0
+                                            }
+                                        }, 
+                                        {
+                                         "name":"inventory",
+                                         "propertytype":"INVENTORY_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }, 
+                                        {
+                                         "name":"medin",
+                                         "propertytype":"SPRITE_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+                                             "texture":67
+                                            }
+                                        }, 
+                                        {
+                                         "name":"render",
+                                         "propertytype":"RENDER_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }, 
+                                        {
+                                         "name":"transform",
+                                         "propertytype":"TRANSFORM_COMPONENT",
+                                         "type":"class",
+                                         "value":
+                                            {
+
+                                            }
+                                        }],
+                                 "rotation":0,
+                                 "type":"",
+                                 "visible":true,
+                                 "width":0,
+                                 "x":261.25950477676,
+                                 "y":213.491908754143
                                 }],
                          "opacity":1,
                          "properties":[
@@ -918,7 +989,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":17,
+ "nextobjectid":23,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
