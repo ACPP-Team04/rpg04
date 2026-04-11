@@ -121,7 +121,17 @@ TEST(ArchetypeManagerTest, ProvenDataCorruption)
 		dummies.push_back(manager.createEntity<StatsComponent, BattleComponent, MovementComponent>());
 	}
 
-	auto playerID = manager.createEntity<StatsComponent, PlayerComponent, MovementComponent>();
+	auto playerID = manager.createEntity<StatsComponent, PlayerComponent, MovementComponent, PartOfLayerComponent>();
+	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(playerID);
+
+	auto world = manager.createEntity<WorldComponent>();
+	auto &worldLayer = manager.getComponent<WorldComponent>(world);
+
+	worldLayer.currentLayer = LAYERTYPE::OVERWORLD;
+	worldLayer.currentLevel = LEVEL_NAME::LEVEL1;
+
+	playerLayer.layer = LAYERTYPE::OVERWORLD;
+	playerLayer.level = LEVEL_NAME::LEVEL1;
 
 	EXPECT_EQ(true, WorldUtils::getPlayer(manager).has_value());
 	auto player = WorldUtils::getPlayer(manager);

@@ -28,7 +28,7 @@ TEST(AISystemTest, executeAILogicHeavyAttack)
 	statsComponentE.health = 90;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_A;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -55,7 +55,7 @@ TEST(AISystemTest, executeAILogicLightAttack)
 	statsComponentE.health = 90;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -83,10 +83,10 @@ TEST(AISystemTest, executeAILogicHeal)
 	auto healingPack = manager.createEntity<ITEM_HEALSTATS_COMPONENT>();
 	inventoryComponetE.addItem(healingPack, ITEM_TYPE::HEALING);
 	battleComponentE.AP = 2;
-	statsComponentE.health = 20;
+	statsComponentE.health = 19;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -113,7 +113,7 @@ TEST(AISystemTest, executeAILogicRest)
 	statsComponentE.health = 90;
 	battleComponentE.numberOfUltimateAttacksUsed = 1;
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -141,7 +141,7 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	statsComponentE.health = 90;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
