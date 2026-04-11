@@ -8,27 +8,23 @@ struct StatsComponent : Component<StatsComponent> {
 	float experience{1};
 	int experienceLevel{1};
 	int numberOfFightsWon{0};
-	int health{0};
-	std::unordered_map<STATS,int> stats;
+	int health{100};
+	std::unordered_map<STATS, int> stats;
 	void readFromJson(const nlohmann::json &j) override
 	{
-		int maxHealth = j.value("maxHealt",1);
-		int strength = j.value("strength",1);
-		int dexterity = j.value("dexterity",1);
-		int faith = j.value("faith",1);
-		int health = j.value("health",1);
+		int maxHealth = j.value("maxHealt", 100);
+		int strength = j.value("strength", 1);
+		int dexterity = j.value("dexterity", 1);
+		int faith = j.value("faith", 1);
+		this->health = maxHealth;
 
 		addScalableStats(STATS::MAX_HEALTH, maxHealth);
 		addScalableStats(STATS::STRENGTH, strength);
 		addScalableStats(STATS::DEXTERITY, dexterity);
-		addScalableStats(STATS::FAITH,faith);
-
+		addScalableStats(STATS::FAITH, faith);
 	}
 
-	void addScalableStats(STATS stat,int factor)
-	{
-		stats[stat] = factor;
-	}
+	void addScalableStats(STATS stat, int factor) { stats[stat] = factor; }
 
 	int getStat(STATS stat)
 	{
