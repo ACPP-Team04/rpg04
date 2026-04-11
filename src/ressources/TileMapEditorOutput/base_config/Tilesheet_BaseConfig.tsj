@@ -66,6 +66,19 @@
                 }]
         }, 
         {
+         "id":316,
+         "properties":[
+                {
+                 "name":"shotgun",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+
+                    }
+                }]
+        }, 
+        {
          "id":339,
          "properties":[
                 {
@@ -109,6 +122,45 @@
                 }]
         }, 
         {
+         "id":361,
+         "properties":[
+                {
+                 "name":"gun",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+
+                    }
+                }]
+        }, 
+        {
+         "id":406,
+         "properties":[
+                {
+                 "name":"knife",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+
+                    }
+                }]
+        }, 
+        {
+         "id":452,
+         "properties":[
+                {
+                 "name":"healingPack",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+                     "variant":"idle"
+                    }
+                }]
+        }, 
+        {
          "id":479,
          "properties":[
                 {
@@ -118,6 +170,19 @@
                  "value":
                     {
                      "variant":"idle"
+                    }
+                }]
+        }, 
+        {
+         "id":496,
+         "properties":[
+                {
+                 "name":"config",
+                 "propertytype":"TileConfig",
+                 "type":"class",
+                 "value":
+                    {
+
                     }
                 }]
         }],

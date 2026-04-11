@@ -89,12 +89,14 @@ class ArchetypeManager {
 
 	void addEntityIdsToArchType(EntityID entityId, SharedArchetype newArchType)
 	{
+		if (signatureHasArchetype(newArchType->getArchTypeSignature())) {
+			newArchType = getArchetypeBySignature(newArchType->getArchTypeSignature());
+		}
 		if (!hasArchetype(entityId)) {
 			size_t location = newArchType->registerEntity(entityId);
 			setEntityLocation(entityId, {newArchType, location});
 			return;
 		}
-
 		if (isEntityInArchetype(entityId, newArchType)) {
 			return;
 		}
@@ -141,6 +143,16 @@ class ArchetypeManager {
 	EntityID createEntity()
 	{
 		EntityID entityId = EntityID();
+		this->addEntityIdsToArchType<T...>(entityId);
+		return entityId;
+	}
+	template <typename... T>
+	EntityID createEntityWithId(int id)
+	{
+		auto entityId = EntityID(id);
+		if (hasArchetype(entityId)) {
+			throw std::runtime_error("Entity with this id already exists!");
+		}
 		this->addEntityIdsToArchType<T...>(entityId);
 		return entityId;
 	}
@@ -210,5 +222,23 @@ class ArchetypeManager {
 			}
 		}
 		return std::nullopt;
+	}
+
+	void destroyEntity(EntityID entityId)
+	{
+		if (!hasArchetype(entityId)) {
+			return;
+		}
+		EntityLocation location = getEntityLocation(entityId);
+		removeEntityIdFromArchetype(entityId, location.archetype);
+
+		for (auto &[tag, ids] : entityTagToEntityId) {
+			auto it = std::find(ids.begin(), ids.end(), entityId);
+			if (it != ids.end()) {
+				ids.erase(it);
+				break;
+			}
+		}
+		deleteEntityLocation(entityId);
 	}
 };

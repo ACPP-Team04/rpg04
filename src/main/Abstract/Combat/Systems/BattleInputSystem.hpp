@@ -10,9 +10,10 @@ class BattleInputSystem : public System {
   private:
 	BattleUI ui;
 	void connectCallbacks();
+	sf::RenderWindow &window;
 
   public:
-	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui);
+	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window);
 
 	void update() override;
 	void init();

@@ -16,7 +16,7 @@ class CombatSystem : public System {
 
 	void executeBattleAction(EntityID attacker, EntityID defender, BattleAction typeOfAction);
 
-	void takeHealAction(EntityID healer);
+	void takeHealAction(EntityID healer, int faith, int maxHealth);
 
 	void restoreAP(EntityID restorator);
 
@@ -37,7 +37,7 @@ class CombatSystem : public System {
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
-	                           float baseAttackDamage);
-	float getMultiplicatorFromScalingFactor(const WeaponComponent &weaponComponent);
+	                           BattleAction action);
+	float getMultiplicatorFromScalingFactor(const StatsComponent stats, const WeaponComponent &weaponComponent);
 	AISystem &aiSystem;
 };

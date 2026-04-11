@@ -2,7 +2,14 @@
 
 #include "Abstract/AssetManager/AssetManager.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include "Abstract/Overwordl/Components/DialogComponent.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/NPC_COMPONENT.hpp"
+#include "Abstract/Overwordl/Components/RenderComponent.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -13,36 +20,27 @@ DialogSystem::DialogSystem(ArchetypeManager &manager, sf::RenderWindow &window) 
 
 void DialogSystem::update()
 {
-
-	InputComponent *input;
-	this->manager.view<InputComponent>().each([&](EntityID id, auto &inputComponent) { input = &inputComponent; });
+	InputComponent &input = WorldUtils::getPlayersComponent<InputComponent>(manager).value();
 
 	sf::Font font;
 	font.openFromFile(FONT);
 	sf::Text text(font);
-	this->manager
-	    .view<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
-	          SpriteComponent>()
-	    .each([&](auto &entity, auto &interactioncomp, auto &npccomponent, DialogComponent &component, auto &transform,
-	              auto &render, auto &sprite) {
+	WorldUtils::viewInCurrentLayer<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
+	          SpriteComponent>(manager,[&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp,
+	              auto &transform, auto &render, auto &sprite) {
 		    if (!interactioncomp.isActive) {
-			    component.isActive = false;
+			    dialogComp.isActive = false;
 			    return;
 		    }
-
-		    std::string dialog;
-		    if (input->interact.justPressed) {
-			    component.isActive = true;
-			    component.nextSentence();
+		    if (!dialogComp.isActive) {
+			    dialogComp.isActive = true;
 		    }
-
-		    if (component.isActive) {
-			    dialog = component.currentSentence;
+		    if (input.interact.justPressed) {
+			    dialogComp.nextSentence();
 		    }
-
-		    text.setString(dialog);
-		    text.setCharacterSize(component.characterSize);
-		    text.setFillColor(component.color);
+		    text.setString(dialogComp.currentSentence);
+		    text.setCharacterSize(dialogComp.characterSize);
+		    text.setFillColor(dialogComp.color);
 		    text.setPosition(transform.position);
 		    window.draw(text);
 	    });

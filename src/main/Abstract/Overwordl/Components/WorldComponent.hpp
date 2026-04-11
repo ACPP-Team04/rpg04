@@ -3,6 +3,7 @@
 #include "Abstract/TILE_ENUMS.hpp"
 #include "Abstract/Utils/Color.hpp"
 
+#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <nlohmann/json_fwd.hpp>
@@ -10,155 +11,6 @@
 #include <unordered_set>
 #include <vector>
 
-struct TransformComponent : public Component<TransformComponent> {
-	sf::Vector2f position;
-	sf::Vector2f scale{1.0f, 1.0f};
-	sf::Angle rotation = sf::Angle::Zero;
-	sf::Vector2f previousPosition;
-
-	void readFromJson(const nlohmann::json &j) override
-	{
-
-		this->position.x = j.value("position_x", 0.0f);
-		this->position.y = j.value("position_y", 0.0f);
-		this->scale.x = j.value("scale_x", 1.0f);
-		this->scale.y = j.value("scale_y", 1.0f);
-		this->rotation = sf::degrees(j.value("rotation", 0.0f));
-	}
-};
-
-struct KeyState {
-	bool pressed = false;
-	bool justPressed = false;
-};
-
-struct InputComponent : public Component<InputComponent> {
-	KeyState moveUp, moveDown, moveRight, moveLeft, menuButton, interact;
-
-	void readFromJson(const nlohmann::json &j) override
-	{
-		this->moveUp = KeyState(j.value("up", false));
-		this->moveDown = KeyState(j.value("down", false));
-		this->moveRight = KeyState(j.value("right", false));
-		this->moveLeft = KeyState(j.value("left", false));
-		this->menuButton = KeyState(j.value("button", false));
-		this->interact = KeyState(j.value("interact", false));
-	}
-};
-
-struct SpriteComponent : public Component<SpriteComponent> {
-	TileType textureId;
-
-	void readFromJson(const nlohmann::json &j) override
-	{
-		this->textureId = static_cast<TileType>(j.value("texture", 0));
-	}
-};
-
-struct RenderComponent : public Component<RenderComponent> {
-
-	int z_layer;
-	void readFromJson(const nlohmann::json &j) override {}
-};
-
-struct MovementComponent : public Component<MovementComponent> {
-	float speed;
-
-	void readFromJson(const nlohmann::json &j) override { this->speed = j.value("speed", 1.0f); };
-};
-
-struct CameraComponent : public Component<CameraComponent> {
-	sf::Vector2f center;
-	sf::Vector2f scaleSize;
-
-	void readFromJson(const nlohmann::json &j) override
-	{
-		scaleSize.x = j.value("scale_x", 1.0f);
-		scaleSize.y = j.value("scale_y", 1.0f);
-	}
-};
-
-struct NPC_Component : public Component<NPC_Component> {
-
-	void readFromJson(const nlohmann::json &j) override {}
-};
-
-struct PlayerComponent : public Component<PlayerComponent> {
-
-	void readFromJson(const nlohmann::json &j) override {}
-};
-
-struct DialogComponent : public Component<DialogComponent> {
-	std::vector<std::string> sentences;
-	sf::Keyboard::Key startsWith;
-	sf::Color color;
-	int characterSize;
-	std::string currentSentence;
-	int senetnceId;
-	bool isActive;
-	void readFromJson(const nlohmann::json &j) override
-	{
-		std::string raw = j.value("dialogSentences", "[]");
-		auto parsed = nlohmann::json::parse(raw);
-		for (const auto &sentence : parsed) {
-			sentences.push_back(sentence.get<std::string>());
-		}
-		startsWith = static_cast<sf::Keyboard::Key>(j.value("startsWithButton", 0));
-		color = parseColorString(j.value("fillColor", "#f7f7f7"));
-		characterSize = j.value("characterSize", 10);
-		currentSentence = this->sentences.back();
-	}
-
-	std::string getKeyAsString(sf::Keyboard::Key key)
-	{
-		if (key == sf::Keyboard::Key::F) {
-			return "F";
-		} else
-			return "G";
-	}
-
-	std::string getSentence() { return currentSentence; }
-
-	void nextSentence()
-	{
-		int newSentence = senetnceId % sentences.size();
-		currentSentence = sentences[newSentence];
-		senetnceId++;
-	}
-};
-
-struct InteractionComponent : public Component<InteractionComponent> {
-
-	bool isActive;
-
-	void readFromJson(const nlohmann::json &j) override { isActive = false; }
-};
-
-struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
-	LEVEL_NAME level;
-	LAYERTYPE layer;
-	void readFromJson(const nlohmann::json &j) override
-	{
-		level = (LEVEL_NAME)j.value("level", 0);
-		layer = (LAYERTYPE)j.value("layer", 0);
-	}
-};
-
-struct PartOfLayerComponent : public Component<PartOfLayerComponent> {
-	LEVEL_NAME level;
-	LAYERTYPE layer;
-	void readFromJson(const nlohmann::json &j) override {}
-};
-
-struct CollisionComponent : public Component<CollisionComponent> {
-	COLLISION_ACTION action;
-	bool isStatic;
-	void readFromJson(const nlohmann::json &j) override
-	{
-		action = (COLLISION_ACTION)j.value("action", 0);
-		isStatic = j.value("isStatic", false);
-	}
-};
 struct tileProperty {
 	std::string name;
 	std::string type;
@@ -167,9 +19,11 @@ struct tileProperty {
 
 	void readFromJson(const nlohmann::json &data)
 	{
+		std::cout << data << std::endl;
 		name = data.value("name", "");
 		type = data.value("type", "");
 		value = data.value("value", nlohmann::json());
+
 		propertytype = data.value("propertytype", "");
 	}
 };
@@ -276,6 +130,8 @@ struct WorldComponent : public Component<WorldComponent> {
 	std::unordered_map<LEVEL_NAME, LevelLayer> levelLayers;
 	LEVEL_NAME currentLevel = (LEVEL_NAME)0;
 	LAYERTYPE currentLayer = (LAYERTYPE)0;
+	std::unordered_map<LAYERTYPE, MENUS> menus;
+	bool menuOpened = false;
 
 	void readFromJson(const nlohmann::json &j) override
 	{
@@ -298,6 +154,8 @@ struct WorldComponent : public Component<WorldComponent> {
 		}
 		throw std::runtime_error("LayerConfig property not found for key: " + key);
 	}
+
+	void register_menu(LAYERTYPE layer, MENUS menu) { this->menus.insert(std::make_pair(layer, menu)); }
 
 	void unfoldLayers(const nlohmann::json &j, const nlohmann::json &rootJson)
 	{

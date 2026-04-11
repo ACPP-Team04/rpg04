@@ -61,11 +61,6 @@
                     "propertyType": "COLLISION_ACTION",
                     "type": "int",
                     "value": 0
-                },
-                {
-                    "name": "isStatic",
-                    "type": "bool",
-                    "value": false
                 }
             ],
             "name": "COLLISION_COMPONENT",
@@ -133,12 +128,6 @@
                     "name": "fillColor",
                     "type": "color",
                     "value": "#fff7f7f7"
-                },
-                {
-                    "name": "startsWithButton",
-                    "propertyType": "Keys",
-                    "type": "int",
-                    "value": 0
                 }
             ],
             "name": "DIALOG_COMPONENT",
@@ -154,6 +143,42 @@
                 "wangset",
                 "project"
             ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 35,
+            "members": [
+                {
+                    "name": "open",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "DOOR_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 36,
+            "name": "DOOR_ENTRANCE_CONDITION",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "BY_KEY",
+                "NO_CONDITION"
+            ],
+            "valuesAsFlags": false
         },
         {
             "color": "#ffa0a0a4",
@@ -176,10 +201,47 @@
             ]
         },
         {
+            "id": 23,
+            "name": "INTERACTION_ACTION",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "START_DIALOG",
+                "PICK_ITEM",
+                "DOOR_INTERACTION",
+                "SWITCH_LAYER",
+                "START_BATTLE"
+            ],
+            "valuesAsFlags": false
+        },
+        {
             "color": "#ffa0a0a4",
             "drawFill": true,
             "id": 19,
             "members": [
+                {
+                    "name": "action",
+                    "propertyType": "INTERACTION_ACTION",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "focusRadius",
+                    "type": "float",
+                    "value": 64
+                },
+                {
+                    "name": "interactionKey",
+                    "propertyType": "Keys",
+                    "type": "int",
+                    "value": 6
+                },
+                {
+                    "name": "trigger",
+                    "propertyType": "INTERACTION_TRIGGER",
+                    "type": "int",
+                    "value": 1
+                }
             ],
             "name": "INTERACTION_COMPONENT",
             "type": "class",
@@ -196,12 +258,174 @@
             ]
         },
         {
+            "id": 22,
+            "name": "INTERACTION_TRIGGER",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "onEnter",
+                "byInteractionKey"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 33,
+            "members": [
+            ],
+            "name": "INVENTORY_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 39,
+            "members": [
+                {
+                    "name": "itemType",
+                    "propertyType": "ITEM_TYPE",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "value": "gun35"
+                }
+            ],
+            "name": "ITEM_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 40,
+            "members": [
+                {
+                    "name": "healAmount",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "ITEM_HEALSTATS_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 24,
+            "name": "ITEM_TYPE",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "WEAPON",
+                "HEALING",
+                "COLLECTABLE"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 26,
+            "members": [
+                {
+                    "name": "heavyAttackBaseDmg",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "lightAttackBaseDmg",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "scaleStat",
+                    "propertyType": "STATS",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "scalingFactor",
+                    "propertyType": "WEAPON_SCALING_FACTOR",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "ultimateAttackBaseDmg",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "weapon_type",
+                    "propertyType": "ITEM_WEAPONS_TYPE",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "ITEM_WEAPON_STATS_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 29,
+            "name": "ITEM_WEAPONS_TYPE",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "DISTANCE",
+                "MELEE"
+            ],
+            "valuesAsFlags": false
+        },
+        {
             "id": 18,
             "name": "Keys",
             "storageType": "int",
             "type": "enum",
             "values": [
-                "Unknown",
                 "A",
                 "B",
                 "C",
@@ -363,6 +587,47 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 37,
+            "members": [
+                {
+                    "name": "isLocked",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "keyId",
+                    "type": "int",
+                    "value": 1
+                }
+            ],
+            "name": "LOCKED_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 34,
+            "name": "Menus",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "Menu1",
+                "Menu2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 3,
             "members": [
                 {
@@ -392,6 +657,46 @@
             "members": [
             ],
             "name": "NPC_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 21,
+            "members": [
+            ],
+            "name": "PLAYER_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 31,
+            "members": [
+            ],
+            "name": "PLAYER_STATS_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",
@@ -454,17 +759,99 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
-            "id": 8,
+            "id": 32,
             "members": [
                 {
-                    "name": "layer",
-                    "propertyType": "LayerType",
+                    "name": "stat",
+                    "propertyType": "STATS",
                     "type": "int",
                     "value": 0
                 },
                 {
-                    "name": "level",
-                    "propertyType": "LEVEL_NAME",
+                    "name": "value",
+                    "type": "float",
+                    "value": 0
+                }
+            ],
+            "name": "STAT_CONFIG",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 30,
+            "name": "STATS",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "STRENGTH",
+                "DEXTERITY",
+                "FAITH",
+                "MAX_HEALTH"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 41,
+            "members": [
+                {
+                    "name": "currentHealth",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "dexterity",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "faith",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "maxHealth",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "strength",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "STATS_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 8,
+            "members": [
+                {
+                    "name": "destination",
                     "type": "int",
                     "value": 0
                 }
@@ -591,8 +978,13 @@
                 "HOUSE_1_BROWN_54",
                 "DEFAULT_DEFAULT",
                 "HOUSE_1_RED",
+                "SHOTGUN_",
                 "HOUSE_1_BROWN",
-                "PLAYER_IDLE"
+                "GUN_",
+                "KNIFE_",
+                "HEALINGPACK_IDLE",
+                "PLAYER_IDLE",
+                "CONFIG_"
             ],
             "valuesAsFlags": false
         },
@@ -617,12 +1009,56 @@
             ]
         },
         {
+            "id": 42,
+            "name": "WEAPON_SCALING_FACTOR",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "SCALE_A",
+                "SCALE_B",
+                "SCALE_C"
+            ],
+            "valuesAsFlags": false
+        },
+        {
             "color": "#ffa0a0a4",
             "drawFill": true,
-            "id": 21,
+            "id": 43,
             "members": [
             ],
-            "name": "PLAYER_COMPONENT",
+            "name": "W",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 44,
+            "members": [
+                {
+                    "name": "healing",
+                    "type": "int",
+                    "value": 1000
+                },
+                {
+                    "name": "weapon",
+                    "propertyType": "ITEM_WEAPON_STATS_COMPONENT",
+                    "type": "class",
+                    "value": {
+                    }
+                }
+            ],
+            "name": "EQUIPMENT_COMPONENT",
             "type": "class",
             "useAs": [
                 "property",

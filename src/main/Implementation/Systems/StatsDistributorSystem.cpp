@@ -6,13 +6,18 @@ StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::
 
 void StatsDistributorSystem::update()
 {
-	if (!(WorldUtils::isCurrentLayer(manager, LAYERTYPE::BATTLEWORLD))) {
+	auto view = manager.view<BattleManagerComponent>();
+	if (view.archetypes.size() == 0) {
 		return;
 	}
-	auto players = manager.getEntityIdByTag(EntityTag::PLAYER);
-	if (players.empty())
+	auto player = WorldUtils::getPlayer(manager);
+	if (!player.has_value()) {
 		return;
-	EntityID playerId = players[0];
+	}
+	if (!manager.hasComponent<BattleComponent>(player.value())) {
+		return;
+	}
+	EntityID playerId = player.value();
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 
 	if (battle.battleState == BattleState::STATS_DISTRIBUTION) {
@@ -29,9 +34,7 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle.battleManagerId);
 	struct LevelUpData {
 		int points;
-		int extraStr = 0;
-		int extraDex = 0;
-		int extraFaith = 0;
+		std::unordered_map<STATS, int> extraStats;
 		tgui::Label::Ptr mainLabel;
 	};
 	auto data = std::make_shared<LevelUpData>();
@@ -48,7 +51,8 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 	data->mainLabel->setPosition(20, 20);
 	window->add(data->mainLabel);
 
-	auto addStatRow = [window, data](std::string name, int &tempValue, int yPos) {
+	auto addStatRow = [window, data](std::string name, STATS statsEnum, int yPos, int stepSize = 1) {
+		data->extraStats[statsEnum] = 0;
 		auto label = tgui::Label::create(name + ": +0");
 		label->setPosition(20, yPos);
 		window->add(label);
@@ -61,20 +65,20 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 		btnMinus->setPosition(190, yPos);
 		btnMinus->setSize(30, 30);
 
-		btnPlus->onPress([data, &tempValue, label, name]() {
+		btnPlus->onPress([data, statsEnum, label, name, stepSize]() {
 			if (data->points > 0) {
 				data->points--;
-				tempValue++;
-				label->setText(name + ": +" + std::to_string(tempValue));
+				data->extraStats[statsEnum] += stepSize;
+				label->setText(name + ": +" + std::to_string(data->extraStats[statsEnum]));
 				data->mainLabel->setText("Points left: " + std::to_string(data->points));
 			}
 		});
 
-		btnMinus->onPress([data, &tempValue, label, name]() {
-			if (tempValue > 0) {
+		btnMinus->onPress([data, statsEnum, label, name, stepSize]() {
+			if (data->extraStats[statsEnum] > 0) {
 				data->points++;
-				tempValue--;
-				label->setText(name + ": +" + std::to_string(tempValue));
+				data->extraStats[statsEnum] -= stepSize;
+				label->setText(name + ": +" + std::to_string(data->extraStats[statsEnum]));
 				data->mainLabel->setText("Points left: " + std::to_string(data->points));
 			}
 		});
@@ -82,18 +86,20 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 		window->add(btnPlus);
 		window->add(btnMinus);
 	};
-	addStatRow("Strength", data->extraStr, 60);
-	addStatRow("Dexterity", data->extraDex, 100);
-	addStatRow("Faith", data->extraFaith, 140);
+	addStatRow("Strength", STATS::STRENGTH, 60, 1);
+	addStatRow("Dexterity", STATS::DEXTERITY, 100, 1);
+	addStatRow("Faith", STATS::FAITH, 140, 1);
+	addStatRow("Max Health", STATS::MAX_HEALTH, 180, 10);
 
 	auto confirmBtn = tgui::Button::create("Save and continue");
 	confirmBtn->setPosition(100, 220);
 
 	confirmBtn->onPress([this, &battle, &stats, data, window]() {
-		stats.strength += data->extraStr;
-		stats.dexterity += data->extraDex;
-		stats.faith += data->extraFaith;
-
+		for (const auto &[statEnum, extraPoints] : data->extraStats) {
+			if (extraPoints > 0) {
+				stats.stats[statEnum] = stats.getStat(statEnum) + extraPoints;
+			}
+		}
 		battle.battleState = BattleState::VICTORY;
 		gui.remove(window);
 		this->isMenuOpen = false;

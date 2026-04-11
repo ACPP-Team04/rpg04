@@ -1347,6 +1347,17 @@
             ]
         },
         {
+            "id": 316,
+            "properties": [
+                {
+                    "name": "shotgun",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {}
+                }
+            ]
+        },
+        {
             "id": 339,
             "properties": [
                 {
@@ -1563,6 +1574,17 @@
                     "value": {
                         "texture": 34
                     }
+                }
+            ]
+        },
+        {
+            "id": 361,
+            "properties": [
+                {
+                    "name": "gun",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {}
                 }
             ]
         },
@@ -1787,6 +1809,17 @@
             ]
         },
         {
+            "id": 406,
+            "properties": [
+                {
+                    "name": "knife",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {}
+                }
+            ]
+        },
+        {
             "id": 429,
             "properties": [
                 {
@@ -2002,6 +2035,19 @@
                     "type": "class",
                     "value": {
                         "texture": 44
+                    }
+                }
+            ]
+        },
+        {
+            "id": 452,
+            "properties": [
+                {
+                    "name": "healingPack",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {
+                        "variant": "idle"
                     }
                 }
             ]
@@ -2236,6 +2282,17 @@
                     "value": {
                         "variant": "idle"
                     }
+                }
+            ]
+        },
+        {
+            "id": 496,
+            "properties": [
+                {
+                    "name": "config",
+                    "propertytype": "TileConfig",
+                    "type": "class",
+                    "value": {}
                 }
             ]
         },

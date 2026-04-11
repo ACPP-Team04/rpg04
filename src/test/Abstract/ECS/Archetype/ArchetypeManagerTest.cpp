@@ -3,6 +3,11 @@
 #include "../../../ECS/TestComponents.hpp"
 #include "Abstract/ECS/Test1.hpp"
 
+#include <Abstract/Overwordl/Components/MovementComponent.hpp>
+#include <Abstract/Overwordl/Components/Player_Component.hpp>
+#include <Abstract/Utils/WorldUtlis.hpp>
+#include <Implementation/Components/BattleComponent.hpp>
+#include <Implementation/Components/StatsComponent.hpp>
 #include <gtest/gtest.h>
 
 TEST(ArchetypeManager, createEntityWIthNewArchetype)
@@ -105,4 +110,44 @@ TEST(ArchetypeManager, addMultiple)
 	int counter = 0;
 	archetypeManager.view<Test1, Test2>().each([&](EntityID entityId, Test1 &test1, Test2 &test2) { counter++; });
 	EXPECT_EQ(3, counter);
+}
+
+TEST(ArchetypeManagerTest, ProvenDataCorruption)
+{
+	ArchetypeManager manager;
+
+	std::vector<EntityID> dummies;
+	for (int i = 0; i < 100; ++i) {
+		dummies.push_back(manager.createEntity<StatsComponent, BattleComponent, MovementComponent>());
+	}
+
+	auto playerID = manager.createEntity<StatsComponent, PlayerComponent, MovementComponent, PartOfLayerComponent>();
+	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(playerID);
+
+	auto world = manager.createEntity<WorldComponent>();
+	auto &worldLayer = manager.getComponent<WorldComponent>(world);
+
+	worldLayer.currentLayer = LAYERTYPE::OVERWORLD;
+	worldLayer.currentLevel = LEVEL_NAME::LEVEL1;
+
+	playerLayer.layer = LAYERTYPE::OVERWORLD;
+	playerLayer.level = LEVEL_NAME::LEVEL1;
+
+	EXPECT_EQ(true, WorldUtils::getPlayer(manager).has_value());
+	auto player = WorldUtils::getPlayer(manager);
+	EntityID playerId;
+	if (player.has_value()) {
+		playerId = player.value();
+		manager.addComponentToEntity<BattleComponent>(playerId);
+		auto bcId = manager.getComponent<BattleComponent>(player.value());
+		manager.removeComponentFromEntity<BattleComponent>(playerId);
+		manager.getComponent<MovementComponent>(playerId).speed = 3.0f;
+		manager.addComponentToEntity<BattleComponent>(playerId);
+		manager.removeComponentFromEntity<BattleComponent>(playerId);
+
+	} else {
+		FAIL() << "Player was not created successfully!";
+	}
+	player = WorldUtils::getPlayer(manager);
+	EXPECT_EQ(true, WorldUtils::getPlayer(manager).has_value());
 }

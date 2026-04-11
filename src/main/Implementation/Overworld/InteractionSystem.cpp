@@ -1,35 +1,64 @@
 
 #include "Abstract/Overwordl/InteractionSystem.hpp"
+#include "Abstract/MathUtils.hpp"
+#include "Abstract/Overwordl/Components/CollisionComponent.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Overwordl/WorldParser.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 
-#include "Abstract/Overwordl/CollisionSystem.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+#include <magic_enum/magic_enum.hpp>
+
+#include <cfloat>
+
 InteractionSystem::InteractionSystem(ArchetypeManager &manager) : System(manager) {}
 
 void InteractionSystem::update()
 {
+	EntityID player = WorldUtils::getPlayer(manager).value();
+	EntityID nearestInteractionEntity;
+	float smallestDistance = FLT_MAX;
+	bool candidateFound = false;
+	WorldUtils::viewInCurrentLayer<InteractionComponent, BoundIngBoxComponent>(manager,
+	    [&](auto &interactableEntity, InteractionComponent &component, BoundIngBoxComponent &bb) {
+		    component.inRange = false;
 
-	std::vector<EntityID> entitiesWithCollision;
-	this->manager.view<InteractionComponent>().each(
-	    [&](EntityID entity, InteractionComponent &icomp) { entitiesWithCollision.push_back(entity); });
+		    auto &playerBB = manager.getComponent<BoundIngBoxComponent>(player);
+		    if (!isinRadius(playerBB, bb, component.focusRadius)) {
+			    component.isActive = false;
+			    component.mustLeaveRadius = false;
+			    return;
+		    }
+		    if (component.mustLeaveRadius)
+			    return;
+		    float newCandidateDistance = distance(playerBB.bounds, bb.bounds);
+		    if (distance(playerBB.bounds, bb.bounds) < smallestDistance) {
+			    smallestDistance = newCandidateDistance;
+			    nearestInteractionEntity = interactableEntity;
+			    candidateFound = true;
+		    }
+	    });
 
-	EntityID player;
-	this->manager.view<PlayerComponent>().each([&](EntityID entity, PlayerComponent &icomp) { player = entity; });
+	if (!candidateFound)
+		return;
 
-	auto &spriteA = manager.getComponent<SpriteComponent>(player);
-	auto &transformA = manager.getComponent<TransformComponent>(player);
+	auto &component = manager.getComponent<InteractionComponent>(nearestInteractionEntity);
 
-	for (EntityID interactionEntity : entitiesWithCollision) {
-		auto &spriteB = manager.getComponent<SpriteComponent>(interactionEntity);
-		auto &transformB = manager.getComponent<TransformComponent>(interactionEntity);
+	if (component.trigger == INTERACTION_TRIGGER::onEnter) {
+		component.isActive = true;
+		return;
+	}
 
-		auto a = getSptiteWithPostion(spriteA, transformA);
-		auto b = getSptiteWithPostion(spriteB, transformB);
-		bool collides = isColliding(a, b);
-
-		if (collides) {
-			manager.getComponent<InteractionComponent>(interactionEntity).isActive = true;
-		} else {
-			manager.getComponent<InteractionComponent>(interactionEntity).isActive = false;
+	if (component.trigger == INTERACTION_TRIGGER::byInteractionKey) {
+		auto &inputComponent = manager.getComponent<InputComponent>(player);
+		component.inRange = true;
+		if (inputComponent.interact.justPressed) {
+			component.isActive = true;
+		}
+		if (component.inRange && !component.isActive) {
+			std::cout << magic_enum::enum_name(component.interactionKey) << std::endl;
+			return;
 		}
 	}
 }

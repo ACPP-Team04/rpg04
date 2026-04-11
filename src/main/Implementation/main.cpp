@@ -1,10 +1,29 @@
+#include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
-#include "Abstract/Overwordl/Components.hpp"
+
+#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
+#include "Abstract/Overwordl/Components/CameraComponent.hpp"
+#include "Abstract/Overwordl/Components/CollisionComponent.hpp"
+#include "Abstract/Overwordl/Components/DialogComponent.hpp"
+#include "Abstract/Overwordl/Components/InputComponent.hpp"
+#include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/IsLockedComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
+#include "Abstract/Overwordl/Components/MovementComponent.hpp"
+#include "Abstract/Overwordl/Components/NPC_COMPONENT.hpp"
+#include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/Overwordl/Components/RenderComponent.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
+#include "Abstract/Overwordl/Components/SwitchLayerComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
+#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 
+#include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <SFML/Graphics.hpp>
-
 
 void registerComponents()
 {
@@ -21,22 +40,30 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<BoundIngBoxComponent>("BOUNDING_BOX_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<ItemComponent>("ITEM_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<InventoryComponent>("INVENTORY_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<BattleComponent>("BATTLE_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
+	ComponentRegistry::getInstance().registerComponent<WeaponComponent>("ITEM_WEAPON_STATS_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
 }
 
 int main()
 {
 
 	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
-
-	ECSManager ecsManager = ECSManager(window);
 	registerComponents();
-	WorldParser parser = WorldParser(ecsManager.manager,window);
+	ECSManager ecsManager = ECSManager(window);
+	WorldParser parser = WorldParser(ecsManager.manager, window);
 	window.clear(sf::Color::Transparent);
 	parser.update();
-
+	ecsManager.init();
 	window.setFramerateLimit(60);
-	while (window.isOpen())
-	{
+	while (window.isOpen()) {
 		ecsManager.update();
 
 		window.display();

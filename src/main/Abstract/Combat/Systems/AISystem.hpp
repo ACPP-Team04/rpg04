@@ -3,7 +3,6 @@
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/InventoryComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 
 class AISystem : public System {

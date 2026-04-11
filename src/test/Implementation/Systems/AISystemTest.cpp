@@ -4,15 +4,17 @@
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
-#include "Implementation/Components/InventoryComponent.hpp"
+
+#include <Abstract/Overwordl/Components/InventoryComponent.hpp>
+#include <Abstract/Overwordl/Components/ItemHealstatsComponent.hpp>
 #include <gtest/gtest.h>
 TEST(AISystemTest, executeAILogicHeavyAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -26,7 +28,7 @@ TEST(AISystemTest, executeAILogicHeavyAttack)
 	statsComponentE.health = 90;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_A;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -38,8 +40,8 @@ TEST(AISystemTest, executeAILogicLightAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -53,7 +55,7 @@ TEST(AISystemTest, executeAILogicLightAttack)
 	statsComponentE.health = 90;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -65,8 +67,8 @@ TEST(AISystemTest, executeAILogicHeal)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -76,11 +78,15 @@ TEST(AISystemTest, executeAILogicHeal)
 
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	InventoryComponent &inventoryComponetE = manager.getComponent<InventoryComponent>(enemy);
+
+	auto healingPack = manager.createEntity<ITEM_HEALSTATS_COMPONENT>();
+	inventoryComponetE.addItem(healingPack, ITEM_TYPE::HEALING);
 	battleComponentE.AP = 2;
-	statsComponentE.health = 20;
+	statsComponentE.health = 19;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -92,8 +98,8 @@ TEST(AISystemTest, executeAILogicRest)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -107,7 +113,7 @@ TEST(AISystemTest, executeAILogicRest)
 	statsComponentE.health = 90;
 	battleComponentE.numberOfUltimateAttacksUsed = 1;
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
@@ -120,8 +126,8 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity(EntityTag::PLAYER);
-	EntityID enemy = manager.createEntity(EntityTag::ENEMY);
+	EntityID player = manager.createEntity();
+	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -135,7 +141,7 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	statsComponentE.health = 90;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = ScalingFactor::B;
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
