@@ -22,7 +22,6 @@ void CombatSystem::update()
 {
 	auto view = manager.view<BattleManagerComponent>();
 	if (view.archetypes.size() == 0) {
-		spdlog::get("combat")->info("No BattleManagerComponent found");
 		return;
 	} else {
 		view.each([&](EntityID battleId, BattleManagerComponent &bmc) {
@@ -96,7 +95,7 @@ void CombatSystem::update()
 void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, BattleAction typeOfAction)
 {
 	auto &attackerBattle = manager.getComponent<BattleComponent>(attacker);
-	auto &attackerInventory = manager.getComponent<InventoryComponent>(attacker);
+
 	int cost = getActionCost(typeOfAction);
 	if (attackerBattle.AP < cost) {
 		spdlog::get("combat")->warn("Not enough AP to do this action");
@@ -104,22 +103,6 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		return;
 	}
 	attackerBattle.AP -= cost;
-
-	if (typeOfAction == BattleAction::HEAL) {
-		auto healItemsSet = attackerInventory.getItems(ITEM_TYPE::HEALING);
-
-		if (healItemsSet.empty()) {
-			spdlog::get("combat")->warn("No health potions left!");
-			attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
-			return;
-		}
-		EntityID itemEntity = *healItemsSet.begin();
-
-		auto &stats = manager.getComponent<StatsComponent>(attacker);
-		attackerInventory.removeItem(itemEntity, ITEM_TYPE::HEALING);
-		manager.destroyEntity(itemEntity);
-		spdlog::get("combat")->info("Healed successfully");
-	}
 
 	if (typeOfAction == BattleAction::ULTIMATE_ATTACK and attackerBattle.numberOfUltimateAttacksUsed >= 1) {
 		spdlog::get("combat")->warn("No ultimate attacks left!");
@@ -130,8 +113,11 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 
 	case BattleAction::LIGHT_ATTACK: {
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto &attackerWeapon = manager.getComponent<WeaponComponent>(attacker);
-		float damage = getDamageWithScaling(attackerStats, attackerWeapon, 5);
+		auto inventory = this->manager.getComponent<InventoryComponent>(attacker);
+		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
+		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
+		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		spdlog::get("combat")->info("Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		break;
@@ -139,8 +125,10 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	case BattleAction::HEAVY_ATTACK: {
 
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto &attackerWeapon = manager.getComponent<WeaponComponent>(attacker);
-		float damage = getDamageWithScaling(attackerStats, attackerWeapon, 10);
+		auto inventory = this->manager.getComponent<InventoryComponent>(attacker);
+		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
+		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
+		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		break;
@@ -149,8 +137,10 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	case BattleAction::ULTIMATE_ATTACK: {
 
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto &attackerWeapon = manager.getComponent<WeaponComponent>(attacker);
-		float damage = getDamageWithScaling(attackerStats, attackerWeapon, 15);
+		auto inventory = this->manager.getComponent<InventoryComponent>(attacker);
+		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
+		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
+		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		manager.getComponent<BattleComponent>(attacker).numberOfUltimateAttacksUsed += 1;
@@ -158,7 +148,8 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	}
 	case BattleAction::HEAL: {
 
-		this->takeHealAction(attacker);
+		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
+		this->takeHealAction(attacker, attackerStats.getStat(STATS::FAITH), attackerStats.getStat(STATS::MAX_HEALTH));
 		break;
 	}
 	case BattleAction::REST: {
@@ -177,10 +168,12 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	                             manager.getComponent<BattleComponent>(attacker).AP);
 }
 
-void CombatSystem::takeHealAction(EntityID healer)
+void CombatSystem::takeHealAction(EntityID healer, int faith, int maxHealth)
 {
 	StatsComponent &statsComponent = manager.getComponent<StatsComponent>(healer);
-	statsComponent.health = std::min(100.0f, statsComponent.health + 10.0f);
+
+	float healAmount = maxHealth * faith * 10.0 / 100.0f;
+	statsComponent.health = std::min((float)maxHealth, statsComponent.health + healAmount);
 }
 
 void CombatSystem::restoreAP(EntityID restorator)
@@ -273,20 +266,22 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
-                                         float baseAttackDamage)
+                                         BattleAction action)
 {
-	if (weaponComponent.weaponType == WeaponType::MELEE) {
-		return weaponComponent.lightAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent,weaponComponent);
-	}
-	if (weaponComponent.weaponType == WeaponType::RANGE) {
-		return weaponComponent.heavyAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent,weaponComponent);
+	if (action == BattleAction::LIGHT_ATTACK) {
+		return weaponComponent.lightAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent);
+	} else if (action == BattleAction::HEAVY_ATTACK) {
+		return weaponComponent.heavyAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent);
+	} else if (action == BattleAction::ULTIMATE_ATTACK) {
+		return weaponComponent.ultimateAttackBaseDmg
+		       + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent);
 	}
 	throw std::runtime_error("Invalid weapon type");
 }
 
-float CombatSystem::getMultiplicatorFromScalingFactor(StatsComponent stats,const WeaponComponent &weaponComponent)
+float CombatSystem::getMultiplicatorFromScalingFactor(StatsComponent stats, const WeaponComponent &weaponComponent)
 {
-	return stats.getStat(weaponComponent.scalingStat)*weaponComponent.getScalingFactor();
+	return stats.getStat(weaponComponent.scalingStat) * weaponComponent.getScalingFactor();
 }
 
 int CombatSystem::getActionCost(BattleAction action)
@@ -295,6 +290,8 @@ int CombatSystem::getActionCost(BattleAction action)
 	case BattleAction::LIGHT_ATTACK:
 		return 1;
 	case BattleAction::HEAVY_ATTACK:
+		return 2;
+	case BattleAction::HEAL:
 		return 2;
 	default:
 		return 0;
