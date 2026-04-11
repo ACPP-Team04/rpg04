@@ -85,27 +85,39 @@ struct ObjectJob {
 	LAYERTYPE layer;
 };
 
-void parseRawEquipmentComponent(ArchetypeManager &manager,const WorldComponent &component)
+void parseRawEquipmentComponent(ArchetypeManager &manager, const WorldComponent &component)
 {
 	std::vector<EntityID> entityIds;
-	manager.view<InventoryComponent,START_EQUIPMENT_COMPONENT>().each([&](auto &entity,InventoryComponent &icomp,START_EQUIPMENT_COMPONENT &eqipComp) {
-		entityIds.push_back(entity.getId());
-		EntityID weapon = manager.createEntity<ItemComponent,WeaponComponent>();
-		manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
-		manager.getComponent<WeaponComponent>(weapon).readFromJson(eqipComp.rawWeaponComponent);
-		EntityID healing = manager.createEntity<ItemComponent,ITEM_HEALSTATS_COMPONENT>();
-		manager.getComponent<ItemComponent>(healing).itemType = ITEM_TYPE::HEALING;
-		manager.getComponent<ITEM_HEALSTATS_COMPONENT>(healing).healAmount=eqipComp.healing;
+	manager.view<InventoryComponent, START_EQUIPMENT_COMPONENT>().each(
+	    [&](auto &entity, InventoryComponent &icomp, START_EQUIPMENT_COMPONENT &eqipComp) {
+		    entityIds.push_back(entity.getId());
+		    EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
+		    manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
+		    manager.getComponent<WeaponComponent>(weapon).readFromJson(eqipComp.rawWeaponComponent);
+		    EntityID healing = manager.createEntity<ItemComponent, ITEM_HEALSTATS_COMPONENT>();
+		    manager.getComponent<ItemComponent>(healing).itemType = ITEM_TYPE::HEALING;
+		    manager.getComponent<ITEM_HEALSTATS_COMPONENT>(healing).healAmount = eqipComp.healing;
 
-		icomp.addItem(weapon,ITEM_TYPE::WEAPON);
-		icomp.addItem(healing,ITEM_TYPE::HEALING);
-
-	});
+		    icomp.addItem(weapon, ITEM_TYPE::WEAPON);
+		    icomp.addItem(healing, ITEM_TYPE::HEALING);
+	    });
 
 	for (const auto &entity : entityIds) {
 		manager.removeComponentFromEntity<START_EQUIPMENT_COMPONENT>(entity);
 	}
-
+}
+void equibFists(ArchetypeManager &manager, const WorldComponent &component)
+{
+	manager.view<InventoryComponent>().each([&](auto &entity, InventoryComponent &icomp) {
+		if (!icomp.hasEquippedItem(ITEM_TYPE::WEAPON)) {
+			EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
+			manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
+			icomp.addItem(weapon, ITEM_TYPE::WEAPON);
+			if (!manager.hasComponent<StatsComponent>(entity)) {
+				manager.addComponentToEntity<StatsComponent>(entity);
+			}
+		}
+	});
 }
 
 void WorldParser::update()
@@ -149,4 +161,6 @@ void WorldParser::update()
 
 	component.register_menu(OVERWORLD, MENUS::Menu1);
 	component.register_menu(BATTLEWORLD, MENUS::Menu2);
+	parseRawEquipmentComponent(manager, component);
+	equibFists(manager, component);
 }
