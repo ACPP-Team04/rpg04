@@ -41,8 +41,9 @@ void SwitchBattleModeSystem::update()
 	this->manager.addComponentToEntity<BattleComponent>(player);
 	this->manager.addComponentToEntity<BattleComponent>(*interActor);
 
-	EntityID bManager =this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>(EntityTag::BATTLEMANAGER);
-	WorldComponent *world =WorldUtils::getWorld(manager);
+	EntityID bManager =
+	    this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>(EntityTag::BATTLEMANAGER);
+	WorldComponent *world = WorldUtils::getWorld(manager);
 	if (world == nullptr) {
 		return;
 	}
@@ -56,7 +57,7 @@ void SwitchBattleModeSystem::update()
 			return;
 		}
 		battleManagerId = entity;
-		component.participants = {*player, *interActor};
+		component.participants = {player, *interActor};
 		found = true;
 	});
 
@@ -66,7 +67,13 @@ void SwitchBattleModeSystem::update()
 	this->manager.getComponent<BattleComponent>(player).battleManagerId = battleManagerId;
 	this->manager.getComponent<BattleComponent>(*interActor).battleManagerId = battleManagerId;
 
-	for (auto& entity:{player, *interActor}) {
+	auto inventoryP = this->manager.getComponent<InventoryComponent>(player);
+	auto inventoryE = this->manager.getComponent<InventoryComponent>(*interActor);
+
+	auto weaponP = inventoryP.getEquippedItem(ITEM_TYPE::WEAPON);
+	auto weaponE = inventoryE.getEquippedItem(ITEM_TYPE::WEAPON);
+
+	for (auto &entity : {player, *interActor}) {
 		if (!this->manager.hasComponent<BattleComponent>(entity)) {
 			throw std::runtime_error("Batteling entity does not have a battle component");
 		}
@@ -76,9 +83,6 @@ void SwitchBattleModeSystem::update()
 		if (!this->manager.hasComponent<InventoryComponent>(entity)) {
 			throw std::runtime_error("Batteling entity does not have a inventory component");
 		}
-
-
 	}
 	spdlog::get("combat")->info("Switched to battle mode");
-	//
 }
