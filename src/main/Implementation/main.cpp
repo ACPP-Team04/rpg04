@@ -22,6 +22,7 @@
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 
+#include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <SFML/Graphics.hpp>
 
 void registerComponents()
@@ -48,6 +49,7 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
 	ComponentRegistry::getInstance().registerComponent<WeaponComponent>("ITEM_WEAPON_STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
 }
 
 int main()
