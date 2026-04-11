@@ -136,7 +136,7 @@ void BattleInputSystem::update()
 	ui.setActionPanelVisible(showMenu);
 
 	if (showMenu) {
-		ui.updateStats(stats.health, stats.maxHealth, battle.AP);
+		ui.updateStats(stats.health, stats.getStat(MAX_HEALTH), battle.AP);
 
 		ui.getButton("BtnLight")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle.AP,
@@ -163,7 +163,7 @@ void BattleInputSystem::update()
 			auto &transform = manager.getComponent<TransformComponent>(id);
 			sf::Vector2i pixelPos = window.mapCoordsToPixel(transform.position);
 			sf::Vector2f screenPos = sf::Vector2f(pixelPos);
-			ui.updateEnemyBar(id, stats.health, stats.maxHealth, screenPos);
+			ui.updateEnemyBar(id, stats.health, stats.getStat(MAX_HEALTH), screenPos);
 		}
 	}
 }

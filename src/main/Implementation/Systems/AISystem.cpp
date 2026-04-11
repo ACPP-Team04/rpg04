@@ -14,7 +14,6 @@ void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 {
 	BattleComponent &aiBattle = manager.getComponent<BattleComponent>(aiId);
 	StatsComponent &aiStats = manager.getComponent<StatsComponent>(aiId);
-	InventoryComponent &aiInventory = manager.getComponent<InventoryComponent>(aiId);
 	EntityID target;
 	for (EntityID p : participants) {
 		if (aiId != p) {
@@ -22,17 +21,10 @@ void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 			break;
 		}
 	}
-	int numberOfHealthPotions = 0;
-	for (auto const &[type, entitySet] : aiInventory.items) {
-		for (EntityID id : entitySet) {
-			if (this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(id)) {
-				numberOfHealthPotions++;
-			}
-		}
-	}
+
 	aiBattle.target = target;
 
-	if (aiStats.health < 30 && numberOfHealthPotions >= 1) {
+	if (aiStats.health < 20 && aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAL)) {
 		aiBattle.selectedAction = BattleAction::HEAL;
 	} else if (aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK)) {
 		aiBattle.selectedAction = BattleAction::HEAVY_ATTACK;
