@@ -20,10 +20,8 @@ struct AssetManager {
 		return instance;
 	}
 
-	sf::Sprite getSpriteAt(TileType tileType)
+	sf::Sprite getSpriteAt(TileInfo tile)
 	{
-		auto tile = TILE_DICT.at(tileType);
-
 		return {*this->textureSet, sf::IntRect({tile.pixelX, tile.pixelY}, {tile.width, tile.height})};
 	}
 

@@ -8,6 +8,7 @@
 #include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -57,6 +58,33 @@ void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEV
 	}
 }
 
+TileInfo calculateTileInfo(WorldComponent &component, int gid)
+{
+	gid -= 1;
+	int col = gid % component.tilesetColumns;
+	int row = gid / component.tilesetColumns;
+
+	return TileInfo{
+		.pixelX = col * component.tilewidth,
+		.pixelY = row * component.tileheight,
+		.width  = component.tilewidth,
+		.height = component.tileheight,
+	};
+}
+
+void addSpriteCommponent(const EntityID & entity, ArchetypeManager & manager, WorldComponent & component, int tile)
+{
+	TileInfo tileInfo = calculateTileInfo(component, tile);
+	manager.addComponentToEntity<SpriteComponent>(entity);
+	manager.getComponent<SpriteComponent>(entity).tileInfo = tileInfo;
+
+}
+
+void addRenderComponent(const EntityID & entity, ArchetypeManager & manager, int z_layer)
+{
+	manager.addComponentToEntity<RenderComponent>(entity);
+	manager.getComponent<RenderComponent>(entity).z_layer = z_layer;
+}
 void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, const WorldComponent &component,
                        LEVEL_NAME level, LAYERTYPE layer)
 {
@@ -67,7 +95,10 @@ void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, 
 				EntityID entity = manager.createEntity();
 				addPartLayerComponent(manager, entity, level, layer);
 				addBoundingBox(manager, entity);
+				const Tile &tile = tileLayer.tileIds[flatIndex];
+				if (tile.tile == 0) continue;
 				for (const tileProperty &prop : tileLayer.tileIds[flatIndex].properties) {
+					addSpriteCommponent(entity,manager,component,tile.tile);
 					addComponent(entity, x * component.tilewidth, y * component.tileheight, prop, manager);
 				}
 

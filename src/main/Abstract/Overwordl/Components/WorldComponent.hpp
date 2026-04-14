@@ -85,6 +85,7 @@ struct ObjectLayerObject {
 	int x, y;
 	int height;
 	int width;
+	int gid;
 	std::vector<tileProperty> properties;
 
 	void readFromJson(const nlohmann::json &j)
@@ -94,6 +95,10 @@ struct ObjectLayerObject {
 		y = j.value("y", 0.0f);
 		height = j.value("height", 0);
 		width = j.value("width", 0);
+		gid = j.value("gid", -1);
+		if (gid == -1) {
+			throw std::runtime_error("Each object needs to be created with the picture tool");
+		}
 		readJsonPropertyArray<tileProperty>(properties, j, "properties");
 	}
 };
@@ -127,6 +132,7 @@ struct WorldComponent : public Component<WorldComponent> {
 	int height;
 	unsigned widthPixel;
 	unsigned heightPixel;
+	int tilesetColumns;
 	std::unordered_map<LEVEL_NAME, LevelLayer> levelLayers;
 	LEVEL_NAME currentLevel = (LEVEL_NAME)0;
 	LAYERTYPE currentLayer = (LAYERTYPE)0;
@@ -141,6 +147,11 @@ struct WorldComponent : public Component<WorldComponent> {
 		height = j.value("height", 0);
 		widthPixel = width * tilewidth;
 		heightPixel = height * tileheight;
+		const auto &tilesets = j.value("tilesets", nlohmann::json::array());
+		if (!tilesets.empty()) {
+			tilesetColumns = tilesets[0].value("columns", 32);
+		}
+
 		unfoldLayers(j, j);
 	}
 
