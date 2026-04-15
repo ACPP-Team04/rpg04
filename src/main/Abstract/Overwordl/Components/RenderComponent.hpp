@@ -4,5 +4,5 @@
 struct RenderComponent : public Component<RenderComponent> {
 
 	int z_layer;
-	void readFromJson(const nlohmann::json &j) override {}
+	void readFromJson(tson::TiledClass &j) override {}
 };

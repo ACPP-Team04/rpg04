@@ -32,7 +32,7 @@
     {
         "id": 14,
         "name": "COLLISION_ACTION",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "KEEP_POSITION",
@@ -48,8 +48,8 @@
             {
                 "name": "action",
                 "propertyType": "COLLISION_ACTION",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "KEEP_POSITION"
             }
         ],
         "name": "COLLISION_COMPONENT",
@@ -78,9 +78,8 @@
             },
             {
                 "name": "dialogSentences",
-                "type": "list",
-                "value": [
-                ]
+                "type": "string",
+                "value": "test12"
             },
             {
                 "name": "fillColor",
@@ -157,7 +156,7 @@
     {
         "id": 35,
         "name": "INTERACTION_ACTION",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "START_DIALOG",
@@ -176,8 +175,8 @@
             {
                 "name": "action",
                 "propertyType": "INTERACTION_ACTION",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "START_DIALOG"
             },
             {
                 "name": "focusRadius",
@@ -187,14 +186,14 @@
             {
                 "name": "interactionKey",
                 "propertyType": "Keys",
-                "type": "int",
-                "value": 6
+                "type": "string",
+                "value": "G"
             },
             {
                 "name": "trigger",
                 "propertyType": "INTERACTION_TRIGGER",
-                "type": "int",
-                "value": 1
+                "type": "string",
+                "value": "byInteractionKey"
             }
         ],
         "name": "INTERACTION_COMPONENT",
@@ -214,7 +213,7 @@
     {
         "id": 34,
         "name": "INTERACTION_TRIGGER",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "onEnter",
@@ -250,8 +249,8 @@
             {
                 "name": "itemType",
                 "propertyType": "ITEM_TYPE",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "WEAPON"
             },
             {
                 "name": "name",
@@ -301,7 +300,7 @@
     {
         "id": 39,
         "name": "ITEM_TYPE",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "WEAPON",
@@ -328,14 +327,14 @@
             {
                 "name": "scaleStat",
                 "propertyType": "STATS",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "STRENGTH"
             },
             {
                 "name": "scalingFactor",
                 "propertyType": "WEAPON_SCALING_FACTOR",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "SCALE_A"
             },
             {
                 "name": "ultimateAttackBaseDmg",
@@ -345,8 +344,8 @@
             {
                 "name": "weapon_type",
                 "propertyType": "ITEM_WEAPONS_TYPE",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "DISTANCE"
             }
         ],
         "name": "ITEM_WEAPON_STATS_COMPONENT",
@@ -366,7 +365,7 @@
     {
         "id": 44,
         "name": "ITEM_WEAPONS_TYPE",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "DISTANCE",
@@ -377,7 +376,7 @@
     {
         "id": 27,
         "name": "Keys",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "A",
@@ -492,14 +491,14 @@
             {
                 "name": "layerType",
                 "propertyType": "LayerType",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "OVERWORLD"
             },
             {
                 "name": "levelName",
                 "propertyType": "LEVEL_NAME",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "LEVEL1"
             }
         ],
         "name": "LayerConfig",
@@ -519,7 +518,7 @@
     {
         "id": 18,
         "name": "LayerType",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "OVERWORLD",
@@ -530,7 +529,7 @@
     {
         "id": 23,
         "name": "LEVEL_NAME",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "LEVEL1",
@@ -571,7 +570,7 @@
     {
         "id": 57,
         "name": "Menus",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "Menu1",
@@ -698,8 +697,8 @@
             {
                 "name": "stat",
                 "propertyType": "STATS",
-                "type": "int",
-                "value": 0
+                "type": "string",
+                "value": "STRENGTH"
             },
             {
                 "name": "value",
@@ -724,7 +723,7 @@
     {
         "id": 50,
         "name": "STATS",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "STRENGTH",
@@ -897,7 +896,7 @@
     {
         "id": 63,
         "name": "WEAPON_SCALING_FACTOR",
-        "storageType": "int",
+        "storageType": "string",
         "type": "enum",
         "values": [
             "SCALE_A",

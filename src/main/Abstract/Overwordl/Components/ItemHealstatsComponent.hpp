@@ -4,5 +4,9 @@
 #include <nlohmann/json_fwd.hpp>
 struct ITEM_HEALSTATS_COMPONENT : public Component<ITEM_HEALSTATS_COMPONENT> {
 	int healAmount;
-	void readFromJson(const nlohmann::json &j) override { healAmount = j.value("healAmount", 1); }
+	void readFromJson(tson::TiledClass &j) override
+
+	{
+		healAmount = j.get<int>("healAmount");
+	}
 };

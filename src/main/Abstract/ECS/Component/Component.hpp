@@ -1,6 +1,8 @@
 #pragma once
+#include <algorithm>
 #include "ComponentTypeInfo.hpp"
-#include <nlohmann/json.hpp>
+#include "tileson.h"
+
 
 template <typename T>
 class Component {
@@ -8,5 +10,5 @@ class Component {
 	Component() = default;
 	virtual ~Component() = default;
 	TypeInfo<T> typeInfo;
-	virtual void readFromJson(const nlohmann::json &j) = 0;
+	virtual void readFromJson(tson::TiledClass &j) = 0;
 };

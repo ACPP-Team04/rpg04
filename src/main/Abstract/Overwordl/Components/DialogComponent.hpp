@@ -2,6 +2,8 @@
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/Utils/Color.hpp"
 
+#include <nlohmann/json.hpp>
+
 struct DialogComponent : public Component<DialogComponent> {
 	std::vector<std::string> sentences;
 	sf::Color color;
@@ -9,16 +11,32 @@ struct DialogComponent : public Component<DialogComponent> {
 	std::string currentSentence;
 	int senetnceId;
 	bool isActive;
-	void readFromJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j) override
 	{
-		std::string raw = j.value("dialogSentences", "[]");
-		auto parsed = nlohmann::json::parse(raw);
-		for (const auto &sentence : parsed) {
-			sentences.push_back(sentence.get<std::string>());
+		sentences.clear();
+
+		if (auto prop = j.getMember("dialogSentences")) {
+			std::string raw = prop->getValue<std::string>();
+
+			if (!raw.empty()) {
+				std::stringstream ss(raw);
+				std::string segment;
+
+				while (std::getline(ss, segment, '|')) {
+					sentences.push_back(segment);
+				}
+			}
 		}
-		color = parseColorString(j.value("fillColor", "#f7f7f7"));
-		characterSize = j.value("characterSize", 10);
-		currentSentence = this->sentences.back();
+		characterSize = j.getMember("characterSize")->getValue<int>();
+		color = parseColorString(j.getMember("fillColor")->getValue<std::string>());
+
+		if (!sentences.empty()) {
+			currentSentence = sentences[0];
+		} else {
+			sentences.push_back("...");
+			currentSentence = sentences[0];
+		}
+		senetnceId = 0;
 	}
 
 	std::string getSentence() { return currentSentence; }

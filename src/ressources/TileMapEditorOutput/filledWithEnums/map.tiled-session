@@ -27,26 +27,27 @@
         "map.tmj": {
             "expandedGroupLayers": [
                 8,
+                5,
+                2,
                 6,
                 3,
-                7,
-                12,
                 4,
-                5,
-                2
+                7,
+                12
             ],
             "scale": 1.0258,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 127.70520569311753,
-                "y": 58.490933905244674
+                "x": 261.74692922597,
+                "y": 213.00448430493273
             }
         },
         "map.tmj#Tilesheet_WithEnums": {
             "scaleInDock": 1
         },
         "map.tmj#Tilesheet_edited": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         }
     },
     "last.externalTilesetPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums",

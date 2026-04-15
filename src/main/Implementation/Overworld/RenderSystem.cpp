@@ -14,7 +14,7 @@ void render(TransformComponent &tcomp, sf::RenderWindow &window,
             SpriteComponent &scomp)
 {
 
-	sf::Sprite sp = AssetManager::getInstance().getSpriteAt(scomp.textureId);
+	sf::Sprite sp = AssetManager::getInstance().getSpriteAt(scomp);
 	sp.setPosition(tcomp.position);
 	sp.setScale(tcomp.scale);
 	sp.setRotation(tcomp.rotation);

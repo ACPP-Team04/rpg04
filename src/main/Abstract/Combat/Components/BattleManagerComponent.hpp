@@ -8,5 +8,5 @@ struct BattleManagerComponent : public Component<BattleManagerComponent> {
 	int currentTurnIndex = 0;
 	bool isBattleOver = false;
 	int playerXpReward = 1;
-	void readFromJson(const nlohmann::json &j) override {}
+	void readFromJson(tson::TiledClass &j)  override {}
 };

@@ -3,5 +3,5 @@
 
 struct PlayerComponent : public Component<PlayerComponent> {
 
-	void readFromJson(const nlohmann::json &j) override {}
+	void readFromJson(tson::TiledClass &j) override {}
 };

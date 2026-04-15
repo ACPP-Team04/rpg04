@@ -10,12 +10,12 @@ struct StatsComponent : Component<StatsComponent> {
 	int numberOfFightsWon{0};
 	int health{100};
 	std::unordered_map<STATS, int> stats;
-	void readFromJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j) override
 	{
-		int maxHealth = j.value("maxHealt", 100);
-		int strength = j.value("strength", 1);
-		int dexterity = j.value("dexterity", 1);
-		int faith = j.value("faith", 1);
+		int maxHealth = j.get<int>("maxHealt");
+		int strength = j.get<int>("strength");
+		int dexterity = j.get<int>("dexterity");
+		int faith = j.get<int>("faith");
 		this->health = maxHealth;
 
 		addScalableStats(STATS::MAX_HEALTH, maxHealth);

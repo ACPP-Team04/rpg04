@@ -3,5 +3,6 @@
 
 struct NPC_Component : public Component<NPC_Component> {
 
-	void readFromJson(const nlohmann::json &j) override {}
+	void readFromJson(tson::TiledClass &j) override{}
+
 };

@@ -30,6 +30,7 @@ void CollisionSystem::update()
 	WorldUtils::viewInCurrentLayer<CollisionComponent, BoundIngBoxComponent, TransformComponent>(manager,
 	    [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) {
 		    entities.push_back(entityA);
+
 	    });
 
 	for (int i = 0; i < entities.size(); i++) {
@@ -45,8 +46,10 @@ void CollisionSystem::update()
 			auto &transformB = manager.getComponent<TransformComponent>(entities.at(j));
 			auto &collisionB = manager.getComponent<CollisionComponent>(entities.at(j));
 			if (collides(bbA, bbB)) {
+
 				if (collisionA.action == COLLISION_ACTION::KEEP_POSITION
 				    && collisionB.action == COLLISION_ACTION::KEEP_POSITION) {
+
 					continue;
 				}
 			}

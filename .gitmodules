@@ -1,3 +1,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg.git
+[submodule "external/tileson"]
+	path = external/tileson
+	url = https://github.com/SSBMTonberry/tileson.git

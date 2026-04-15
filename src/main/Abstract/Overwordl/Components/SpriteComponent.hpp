@@ -4,14 +4,11 @@
 
 struct SpriteComponent : public Component<SpriteComponent> {
 	TileInfo tileInfo;
+	std::string tilesetPath;
 
-	void readFromJson(const nlohmann::json &j) override
-	{
-	}
+	void readFromJson(tson::TiledClass &j) override
 
-	void setTileInfo(int x, int y)
 	{
-		tileInfo = {x,y};
 	}
 
 };

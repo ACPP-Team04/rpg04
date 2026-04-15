@@ -28,18 +28,19 @@
             "scaleInEditor": 1.784
         }
     },
-    "last.imagePath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput",
+    "last.imagePath": "/home/marcocotrotzo/Downloads",
     "last.objectTypesPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/base_config/mainProperty.json",
     "openFiles": [
         "Tilesheet_BaseConfig.tsj"
     ],
     "project": "base_configTilset.tiled-project",
-    "property.type": "int",
+    "property.type": "NPC_COMPONENT",
     "recentFiles": [
         "Tilesheet_BaseConfig.tsj",
         "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj",
         "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/Tilesheet_WithEnums.tsj"
     ],
+    "tileset.embedInMap": true,
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {
         "height": 16,

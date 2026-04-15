@@ -1,5 +1,6 @@
 #pragma once
 #include "Abstract/GlobalProperties.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
 
 #include <SFML/Graphics/Font.hpp>
@@ -20,9 +21,17 @@ struct AssetManager {
 		return instance;
 	}
 
-	sf::Sprite getSpriteAt(TileInfo tile)
+	std::unordered_map<std::string, std::shared_ptr<sf::Texture>> chacheImage = {};
+
+	sf::Sprite getSpriteAt(SpriteComponent& tile)
 	{
-		return {*this->textureSet, sf::IntRect({tile.pixelX, tile.pixelY}, {tile.width, tile.height})};
+		if (!chacheImage.contains(tile.tilesetPath)) {
+			if (!textureSet->loadFromFile(tile.tilesetPath)) {
+				throw std::runtime_error("Failed to load texture");
+			}
+			chacheImage[tile.tilesetPath] = textureSet;
+		}
+		return {*chacheImage[tile.tilesetPath], sf::IntRect({tile.tileInfo.pixelX, tile.tileInfo.pixelY}, {tile.tileInfo.width, tile.tileInfo.height})};
 	}
 
   private:

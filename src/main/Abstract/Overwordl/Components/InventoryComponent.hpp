@@ -9,7 +9,10 @@ struct InventoryComponent : public Component<InventoryComponent> {
 
 	std::unordered_map<ITEM_TYPE, EntityID> equiped;
 
-	void readFromJson(const nlohmann::json &j) override {}
+	void readFromJson(tson::TiledClass &j) override
+	{
+
+	}
 
 	void addItem(EntityID entity, ITEM_TYPE item)
 	{
