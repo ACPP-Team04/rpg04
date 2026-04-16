@@ -4,4 +4,4 @@
 #define SPRITE_SHEET_PATH "../src/ressources/TileMapEditorOutput/Tilesheet_edited.png"
 #define MAP "../src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj"
 #define FONT "../src/ressources/COMICATE.TTF"
-#define PRO "../src/ressources/TileMapEditorOutput/filledWithEnums/map.tiled-project"
+#define PRO "../src/ressources/TileMapEditorOutput/filledWithEnums/filledWithEnunm.tiled-project"

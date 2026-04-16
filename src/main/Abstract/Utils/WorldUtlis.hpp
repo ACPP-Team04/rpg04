@@ -39,6 +39,9 @@ class WorldUtils {
 
 	static bool isPartOfCurrentLayer(ArchetypeManager &manager, const EntityID &entity)
 	{
+		if (!manager.hasComponent<PartOfLayerComponent>(entity)) {
+			throw std::runtime_error("Entity does not have the PartOfLayer component!");
+		}
 		const auto &pComp = manager.getComponent<PartOfLayerComponent>(entity);
 		return isCurrentLayer(manager, pComp.layer, pComp.level);
 	}
