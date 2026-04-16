@@ -15,23 +15,25 @@ SwitchBattleModeSystem::SwitchBattleModeSystem(ArchetypeManager &manager) : Syst
 
 void SwitchBattleModeSystem::update()
 {
-
+	std::optional<EntityID> interActorId = std::nullopt;
 	InteractionComponent *icomp = nullptr;
-	EntityID *interActor = nullptr;
-	WorldUtils::viewInCurrentLayer<InteractionComponent>(manager, [&](auto &entity, InteractionComponent &component) {
+
+	WorldUtils::viewInCurrentLayer<InteractionComponent>(manager, [&](auto entity, InteractionComponent &component) {
 		if (!component.isActive) {
 			return;
 		}
 		if (component.action == INTERACTION_ACTION::START_BATTLE) {
-			interActor = &entity;
+			interActorId = entity;
 			icomp = &component;
 		}
 	});
 
-	if (icomp == nullptr)
-		return;
-	EntityID player = WorldUtils::getPlayer(manager).value();
+	if (!interActorId.has_value() || icomp == nullptr) {
 
+		return;
+	}
+	EntityID player = WorldUtils::getPlayer(manager).value();
+	EntityID enemyId = interActorId.value();
 	icomp->isActive = false;
 
 	if (manager.hasComponent<BattleComponent>(player))
@@ -39,7 +41,7 @@ void SwitchBattleModeSystem::update()
 
 	this->manager.removeComponentFromEntity<MovementComponent>(player);
 	this->manager.addComponentToEntity<BattleComponent>(player);
-	this->manager.addComponentToEntity<BattleComponent>(*interActor);
+	this->manager.addComponentToEntity<BattleComponent>(enemyId);
 
 	EntityID bManager =
 	    this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>(EntityTag::BATTLEMANAGER);
@@ -57,23 +59,23 @@ void SwitchBattleModeSystem::update()
 			return;
 		}
 		battleManagerId = entity;
-		component.participants = {player, *interActor};
+		component.participants = {player, enemyId};
 		found = true;
 	});
 
 	this->manager.getComponent<BattleManagerComponent>(bManager).participants.push_back(player);
-	this->manager.getComponent<BattleManagerComponent>(bManager).participants.push_back(*interActor);
+	this->manager.getComponent<BattleManagerComponent>(bManager).participants.push_back(enemyId);
 
 	this->manager.getComponent<BattleComponent>(player).battleManagerId = battleManagerId;
-	this->manager.getComponent<BattleComponent>(*interActor).battleManagerId = battleManagerId;
+	this->manager.getComponent<BattleComponent>(enemyId).battleManagerId = battleManagerId;
 
 	auto inventoryP = this->manager.getComponent<InventoryComponent>(player);
-	auto inventoryE = this->manager.getComponent<InventoryComponent>(*interActor);
+	auto inventoryE = this->manager.getComponent<InventoryComponent>(enemyId);
 
 	auto weaponP = inventoryP.getEquippedItem(ITEM_TYPE::WEAPON);
 	auto weaponE = inventoryE.getEquippedItem(ITEM_TYPE::WEAPON);
 
-	for (auto &entity : {player, *interActor}) {
+	for (auto &entity : {player, enemyId}) {
 		if (!this->manager.hasComponent<BattleComponent>(entity)) {
 			throw std::runtime_error("Batteling entity does not have a battle component");
 		}
