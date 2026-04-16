@@ -8,7 +8,6 @@ class BattleUI {
 	tgui::Gui &gui;
 	tgui::Panel::Ptr hudPanel;
 	tgui::Panel::Ptr actionPanel;
-	std::unordered_map<EntityID, tgui::ProgressBar::Ptr> enemyBars;
 
   public:
 	BattleUI(tgui::Gui &gui) : gui(gui) {};
@@ -60,36 +59,4 @@ class BattleUI {
 
 		hudPanel->get<tgui::Label>("APLabel")->setText("AP: " + std::to_string(ap));
 	}
-	void createEnemyBar(EntityID id)
-	{
-		auto bar = tgui::ProgressBar::create();
-		bar->setSize(60, 10);
-		bar->getRenderer()->setFillColor(sf::Color::Red);
-		bar->getRenderer()->setBackgroundColor(sf::Color(50, 50, 50));
-		bar->setText("");
-
-		gui.add(bar);
-		enemyBars[id] = bar;
-	}
-
-	void updateEnemyBar(EntityID id, float hp, float maxHp, sf::Vector2f screenPos)
-	{
-		if (enemyBars.contains(id)) {
-			auto &bar = enemyBars[id];
-			bar->setMaximum(maxHp);
-			bar->setValue(hp);
-			bar->setPosition(screenPos.x - (bar->getSize().x / 2.0f), screenPos.y - 40.0f);
-			bar->setVisible(true);
-		}
-	}
-
-	void removeEnemyBar(EntityID id)
-	{
-		if (enemyBars.contains(id)) {
-			gui.remove(enemyBars[id]);
-			enemyBars.erase(id);
-		}
-	}
-
-	bool hasEnemyBar(EntityID id) { return enemyBars.contains(id); }
 };
