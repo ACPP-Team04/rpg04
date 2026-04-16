@@ -1,7 +1,7 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
-
+#include <spdlog/spdlog.h>
 struct StatsComponent : Component<StatsComponent> {
   public:
 	StatsComponent() = default;
@@ -29,6 +29,11 @@ struct StatsComponent : Component<StatsComponent> {
 	int getStat(STATS stat)
 	{
 		if (!stats.contains(stat)) {
+			if (stat == STATS::MAX_HEALTH) {
+				spdlog::get("combat")->warn("Returned MAX_HEALTH 100, because it was not in the stats");
+				return 100;
+			}
+			spdlog::get("combat")->warn("Returned 0 for {}, because it was not in the stats", (int)stat);
 			return 0;
 		}
 		return stats[stat];
