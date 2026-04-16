@@ -12,7 +12,8 @@ struct StatsComponent : Component<StatsComponent> {
 	std::unordered_map<STATS, int> stats;
 	void readFromJson(tson::TiledClass &j) override
 	{
-		int maxHealth = j.get<int>("maxHealt");
+
+		int maxHealth = j.get<int>("maxHealth");
 		int strength = j.get<int>("strength");
 		int dexterity = j.get<int>("dexterity");
 		int faith = j.get<int>("faith");

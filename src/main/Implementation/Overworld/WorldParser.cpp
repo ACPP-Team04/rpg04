@@ -61,6 +61,120 @@ tson::TiledClass getCustomPropertyAsClass(tson::Property prop)
 	return prop.getValue<tson::TiledClass>();
 }
 
+void equibFists(ArchetypeManager &manager, const WorldComponent &component)
+{
+	manager.view<InventoryComponent>().each([&](auto &entity, InventoryComponent &icomp) {
+		if (!icomp.hasEquippedItem(ITEM_TYPE::WEAPON)) {
+			EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
+			manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
+			icomp.addItem(weapon, ITEM_TYPE::WEAPON);
+			
+		}
+		if (!manager.hasComponent<StatsComponent>(entity)) {
+				manager.addComponentToEntity<StatsComponent>(entity);
+				std::cout << "Added stats component to entity: " << entity.getId() << std::endl;
+				std::cout <<manager.getComponent<StatsComponent>(entity).health<< std::endl;
+			}
+	});
+}
+void parseRawEquipmentComponent(ArchetypeManager &manager, const WorldComponent &component)
+{
+	std::vector<EntityID> entityIds;
+	manager.view<InventoryComponent, START_EQUIPMENT_COMPONENT>().each(
+	    [&](auto &entity, InventoryComponent &icomp, START_EQUIPMENT_COMPONENT &eqipComp) {
+		    entityIds.push_back(entity.getId());
+		    EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
+		    manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
+		    manager.getComponent<WeaponComponent>(weapon).readFromJson(eqipComp.rawWeaponComponent);
+		    EntityID healing = manager.createEntity<ItemComponent, ITEM_HEALSTATS_COMPONENT>();
+		    manager.getComponent<ItemComponent>(healing).itemType = ITEM_TYPE::HEALING;
+		    manager.getComponent<ITEM_HEALSTATS_COMPONENT>(healing).healAmount = eqipComp.healing;
+
+		    icomp.addItem(weapon, ITEM_TYPE::WEAPON);
+		    icomp.addItem(healing, ITEM_TYPE::HEALING);
+	    });
+
+	for (const auto &entity : entityIds) {
+		manager.removeComponentFromEntity<START_EQUIPMENT_COMPONENT>(entity);
+	}
+}
+
+void WorldParser::addTransformcomponent(ArchetypeManager &manager, EntityID id, tson::Object obj,LEVEL_NAME level)
+{
+	manager.addComponentToEntity<PartOfLayerComponent>(id);
+	manager.getComponent<PartOfLayerComponent>(id).level = level;
+	manager.addComponentToEntity<BoundIngBoxComponent>(id);
+
+	manager.addComponentToEntity<TransformComponent>(id);
+	manager.getComponent<TransformComponent>(id).position.x = (float)obj.getPosition().x;
+	manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;
+	manager.getComponent<TransformComponent>(id).setRotation((float)obj.getRotation());
+	float sx = (float)obj.getSize().x / (float)map->getTileSize().x;
+	float sy = (float)obj.getSize().y / (float)map->getTileSize().y;
+	manager.getComponent<TransformComponent>(id).scale.x = (sx > 0.f) ? sx : 1.f;
+	manager.getComponent<TransformComponent>(id).scale.y = (sy > 0.f) ? sy : 1.f;
+}
+
+void WorldParser::addRenderComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
+{
+	if (obj.isVisible()) {
+		std::cout << obj.getId() << std::endl;
+		manager.addComponentToEntity<RenderComponent>(id);
+	}
+}
+
+void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
+{
+	manager.addComponentToEntity<SpriteComponent>(id);
+	auto &sprite = manager.getComponent<SpriteComponent>(id);
+
+	if (obj.getObjectType() == tson::ObjectType::Object) {
+		tson::Tileset *tileset = map->getTilesetByGid(obj.getGid());
+		int localId = obj.getGid() - tileset->getFirstgid();
+		int cols    = tileset->getColumns();
+		int tw      = tileset->getTileSize().x;
+		int th      = tileset->getTileSize().y;
+	
+		sprite.tileInfo = {
+			(localId % cols) * tw,
+			(localId / cols) * th,
+			tw,
+			th
+		};
+		sprite.tilesetPath = fs::path(MAP).parent_path() / tileset->getImagePath();
+	
+	}
+	if (obj.getObjectType()==tson::ObjectType::Rectangle) {
+		if (map->getTilesets().empty()) {
+			throw std::runtime_error("You need to embedd a tileset!");
+		}
+		
+		auto firsTileset = map->getTilesets()[0];
+
+		int tilewidth = firsTileset.getTileSize().x;
+		int tileheight = firsTileset.getTileSize().y;
+		sprite.tileInfo = {0, 0, tilewidth, tileheight};
+		sprite.tilesetPath = fs::path(MAP).parent_path() / firsTileset.getImagePath();
+
+	}
+}
+
+void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, tson::Object obj)
+{
+	for (auto& prop : obj.getProperties().getProperties()) {
+		std::string propType = prop.second.getPropertyType();
+		std::cout << "Adding: " << propType << std::endl;
+		ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
+		auto func = componentRegistry.getCreationFunctions(propType);
+		auto propClass = getCustomPropertyAsClass(prop.second);
+		if (func) {
+
+			func(manager, id, propClass);
+		}
+		std::cout << "Added:" << propType << std::endl;
+
+	}
+}
 void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple)
 {
 
@@ -73,38 +187,33 @@ void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple)
 	auto level = std::get<1>(tuple);
 	EntityID id = manager.createEntityWithId(obj.getId());
 
-	manager.addComponentToEntity<PartOfLayerComponent>(id);
-	manager.getComponent<PartOfLayerComponent>(id).level = level;
-	manager.addComponentToEntity<BoundIngBoxComponent>(id);
-
-	manager.addComponentToEntity<TransformComponent>(id);
-	manager.getComponent<TransformComponent>(id).position.x = (float)obj.getPosition().x;
-	manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;
-	manager.getComponent<TransformComponent>(id).setRotation((float)obj.getRotation());
-	manager.getComponent<TransformComponent>(id).scale.x = (float)obj.getSize().x / (float)map->getTileSize().x;
-	manager.getComponent<TransformComponent>(id).scale.y = (float)obj.getSize().y / (float)map->getTileSize().y;
-
-
-	if (obj.isVisible()) {
-		std::cout << obj.getId() << std::endl;
-		manager.addComponentToEntity<RenderComponent>(id);
-	}
+	addTransformcomponent(manager, id, obj, level);
+	addRenderComponent(manager, id, obj);
 
 	manager.addComponentToEntity<SpriteComponent>(id);
 	auto &sprite = manager.getComponent<SpriteComponent>(id);
 
-	if (obj.getObjectType()==tson::ObjectType::Object) {
-		tson::Tileset *tileset = map->getTilesetByGid(obj.getGid());
-		tson::Tile *tile = tileset->getTile(obj.getGid() - tileset->getFirstgid());
-		tson::Rect drawingRect = tile->getDrawingRect();
-		sprite.tileInfo = {drawingRect.x, drawingRect.y, drawingRect.width, drawingRect.height};
-		sprite.tilesetPath = fs::path(MAP).parent_path() / tileset->getImagePath();
-
+	if (obj.getObjectType() == tson::ObjectType::Object) {
+    	tson::Tileset *tileset = map->getTilesetByGid(obj.getGid());
+    	int localId = obj.getGid() - tileset->getFirstgid();
+    	int cols    = tileset->getColumns();
+    	int tw      = tileset->getTileSize().x;
+    	int th      = tileset->getTileSize().y;
+    
+    	sprite.tileInfo = {
+        	(localId % cols) * tw,
+        	(localId / cols) * th,
+        	tw,
+        	th
+    	};
+    	sprite.tilesetPath = fs::path(MAP).parent_path() / tileset->getImagePath();
+    
 	}
 	if (obj.getObjectType()==tson::ObjectType::Rectangle) {
 		if (map->getTilesets().empty()) {
 			throw std::runtime_error("You need to embedd a tileset!");
 		}
+		
 		auto firsTileset = map->getTilesets()[0];
 
 		int tilewidth = firsTileset.getTileSize().x;
@@ -141,7 +250,7 @@ void WorldParser::update()
 	std::vector<tson::Layer> tileLayers;
 	worldComp.widthPixel = map->getSize().x * map->getTileSize().x;
 	worldComp.heightPixel = map->getSize().y * map->getTileSize().y;
-	worldComp.currentLevel = LEVEL_NAME();
+	worldComp.currentLevel = LEVEL_NAME::LEVEL1;
 	worldComp.currentLayer = LAYERTYPE::OVERWORLD;
 	window.setSize({worldComp.widthPixel,worldComp.heightPixel});
 
@@ -171,5 +280,20 @@ void WorldParser::update()
 		createEntity(tr.second);
 	}
 
+	for (auto &tileLayer : tileLayers) {
+		tson::Property config = getPropertyByPropertyType(tileLayer.getProperties(), "LayerConfig");
+		auto configObject = getCustomPropertyAsClass(config);
+		int level_name2 = configObject.get<int>("layerType");
+		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject,"levelName");
+		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject,"layerType");
 
+		for(auto &[pos, tileObject] : tileLayer.getTileObjects()){
+			
+		}
+	}
+
+	
+
+	parseRawEquipmentComponent(manager, worldComp);
+	equibFists(manager, worldComp);
 }

@@ -43,7 +43,7 @@
         {
             "id": 11,
             "name": "COLLISION_ACTION",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "KEEP_POSITION",
@@ -59,8 +59,8 @@
                 {
                     "name": "action",
                     "propertyType": "COLLISION_ACTION",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "KEEP_POSITION"
                 }
             ],
             "name": "COLLISION_COMPONENT",
@@ -85,14 +85,14 @@
                 {
                     "name": "layer",
                     "propertyType": "LayerType",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "OVERWORLD"
                 },
                 {
                     "name": "level",
                     "propertyType": "LEVEL_NAME",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "LEVEL1"
                 }
             ],
             "name": "CURRENT_LAYER_COMPONENT",
@@ -183,6 +183,38 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 44,
+            "members": [
+                {
+                    "name": "healing",
+                    "type": "int",
+                    "value": 1000
+                },
+                {
+                    "name": "weapon",
+                    "propertyType": "ITEM_WEAPON_STATS_COMPONENT",
+                    "type": "class",
+                    "value": {
+                    }
+                }
+            ],
+            "name": "EQUIPMENT_COMPONENT",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 2,
             "members": [
             ],
@@ -203,7 +235,7 @@
         {
             "id": 23,
             "name": "INTERACTION_ACTION",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "START_DIALOG",
@@ -222,8 +254,8 @@
                 {
                     "name": "action",
                     "propertyType": "INTERACTION_ACTION",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "START_DIALOG"
                 },
                 {
                     "name": "focusRadius",
@@ -233,14 +265,14 @@
                 {
                     "name": "interactionKey",
                     "propertyType": "Keys",
-                    "type": "int",
-                    "value": 6
+                    "type": "string",
+                    "value": "G"
                 },
                 {
                     "name": "trigger",
                     "propertyType": "INTERACTION_TRIGGER",
-                    "type": "int",
-                    "value": 1
+                    "type": "string",
+                    "value": "byInteractionKey"
                 }
             ],
             "name": "INTERACTION_COMPONENT",
@@ -260,7 +292,7 @@
         {
             "id": 22,
             "name": "INTERACTION_TRIGGER",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "onEnter",
@@ -296,8 +328,8 @@
                 {
                     "name": "itemType",
                     "propertyType": "ITEM_TYPE",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "WEAPON"
                 },
                 {
                     "name": "name",
@@ -347,7 +379,7 @@
         {
             "id": 24,
             "name": "ITEM_TYPE",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "WEAPON",
@@ -374,14 +406,14 @@
                 {
                     "name": "scaleStat",
                     "propertyType": "STATS",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "STRENGTH"
                 },
                 {
                     "name": "scalingFactor",
                     "propertyType": "WEAPON_SCALING_FACTOR",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "SCALE_A"
                 },
                 {
                     "name": "ultimateAttackBaseDmg",
@@ -391,8 +423,8 @@
                 {
                     "name": "weapon_type",
                     "propertyType": "ITEM_WEAPONS_TYPE",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "DISTANCE"
                 }
             ],
             "name": "ITEM_WEAPON_STATS_COMPONENT",
@@ -412,7 +444,7 @@
         {
             "id": 29,
             "name": "ITEM_WEAPONS_TYPE",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "DISTANCE",
@@ -423,7 +455,7 @@
         {
             "id": 18,
             "name": "Keys",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "A",
@@ -538,14 +570,14 @@
                 {
                     "name": "layerType",
                     "propertyType": "LayerType",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "OVERWORLD"
                 },
                 {
                     "name": "levelName",
                     "propertyType": "LEVEL_NAME",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "LEVEL1"
                 }
             ],
             "name": "LayerConfig",
@@ -565,7 +597,7 @@
         {
             "id": 14,
             "name": "LayerType",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "OVERWORLD",
@@ -576,7 +608,7 @@
         {
             "id": 15,
             "name": "LEVEL_NAME",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "LEVEL1",
@@ -617,7 +649,7 @@
         {
             "id": 34,
             "name": "Menus",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "Menu1",
@@ -738,8 +770,8 @@
                 {
                     "name": "texture",
                     "propertyType": "TileInfoEnum",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "HOUSE_1_RED_00"
                 }
             ],
             "name": "SPRITE_COMPONENT",
@@ -764,8 +796,8 @@
                 {
                     "name": "stat",
                     "propertyType": "STATS",
-                    "type": "int",
-                    "value": 0
+                    "type": "string",
+                    "value": "STRENGTH"
                 },
                 {
                     "name": "value",
@@ -790,7 +822,7 @@
         {
             "id": 30,
             "name": "STATS",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "STRENGTH",
@@ -913,7 +945,7 @@
         {
             "id": 6,
             "name": "TileInfoEnum",
-            "storageType": "int",
+            "storageType": "string",
             "type": "enum",
             "values": [
                 "HOUSE_1_RED_00",
@@ -1009,18 +1041,6 @@
             ]
         },
         {
-            "id": 42,
-            "name": "WEAPON_SCALING_FACTOR",
-            "storageType": "int",
-            "type": "enum",
-            "values": [
-                "SCALE_A",
-                "SCALE_B",
-                "SCALE_C"
-            ],
-            "valuesAsFlags": false
-        },
-        {
             "color": "#ffa0a0a4",
             "drawFill": true,
             "id": 43,
@@ -1041,36 +1061,16 @@
             ]
         },
         {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
-            "id": 44,
-            "members": [
-                {
-                    "name": "healing",
-                    "type": "int",
-                    "value": 1000
-                },
-                {
-                    "name": "weapon",
-                    "propertyType": "ITEM_WEAPON_STATS_COMPONENT",
-                    "type": "class",
-                    "value": {
-                    }
-                }
+            "id": 42,
+            "name": "WEAPON_SCALING_FACTOR",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "SCALE_A",
+                "SCALE_B",
+                "SCALE_C"
             ],
-            "name": "EQUIPMENT_COMPONENT",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset",
-                "project"
-            ]
+            "valuesAsFlags": false
         }
     ]
 }

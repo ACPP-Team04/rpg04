@@ -30,6 +30,9 @@ class WorldUtils {
 		manager.view<WorldComponent>().each([&](auto id, auto &comp) {
 			world = &comp;
 		});
+		if(world == nullptr) {
+			throw std::runtime_error("No world component found!");
+		}
 
 		return world;
 	}
@@ -55,7 +58,7 @@ class WorldUtils {
 	{
 		auto players = getPlayers(manager);
 		if (players.empty())
-			return std::nullopt;
+			throw std::runtime_error("No player found. You need a player with player component in the current layer!");
 		return players[0];
 	}
 
@@ -75,7 +78,7 @@ class WorldUtils {
 			throw std::runtime_error("No player found");
 		}
 		if (!manager.hasComponent<T>(player.value())) {
-			return std::nullopt;
+			throw std::runtime_error("Player does not have the requested component");
 		}
 		return std::ref(manager.getComponent<T>(player.value()));
 	}

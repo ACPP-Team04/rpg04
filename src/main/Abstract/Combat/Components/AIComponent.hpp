@@ -3,5 +3,5 @@
 
 struct AIComponent : public Component<AIComponent> {
 	AIComponent() = default;
-	void readFromJson(const nlohmann::json &j) override {};
+	virtual void readFromJson(tson::TiledClass &j) override {};
 };

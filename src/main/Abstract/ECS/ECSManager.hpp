@@ -88,6 +88,7 @@ struct ECSManager {
 		collisionSystem.update();
 		boundingBoxSystem.update();
 		interactionSystem.update();
+		
 		door_system.update();
 		switchLayerSystem.update();
 		boundingBoxSystem.update();
