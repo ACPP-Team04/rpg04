@@ -20,14 +20,20 @@ DialogSystem::DialogSystem(ArchetypeManager &manager, sf::RenderWindow &window) 
 
 void DialogSystem::update()
 {
-	InputComponent &input = WorldUtils::getPlayersComponent<InputComponent>(manager).value();
+
+	auto inputComponentOptional = WorldUtils::getPlayersComponent<InputComponent>(manager);
+	if (!inputComponentOptional.has_value()) {
+		return;
+	}
+	InputComponent &input = inputComponentOptional.value();
 
 	sf::Font font;
 	font.openFromFile(FONT);
 	sf::Text text(font);
-	WorldUtils::viewInCurrentLayer<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
-	          SpriteComponent>(manager,[&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp,
-	              auto &transform, auto &render, auto &sprite) {
+	WorldUtils::viewInCurrentLayer<InteractionComponent, NPC_Component, DialogComponent, TransformComponent,
+	                               RenderComponent, SpriteComponent>(
+	    manager, [&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent,
+	                 DialogComponent &dialogComp, auto &transform, auto &render, auto &sprite) {
 		    if (!interactioncomp.isActive) {
 			    dialogComp.isActive = false;
 			    return;
