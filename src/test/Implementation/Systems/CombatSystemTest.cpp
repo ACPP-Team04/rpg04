@@ -79,7 +79,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
 	EXPECT_EQ(1, battleComponentP.AP);
-	EXPECT_EQ(84, statsComponentE.health);
+	EXPECT_EQ(34, statsComponentE.health);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
@@ -254,7 +254,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
 	EXPECT_EQ(2, battleComponentP.AP);
-	EXPECT_EQ(80, statsComponentE.health);
+	EXPECT_EQ(67, statsComponentE.health);
 	EXPECT_EQ(1, battleComponentP.numberOfUltimateAttacksUsed);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
