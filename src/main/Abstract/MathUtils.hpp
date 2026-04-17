@@ -40,3 +40,4 @@ static bool isinRadius(const BoundIngBoxComponent &rectA, const BoundIngBoxCompo
 {
 	return isinRadius(rectA.bounds, rectB.bounds, radius);
 }
+

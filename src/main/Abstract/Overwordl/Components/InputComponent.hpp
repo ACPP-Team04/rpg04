@@ -9,13 +9,13 @@ struct KeyState {
 struct InputComponent : public Component<InputComponent> {
 	KeyState moveUp, moveDown, moveRight, moveLeft, menuButton, interact;
 
-	void readFromJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j) override
 	{
-		this->moveUp = KeyState(j.value("up", false));
-		this->moveDown = KeyState(j.value("down", false));
-		this->moveRight = KeyState(j.value("right", false));
-		this->moveLeft = KeyState(j.value("left", false));
-		this->menuButton = KeyState(j.value("button", false));
-		this->interact = KeyState(j.value("interact", false));
+		this->moveUp = KeyState(j.get<bool>("up"));
+		this->moveDown = KeyState(j.get<bool>("down"));
+		this->moveRight = KeyState(j.get<bool>("right"));
+		this->moveLeft = KeyState(j.get<bool>("left"));
+		this->menuButton = KeyState(j.get<bool>("button"));
+		this->interact = KeyState(j.get<bool>("interact"));
 	}
 };

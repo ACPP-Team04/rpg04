@@ -1,4 +1,4 @@
-#pragma once
+
 #include "Abstract/Overwordl/MenuSystem.hpp"
 
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"

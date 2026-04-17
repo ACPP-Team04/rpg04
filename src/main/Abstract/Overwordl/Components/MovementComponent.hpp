@@ -4,5 +4,9 @@
 struct MovementComponent : public Component<MovementComponent> {
 	float speed;
 
-	void readFromJson(const nlohmann::json &j) override { this->speed = j.value("speed", 1.0f); };
+	void readFromJson(tson::TiledClass &j) override
+
+	{
+		this->speed = j.get<float>("speed");
+	};
 };

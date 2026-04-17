@@ -59,7 +59,7 @@ class Test3 : public Component<Test3> {
 	int health{};
 	int stamina{};
 
-	void readFromJson(const nlohmann::json &j) {}
+	virtual void readFromJson(tson::TiledClass &j) override {}
 };
 
 TEST(ComponentArea, registerOneEntity)

@@ -9,7 +9,7 @@ class Test3 : public Component<Test3> {
 	int x{};
 	int y{};
 
-	void readFromJson(const nlohmann::json &j) override {}
+	virtual void readFromJson(tson::TiledClass &j) override {}
 };
 
 TEST(Archetype, CreateNew)

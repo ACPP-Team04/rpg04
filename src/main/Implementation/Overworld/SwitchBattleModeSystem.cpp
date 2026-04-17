@@ -80,6 +80,7 @@ void SwitchBattleModeSystem::update()
 		if (!this->manager.hasComponent<StatsComponent>(entity)) {
 			throw std::runtime_error("Batteling entity does not have a stat component");
 		}
+		std::cout << "Health for entity " << entity.getId() << ": " << this->manager.getComponent<StatsComponent>(entity).health << std::endl;
 		if (!this->manager.hasComponent<InventoryComponent>(entity)) {
 			throw std::runtime_error("Batteling entity does not have a inventory component");
 		}
