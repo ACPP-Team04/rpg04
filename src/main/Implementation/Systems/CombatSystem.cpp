@@ -7,6 +7,7 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
 #include <Abstract/Overwordl/Components/RenderComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
@@ -233,9 +234,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 	auto playerID = WorldUtils::getPlayer(manager);
 	std::vector<EntityID> defeatedEnemies;
 
-	manager.addComponentToEntity<MovementComponent>(playerID.value());
-	auto &move = manager.getComponent<MovementComponent>(playerID.value());
-	move.speed = 3.0f;
+	manager.addComponentToEntity<InputComponent>(playerID.value());
 
 	auto participantsCopy = bmc.participants;
 	for (EntityID entity : participantsCopy) {

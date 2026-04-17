@@ -7,6 +7,7 @@
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/InventoryComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
 #include <spdlog/spdlog.h>
@@ -39,7 +40,7 @@ void SwitchBattleModeSystem::update()
 	if (manager.hasComponent<BattleComponent>(player))
 		return;
 
-	this->manager.removeComponentFromEntity<MovementComponent>(player);
+	this->manager.removeComponentFromEntity<InputComponent>(player);
 	this->manager.addComponentToEntity<BattleComponent>(player);
 	this->manager.addComponentToEntity<BattleComponent>(enemyId);
 
