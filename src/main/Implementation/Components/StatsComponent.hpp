@@ -10,12 +10,13 @@ struct StatsComponent : Component<StatsComponent> {
 	int numberOfFightsWon{0};
 	int health{100};
 	std::unordered_map<STATS, int> stats;
-	void readFromJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j) override
 	{
-		int maxHealth = j.value("maxHealt", 100);
-		int strength = j.value("strength", 1);
-		int dexterity = j.value("dexterity", 1);
-		int faith = j.value("faith", 1);
+
+		int maxHealth = j.get<int>("maxHealth");
+		int strength = j.get<int>("strength");
+		int dexterity = j.get<int>("dexterity");
+		int faith = j.get<int>("faith");
 		this->health = maxHealth;
 
 		addScalableStats(STATS::MAX_HEALTH, maxHealth);
@@ -29,12 +30,7 @@ struct StatsComponent : Component<StatsComponent> {
 	int getStat(STATS stat)
 	{
 		if (!stats.contains(stat)) {
-			if (stat == STATS::MAX_HEALTH) {
-				spdlog::get("combat")->warn("Returned MAX_HEALTH 100, because it was not in the stats");
-				return 100;
-			}
-			spdlog::get("combat")->warn("Returned 0 for {}, because it was not in the stats", (int)stat);
-			return 0;
+			return 50;
 		}
 		return stats[stat];
 	}

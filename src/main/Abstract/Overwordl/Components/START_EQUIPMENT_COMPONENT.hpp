@@ -4,12 +4,13 @@
 #include "Implementation/Components/WeaponComponent.hpp"
 struct START_EQUIPMENT_COMPONENT : Component<START_EQUIPMENT_COMPONENT> {
 	int healing;
-	nlohmann::json rawWeaponComponent;
+	tson::TiledClass  rawWeaponComponent;
 
-	void readFromJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j) override
+
 	{
-		healing = j.value("healing", 0);
-		rawWeaponComponent = j.value("weapon",nlohmann::json());
+		healing = j.get<int>("healing");
+		rawWeaponComponent = j.get<tson::TiledClass>("weapon");
 
 	}
 };

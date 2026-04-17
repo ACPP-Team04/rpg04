@@ -1,0 +1,3 @@
+sudo apt-get install pkg-config
+git submodule update --init --recursive
+sudo apt-get install libx11-dev libxi-dev libxrandr-dev libxcursor-dev libudev-dev libgl1-mesa-dev make

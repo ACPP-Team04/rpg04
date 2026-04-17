@@ -12,7 +12,7 @@
 
 sf::Sprite getSpriteWithPosition(SpriteComponent &sprite, TransformComponent &transform)
 {
-	sf::Sprite sfmlSprite = AssetManager::getInstance().getSpriteAt(sprite.textureId);
+	sf::Sprite sfmlSprite = AssetManager::getInstance().getSpriteAt(sprite);
 	sfmlSprite.setPosition(transform.position);
 	sfmlSprite.setPosition(transform.position);
 	sfmlSprite.setScale(transform.scale);

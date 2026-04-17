@@ -28,5 +28,5 @@ struct BattleComponent : Component<BattleComponent> {
 	float actionDelay = 0.0f;
 	EntityID battleManagerId;
 
-	void readFromJson(const nlohmann::json &j) override {}
+	void readFromJson(tson::TiledClass &j) override {}
 };

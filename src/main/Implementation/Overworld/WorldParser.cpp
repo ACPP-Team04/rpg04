@@ -8,83 +8,75 @@
 #include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp"
+#include "Abstract/Overwordl/Components/SpriteComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
+#include "Abstract/Overwordl/Components/CameraComponent.hpp"
+#include "Abstract/Overwordl/Components/CollisionComponent.hpp"
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
+#include "tileson.h"
+
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <fmt/base.h>
+#include <fmt/format.h>
 #include <fstream>
 #include <utility>
 
-using json = nlohmann::json;
-WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {}
-
-void addComponent(EntityID &entity_id, int xLayerPostion, int yLayerPosition, tileProperty tile_property,
-                  ArchetypeManager &manager)
+WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window)
+    : System(manager), window(window), project(PRO)
 {
-	tile_property.value["position_x"] = xLayerPostion;
-	tile_property.value["position_y"] = yLayerPosition;
-	std::cout << "Adding: " << tile_property.propertytype << std::endl;
-	ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
-	auto func = componentRegistry.getCreationFunctions(tile_property.propertytype);
-	if (func) {
-		func(manager, entity_id, tile_property.value);
-	}
-	std::cout << "Added: " << tile_property.propertytype << std::endl;
+    tson::Tileson t{&project};
+    map = t.parse(fs::path(MAP));
 }
 
-void addBoundingBox(ArchetypeManager &manager, EntityID &entity_id)
-{
-	manager.addComponentToEntity<BoundIngBoxComponent>(entity_id);
-}
 
-void addPartLayerComponent(ArchetypeManager &manager, EntityID &entity_id, LEVEL_NAME level, LAYERTYPE layer)
+void WorldParser::undfoldLayers(std::vector<tson::Layer> & layers,std::vector<tson::Layer> & objectLayers, std::vector<tson::Layer> & tileLayers)
 {
+	for (auto & layer : layers) {
+		if (layer.getType()==tson::LayerType::TileLayer) {
+			tileLayers.push_back(layer);
+		}
+		if (layer.getType()==tson::LayerType::ObjectGroup) {
+			objectLayers.push_back(layer);
+		}
+		this->undfoldLayers(layer.getLayers(), objectLayers, tileLayers);
 
-	manager.addComponentToEntity<PartOfLayerComponent>(entity_id);
-	manager.getComponent<PartOfLayerComponent>(entity_id).layer = layer;
-	manager.getComponent<PartOfLayerComponent>(entity_id).level = level;
-}
-
-void createEntities(const ObjectLayerObject &obj, ArchetypeManager &manager, LEVEL_NAME level, LAYERTYPE layer)
-{
-	EntityID entity = manager.createEntityWithId(obj.id);
-	addPartLayerComponent(manager, entity, level, layer);
-	addBoundingBox(manager, entity);
-	for (const tileProperty &prop : obj.properties) {
-		addComponent(entity, obj.x, obj.y, prop, manager);
-	}
-	if (manager.hasComponent<RenderComponent>(entity)) {
-		manager.getComponent<RenderComponent>(entity).z_layer = 1;
 	}
 }
 
-void intializeEntities(const WorldLayer &worldLayer, ArchetypeManager &manager, const WorldComponent &component,
-                       LEVEL_NAME level, LAYERTYPE layer)
+tson::Property getPropertyByPropertyType(tson::PropertyCollection props,std::string type)
 {
-	for (const auto &tileLayer : worldLayer.tileLayers) {
-		for (int y = 0; y < component.height; ++y) {
-			for (int x = 0; x < component.width; ++x) {
-				int flatIndex = x + (y * component.width);
-				EntityID entity = manager.createEntity();
-				addPartLayerComponent(manager, entity, level, layer);
-				addBoundingBox(manager, entity);
-				for (const tileProperty &prop : tileLayer.tileIds[flatIndex].properties) {
-					addComponent(entity, x * component.tilewidth, y * component.tileheight, prop, manager);
-				}
-
-				if (manager.hasComponent<RenderComponent>(entity)) {
-					manager.getComponent<RenderComponent>(entity).z_layer = 0;
-				}
-			}
+	for (auto & prop : props.getProperties()) {
+		if (prop.second.getPropertyType()==type) {
+			return prop.second;
 		}
 	}
-}
-
-struct ObjectJob {
-	const ObjectLayerObject *data;
-	LEVEL_NAME level;
-	LAYERTYPE layer;
+	throw std::logic_error(fmt::format("Unknown property type: {}", type));
 };
 
+
+tson::TiledClass getCustomPropertyAsClass(tson::Property prop)
+{
+	return prop.getValue<tson::TiledClass>();
+}
+
+void equibFists(ArchetypeManager &manager, const WorldComponent &component)
+{
+	manager.view<InventoryComponent>().each([&](auto &entity, InventoryComponent &icomp) {
+		if (!icomp.hasEquippedItem(ITEM_TYPE::WEAPON)) {
+			EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
+			manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
+			icomp.addItem(weapon, ITEM_TYPE::WEAPON);
+			
+		}
+		if (!manager.hasComponent<StatsComponent>(entity)) {
+				manager.addComponentToEntity<StatsComponent>(entity);
+				std::cout << "Added stats component to entity: " << entity.getId() << std::endl;
+				std::cout <<manager.getComponent<StatsComponent>(entity).health<< std::endl;
+			}
+	});
+}
 void parseRawEquipmentComponent(ArchetypeManager &manager, const WorldComponent &component)
 {
 	std::vector<EntityID> entityIds;
@@ -106,61 +98,191 @@ void parseRawEquipmentComponent(ArchetypeManager &manager, const WorldComponent 
 		manager.removeComponentFromEntity<START_EQUIPMENT_COMPONENT>(entity);
 	}
 }
-void equibFists(ArchetypeManager &manager, const WorldComponent &component)
+
+void WorldParser::addTransformcomponent(ArchetypeManager &manager, EntityID id, tson::Object obj,LEVEL_NAME level)
 {
-	manager.view<InventoryComponent>().each([&](auto &entity, InventoryComponent &icomp) {
-		if (!icomp.hasEquippedItem(ITEM_TYPE::WEAPON)) {
-			EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
-			manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
-			icomp.addItem(weapon, ITEM_TYPE::WEAPON);
-			if (!manager.hasComponent<StatsComponent>(entity)) {
-				manager.addComponentToEntity<StatsComponent>(entity);
-			}
-		}
-	});
+	manager.addComponentToEntity<PartOfLayerComponent>(id);
+	manager.getComponent<PartOfLayerComponent>(id).level = level;
+	manager.addComponentToEntity<BoundIngBoxComponent>(id);
+
+	manager.addComponentToEntity<TransformComponent>(id);
+	manager.getComponent<TransformComponent>(id).position.x = (float)obj.getPosition().x;
+	manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;
+	manager.getComponent<TransformComponent>(id).setRotation((float)obj.getRotation());
+	float sx = (float)obj.getSize().x / (float)map->getTileSize().x;
+	float sy = (float)obj.getSize().y / (float)map->getTileSize().y;
+	manager.getComponent<TransformComponent>(id).scale.x = (sx > 0.f) ? sx : 1.f;
+	manager.getComponent<TransformComponent>(id).scale.y = (sy > 0.f) ? sy : 1.f;
 }
 
+void WorldParser::addRenderComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
+{
+	if (obj.isVisible()) {
+		std::cout << obj.getId() << std::endl;
+		manager.addComponentToEntity<RenderComponent>(id);
+		manager.getComponent<RenderComponent>(id).z_layer = 1;
+	}
+}
+
+void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
+{
+	manager.addComponentToEntity<SpriteComponent>(id);
+	auto &sprite = manager.getComponent<SpriteComponent>(id);
+
+	if (obj.getObjectType() == tson::ObjectType::Object) {
+		tson::Tileset *tileset = map->getTilesetByGid(obj.getGid());
+		int localId = obj.getGid() - tileset->getFirstgid();
+		int cols    = tileset->getColumns();
+		int tw      = tileset->getTileSize().x;
+		int th      = tileset->getTileSize().y;
+	
+		sprite.tileInfo = {
+			(localId % cols) * tw,
+			(localId / cols) * th,
+			tw,
+			th
+		};
+		sprite.tilesetPath = (fs::path(MAP).parent_path() / tileset->getImagePath()).string();
+	
+	}
+	if (obj.getObjectType()==tson::ObjectType::Rectangle) {
+		if (map->getTilesets().empty()) {
+			throw std::runtime_error("You need to embedd a tileset!");
+		}
+		
+		auto firsTileset = map->getTilesets()[0];
+
+		int tilewidth = firsTileset.getTileSize().x;
+		int tileheight = firsTileset.getTileSize().y;
+		sprite.tileInfo = {0, 0, tilewidth, tileheight};
+		sprite.tilesetPath = (fs::path(MAP).parent_path() / firsTileset.getImagePath()).string();
+
+	}
+}
+
+void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, tson::Object obj)
+{
+	for (auto& prop : obj.getProperties().getProperties()) {
+		std::string propType = prop.second.getPropertyType();
+		std::cout << "Adding: " << propType << std::endl;
+		ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
+		auto func = componentRegistry.getCreationFunctions(propType);
+		auto propClass = getCustomPropertyAsClass(prop.second);
+		if (func) {
+
+			func(manager, id, propClass);
+		}
+		std::cout << "Added:" << propType << std::endl;
+
+	}
+}
+
+void WorldParser::addPartOfLayerComponents(ArchetypeManager &manager, EntityID id, tson::Object obj,LEVEL_NAME level)
+{
+	manager.addComponentToEntity<PartOfLayerComponent>(id);
+	manager.getComponent<PartOfLayerComponent>(id).level = level;
+}
+
+void WorldParser::addBoundingBoxComponents(ArchetypeManager &manager, EntityID id, tson::Object obj)
+{
+	manager.addComponentToEntity<BoundIngBoxComponent>(id);
+}
+
+void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tuple)
+{
+	auto obj = std::get<0>(tuple);
+	auto level = std::get<1>(tuple);
+	EntityID id = manager.createEntity();
+	manager.addComponentToEntity<TransformComponent>(id);
+	manager.getComponent<TransformComponent>(id).position.x = (float)obj.getPosition().x;
+	manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;
+	manager.addComponentToEntity<RenderComponent>(id);
+	manager.getComponent<RenderComponent>(id).z_layer = 0;
+	manager.addComponentToEntity<SpriteComponent>(id);
+	auto &sprite = manager.getComponent<SpriteComponent>(id);
+
+	sprite.tileInfo = {obj.getDrawingRect().x,obj.getDrawingRect().y,obj.getDrawingRect().width,obj.getDrawingRect().height};
+	sprite.tilesetPath = (fs::path(MAP).parent_path() / obj.getTile()->getTileset()->getImagePath()).string();
+
+	manager.addComponentToEntity<PartOfLayerComponent>(id);
+	manager.getComponent<PartOfLayerComponent>(id).level = level;
+}
+
+
+void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple)
+{
+
+
+	auto obj = std::get<0>(tuple);
+	if (obj.getObjectType()!=tson::ObjectType::Rectangle && obj.getObjectType()!=tson::ObjectType::Object) {
+		throw std::runtime_error("We allow only rectangle objects");
+	}
+	auto level = std::get<1>(tuple);
+	EntityID id = manager.createEntityWithId(obj.getId());
+	addTransformcomponent(manager, id, obj, level);
+	addRenderComponent(manager, id, obj);
+	addSpriteComponent(manager,id,obj);
+	addBoundingBoxComponents(manager, id, obj);
+	addPartOfLayerComponents(manager, id, obj, level);
+	addTilesonComponents(manager, id, obj);
+
+
+}
 void WorldParser::update()
 {
-	std::ifstream f(MAP);
-	json data = json::parse(f);
-	EntityID world = manager.createEntity<WorldComponent>();
-	auto &component = manager.getComponent<WorldComponent>(world);
-	component.readFromJson(data);
+	tson::Tileson t;
 
-	window.setSize({component.widthPixel, component.heightPixel});
+	EntityID world = manager.createEntity<WorldComponent>();
+	WorldComponent &worldComp = manager.getComponent<WorldComponent>(world);
+
+	std::vector<tson::Layer> objectLayers;
+	std::vector<tson::Layer> tileLayers;
+	worldComp.widthPixel = map->getSize().x * map->getTileSize().x;
+	worldComp.heightPixel = map->getSize().y * map->getTileSize().y;
+	worldComp.currentLevel = LEVEL_NAME::LEVEL1;
+	worldComp.currentLayer = LAYERTYPE::OVERWORLD;
+	window.setSize({worldComp.widthPixel,worldComp.heightPixel});
 
 	sf::View view(sf::FloatRect({0.f, 0.f},
-	                            {static_cast<float>(component.widthPixel), static_cast<float>(component.heightPixel)}));
+								{static_cast<float>(worldComp.widthPixel), static_cast<float>(worldComp.heightPixel)}));
 	window.setView(view);
 
-	std::vector<ObjectJob> allObjectJobs;
 
-	for (auto &[levelName, levelLayer] : component.levelLayers) {
-		for (auto &[layerType, layer] : levelLayer.layers) {
-			for (const auto &objLayer : layer.objectLayers) {
-				for (const auto &obj : objLayer.objects) {
-					allObjectJobs.push_back({&obj, levelName, layerType});
-				}
-			}
+	undfoldLayers(map->getLayers(), objectLayers, tileLayers);
+
+	std::map<int,std::tuple<tson::Object,LEVEL_NAME>> objects;
+
+	for (auto & objlayer : objectLayers) {
+
+		tson::Property config = getPropertyByPropertyType(objlayer.getProperties(), "LayerConfig");
+
+		auto configObject = getCustomPropertyAsClass(config);
+		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject,"levelName");
+		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject,"layerType");
+		for (auto & obj : objlayer.getObjects()) {
+			objects[obj.getId()] = {obj,level_name};
 		}
 	}
 
-	std::sort(allObjectJobs.begin(), allObjectJobs.end(),
-	          [](const ObjectJob &a, const ObjectJob &b) { return a.data->id < b.data->id; });
-
-	for (const auto &job : allObjectJobs) {
-		createEntities(*(job.data), manager, job.level, job.layer);
+	for (auto &tr: objects) {
+		createEntity(tr.second);
 	}
 
-	for (auto &[levelName, levelLayer] : component.levelLayers) {
-		for (auto &[layerType, layer] : levelLayer.layers) {
-			intializeEntities(layer, manager, component, levelName, layerType);
+
+	for (auto &tileLayer : tileLayers) {
+		tson::Property config = getPropertyByPropertyType(tileLayer.getProperties(), "LayerConfig");
+		auto configObject = getCustomPropertyAsClass(config);
+		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject,"levelName");
+		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject,"layerType");
+
+		for(auto &[pos, tileObject] : tileLayer.getTileObjects()) {
+			std::tuple<tson::TileObject, LEVEL_NAME> obj = std::make_tuple(tileObject, level_name);
+			createTileObject(obj);
 		}
 	}
 
-	component.register_menu(OVERWORLD, MENUS::Menu1);
-	component.register_menu(BATTLEWORLD, MENUS::Menu2);
-	parseRawEquipmentComponent(manager, component);
-	equibFists(manager, component);
+	
+
+	parseRawEquipmentComponent(manager, worldComp);
+	equibFists(manager, worldComp);
 }

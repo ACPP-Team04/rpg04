@@ -1,15 +1,11 @@
 #pragma once
-
+#include <algorithm>
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
-
-#include <any>
 #include <functional>
-
-#include <nlohmann/json.hpp>
 #include <unordered_map>
-
-using FunctionCreator = std::function<void(ArchetypeManager &, EntityID, nlohmann::json &)>;
+#include "tileson.h"
+using FunctionCreator = std::function<void(ArchetypeManager &, EntityID, tson::TiledClass &)>;
 
 class ComponentRegistry {
 
@@ -20,7 +16,7 @@ class ComponentRegistry {
 	template <typename T>
 	void registerComponent(const std::string &name)
 	{
-		components[name] = [](ArchetypeManager &mgr, EntityID id, nlohmann::json &data) {
+		components[name] = [](ArchetypeManager &mgr, EntityID id, tson::TiledClass &data) {
 			mgr.addComponentToEntity<T>(id);
 			mgr.getComponent<T>(id).readFromJson(data);
 		};

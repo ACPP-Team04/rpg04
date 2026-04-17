@@ -1,7 +1,7 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
-
+#include "Abstract/Utils/WorldUtlis.hpp"
 #include <SFML/Window/Keyboard.hpp>
 
 struct InteractionComponent : public Component<InteractionComponent> {
@@ -14,12 +14,14 @@ struct InteractionComponent : public Component<InteractionComponent> {
 	float focusRadius;
 	bool mustLeaveRadius = false;
 
-	void readFromJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j) override
 	{
 		isActive = false;
-		trigger = j.value("trigger", INTERACTION_TRIGGER());
-		action = j.value("action", INTERACTION_ACTION());
-		focusRadius = j.value("focusRadius", 1.0f);
-		interactionKey = j.value("interactionKey", sf::Keyboard::Key());
+		trigger = WorldUtils::getEnumValue<INTERACTION_TRIGGER>(j, "trigger");
+		action = WorldUtils::getEnumValue<INTERACTION_ACTION>(j, "action");
+		focusRadius = j.get<float>("focusRadius");
+		interactionKey = WorldUtils::getEnumValue<sf::Keyboard::Key>(j, "interactionKey");
+
+		int n = 10;
 	}
 };

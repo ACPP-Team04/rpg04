@@ -1,0 +1,48 @@
+{
+    "activeFile": "map.tmj",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Tilesheet_WithEnums.tsj": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tilesheet_edited.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map.tmj": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 307,
+                "y": 22.25
+            }
+        },
+        "map.tmj#Tilesheet_edited": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "//wsl.localhost/Ubuntu/home/marco/rpg04/src/ressources/TileMapEditorOutput",
+    "last.objectTypesPath": "//wsl.localhost/Ubuntu/home/marco/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/properties.json",
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "map.tmj",
+        "Tilesheet_WithEnums.tsj"
+    ],
+    "project": "filledWithEnunm.tiled-project",
+    "property.type": "LayerConfig",
+    "recentFiles": [
+        "Tilesheet_WithEnums.tsj",
+        "map.tmj",
+        "Tilesheet_edited.tsx"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

@@ -2,6 +2,7 @@
 #include "Abstract/ECS/Component/Component.hpp"
 #include "StatsComponent.hpp"
 #include <map>
+#include "Abstract/Utils/WorldUtlis.hpp"
 
 enum class WeaponType { MELEE, RANGE };
 
@@ -27,14 +28,14 @@ struct WeaponComponent : Component<WeaponComponent> {
 			return 0.0;
 		}
 	}
-	void readFromJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j)  override
 	{
-		weaponType = j.value("weapon_type", WeaponType());
-		scalingFactor = j.value("scalingFactor", WEAPON_SCALING_FACTOR());
-		scalingStat = j.value("scaleStat", STATS());
-		lightAttackBaseDmg = j.value("lightAttackBaseDmg", 1);
-		heavyAttackBaseDmg = j.value("heavyAttackBaseDmg", 1);
-		ultimateAttackBaseDmg = j.value("ultimateAttackBaseDmg", 1);
+		weaponType = WorldUtils::getEnumValue<WeaponType>(j,"weapon_type");
+		scalingFactor = WorldUtils::getEnumValue<WEAPON_SCALING_FACTOR>(j,"scalingFactor");
+		scalingStat = WorldUtils::getEnumValue<STATS>(j,"scaleStat");
+		lightAttackBaseDmg = j.get<int>("lightAttackBaseDmg");
+		heavyAttackBaseDmg = j.get<int>("heavyAttackBaseDmg");
+		ultimateAttackBaseDmg = j.get<int>("ultimateAttackBaseDmg");
 	}
 
 	float getScalingFactor() const { return scaleFactorAsFloat(scalingFactor); }
