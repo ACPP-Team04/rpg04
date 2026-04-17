@@ -81,9 +81,9 @@ struct InventoryComponent : public Component<InventoryComponent> {
 			if (equiped.contains(item)) {
 				return equiped[item];
 			}
-		} else {
-			throw std::runtime_error("No equipment");
-		}
+		} 
+		throw std::runtime_error("No equipment");
+		
 	}
 
 	bool hasEquippedItem(ITEM_TYPE item)
