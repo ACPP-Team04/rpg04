@@ -1,7 +1,7 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
-
+#include <spdlog/spdlog.h>
 struct StatsComponent : Component<StatsComponent> {
   public:
 	StatsComponent() = default;

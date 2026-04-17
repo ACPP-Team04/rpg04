@@ -20,6 +20,7 @@
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 
+#include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
@@ -47,13 +48,15 @@ struct ECSManager {
 	ItemSystem item_system;
 	DoorSystem door_system;
 	SwitchBattleModeSystem switch_battle_mode_system;
+	EnemyHealthBarSystem enemyHealthBarSystem;
 
 	ECSManager(sf::RenderWindow &window)
 	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
 	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
-	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui), switch_battle_mode_system(manager)
+	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui), switch_battle_mode_system(manager),
+	      enemyHealthBarSystem(manager, gui, window)
 	{
 		gui.setWindow(window);
 	}
@@ -97,6 +100,7 @@ struct ECSManager {
 		switch_battle_mode_system.update();
 		battleInputSystem.update();
 		combatSystem.update();
+		enemyHealthBarSystem.update();
 		boundingBoxSystem.update();
 		statsDistributorSystem.update();
 		dialogSystem.update();

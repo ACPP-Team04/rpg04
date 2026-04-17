@@ -7,6 +7,7 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
 #include <Abstract/Overwordl/Components/RenderComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
@@ -78,7 +79,7 @@ void CombatSystem::update()
 				this->passTurn(currentAttacker, bmc.currentTurnIndex, bmc.participants);
 				break;
 			case BattleState::VICTORY:
-				spdlog::get("combat")->debug("Victory for player");
+				spdlog::get("combat")->info("Victory for player");
 				bmc.isBattleOver = true;
 				break;
 			case BattleState::DEFEAT:
@@ -160,12 +161,12 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	}
 	spdlog::get("combat")->info("Entity {} attacks Entity {} with {}!", attacker.getId(), defender.getId(),
 	                            static_cast<int>(typeOfAction));
-	spdlog::get("combat")->debug("Entity {} has {} HP and {} AP left!", defender.getId(),
-	                             manager.getComponent<StatsComponent>(defender).health,
-	                             manager.getComponent<BattleComponent>(defender).AP);
-	spdlog::get("combat")->debug("Entity {} has {} HP and {} AP left!", attacker.getId(),
-	                             manager.getComponent<StatsComponent>(attacker).health,
-	                             manager.getComponent<BattleComponent>(attacker).AP);
+	spdlog::get("combat")->info("Entity {} has {} HP and {} AP left!", defender.getId(),
+	                            manager.getComponent<StatsComponent>(defender).health,
+	                            manager.getComponent<BattleComponent>(defender).AP);
+	spdlog::get("combat")->info("Entity {} has {} HP and {} AP left!", attacker.getId(),
+	                            manager.getComponent<StatsComponent>(attacker).health,
+	                            manager.getComponent<BattleComponent>(attacker).AP);
 }
 
 void CombatSystem::takeHealAction(EntityID healer, int faith, int maxHealth)
@@ -233,14 +234,17 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 	auto playerID = WorldUtils::getPlayer(manager);
 	std::vector<EntityID> defeatedEnemies;
 
-	manager.addComponentToEntity<MovementComponent>(playerID.value());
-	auto &move = manager.getComponent<MovementComponent>(playerID.value());
-	move.speed = 3.0f;
+	manager.addComponentToEntity<InputComponent>(playerID.value());
 
 	auto participantsCopy = bmc.participants;
 	for (EntityID entity : participantsCopy) {
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		auto &stats = manager.getComponent<StatsComponent>(entity);
+		if (stats.health > stats.getStat(STATS::MAX_HEALTH)) {
+			spdlog::get("combat")->warn(
+			    "HP of Entity {} have been set to max_health {}, which is lower than current health {}", entity.getId(),
+			    stats.getStat(STATS::MAX_HEALTH), stats.health);
+		}
 		stats.health = stats.getStat(STATS::MAX_HEALTH);
 		if (entity == winningEntity && battleState == BattleState::VICTORY) {
 			stats.experienceLevel += 1;

@@ -14,20 +14,24 @@ ItemSystem::ItemSystem(ArchetypeManager &manager) : System(manager) {}
 
 void ItemSystem::update()
 {
-	InputComponent &inputComponent = WorldUtils::getPlayersComponent<InputComponent>(manager).value();
+	auto inputComponentOptional = WorldUtils::getPlayersComponent<InputComponent>(manager);
+	if (!inputComponentOptional.has_value()) {
+		return;
+	}
+	InputComponent &inputComponent = inputComponentOptional.value();
 	InventoryComponent &inventoryComponent = WorldUtils::getPlayersComponent<InventoryComponent>(manager).value();
-	WorldUtils::viewInCurrentLayer<InteractionComponent, ItemComponent>(manager,
-	    [&](auto &entity, InteractionComponent &interaction, ItemComponent &item) {
+	WorldUtils::viewInCurrentLayer<InteractionComponent, ItemComponent>(
+	    manager, [&](auto &entity, InteractionComponent &interaction, ItemComponent &item) {
 		    if (!interaction.isActive) {
 			    return;
 		    }
 		    if (interaction.action == INTERACTION_ACTION::PICK_ITEM) {
-		    	if (inputComponent.interact.justPressed) {
-		    		return;
-		    	}
-		    	inventoryComponent.addItem(entity, item.itemType);
-		    	this->manager.removeComponentFromEntity<RenderComponent>(entity);
-		    	this->manager.removeComponentFromEntity<InteractionComponent>(entity);
+			    if (inputComponent.interact.justPressed) {
+				    return;
+			    }
+			    inventoryComponent.addItem(entity, item.itemType);
+			    this->manager.removeComponentFromEntity<RenderComponent>(entity);
+			    this->manager.removeComponentFromEntity<InteractionComponent>(entity);
 		    }
 	    });
 }

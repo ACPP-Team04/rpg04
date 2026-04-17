@@ -153,19 +153,6 @@ void BattleInputSystem::update()
 	}
 	auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
 	auto &bmc = manager.getComponent<BattleManagerComponent>(bmcId);
-
-	for (EntityID id : bmc.participants) {
-		if (id != playerId) {
-			if (!ui.hasEnemyBar(id))
-				ui.createEnemyBar(id);
-
-			auto &stats = manager.getComponent<StatsComponent>(id);
-			auto &transform = manager.getComponent<TransformComponent>(id);
-			sf::Vector2i pixelPos = window.mapCoordsToPixel(transform.position);
-			sf::Vector2f screenPos = sf::Vector2f(pixelPos);
-			ui.updateEnemyBar(id, stats.health, stats.getStat(MAX_HEALTH), screenPos);
-		}
-	}
 }
 
 EntityID BattleInputSystem::selectTarget(std::vector<EntityID> participants, EntityID playerId)
