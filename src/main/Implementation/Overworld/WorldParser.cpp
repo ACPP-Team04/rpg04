@@ -142,7 +142,7 @@ void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tso
 			tw,
 			th
 		};
-		sprite.tilesetPath = fs::path(MAP).parent_path() / tileset->getImagePath();
+		sprite.tilesetPath = (fs::path(MAP).parent_path() / tileset->getImagePath()).string();
 	
 	}
 	if (obj.getObjectType()==tson::ObjectType::Rectangle) {
@@ -155,7 +155,7 @@ void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tso
 		int tilewidth = firsTileset.getTileSize().x;
 		int tileheight = firsTileset.getTileSize().y;
 		sprite.tileInfo = {0, 0, tilewidth, tileheight};
-		sprite.tilesetPath = fs::path(MAP).parent_path() / firsTileset.getImagePath();
+		sprite.tilesetPath = (fs::path(MAP).parent_path() / firsTileset.getImagePath()).string();
 
 	}
 }
@@ -202,7 +202,7 @@ void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tu
 	auto &sprite = manager.getComponent<SpriteComponent>(id);
 
 	sprite.tileInfo = {obj.getDrawingRect().x,obj.getDrawingRect().y,obj.getDrawingRect().width,obj.getDrawingRect().height};
-	sprite.tilesetPath = fs::path(MAP).parent_path() / obj.getTile()->getTileset()->getImagePath();
+	sprite.tilesetPath = (fs::path(MAP).parent_path() / obj.getTile()->getTileset()->getImagePath()).string();
 
 	manager.addComponentToEntity<PartOfLayerComponent>(id);
 	manager.getComponent<PartOfLayerComponent>(id).level = level;
