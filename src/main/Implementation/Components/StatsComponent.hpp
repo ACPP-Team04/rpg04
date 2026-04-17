@@ -30,7 +30,7 @@ struct StatsComponent : Component<StatsComponent> {
 	int getStat(STATS stat)
 	{
 		if (!stats.contains(stat)) {
-			return 0;
+			return 50;
 		}
 		return stats[stat];
 	}
