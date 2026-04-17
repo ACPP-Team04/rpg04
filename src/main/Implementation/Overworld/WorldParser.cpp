@@ -205,6 +205,7 @@ void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tu
 	sprite.tilesetPath = fs::path(MAP).parent_path() / obj.getTile()->getTileset()->getImagePath();
 
 	manager.addComponentToEntity<PartOfLayerComponent>(id);
+	manager.getComponent<PartOfLayerComponent>(id).level = level;
 }
 
 

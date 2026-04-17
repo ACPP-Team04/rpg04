@@ -45,14 +45,10 @@ void CollisionSystem::update()
 			auto &bbB = manager.getComponent<BoundIngBoxComponent>(entities.at(j));
 			auto &transformB = manager.getComponent<TransformComponent>(entities.at(j));
 			auto &collisionB = manager.getComponent<CollisionComponent>(entities.at(j));
-			if (collides(bbA, bbB)) {
-
-				if (collisionA.action == COLLISION_ACTION::KEEP_POSITION
+			if (collisionA.action == COLLISION_ACTION::KEEP_POSITION
 				    && collisionB.action == COLLISION_ACTION::KEEP_POSITION) {
-
 					continue;
 				}
-			}
 			if (collides(bbA, bbB)) {
 				resolveCollision(collisionA, transformA, collidesOverlap(bbA.bounds, bbB.bounds));
 				resolveCollision(collisionB, transformB, collidesOverlap(bbA.bounds, bbB.bounds));

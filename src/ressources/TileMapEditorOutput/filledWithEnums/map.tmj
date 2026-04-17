@@ -39,7 +39,7 @@
                     }
                 }],
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":30,
          "x":0,
          "y":0
@@ -234,7 +234,7 @@
                          "type":"class",
                          "value":
                             {
-                             "destination":9
+                             "destination":17
                             }
                         }],
                  "rotation":0,
@@ -318,7 +318,7 @@
                             {
                              "characterSize":10,
                              "dialogSentences":"Hallo wie gehts | Was ist los\n",
-                             "fillColor":"#fff72dba"
+                             "fillColor":"#ff9ff71c"
                             }
                         }, 
                         {
@@ -373,20 +373,118 @@
                     }
                 }],
          "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":3,
+         "name":"Objektebene 2",
+         "objects":[
+                {
+                 "height":0,
+                 "id":17,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":0,
+                 "x":307,
+                 "y":22.5
+                }],
+         "opacity":1,
+         "properties":[
+                {
+                 "name":"layerConfig",
+                 "propertytype":"LayerConfig",
+                 "type":"class",
+                 "value":
+                    {
+                     "layerType":"OVERWORLD",
+                     "levelName":"LEVEL2"
+                    }
+                }],
+         "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 790, 791, 792, 793, 794, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 835, 836, 837, 838, 839, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 880, 881, 882, 883, 884, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 925, 926, 927, 928, 929, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 970, 971, 972, 973, 974, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 790, 791, 792, 793, 794, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 835, 836, 837, 838, 839, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 880, 881, 882, 883, 884, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 925, 926, 927, 928, 929, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 970, 971, 972, 973, 974, 0, 0, 0, 0, 0],
+         "height":20,
+         "id":4,
+         "name":"Kachelebene 2",
+         "opacity":1,
+         "properties":[
+                {
+                 "name":"layerConfig",
+                 "propertytype":"LayerConfig",
+                 "type":"class",
+                 "value":
+                    {
+                     "layerType":"OVERWORLD",
+                     "levelName":"LEVEL2"
+                    }
+                }],
+         "type":"tilelayer",
+         "visible":true,
+         "width":30,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":17,
+ "nextlayerid":5,
+ "nextobjectid":18,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
  "tileheight":16,
  "tilesets":[
         {
+         "columns":45,
          "firstgid":1,
-         "source":"Tilesheet_WithEnums.tsj"
+         "image":"..\/Tilesheet_edited.png",
+         "imageheight":240,
+         "imagewidth":720,
+         "margin":0,
+         "name":"Tilesheet_edited",
+         "spacing":0,
+         "tilecount":675,
+         "tileheight":16,
+         "tilewidth":16
+        }, 
+        {
+         "columns":45,
+         "firstgid":676,
+         "image":"..\/Tilesheet_edited.png",
+         "imageheight":240,
+         "imagewidth":720,
+         "margin":0,
+         "name":"Tilesheet_edited",
+         "spacing":0,
+         "tilecount":675,
+         "tileheight":16,
+         "tilewidth":16
         }],
  "tilewidth":16,
  "type":"map",
