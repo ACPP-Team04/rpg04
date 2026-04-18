@@ -20,8 +20,8 @@ void InteractionSystem::update()
 	EntityID nearestInteractionEntity;
 	float smallestDistance = FLT_MAX;
 	bool candidateFound = false;
-	WorldUtils::viewInCurrentLayer<InteractionComponent, BoundIngBoxComponent>(manager,
-	    [&](auto &interactableEntity, InteractionComponent &component, BoundIngBoxComponent &bb) {
+	WorldUtils::viewInCurrentLayer<InteractionComponent, BoundIngBoxComponent>(
+	    manager, [&](auto &interactableEntity, InteractionComponent &component, BoundIngBoxComponent &bb) {
 		    component.inRange = false;
 
 		    auto &playerBB = manager.getComponent<BoundIngBoxComponent>(player);
@@ -51,6 +51,9 @@ void InteractionSystem::update()
 	}
 
 	if (component.trigger == INTERACTION_TRIGGER::byInteractionKey) {
+		if (!manager.hasComponent<InputComponent>(player)) {
+			return;
+		}
 		auto &inputComponent = manager.getComponent<InputComponent>(player);
 		component.inRange = true;
 		if (inputComponent.interact.justPressed) {
