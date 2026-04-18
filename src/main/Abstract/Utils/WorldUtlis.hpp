@@ -1,10 +1,10 @@
 #pragma once
-#include <algorithm>
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "tileson.h"
+#include <algorithm>
 
 #include <magic_enum/magic_enum.hpp>
 class WorldUtils {
@@ -27,10 +27,8 @@ class WorldUtils {
 	{
 		WorldComponent *world = nullptr;
 
-		manager.view<WorldComponent>().each([&](auto id, auto &comp) {
-			world = &comp;
-		});
-		if(world == nullptr) {
+		manager.view<WorldComponent>().each([&](auto id, auto &comp) { world = &comp; });
+		if (world == nullptr) {
 			throw std::runtime_error("No world component found!");
 		}
 
@@ -45,11 +43,11 @@ class WorldUtils {
 		const auto &pComp = manager.getComponent<PartOfLayerComponent>(entity);
 		return isCurrentLayer(manager, pComp.layer, pComp.level);
 	}
-	template <typename ...T, typename Function>
-	static void viewInCurrentLayer(ArchetypeManager &manager,Function &&function)
+	template <typename... T, typename Function>
+	static void viewInCurrentLayer(ArchetypeManager &manager, Function &&function)
 	{
 
-		manager.view<T...>().each([&](auto &entity, T&... components) {
+		manager.view<T...>().each([&](auto &entity, T &...components) {
 			if (!isPartOfCurrentLayer(manager, entity)) {
 				return;
 			}
@@ -68,10 +66,9 @@ class WorldUtils {
 	static std::vector<EntityID> getPlayers(ArchetypeManager &manager)
 	{
 		std::vector<EntityID> result;
-		viewInCurrentLayer<PlayerComponent>(manager,[&](auto &entity, auto &component) { result.push_back(entity); });
+		viewInCurrentLayer<PlayerComponent>(manager, [&](auto &entity, auto &component) { result.push_back(entity); });
 		return result;
 	}
-
 
 	template <typename T>
 	static std::optional<std::reference_wrapper<T>> getPlayersComponent(ArchetypeManager &manager)
@@ -81,7 +78,7 @@ class WorldUtils {
 			throw std::runtime_error("No player found");
 		}
 		if (!manager.hasComponent<T>(player.value())) {
-			throw std::runtime_error("Player does not have the requested component");
+			return std::nullopt;
 		}
 		return std::ref(manager.getComponent<T>(player.value()));
 	}
