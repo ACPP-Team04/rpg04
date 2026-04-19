@@ -13,7 +13,7 @@ TEST(AISystemTest, executeAILogicHeavyAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
@@ -40,7 +40,7 @@ TEST(AISystemTest, executeAILogicLightAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
@@ -67,7 +67,7 @@ TEST(AISystemTest, executeAILogicHeal)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
@@ -98,7 +98,7 @@ TEST(AISystemTest, executeAILogicRest)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
@@ -126,7 +126,7 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
-	EntityID player = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
 
@@ -147,4 +147,19 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	aiSystem.executeAILogic(enemy, {player, enemy});
 	EXPECT_EQ(BattleState::SELECTED_ACTION, manager.getComponent<BattleComponent>(enemy).battleState);
 	EXPECT_EQ(BattleAction::ULTIMATE_ATTACK, manager.getComponent<BattleComponent>(enemy).selectedAction);
+}
+
+TEST(AISystemTest, selectTargetWithMultipleEnemies)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	AISystem aiSystem = AISystem(manager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	EntityID player = manager.createEntity<PlayerComponent>();
+	EntityID enemy = manager.createEntity();
+	EntityID enemy2 = manager.createEntity();
+	EntityID battle = manager.createEntity();
+
+	auto target = aiSystem.selectTarget(enemy, {player, enemy, enemy2});
+	EXPECT_EQ(target.has_value(), true);
+	EXPECT_EQ(player, target.value());
 }
