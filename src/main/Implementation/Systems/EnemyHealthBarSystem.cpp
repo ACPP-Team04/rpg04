@@ -74,8 +74,8 @@ void EnemyHealthBarSystem::createEnemyBar(EntityID id)
 void EnemyHealthBarSystem::updateEnemyBar(EntityID id, float hp, float maxHp, sf::Vector2f screenPos)
 {
 	if (hp > maxHp) {
-		spdlog::get("combat")->info("In healthbar-system health {} is bigger than maxHp {} for entity {}", hp, maxHp,
-		                            id.getId());
+		spdlog::get("combat")->debug("In healthbar-system health {} is bigger than maxHp {} for entity {}", hp, maxHp,
+		                             id.getId());
 	}
 	auto &bar = enemyBars[id];
 	bar->setMaximum(maxHp);
