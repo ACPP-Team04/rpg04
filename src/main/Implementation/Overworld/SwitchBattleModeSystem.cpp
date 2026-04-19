@@ -43,7 +43,8 @@ void SwitchBattleModeSystem::update()
 		return;
 	std::vector<EntityID> participantsList;
 	participantsList.push_back(player);
-	auto enemyList = getEnemiesInRatio(manager.getComponent<TransformComponent>(initialEnemyId).position, 50.0f);
+	auto enemyList =
+	    getEnemiesInRatio(manager.getComponent<TransformComponent>(initialEnemyId).position, 50.0f, player);
 	participantsList.insert(participantsList.end(), enemyList.begin(), enemyList.end());
 
 	EntityID bManager = this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>();
@@ -87,11 +88,15 @@ void SwitchBattleModeSystem::update()
 	spdlog::get("combat")->info("Switched to battle mode");
 }
 
-std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector2f center, float radius)
+std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector2f center, float radius,
+                                                                EntityID playerId)
 {
 	std::vector<EntityID> enemiesIdList;
 	this->manager.view<InventoryComponent, TransformComponent>().each(
 	    [&](auto entityId, auto &eqComponent, auto &transformComponent) {
+		    if (entityId == playerId) {
+			    return;
+		    }
 		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entityId)) {
 			    return;
 		    }
