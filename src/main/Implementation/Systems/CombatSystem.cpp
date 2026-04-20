@@ -302,17 +302,13 @@ int CombatSystem::getActionCost(BattleAction action)
 	}
 }
 
-bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed,
-                                  int numberOfHealthPotions)
+bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed)
 {
 	int cost = getActionCost(action);
 	if (AP < cost) {
 		return false;
 	}
 	if (action == BattleAction::ULTIMATE_ATTACK && numberOfUltimateAttacksUsed >= 1) {
-		return false;
-	}
-	if (action == BattleAction::HEAL && numberOfHealthPotions <= 0) {
 		return false;
 	}
 	return true;

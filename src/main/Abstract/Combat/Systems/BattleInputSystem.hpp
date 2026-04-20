@@ -11,11 +11,15 @@ class BattleInputSystem : public System {
 	BattleUI ui;
 	void connectCallbacks();
 	sf::RenderWindow &window;
+	int currentTargetIndex = 0;
+	bool rightKeyWasPressed = false;
+	bool leftKeyWasPressed = false;
+	bool enterKeyWasPressed = false;
 
   public:
 	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window);
 
 	void update() override;
 	void init();
-	EntityID selectTarget(std::vector<EntityID> participants, EntityID playerId);
+	std::vector<EntityID> getTargetsInBattle(const EntityID playerId, const EntityID managerId);
 };
