@@ -30,6 +30,9 @@ struct StatsComponent : Component<StatsComponent> {
 	int getStat(STATS stat)
 	{
 		if (!stats.contains(stat)) {
+			if (stat == STATS::MAX_HEALTH) {
+				return 100;
+			}
 			return 50;
 		}
 		return stats[stat];
