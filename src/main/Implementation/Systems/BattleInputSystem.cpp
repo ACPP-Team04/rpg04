@@ -136,10 +136,17 @@ void BattleInputSystem::update()
 		    CombatSystem::validateAction(BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed));
 		ui.getButton("BtnRest")->setEnabled(true);
 	} else if (showTargetMenu) {
-		auto validTargets =
-		    getTargetsInBattle(playerId, manager.getComponent<BattleComponent>(playerId).battleManagerId);
+		auto validTargets = getTargetsInBattle(
+		    playerId, manager.getComponent<BattleComponent>(playerId).battleManagerId, this->manager);
 		if (validTargets.empty()) {
 			throw std::runtime_error("No valid targets in battle for player");
+		}
+		auto selectedAction = battle.selectedAction;
+		if (selectedAction == BattleAction::HEAL || selectedAction == BattleAction::REST) {
+			battle.battleState = BattleState::SELECTED_ACTION;
+			battle.hoveringTarget = std::nullopt;
+			ui.setActionPanelVisible(false);
+			return;
 		}
 		std::sort(validTargets.begin(), validTargets.end(), [this](const EntityID a, const EntityID b) {
 			auto transformA = manager.getComponent<TransformComponent>(a);
@@ -177,7 +184,8 @@ void BattleInputSystem::update()
 	}
 }
 
-std::vector<EntityID> BattleInputSystem::getTargetsInBattle(const EntityID playerId, const EntityID battleMangerId)
+std::vector<EntityID> BattleInputSystem::getTargetsInBattle(const EntityID playerId, const EntityID battleMangerId,
+                                                            ArchetypeManager &manager)
 {
 	const auto &bmc = manager.getComponent<BattleManagerComponent>(battleMangerId).participants;
 	std::vector<EntityID> targets;
