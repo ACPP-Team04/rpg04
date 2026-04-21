@@ -5,6 +5,7 @@
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
+#include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <spdlog/spdlog.h>
 
 EnemyHealthBarSystem::EnemyHealthBarSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window)
@@ -38,6 +39,9 @@ void EnemyHealthBarSystem::update()
 				continue;
 			}
 
+			if (manager.hasComponent<DeathComponent>(id)) {
+				continue;
+			}
 			activeEnemies.push_back(id);
 
 			auto &stats = manager.getComponent<StatsComponent>(id);
