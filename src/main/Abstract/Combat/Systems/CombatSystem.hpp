@@ -6,6 +6,7 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Combat/Components/BattleManagerComponent.hpp>
 #include <SFML/Graphics.hpp>
 
 class CombatSystem : public System {
@@ -24,9 +25,9 @@ class CombatSystem : public System {
 
 	BattleState checkDeathCondition(EntityID defender, EntityID attacker);
 
-	void passTurn(EntityID &currentEntity, int currentTurnIndex, const std::vector<EntityID> participants);
+	void passTurn(EntityID &currentEntity, BattleManagerComponent &bmc);
 
-	EntityID getAttacker(int currentTurnIndex, const std::vector<EntityID> participants);
+	EntityID getAttacker(BattleManagerComponent &bmc);
 
 	static int getActionCost(BattleAction action);
 
