@@ -7,6 +7,8 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Combat/Systems/BattleInputSystem.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
 #include <Abstract/Overwordl/Components/RenderComponent.hpp>
@@ -31,7 +33,7 @@ void CombatSystem::update()
 			if (player.has_value()) {
 				playerId = player.value();
 			}
-			EntityID currentAttacker = this->getAttacker(bmc.currentTurnIndex, bmc.participants);
+			EntityID currentAttacker = this->getAttacker(bmc);
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			if (bmc.isBattleOver) {
 				cleanUpBattle(battleId, currentAttacker, battle.battleState);
@@ -75,8 +77,7 @@ void CombatSystem::update()
 				break;
 			}
 			case BattleState::NEXT_ROUND:
-				bmc.currentTurnIndex++;
-				this->passTurn(currentAttacker, bmc.currentTurnIndex, bmc.participants);
+				this->passTurn(currentAttacker, bmc);
 				break;
 			case BattleState::VICTORY:
 				spdlog::get("combat")->info("Victory for player");
@@ -118,7 +119,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
 		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
-		spdlog::get("combat")->info("Damage: {}", damage);
+		spdlog::get("combat")->info("Light Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		break;
@@ -130,6 +131,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
 		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		break;
@@ -142,6 +144,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
 		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		spdlog::get("combat")->info("Ultimate Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		manager.getComponent<BattleComponent>(attacker).numberOfUltimateAttacksUsed += 1;
@@ -199,34 +202,61 @@ bool CombatSystem::handleActionDelay(BattleComponent &battle)
 BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attacker)
 {
 	float healthDefender = manager.getComponent<StatsComponent>(defender).health;
+	if (healthDefender > 0.0) {
+		return BattleState::NEXT_ROUND;
+	}
 	auto player = WorldUtils::getPlayer(manager);
 	EntityID playerId;
 	if (player.has_value()) {
 		playerId = player.value();
 	}
 	bool playerIsAttacking = attacker == playerId;
+	bool playerIsDefending = defender == playerId;
 
-	if (healthDefender <= 0) {
-		return playerIsAttacking ? BattleState::VICTORY : BattleState::DEFEAT;
+	if (healthDefender <= 0 && playerIsDefending) {
+	} else if (healthDefender <= 0 && playerIsAttacking) {
+		manager.addComponentToEntity<DeathComponent>(defender);
 	}
+	auto &attackerBattleComp = manager.getComponent<BattleComponent>(attacker);
 
+	std::vector<EntityID> aliveEnemies =
+	    BattleInputSystem::getTargetsInBattle(playerId, attackerBattleComp.battleManagerId, this->manager);
+
+	if (aliveEnemies.empty()) {
+		return BattleState::VICTORY;
+	}
 	return BattleState::NEXT_ROUND;
 }
-void CombatSystem::passTurn(EntityID &currentEntity, int currentTurnIndex, const std::vector<EntityID> participants)
+void CombatSystem::passTurn(EntityID &currentEntity, BattleManagerComponent &bmc)
 {
 
 	manager.getComponent<BattleComponent>(currentEntity).isActiveTurn = false;
-	EntityID nextId = this->getAttacker(currentTurnIndex, participants);
+	bmc.currentTurnIndex++;
+	EntityID nextId = this->getAttacker(bmc);
 	auto &nextBattleComponent = manager.getComponent<BattleComponent>(nextId);
 	nextBattleComponent.battleState = BattleState::TURN_START;
 	nextBattleComponent.isActiveTurn = true;
 }
-EntityID CombatSystem::getAttacker(int currentTurnIndex, const std::vector<EntityID> participants)
+EntityID CombatSystem::getAttacker(BattleManagerComponent &bmc)
 {
-	if (participants.size() == 0) {
+	if (bmc.participants.size() == 0) {
 		throw std::runtime_error("No participants in battle");
 	}
-	return participants[currentTurnIndex % participants.size()];
+	int numberOfParticipants = bmc.participants.size();
+	auto attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
+	if (!manager.hasComponent<DeathComponent>(attacker)) {
+		return attacker;
+	}
+	int loopSafeguard = 0;
+	while (manager.hasComponent<DeathComponent>(attacker)) {
+		bmc.currentTurnIndex++;
+		loopSafeguard++;
+		if (loopSafeguard > numberOfParticipants) {
+			throw std::runtime_error("All participants are dead, but battle is not over");
+		}
+		attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
+	}
+	return attacker;
 }
 void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState)
 {
