@@ -21,5 +21,6 @@ class BattleInputSystem : public System {
 
 	void update() override;
 	void init();
-	std::vector<EntityID> getTargetsInBattle(const EntityID playerId, const EntityID managerId);
+	static std::vector<EntityID> getTargetsInBattle(const EntityID playerId, const EntityID managerId,
+	                                                ArchetypeManager &manager);
 };
