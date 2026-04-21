@@ -214,6 +214,7 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 	bool playerIsDefending = defender == playerId;
 
 	if (healthDefender <= 0 && playerIsDefending) {
+		return BattleState::DEFEAT;
 	} else if (healthDefender <= 0 && playerIsAttacking) {
 		manager.addComponentToEntity<DeathComponent>(defender);
 	}
