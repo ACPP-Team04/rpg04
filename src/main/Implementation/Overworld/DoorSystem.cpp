@@ -32,6 +32,7 @@ void DoorSystem::update()
 				    }
 			    } else {
 				    std::cout << "Door open!!!" << std::endl;
+			    	icomp.action = INTERACTION_ACTION::SWITCH_LAYER;
 			    }
 		    }
 	    });

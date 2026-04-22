@@ -39,7 +39,7 @@
                     }
                 }],
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":30,
          "x":0,
          "y":0
@@ -222,10 +222,20 @@
                          "type":"class",
                          "value":
                             {
-                             "action":"SWITCH_LAYER",
-                             "focusRadius":5,
+                             "action":"DOOR_INTERACTION",
+                             "focusRadius":25,
                              "interactionKey":"F",
                              "trigger":"onEnter"
+                            }
+                        }, 
+                        {
+                         "name":"isLocked",
+                         "propertytype":"LOCKED_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+                             "isLocked":true,
+                             "keyId":20
                             }
                         }, 
                         {
@@ -270,7 +280,7 @@
                          "value":
                             {
                              "action":"START_BATTLE",
-                             "focusRadius":20,
+                             "focusRadius":40,
                              "interactionKey":"F",
                              "trigger":"byInteractionKey"
                             }
@@ -359,6 +369,65 @@
                  "width":16,
                  "x":100.5,
                  "y":271.5
+                }, 
+                {
+                 "gid":331,
+                 "height":16,
+                 "id":18,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"collision",
+                         "propertytype":"COLLISION_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+                             "action":"KEEP_POSITION"
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":76.856900408856,
+                 "y":163.828126205354
+                }, 
+                {
+                 "gid":317,
+                 "height":16,
+                 "id":20,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"col",
+                         "propertytype":"INTERACTION_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+                             "action":"PICK_ITEM",
+                             "focusRadius":20,
+                             "interactionKey":"F",
+                             "trigger":"onEnter"
+                            }
+                        }, 
+                        {
+                         "name":"item",
+                         "propertytype":"ITEM_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+                             "itemType":"COLLECTABLE",
+                             "name":"key23"
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":285.913445961583,
+                 "y":267.199259430687
                 }],
          "opacity":1,
          "properties":[
@@ -373,7 +442,7 @@
                     }
                 }],
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -448,13 +517,13 @@
                     }
                 }],
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":30,
          "x":0,
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":18,
+ "nextobjectid":21,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",

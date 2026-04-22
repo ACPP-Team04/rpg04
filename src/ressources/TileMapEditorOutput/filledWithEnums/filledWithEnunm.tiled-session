@@ -3,6 +3,7 @@
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "Alle Dateien (*)",
     "fileStates": {
         "Tilesheet_WithEnums.tsj": {
             "scaleInDock": 1,
@@ -13,11 +14,11 @@
             "scaleInEditor": 1
         },
         "map.tmj": {
-            "scale": 2,
+            "scale": 1.2963,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 307,
-                "y": 22.25
+                "x": 216.77080922625933,
+                "y": 140.7853120419656
             }
         },
         "map.tmj#Tilesheet_edited": {
@@ -34,7 +35,7 @@
         "Tilesheet_WithEnums.tsj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "LayerConfig",
+    "property.type": "INTERACTION_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",
