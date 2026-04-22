@@ -47,16 +47,6 @@ class Archetype {
 		return this->componentArea.getComponentArraysReferenceAsTuple<T...>();
 	}
 
-	template <typename... T>
-	std::tuple<T &...> getComponentArrays(size_t location)
-	{
-		auto componentArrays = getComponentArrays<T...>();
-		if (location > this->componentArea.getLastEntityIndex()) {
-			throw std::out_of_range("The archetype has not this entity!");
-		}
-		return std::tie((std::get<T *>(componentArrays)[location])...);
-	}
-
 	ComponentArea *getComponentArea() { return &this->componentArea; }
 
 	ArchetypeBitSignature getArchTypeSignature() { return this->type; }

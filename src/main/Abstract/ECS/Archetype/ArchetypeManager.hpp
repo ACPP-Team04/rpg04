@@ -139,6 +139,7 @@ class ArchetypeManager {
 		this->addEntityTag(tag, entityId);
 		return entityId;
 	}
+
 	template <typename... T>
 	EntityID createEntity()
 	{
@@ -163,7 +164,8 @@ class ArchetypeManager {
 	T &getComponent(EntityID entityId)
 	{
 		EntityLocation location = getEntityLocation(entityId);
-		return std::get<0>(location.archetype->getComponentArrays<T>(location.index));
+		T* arr = std::get<0>(location.archetype->getComponentArrays<T>());
+		return arr[location.index];
 	}
 	template <typename T>
 	bool hasComponent(EntityID entityId)
