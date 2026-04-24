@@ -1,9 +1,11 @@
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
+#include "Abstract/Combat/Components/CombatGodMode.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
+#include "Abstract/Utils/GraveConfig.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
@@ -209,14 +211,24 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 	EntityID playerId;
 	if (player.has_value()) {
 		playerId = player.value();
+	} else {
+		throw std::runtime_error("No player found in checkDeathCondition");
 	}
 	bool playerIsAttacking = attacker == playerId;
 	bool playerIsDefending = defender == playerId;
 
 	if (healthDefender <= 0 && playerIsDefending) {
+		if (manager.hasComponent<CombatGodMode>(playerId)) {
+			manager.getComponent<StatsComponent>(defender).health = 100;
+			spdlog::get("combat")->info("Healing player back to 100, because of god mode");
+			return BattleState::NEXT_ROUND;
+		}
 		return BattleState::DEFEAT;
 	} else if (healthDefender <= 0 && playerIsAttacking) {
 		manager.addComponentToEntity<DeathComponent>(defender);
+		auto &dc = manager.getComponent<DeathComponent>(defender);
+		dc.graveTile = GraveConfig::defaultTile;
+		dc.graveTilesetPath = GraveConfig::tilesetPath;
 	}
 	auto &attackerBattleComp = manager.getComponent<BattleComponent>(attacker);
 
