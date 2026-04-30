@@ -122,15 +122,7 @@ void BattleInputSystem::update()
 	}
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
-	auto &inv = manager.getComponent<InventoryComponent>(playerId);
-	std::vector<EntityID> healPositions;
-	for (auto &item : inv.inventory) {
-		bool IsHealItem = this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(item);
-		if (IsHealItem) {
-			healPositions.push_back(item);
-		}
-	}
-	int numberOfHealPotions = healPositions.size();
+	int numberOfHealsUsed = battle.numberOfHealsUsed;
 	ui.setHUDVisible(true);
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 	ui.setActionPanelVisible(showMenu);
@@ -140,15 +132,15 @@ void BattleInputSystem::update()
 
 		ui.getButton("BtnLight")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
 		ui.getButton("BtnHeavy")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::HEAVY_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
 		ui.getButton("BtnUltimate")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::ULTIMATE_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
 		ui.getButton("BtnHeal")->setEnabled(CombatSystem::validateAction(
-		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
+		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
 		ui.getButton("BtnRest")->setEnabled(true);
 	}
 	auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
