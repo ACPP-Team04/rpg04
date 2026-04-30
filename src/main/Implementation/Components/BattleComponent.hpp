@@ -19,6 +19,7 @@ struct BattleComponent : Component<BattleComponent> {
 	BattleComponent() = default;
 	float AP{2};
 	int numberOfUltimateAttacksUsed{0};
+	int numberOfHealsUsed{0};
 	BattleAction selectedAction;
 	EntityID target;
 	bool isPlayerTeam;
