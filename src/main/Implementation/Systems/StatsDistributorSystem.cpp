@@ -51,18 +51,18 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 	data->mainLabel->setPosition(20, 20);
 	window->add(data->mainLabel);
 
-	auto addStatRow = [window, data](std::string name, STATS statsEnum, int yPos, int stepSize = 1) {
+	auto addStatRow = [window, data](std::string name, STATS statsEnum, int yPos, int currentVal, int stepSize = 1) {
 		data->extraStats[statsEnum] = 0;
-		auto label = tgui::Label::create(name + ": +0");
+		auto label = tgui::Label::create(name + " (" + std::to_string(currentVal) + "): +0");
 		label->setPosition(20, yPos);
 		window->add(label);
 
 		auto btnPlus = tgui::Button::create("+");
-		btnPlus->setPosition(150, yPos);
+		btnPlus->setPosition(200, yPos);
 		btnPlus->setSize(30, 30);
 
 		auto btnMinus = tgui::Button::create("-");
-		btnMinus->setPosition(190, yPos);
+		btnMinus->setPosition(240, yPos);
 		btnMinus->setSize(30, 30);
 
 		btnPlus->onPress([data, statsEnum, label, name, stepSize]() {
@@ -70,6 +70,7 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 				data->points--;
 				data->extraStats[statsEnum] += stepSize;
 				label->setText(name + ": +" + std::to_string(data->extraStats[statsEnum]));
+				data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
 				data->mainLabel->setText("Points left: " + std::to_string(data->points));
 			}
 		});
@@ -79,6 +80,7 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 				data->points++;
 				data->extraStats[statsEnum] -= stepSize;
 				label->setText(name + ": +" + std::to_string(data->extraStats[statsEnum]));
+				data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
 				data->mainLabel->setText("Points left: " + std::to_string(data->points));
 			}
 		});
@@ -86,15 +88,24 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 		window->add(btnPlus);
 		window->add(btnMinus);
 	};
-	addStatRow("Strength", STATS::STRENGTH, 60, 1);
-	addStatRow("Dexterity", STATS::DEXTERITY, 100, 1);
-	addStatRow("Faith", STATS::FAITH, 140, 1);
-	addStatRow("Max Health", STATS::MAX_HEALTH, 180, 10);
+	addStatRow("Strength", STATS::STRENGTH, 60, stats.getStat(STATS::STRENGTH), 1);
+	addStatRow("Dexterity", STATS::DEXTERITY, 100, stats.getStat(STATS::DEXTERITY), 1);
+	addStatRow("Faith", STATS::FAITH, 140, stats.getStat(STATS::FAITH), 1);
+	addStatRow("Max Health", STATS::MAX_HEALTH, 180, stats.getStat(STATS::MAX_HEALTH), 10);
 
 	auto confirmBtn = tgui::Button::create("Save and continue");
 	confirmBtn->setPosition(100, 220);
 
-	confirmBtn->onPress([this, &battle, &stats, data, window]() {
+	confirmBtn->onPress([this, playerId, data, window]() {
+		if (data->points > 0) {
+			data->mainLabel->getRenderer()->setTextColor(tgui::Color::Red);
+			data->mainLabel->setText("Please spend all points! Points left: " + std::to_string(data->points));
+			return;
+		}
+
+		auto &stats = manager.getComponent<StatsComponent>(playerId);
+		auto &battle = manager.getComponent<BattleComponent>(playerId);
+
 		for (const auto &[statEnum, extraPoints] : data->extraStats) {
 			if (extraPoints > 0) {
 				stats.stats[statEnum] = stats.getStat(statEnum) + extraPoints;
