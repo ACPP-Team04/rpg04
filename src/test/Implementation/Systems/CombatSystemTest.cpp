@@ -79,7 +79,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
 	EXPECT_EQ(1, battleComponentP.AP);
-	EXPECT_EQ(34, statsComponentE.health);
+	// 92-(8+1*0.5*1)=83.5 -> (int) 83
+	EXPECT_EQ(83, statsComponentE.health);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
@@ -168,7 +169,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
 	EXPECT_EQ(0, battleComponentP.AP);
-	EXPECT_EQ(87, statsComponentE.health);
+	// 100-(12+1*2*0.5*2)=86
+	EXPECT_EQ(86, statsComponentE.health);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
@@ -254,7 +256,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
 	EXPECT_EQ(2, battleComponentP.AP);
-	EXPECT_EQ(67, statsComponentE.health);
+	// 100-(20+1*0.25*3)=79.25 -> (int) 79
+	EXPECT_EQ(79, statsComponentE.health);
 	EXPECT_EQ(1, battleComponentP.numberOfUltimateAttacksUsed);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
@@ -434,6 +437,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 	EXPECT_EQ(0, battleComponentP.AP);
 	EXPECT_EQ(20, statsComponentE.health);
 	EXPECT_EQ(101, statsComponentP.health);
+	EXPECT_EQ(1, battleComponentP.numberOfHealsUsed);
 
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
