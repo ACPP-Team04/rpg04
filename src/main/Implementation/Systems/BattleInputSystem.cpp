@@ -5,9 +5,11 @@
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
+#include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window)
@@ -40,9 +42,7 @@ void BattleInputSystem::connectCallbacks()
 		if (manager.hasComponent<BattleComponent>(playerId)) {
 			auto &b = manager.getComponent<BattleComponent>(playerId);
 			b.selectedAction = BattleAction::LIGHT_ATTACK;
-			b.target =
-			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
-			b.battleState = BattleState::SELECTED_ACTION;
+			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 	ui.getButton("BtnHeavy")->onPress([this]() {
@@ -54,9 +54,7 @@ void BattleInputSystem::connectCallbacks()
 		if (manager.hasComponent<BattleComponent>(playerId)) {
 			auto &b = manager.getComponent<BattleComponent>(playerId);
 			b.selectedAction = BattleAction::HEAVY_ATTACK;
-			b.target =
-			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
-			b.battleState = BattleState::SELECTED_ACTION;
+			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 	ui.getButton("BtnUltimate")->onPress([this]() {
@@ -68,9 +66,7 @@ void BattleInputSystem::connectCallbacks()
 		if (manager.hasComponent<BattleComponent>(playerId)) {
 			auto &b = manager.getComponent<BattleComponent>(playerId);
 			b.selectedAction = BattleAction::ULTIMATE_ATTACK;
-			b.target =
-			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
-			b.battleState = BattleState::SELECTED_ACTION;
+			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 	ui.getButton("BtnHeal")->onPress([this]() {
@@ -82,9 +78,7 @@ void BattleInputSystem::connectCallbacks()
 		if (manager.hasComponent<BattleComponent>(playerId)) {
 			auto &b = manager.getComponent<BattleComponent>(playerId);
 			b.selectedAction = BattleAction::HEAL;
-			b.target =
-			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
-			b.battleState = BattleState::SELECTED_ACTION;
+			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 	ui.getButton("BtnRest")->onPress([this]() {
@@ -96,9 +90,7 @@ void BattleInputSystem::connectCallbacks()
 		if (manager.hasComponent<BattleComponent>(playerId)) {
 			auto &b = manager.getComponent<BattleComponent>(playerId);
 			b.selectedAction = BattleAction::REST;
-			b.target =
-			    selectTarget(manager.getComponent<BattleManagerComponent>(b.battleManagerId).participants, playerId);
-			b.battleState = BattleState::SELECTED_ACTION;
+			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 }
@@ -122,45 +114,86 @@ void BattleInputSystem::update()
 	}
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
-	auto &inv = manager.getComponent<InventoryComponent>(playerId);
-	std::vector<EntityID> healPositions;
-	for (auto &item : inv.inventory) {
-		bool IsHealItem = this->manager.hasComponent<ITEM_HEALSTATS_COMPONENT>(item);
-		if (IsHealItem) {
-			healPositions.push_back(item);
-		}
-	}
-	int numberOfHealPotions = healPositions.size();
+
 	ui.setHUDVisible(true);
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 	ui.setActionPanelVisible(showMenu);
 
+	bool showTargetMenu = battle.battleState == BattleState::SELECTING_TARGET;
 	if (showMenu) {
 		ui.updateStats(stats.health, stats.getStat(MAX_HEALTH), battle.AP);
 
 		ui.getButton("BtnLight")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
+		                                              battle.numberOfUltimateAttacksUsed));
 		ui.getButton("BtnHeavy")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::HEAVY_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
+		                                              battle.numberOfUltimateAttacksUsed));
 		ui.getButton("BtnUltimate")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::ULTIMATE_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
-		ui.getButton("BtnHeal")->setEnabled(CombatSystem::validateAction(
-		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealPotions));
+		                                              battle.numberOfUltimateAttacksUsed));
+		ui.getButton("BtnHeal")->setEnabled(
+		    CombatSystem::validateAction(BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed));
 		ui.getButton("BtnRest")->setEnabled(true);
+	} else if (showTargetMenu) {
+		auto validTargets = getTargetsInBattle(
+		    playerId, manager.getComponent<BattleComponent>(playerId).battleManagerId, this->manager);
+		if (validTargets.empty()) {
+			throw std::runtime_error("No valid targets in battle for player");
+		}
+		auto selectedAction = battle.selectedAction;
+		if (selectedAction == BattleAction::HEAL || selectedAction == BattleAction::REST) {
+			battle.battleState = BattleState::SELECTED_ACTION;
+			battle.hoveringTarget = std::nullopt;
+			ui.setActionPanelVisible(false);
+			return;
+		}
+		std::sort(validTargets.begin(), validTargets.end(), [this](const EntityID a, const EntityID b) {
+			auto transformA = manager.getComponent<TransformComponent>(a);
+			auto transformB = manager.getComponent<TransformComponent>(b);
+			return transformA.position.x < transformB.position.x;
+		});
+		if (currentTargetIndex >= validTargets.size()) {
+			currentTargetIndex = 0;
+		}
+		if (!battle.hoveringTarget.has_value()) {
+			battle.hoveringTarget = validTargets[currentTargetIndex];
+		}
+		bool rightPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right);
+		if (rightPressed && !rightKeyWasPressed) {
+			currentTargetIndex = (currentTargetIndex + 1) % validTargets.size();
+			battle.hoveringTarget = validTargets[currentTargetIndex];
+		}
+		rightKeyWasPressed = rightPressed;
+
+		bool leftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left);
+		if (leftPressed && !leftKeyWasPressed) {
+			currentTargetIndex = (currentTargetIndex == 0) ? (validTargets.size() - 1) : (currentTargetIndex - 1);
+			battle.hoveringTarget = validTargets[currentTargetIndex];
+		}
+		leftKeyWasPressed = leftPressed;
+
+		bool enterPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter);
+		if (enterPressed && !enterKeyWasPressed) {
+			battle.target = validTargets[currentTargetIndex];
+			battle.battleState = BattleState::SELECTED_ACTION;
+			battle.hoveringTarget = std::nullopt;
+			ui.setActionPanelVisible(false);
+		}
+		enterKeyWasPressed = enterPressed;
 	}
-	auto bmcId = manager.getComponent<BattleComponent>(playerId).battleManagerId;
-	auto &bmc = manager.getComponent<BattleManagerComponent>(bmcId);
 }
 
-EntityID BattleInputSystem::selectTarget(std::vector<EntityID> participants, EntityID playerId)
+std::vector<EntityID> BattleInputSystem::getTargetsInBattle(const EntityID playerId, const EntityID battleMangerId,
+                                                            ArchetypeManager &manager)
 {
-	for (EntityID entity : participants) {
-		if (entity != playerId) {
-			return entity;
+	const auto &bmc = manager.getComponent<BattleManagerComponent>(battleMangerId).participants;
+	std::vector<EntityID> targets;
+	for (EntityID entity : bmc) {
+		// TODO: add logic for not attacking companions later
+		if (entity != playerId && !manager.hasComponent<DeathComponent>(entity)) {
+			targets.push_back(entity);
 		}
 	}
-	throw std::runtime_error("No valid target found");
+	return targets;
 }

@@ -10,6 +10,8 @@
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/InventoryComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
+#include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
+#include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <spdlog/spdlog.h>
 
 SwitchBattleModeSystem::SwitchBattleModeSystem(ArchetypeManager &manager) : System(manager) {}
@@ -34,18 +36,18 @@ void SwitchBattleModeSystem::update()
 		return;
 	}
 	EntityID player = WorldUtils::getPlayer(manager).value();
-	EntityID enemyId = interActorId.value();
+	EntityID initialEnemyId = interActorId.value();
 	icomp->isActive = false;
 
 	if (manager.hasComponent<BattleComponent>(player))
 		return;
+	std::vector<EntityID> participantsList;
+	participantsList.push_back(player);
+	auto enemyList =
+	    getEnemiesInRatio(manager.getComponent<TransformComponent>(initialEnemyId).position, 50.0f, player);
+	participantsList.insert(participantsList.end(), enemyList.begin(), enemyList.end());
 
-	this->manager.removeComponentFromEntity<InputComponent>(player);
-	this->manager.addComponentToEntity<BattleComponent>(player);
-	this->manager.addComponentToEntity<BattleComponent>(enemyId);
-
-	EntityID bManager =
-	    this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>(EntityTag::BATTLEMANAGER);
+	EntityID bManager = this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>();
 	WorldComponent *world = WorldUtils::getWorld(manager);
 	if (world == nullptr) {
 		return;
@@ -60,33 +62,58 @@ void SwitchBattleModeSystem::update()
 			return;
 		}
 		battleManagerId = entity;
-		component.participants = {player, enemyId};
+		component.participants = {player, initialEnemyId};
 		found = true;
 	});
 
-	this->manager.getComponent<BattleManagerComponent>(bManager).participants.push_back(player);
-	this->manager.getComponent<BattleManagerComponent>(bManager).participants.push_back(enemyId);
+	prepareForBattle(participantsList, player);
+	this->manager.getComponent<BattleManagerComponent>(bManager).participants = participantsList;
 
-	this->manager.getComponent<BattleComponent>(player).battleManagerId = battleManagerId;
-	this->manager.getComponent<BattleComponent>(enemyId).battleManagerId = battleManagerId;
-
-	auto inventoryP = this->manager.getComponent<InventoryComponent>(player);
-	auto inventoryE = this->manager.getComponent<InventoryComponent>(enemyId);
-
-	auto weaponP = inventoryP.getEquippedItem(ITEM_TYPE::WEAPON);
-	auto weaponE = inventoryE.getEquippedItem(ITEM_TYPE::WEAPON);
-
-	for (auto &entity : {player, enemyId}) {
-		if (!this->manager.hasComponent<BattleComponent>(entity)) {
+	for (const auto &participant : participantsList) {
+		this->manager.getComponent<BattleComponent>(participant).battleManagerId = battleManagerId;
+		auto inventory = this->manager.getComponent<InventoryComponent>(participant);
+		auto weapon = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
+		if (!this->manager.hasComponent<BattleComponent>(participant)) {
 			throw std::runtime_error("Batteling entity does not have a battle component");
 		}
-		if (!this->manager.hasComponent<StatsComponent>(entity)) {
+		if (!this->manager.hasComponent<StatsComponent>(participant)) {
 			throw std::runtime_error("Batteling entity does not have a stat component");
 		}
-		std::cout << "Health for entity " << entity.getId() << ": " << this->manager.getComponent<StatsComponent>(entity).health << std::endl;
-		if (!this->manager.hasComponent<InventoryComponent>(entity)) {
+		std::cout << "Health for entity " << participant.getId() << ": "
+		          << this->manager.getComponent<StatsComponent>(participant).health << std::endl;
+		if (!this->manager.hasComponent<InventoryComponent>(participant)) {
 			throw std::runtime_error("Batteling entity does not have a inventory component");
 		}
 	}
 	spdlog::get("combat")->info("Switched to battle mode");
+}
+
+std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector2f center, float radius,
+                                                                EntityID playerId)
+{
+	std::vector<EntityID> enemiesIdList;
+	this->manager.view<InventoryComponent, TransformComponent>().each(
+	    [&](auto entityId, auto &eqComponent, auto &transformComponent) {
+		    if (entityId == playerId) {
+			    return;
+		    }
+		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entityId)) {
+			    return;
+		    }
+		    if (SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position) <= radius * radius) {
+			    enemiesIdList.push_back(entityId);
+		    }
+	    });
+	spdlog::get("combat")->info("Found {} enemies in the action radius", enemiesIdList.size());
+	return enemiesIdList;
+}
+
+void SwitchBattleModeSystem::prepareForBattle(const std::vector<EntityID> &participants, EntityID playerId)
+{
+	for (const auto &participant : participants) {
+		if (participant == playerId) {
+			this->manager.removeComponentFromEntity<InputComponent>(participant);
+		}
+		this->manager.addComponentToEntity<BattleComponent>(participant);
+	}
 }

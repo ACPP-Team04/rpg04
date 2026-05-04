@@ -9,6 +9,7 @@ enum class BattleState {
 	EXECUTING_ACTION,
 	CHECK_DEATH,
 	WAITING_FOR_INPUT,
+	SELECTING_TARGET,
 	NEXT_ROUND,
 	VICTORY,
 	DEFEAT,
@@ -27,6 +28,6 @@ struct BattleComponent : Component<BattleComponent> {
 	float actionTimer = 0.0f;
 	float actionDelay = 0.0f;
 	EntityID battleManagerId;
-
+	std::optional<EntityID> hoveringTarget = std::nullopt;
 	void readFromJson(tson::TiledClass &j) override {}
 };
