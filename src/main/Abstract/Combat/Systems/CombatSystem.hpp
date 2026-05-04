@@ -34,7 +34,7 @@ class CombatSystem : public System {
 	sf::Clock clock;
 
 	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState);
-	static bool validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed);
+	static bool validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealsUsed);
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
