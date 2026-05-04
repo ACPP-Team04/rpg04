@@ -15,6 +15,6 @@ class EnemyHealthBarSystem : public System {
 	sf::RenderWindow &window;
 	std::unordered_map<EntityID, tgui::ProgressBar::Ptr> enemyBars;
 	void createEnemyBar(EntityID id);
-	void updateEnemyBar(EntityID id, float hp, float maxHp, sf::Vector2f screenPos);
+	void updateEnemyBar(EntityID id, float hp, float maxHp, sf::Vector2f screenPos, bool isHoveringTarget);
 	void clearAllBars();
 };

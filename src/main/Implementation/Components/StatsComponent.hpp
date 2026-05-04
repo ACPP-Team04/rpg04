@@ -36,4 +36,5 @@ struct StatsComponent : Component<StatsComponent> {
 	void addScalableStats(STATS stat, int factor) { stats[static_cast<size_t>(stat)] = factor; }
 
 	int getStat(STATS stat) const { return stats[static_cast<size_t>(stat)]; }
+
 };
