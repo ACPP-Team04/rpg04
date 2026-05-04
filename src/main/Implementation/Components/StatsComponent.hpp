@@ -1,15 +1,23 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
+#include <array>
 #include <spdlog/spdlog.h>
 struct StatsComponent : Component<StatsComponent> {
   public:
-	StatsComponent() = default;
 	float experience{1};
 	int experienceLevel{1};
 	int numberOfFightsWon{0};
 	int health{100};
-	std::unordered_map<STATS, int> stats;
+	// 4 stats: strength, dexterity, faith, max_health
+	std::array<int, static_cast<size_t>(4)> stats{};
+
+	StatsComponent()
+	{
+		stats.fill(1);
+		stats[static_cast<size_t>(STATS::MAX_HEALTH)] = 100;
+	}
+
 	void readFromJson(tson::TiledClass &j) override
 	{
 
@@ -25,16 +33,8 @@ struct StatsComponent : Component<StatsComponent> {
 		addScalableStats(STATS::FAITH, faith);
 	}
 
-	void addScalableStats(STATS stat, int factor) { stats[stat] = factor; }
+	void addScalableStats(STATS stat, int factor) { stats[static_cast<size_t>(stat)] = factor; }
 
-	int getStat(STATS stat)
-	{
-		if (!stats.contains(stat)) {
-			if (stat == STATS::MAX_HEALTH) {
-				return 100;
-			}
-			return 50;
-		}
-		return stats[stat];
-	}
+	int getStat(STATS stat) const { return stats[static_cast<size_t>(stat)]; }
+
 };

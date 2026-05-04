@@ -113,6 +113,12 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;
 	}
+
+	if (typeOfAction == BattleAction::HEAL and attackerBattle.numberOfHealsUsed >= 2) {
+		spdlog::get("combat")->warn("No heals left!");
+		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
+		return;
+	}
 	switch (typeOfAction) {
 
 	case BattleAction::LIGHT_ATTACK: {
@@ -156,6 +162,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
 		this->takeHealAction(attacker, attackerStats.getStat(STATS::FAITH), attackerStats.getStat(STATS::MAX_HEALTH));
+		manager.getComponent<BattleComponent>(attacker).numberOfHealsUsed += 1;
 		break;
 	}
 	case BattleAction::REST: {
@@ -305,7 +312,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 		spdlog::get("combat")->info("You won the battle!");
 
 	} else if (battleState == BattleState::DEFEAT) {
-		// port away from enemy
+		// port away from enemy Fix for now
 		auto &trans = manager.getComponent<TransformComponent>(playerID.value());
 		trans.position = {0, 1};
 		spdlog::get("combat")->info("You lost the battle! Game over");
@@ -316,12 +323,14 @@ float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, c
                                          BattleAction action)
 {
 	if (action == BattleAction::LIGHT_ATTACK) {
-		return weaponComponent.lightAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent);
+		return weaponComponent.lightAttackBaseDmg
+		       + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent) * 1.0f;
 	} else if (action == BattleAction::HEAVY_ATTACK) {
-		return weaponComponent.heavyAttackBaseDmg + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent);
+		return weaponComponent.heavyAttackBaseDmg
+		       + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent) * 2.0f;
 	} else if (action == BattleAction::ULTIMATE_ATTACK) {
 		return weaponComponent.ultimateAttackBaseDmg
-		       + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent);
+		       + getMultiplicatorFromScalingFactor(statsComponent, weaponComponent) * 3.0f;
 	}
 	throw std::runtime_error("Invalid weapon type");
 }
@@ -345,13 +354,19 @@ int CombatSystem::getActionCost(BattleAction action)
 	}
 }
 
-bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed)
+
+bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealsUsed)
+
 {
 	int cost = getActionCost(action);
 	if (AP < cost) {
 		return false;
 	}
 	if (action == BattleAction::ULTIMATE_ATTACK && numberOfUltimateAttacksUsed >= 1) {
+		return false;
+	}
+
+	if (action == BattleAction::HEAL && numberOfHealsUsed >= 2) {
 		return false;
 	}
 	return true;

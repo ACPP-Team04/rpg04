@@ -33,7 +33,8 @@ void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 	}
 	aiBattle.target = targetOpt.value();
 
-	if (aiStats.health < 20 && aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAL)) {
+	if (aiStats.health < 0.2 * aiStats.getStat(MAX_HEALTH) && aiBattle.numberOfHealsUsed < 2
+	    && aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAL)) {
 		aiBattle.selectedAction = BattleAction::HEAL;
 	} else if (aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK)) {
 		aiBattle.selectedAction = BattleAction::HEAVY_ATTACK;

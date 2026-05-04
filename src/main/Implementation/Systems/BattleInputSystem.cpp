@@ -115,6 +115,8 @@ void BattleInputSystem::update()
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
 
+	int numberOfHealsUsed = battle.numberOfHealsUsed;
+
 	ui.setHUDVisible(true);
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 	ui.setActionPanelVisible(showMenu);
@@ -125,15 +127,16 @@ void BattleInputSystem::update()
 
 		ui.getButton("BtnLight")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
 		ui.getButton("BtnHeavy")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::HEAVY_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
 		ui.getButton("BtnUltimate")
 		    ->setEnabled(CombatSystem::validateAction(BattleAction::ULTIMATE_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed));
-		ui.getButton("BtnHeal")->setEnabled(
-		    CombatSystem::validateAction(BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed));
+		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
+		ui.getButton("BtnHeal")->setEnabled(CombatSystem::validateAction(
+		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
+
 		ui.getButton("BtnRest")->setEnabled(true);
 	} else if (showTargetMenu) {
 		auto validTargets = getTargetsInBattle(
