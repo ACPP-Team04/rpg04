@@ -30,6 +30,7 @@ struct ECSManager {
 	sf::RenderWindow &window;
 	tgui::Gui gui;
 	ArchetypeManager manager = ArchetypeManager();
+	AudioManager &audioManager;
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
@@ -50,13 +51,14 @@ struct ECSManager {
 	SwitchBattleModeSystem switch_battle_mode_system;
 	EnemyHealthBarSystem enemyHealthBarSystem;
 
-	ECSManager(sf::RenderWindow &window)
-	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
-	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
-	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
-	      combatSystem(manager, aiSystem), statsDistributorSystem(manager, gui), switch_battle_mode_system(manager),
-	      enemyHealthBarSystem(manager, gui, window)
+	ECSManager(sf::RenderWindow &window, AudioManager &audioManager)
+	    : window(window), gui(window), manager(), audioManager(audioManager), renderSystem(manager, window),
+	      inputSystem(manager, window), movementSystem(manager), cameraSystem(manager, window),
+	      switchLayerSystem(manager), collisionSystem(manager), dialogSystem(manager, window),
+	      interactionSystem(manager), boundingBoxSystem(manager), item_system(manager), menuSystem(manager, gui),
+	      door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
+	      combatSystem(manager, aiSystem, audioManager), statsDistributorSystem(manager, gui),
+	      switch_battle_mode_system(manager, audioManager), enemyHealthBarSystem(manager, gui, window)
 	{
 		gui.setWindow(window);
 	}
@@ -91,7 +93,7 @@ struct ECSManager {
 		collisionSystem.update();
 		boundingBoxSystem.update();
 		interactionSystem.update();
-		
+
 		door_system.update();
 		switchLayerSystem.update();
 		boundingBoxSystem.update();
