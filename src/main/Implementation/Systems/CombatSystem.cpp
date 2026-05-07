@@ -317,6 +317,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 		trans.position = {0, 1};
 		spdlog::get("combat")->info("You lost the battle! Game over");
 	}
+	audioManager.switchMusic("overworld", true);
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
@@ -353,7 +354,6 @@ int CombatSystem::getActionCost(BattleAction action)
 		return 0;
 	}
 }
-
 
 bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealsUsed)
 
