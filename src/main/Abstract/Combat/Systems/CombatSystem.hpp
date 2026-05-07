@@ -6,12 +6,14 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Combat/Components/BattleManagerComponent.hpp>
 #include <SFML/Graphics.hpp>
 
 class CombatSystem : public System {
   public:
-	CombatSystem(ArchetypeManager &manager, AISystem &aiSystem) : System(manager), aiSystem(aiSystem) {};
+	CombatSystem(ArchetypeManager &manager, AISystem &aiSystem, AudioManager &audioManager)
+	    : System(manager), aiSystem(aiSystem), audioManager(audioManager) {};
 
 	void update() override;
 
@@ -41,4 +43,5 @@ class CombatSystem : public System {
 	                           BattleAction action);
 	float getMultiplicatorFromScalingFactor(const StatsComponent stats, const WeaponComponent &weaponComponent);
 	AISystem &aiSystem;
+	AudioManager &audioManager;
 };
