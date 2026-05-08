@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <spdlog/spdlog.h>
 
-AudioManager::AudioManager(size_t poolSize) : masterMusicVolume(100.0f), maxPoolSize(poolSize)
+AudioManager::AudioManager(size_t poolSize) : masterMusicVolume(25.0f), masterSfxVolume(100.0f), maxPoolSize(poolSize)
 {
 	spdlog::info("AudioManager initialized with a max of {} sound channels.", poolSize);
 }
@@ -60,3 +60,4 @@ void AudioManager::playSound(const std::string &soundName, float volumeModifier)
 	} catch (const std::runtime_error &e) {
 		spdlog::error("AudioManager: Cannot play sound because buffer is missing.");
 	}
+}
