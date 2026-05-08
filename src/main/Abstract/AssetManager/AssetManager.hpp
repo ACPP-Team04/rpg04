@@ -54,6 +54,26 @@ struct AssetManager {
 		}
 		return musicPaths[name];
 	}
+	void registerSound(const std::string &name, const std::string &filepath)
+	{
+		sf::SoundBuffer buffer;
+		if (!buffer.loadFromFile(filepath)) {
+			spdlog::error("Failed to load sound file at: {}", filepath);
+			return;
+		}
+
+		soundBuffers[name] = std::move(buffer);
+		spdlog::info("Registered Sound Effect: {}", name);
+	}
+
+	sf::SoundBuffer &getSoundBuffer(const std::string &name)
+	{
+		if (!soundBuffers.contains(name)) {
+			spdlog::error("Sound buffer '{}' not found in AssetManager!", name);
+			throw std::runtime_error("Sound buffer not found");
+		}
+		return soundBuffers[name];
+	}
 
   private:
 	std::shared_ptr<sf::Texture> textureSet;
