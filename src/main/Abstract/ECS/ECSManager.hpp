@@ -20,6 +20,7 @@
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 
+#include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
@@ -31,6 +32,7 @@ struct ECSManager {
 	tgui::Gui gui;
 	ArchetypeManager manager = ArchetypeManager();
 	AudioManager &audioManager;
+	AudioSystem audioSystem;
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
 	MovementSystem movementSystem;
@@ -52,12 +54,12 @@ struct ECSManager {
 	EnemyHealthBarSystem enemyHealthBarSystem;
 
 	ECSManager(sf::RenderWindow &window, AudioManager &audioManager)
-	    : window(window), gui(window), manager(), audioManager(audioManager), renderSystem(manager, window),
-	      inputSystem(manager, window), movementSystem(manager), cameraSystem(manager, window),
-	      switchLayerSystem(manager), collisionSystem(manager), dialogSystem(manager, window),
-	      interactionSystem(manager), boundingBoxSystem(manager), item_system(manager), menuSystem(manager, gui),
-	      door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
-	      combatSystem(manager, aiSystem, audioManager), statsDistributorSystem(manager, gui),
+	    : window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
+	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
+	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
+	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
+	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
+	      combatSystem(manager, aiSystem, audioManager, audioSystem), statsDistributorSystem(manager, gui),
 	      switch_battle_mode_system(manager, audioManager), enemyHealthBarSystem(manager, gui, window)
 	{
 		gui.setWindow(window);
@@ -107,6 +109,7 @@ struct ECSManager {
 		statsDistributorSystem.update();
 		dialogSystem.update();
 		item_system.update();
+		audioSystem.update();
 		gui.draw();
 	}
 };
