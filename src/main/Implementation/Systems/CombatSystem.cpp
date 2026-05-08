@@ -72,6 +72,7 @@ void CombatSystem::update()
 
 				auto result = this->checkDeathCondition(battle.target, currentAttacker);
 				if (result == BattleState::VICTORY) {
+					audioSystem.enqueueSound("victory_sound");
 					battle.battleState = BattleState::STATS_DISTRIBUTION;
 				} else {
 					battle.battleState = result;
@@ -313,6 +314,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 
 	} else if (battleState == BattleState::DEFEAT) {
 		// port away from enemy Fix for now
+		audioSystem.enqueueSound("defeat_sound");
 		auto &trans = manager.getComponent<TransformComponent>(playerID.value());
 		trans.position = {0, 1};
 		spdlog::get("combat")->info("You lost the battle! Game over");
