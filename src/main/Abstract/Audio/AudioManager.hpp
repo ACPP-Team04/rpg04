@@ -19,4 +19,7 @@ class AudioManager {
 	void setMasterMusicVolume(float volume);
 	void setMasterSfxVolume(float volume);
 	void playSound(const std::string &soundName, float volumeModifier);
+	sf::Sound *playLoopingSound(const std::string &soundId, float startVolume = 100.0f);
+	void pauseAll();
+	void resumeAll();
 };

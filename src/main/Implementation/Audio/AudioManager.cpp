@@ -61,3 +61,54 @@ void AudioManager::playSound(const std::string &soundName, float volumeModifier)
 		spdlog::error("AudioManager: Cannot play sound because buffer is missing.");
 	}
 }
+sf::Sound *AudioManager::playLoopingSound(const std::string &soundId, float startVolume)
+{
+	if (soundPool.size() >= maxPoolSize) {
+		spdlog::warn("AudioManager Pool is full. Ignoring {}", soundId);
+		return nullptr;
+	}
+	try {
+		sf::SoundBuffer &buffer = AssetManager::getInstance().getSoundBuffer(soundId);
+		soundPool.emplace_back(buffer);
+		sf::Sound &newSound = soundPool.back();
+		newSound.setLooping(true);
+
+		float finalVolume = masterSfxVolume * (startVolume / 100.0f);
+		newSound.setVolume(finalVolume);
+		newSound.play();
+
+		return &newSound;
+
+	} catch (const std::exception &e) {
+		spdlog::error("Error playing {}: {}", soundId, e.what());
+		return nullptr;
+	}
+}
+void AudioManager::pauseAll()
+{
+	if (backgroundMusic.getStatus() == sf::Music::Status::Playing) {
+		backgroundMusic.pause();
+	}
+
+	for (auto &sound : soundPool) {
+		if (sound.getStatus() == sf::Sound::Status::Playing) {
+			sound.pause();
+		}
+	}
+
+	spdlog::info("Audio globally paused.");
+}
+
+void AudioManager::resumeAll()
+{
+	if (backgroundMusic.getStatus() == sf::Music::Status::Paused) {
+		backgroundMusic.play();
+	}
+	for (auto &sound : soundPool) {
+		if (sound.getStatus() == sf::Sound::Status::Paused) {
+			sound.play();
+		}
+	}
+
+	spdlog::info("Audio globally resumed.");
+}
