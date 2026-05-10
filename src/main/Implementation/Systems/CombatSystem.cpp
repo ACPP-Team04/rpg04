@@ -324,7 +324,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 		trans.position = {0, 1};
 		spdlog::get("combat")->info("You lost the battle! Game over");
 	}
-	audioManager.switchMusic("overworld", true);
+	audioSystem.switchMusic("overworld", true);
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,

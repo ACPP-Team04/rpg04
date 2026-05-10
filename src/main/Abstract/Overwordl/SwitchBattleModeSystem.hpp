@@ -2,12 +2,12 @@
 
 #pragma once
 #include "Abstract/ECS/System/System.hpp"
-#include <Abstract/Audio/AudioManager.hpp>
+#include <Abstract/Audio/AudioSystem.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 struct SwitchBattleModeSystem : System {
 
-	SwitchBattleModeSystem(ArchetypeManager &manager, AudioManager &audioManager);
+	SwitchBattleModeSystem(ArchetypeManager &manager, AudioSystem &audioSystem);
 	void update() override;
 	[[nodiscard]] std::vector<EntityID> getEnemiesInRatio(const sf::Vector2f center, float radius, EntityID playerId);
 	void prepareForBattle(const std::vector<EntityID> &participants, EntityID playerId);
@@ -17,5 +17,5 @@ struct SwitchBattleModeSystem : System {
 		float dy = a.y - b.y;
 		return (dx * dx) + (dy * dy);
 	}
-	AudioManager &audioManager;
+	AudioSystem &audioSystem;
 };
