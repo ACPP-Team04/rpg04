@@ -14,4 +14,6 @@ class AudioSystem : public System {
 	AudioSystem(ArchetypeManager &manager, AudioManager &audioManager);
 	void update() override;
 	void enqueueSound(const std::string &soundId, float volumeModifier = 1.0f);
+	void switchMusic(const std::string &musicName, bool loop);
+	void stopMusic();
 };
