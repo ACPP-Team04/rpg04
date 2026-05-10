@@ -13,8 +13,8 @@
 
 class CombatSystem : public System {
   public:
-	CombatSystem(ArchetypeManager &manager, AISystem &aiSystem, AudioManager &audioManager, AudioSystem &audioSystem)
-	    : System(manager), aiSystem(aiSystem), audioManager(audioManager), audioSystem(audioSystem) {};
+	CombatSystem(ArchetypeManager &manager, AISystem &aiSystem, AudioSystem &audioSystem)
+	    : System(manager), aiSystem(aiSystem), audioSystem(audioSystem) {};
 
 	void update() override;
 
@@ -44,6 +44,5 @@ class CombatSystem : public System {
 	                           BattleAction action);
 	float getMultiplicatorFromScalingFactor(const StatsComponent stats, const WeaponComponent &weaponComponent);
 	AISystem &aiSystem;
-	AudioManager &audioManager;
 	AudioSystem &audioSystem;
 };
