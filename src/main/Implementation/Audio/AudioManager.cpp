@@ -3,9 +3,14 @@
 #include <SFML/Audio.hpp>
 #include <spdlog/spdlog.h>
 
-AudioManager::AudioManager(size_t poolSize) : masterMusicVolume(25.0f), masterSfxVolume(100.0f), maxPoolSize(poolSize)
+AudioManager::AudioManager(size_t poolSize, bool headless)
+    : masterMusicVolume(25.0f), masterSfxVolume(100.0f), maxPoolSize(poolSize), isHeadless(headless)
 {
-	spdlog::info("AudioManager initialized with a max of {} sound channels.", poolSize);
+	if (!headless) {
+		spdlog::info("AudioManager initialized with a max of {} sound channels.", poolSize);
+	} else {
+		spdlog::info("AudioManager initialized headless.");
+	}
 }
 
 void AudioManager::switchMusic(const std::string &musicName, bool loop)
@@ -32,6 +37,8 @@ void AudioManager::setMasterSfxVolume(float volume)
 }
 void AudioManager::playMusic(const std::string &musicName, bool loop)
 {
+	if (isHeadless)
+		return;
 	auto musicPath = AssetManager::getInstance().getMusicPath(musicName);
 	if (!backgroundMusic.openFromFile(musicPath)) {
 		spdlog::error("Failed to open music file at: {}", musicPath);
@@ -45,6 +52,8 @@ void AudioManager::playMusic(const std::string &musicName, bool loop)
 }
 void AudioManager::playSound(const std::string &soundName, float volumeModifier)
 {
+	if (isHeadless)
+		return;
 	try {
 		sf::SoundBuffer &buffer = AssetManager::getInstance().getSoundBuffer(soundName);
 		soundPool.remove_if([](const sf::Sound &s) { return s.getStatus() == sf::Sound::Status::Stopped; });
@@ -63,6 +72,8 @@ void AudioManager::playSound(const std::string &soundName, float volumeModifier)
 }
 sf::Sound *AudioManager::playLoopingSound(const std::string &soundId, float startVolume)
 {
+	if (isHeadless)
+		return nullptr;
 	if (soundPool.size() >= maxPoolSize) {
 		spdlog::warn("AudioManager Pool is full. Ignoring {}", soundId);
 		return nullptr;
@@ -86,6 +97,8 @@ sf::Sound *AudioManager::playLoopingSound(const std::string &soundId, float star
 }
 void AudioManager::pauseAll()
 {
+	if (isHeadless)
+		return;
 	if (backgroundMusic.getStatus() == sf::Music::Status::Playing) {
 		backgroundMusic.pause();
 	}
@@ -101,6 +114,8 @@ void AudioManager::pauseAll()
 
 void AudioManager::resumeAll()
 {
+	if (isHeadless)
+		return;
 	if (backgroundMusic.getStatus() == sf::Music::Status::Paused) {
 		backgroundMusic.play();
 	}

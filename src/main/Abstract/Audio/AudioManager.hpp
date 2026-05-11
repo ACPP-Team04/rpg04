@@ -10,9 +10,10 @@ class AudioManager {
 	size_t maxPoolSize;
 	float masterMusicVolume;
 	float masterSfxVolume;
+	bool isHeadless;
 
   public:
-	AudioManager(size_t poolSize = 16);
+	AudioManager(size_t poolSize = 16, bool headless = false);
 	void switchMusic(const std::string &musicName, bool loop = true);
 	void playMusic(const std::string &musicName, bool loop = true);
 	void stopMusic();
