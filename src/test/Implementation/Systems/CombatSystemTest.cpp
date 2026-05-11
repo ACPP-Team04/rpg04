@@ -26,7 +26,9 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	playerLayer.level = LEVEL_NAME::LEVEL1;
 
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
@@ -110,8 +112,9 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
@@ -191,7 +194,9 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	EntityID world = manager.createEntity<WorldComponent>();
 
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
@@ -288,8 +293,9 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
@@ -377,8 +383,9 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
@@ -468,8 +475,9 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
@@ -558,8 +566,9 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
@@ -595,8 +604,9 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
@@ -635,8 +645,9 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
@@ -702,8 +713,9 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
@@ -772,8 +784,9 @@ TEST(CombatSystemTest, checkDeathConditionPlayerLost)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
@@ -812,8 +825,9 @@ TEST(CombatSystemTest, checkDeathConditionPlayerWon)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
@@ -856,8 +870,9 @@ TEST(CombatSystemTest, checkDeathConditionNextRound)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
@@ -900,8 +915,9 @@ TEST(CombatSystemTest, getAttackerBaseCase)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
@@ -947,7 +963,9 @@ TEST(CombatSystemTest, getAttackerSkipDeathEnemy)
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
 
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
@@ -992,8 +1010,9 @@ TEST(CombatSystemTest, getAttackerCheckBoundaryCondition)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
@@ -1038,8 +1057,9 @@ TEST(CombatSystemTest, passTurnAllActiveParticipants)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
@@ -1085,8 +1105,9 @@ TEST(CombatSystemTest, passTurnOneDeathParticipant)
 
 	playerLayer.layer = LAYERTYPE::OVERWORLD;
 	playerLayer.level = LEVEL_NAME::LEVEL1;
-
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager(16, true);
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();
