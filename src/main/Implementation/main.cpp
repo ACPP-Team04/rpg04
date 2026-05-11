@@ -90,7 +90,19 @@ int main()
 	window.clear(sf::Color::Transparent);
 	parser.update();
 	ecsManager.init();
-	registerAudio();
+	AssetManager::getInstance().registerMusic("overworld",
+	                                          "../../../src/ressources/audio/music/the_field_of_dreams.ogg");
+	AssetManager::getInstance().registerMusic("combat", "../../../src/ressources/audio/music/battleThemeA.ogg");
+	AssetManager::getInstance().registerSound("victory_sound", "../../../src/ressources/audio/sfx/combat_victory.wav");
+	AssetManager::getInstance().registerSound("defeat_sound", "../../../src/ressources/audio/sfx/death.wav");
+	AssetManager::getInstance().registerSound("light_fist_hit", "../../../src/ressources/audio/sfx/punch_1b.wav");
+	AssetManager::getInstance().registerSound("heavy_fist_hit", "../../../src/ressources/audio/sfx/punch_alt-2a.wav");
+	AssetManager::getInstance().registerSound("ultimate_fist_hit", "../../../src/ressources/audio/sfx/foom_0.wav");
+	AssetManager::getInstance().registerSound("heal_sound", "../../../src/ressources/audio/sfx/healspell3.wav");
+	AssetManager::getInstance().registerSound("rest_sound", "../../../src/ressources/audio/sfx/short_wind.wav");
+	AssetManager::getInstance().registerSound("enemy_death_sound",
+	                                          "../../../src/ressources/audio/sfx/zombie_death.wav");
+	AssetManager::getInstance().registerSound("test", "../../../src/ressources/audio/sfx/zombie_death.wav");
 	audioManager.playMusic("overworld", true);
 	auto player = WorldUtils::getPlayer(ecsManager.manager);
 	ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
