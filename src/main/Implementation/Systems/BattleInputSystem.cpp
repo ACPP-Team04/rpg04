@@ -123,21 +123,41 @@ void BattleInputSystem::update()
 
 	bool showTargetMenu = battle.battleState == BattleState::SELECTING_TARGET;
 	if (showMenu) {
-		ui.updateStats(stats.health, stats.getStat(MAX_HEALTH), battle.AP);
+		auto btnLightAttack = ui.getButton("BtnLight");
+		btnLightAttack->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle));
+		auto btnHeavy = ui.getButton("BtnHeavy");
+		btnHeavy->setEnabled(CombatSystem::validateAction(BattleAction::HEAVY_ATTACK, battle));
+		auto btnUltimate = ui.getButton("BtnUltimate");
+		btnUltimate->setEnabled(CombatSystem::validateAction(BattleAction::ULTIMATE_ATTACK, battle));
+		auto btnHeal = ui.getButton("BtnHeal");
+		btnHeal->setEnabled(CombatSystem::validateAction(BattleAction::HEAL, battle));
+		auto btnRest = ui.getButton("BtnRest");
+		btnRest->setEnabled(CombatSystem::validateAction(BattleAction::REST, battle));
 
-		ui.getButton("BtnLight")
-		    ->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
-		ui.getButton("BtnHeavy")
-		    ->setEnabled(CombatSystem::validateAction(BattleAction::HEAVY_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
-		ui.getButton("BtnUltimate")
-		    ->setEnabled(CombatSystem::validateAction(BattleAction::ULTIMATE_ATTACK, battle.AP,
-		                                              battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
-		ui.getButton("BtnHeal")->setEnabled(CombatSystem::validateAction(
-		    BattleAction::HEAL, battle.AP, battle.numberOfUltimateAttacksUsed, numberOfHealsUsed));
+		if (battle.AP != lastDrawnAP) {
+			ui.updateStats(stats.health, stats.getStat(MAX_HEALTH), battle.AP);
 
-		ui.getButton("BtnRest")->setEnabled(true);
+			btnLightAttack->setText("Light Attack ("
+			                        + std::to_string(CombatSystem::getActionCost(BattleAction::LIGHT_ATTACK)) + " AP)");
+
+			btnHeavy->setText("Heavy Attack (" + std::to_string(CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK))
+			                  + " AP)");
+
+			int ultimateCost = CombatSystem::getActionCost(BattleAction::ULTIMATE_ATTACK);
+			int ultimateAttacksLeft = battle.maxUltimateAttacks - battle.numberOfUltimateAttacksUsed;
+			btnUltimate->setText("Ultimate Attack (" + std::to_string(ultimateCost) + " AP) ["
+			                     + std::to_string(ultimateAttacksLeft) + " Left]");
+
+			int healCost = CombatSystem::getActionCost(BattleAction::HEAL);
+			int healsLeft = battle.maxHeals - battle.numberOfHealsUsed;
+			btnHeal->setText("Heal (" + std::to_string(healCost) + " AP) [" + std::to_string(healsLeft) + " Left]");
+
+			int restCost = CombatSystem::getActionCost(BattleAction::REST);
+			btnRest->setText("Rest (" + std::to_string(restCost) + " AP)");
+
+			lastDrawnAP = battle.AP;
+		}
+
 	} else if (showTargetMenu) {
 		auto validTargets = getTargetsInBattle(
 		    playerId, manager.getComponent<BattleComponent>(playerId).battleManagerId, this->manager);
@@ -184,6 +204,8 @@ void BattleInputSystem::update()
 			ui.setActionPanelVisible(false);
 		}
 		enterKeyWasPressed = enterPressed;
+	} else {
+		lastDrawnAP = -1;
 	}
 }
 

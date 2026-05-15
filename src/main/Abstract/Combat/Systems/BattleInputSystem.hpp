@@ -15,6 +15,7 @@ class BattleInputSystem : public System {
 	bool rightKeyWasPressed = false;
 	bool leftKeyWasPressed = false;
 	bool enterKeyWasPressed = false;
+	int lastDrawnAP = -1;
 
   public:
 	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window);
