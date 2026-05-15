@@ -362,18 +362,18 @@ int CombatSystem::getActionCost(BattleAction action)
 	}
 }
 
-bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealsUsed)
+bool CombatSystem::validateAction(BattleAction action, const BattleComponent &battle)
 
 {
 	int cost = getActionCost(action);
-	if (AP < cost) {
+	if (battle.AP < cost) {
 		return false;
 	}
-	if (action == BattleAction::ULTIMATE_ATTACK && numberOfUltimateAttacksUsed >= 1) {
+	if (action == BattleAction::ULTIMATE_ATTACK && battle.numberOfUltimateAttacksUsed >= battle.maxUltimateAttacks) {
 		return false;
 	}
 
-	if (action == BattleAction::HEAL && numberOfHealsUsed >= 2) {
+	if (action == BattleAction::HEAL && battle.numberOfHealsUsed >= battle.maxHeals) {
 		return false;
 	}
 	return true;
