@@ -14,6 +14,9 @@ struct WeaponComponent : Component<WeaponComponent> {
 	int lightAttackBaseDmg{7};
 	int heavyAttackBaseDmg{18};
 	int ultimateAttackBaseDmg{35};
+	std::string hitSoundLight{"light_fist_hit"};
+	std::string hitSoundHeavy{"heavy_fist_hit"};
+	std::string hitSoundUltimate{"ultimate_fist_hit"};
 
 	static float scaleFactorAsFloat(WEAPON_SCALING_FACTOR factor)
 	{

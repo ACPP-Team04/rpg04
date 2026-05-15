@@ -14,7 +14,10 @@
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <spdlog/spdlog.h>
 
-SwitchBattleModeSystem::SwitchBattleModeSystem(ArchetypeManager &manager) : System(manager) {}
+SwitchBattleModeSystem::SwitchBattleModeSystem(ArchetypeManager &manager, AudioSystem &audioSystem)
+    : System(manager), audioSystem(audioSystem)
+{
+}
 
 void SwitchBattleModeSystem::update()
 {
@@ -85,6 +88,7 @@ void SwitchBattleModeSystem::update()
 			throw std::runtime_error("Batteling entity does not have a inventory component");
 		}
 	}
+	audioSystem.switchMusic("combat", true);
 	spdlog::get("combat")->info("Switched to battle mode");
 }
 

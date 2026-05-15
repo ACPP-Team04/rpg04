@@ -12,7 +12,9 @@ TEST(AISystemTest, executeAILogicHeavyAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -39,7 +41,9 @@ TEST(AISystemTest, executeAILogicLightAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -66,7 +70,9 @@ TEST(AISystemTest, executeAILogicHeal)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -97,7 +103,9 @@ TEST(AISystemTest, executeAILogicRest)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -125,7 +133,9 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity();
@@ -153,7 +163,9 @@ TEST(AISystemTest, selectTargetWithMultipleEnemies)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
-	CombatSystem combatSystem = CombatSystem(manager, aiSystem);
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 	EntityID player = manager.createEntity<PlayerComponent>();
 	EntityID enemy = manager.createEntity();
 	EntityID enemy2 = manager.createEntity();

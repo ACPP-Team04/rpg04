@@ -72,6 +72,7 @@ void CombatSystem::update()
 
 				auto result = this->checkDeathCondition(battle.target, currentAttacker);
 				if (result == BattleState::VICTORY) {
+					audioSystem.enqueueSound("victory_sound");
 					battle.battleState = BattleState::STATS_DISTRIBUTION;
 				} else {
 					battle.battleState = result;
@@ -123,10 +124,11 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 
 	case BattleAction::LIGHT_ATTACK: {
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto inventory = this->manager.getComponent<InventoryComponent>(attacker);
+		auto &inventory = this->manager.getComponent<InventoryComponent>(attacker);
 		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
 		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		audioSystem.enqueueSound(attackerWeapon.hitSoundLight);
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
@@ -135,10 +137,11 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	case BattleAction::HEAVY_ATTACK: {
 
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto inventory = this->manager.getComponent<InventoryComponent>(attacker);
+		auto &inventory = this->manager.getComponent<InventoryComponent>(attacker);
 		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
 		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		audioSystem.enqueueSound(attackerWeapon.hitSoundHeavy);
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
@@ -148,10 +151,11 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	case BattleAction::ULTIMATE_ATTACK: {
 
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto inventory = this->manager.getComponent<InventoryComponent>(attacker);
+		auto &inventory = this->manager.getComponent<InventoryComponent>(attacker);
 		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
 		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
 		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		audioSystem.enqueueSound(attackerWeapon.hitSoundUltimate);
 		spdlog::get("combat")->info("Ultimate Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
@@ -161,12 +165,13 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	case BattleAction::HEAL: {
 
 		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
+		audioSystem.enqueueSound("heal_sound");
 		this->takeHealAction(attacker, attackerStats.getStat(STATS::FAITH), attackerStats.getStat(STATS::MAX_HEALTH));
 		manager.getComponent<BattleComponent>(attacker).numberOfHealsUsed += 1;
 		break;
 	}
 	case BattleAction::REST: {
-
+		audioSystem.enqueueSound("rest_sound");
 		this->restoreAP(attacker);
 		break;
 	}
@@ -236,6 +241,7 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 		auto &dc = manager.getComponent<DeathComponent>(defender);
 		dc.graveTile = GraveConfig::defaultTile;
 		dc.graveTilesetPath = GraveConfig::tilesetPath;
+		audioSystem.enqueueSound("enemy_death_sound");
 	}
 	auto &attackerBattleComp = manager.getComponent<BattleComponent>(attacker);
 
@@ -313,10 +319,12 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 
 	} else if (battleState == BattleState::DEFEAT) {
 		// port away from enemy Fix for now
+		audioSystem.enqueueSound("defeat_sound");
 		auto &trans = manager.getComponent<TransformComponent>(playerID.value());
 		trans.position = {0, 1};
 		spdlog::get("combat")->info("You lost the battle! Game over");
 	}
+	audioSystem.switchMusic("overworld", true);
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
@@ -353,7 +361,6 @@ int CombatSystem::getActionCost(BattleAction action)
 		return 0;
 	}
 }
-
 
 bool CombatSystem::validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealsUsed)
 
