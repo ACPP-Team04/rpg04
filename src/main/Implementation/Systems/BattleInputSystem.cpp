@@ -137,11 +137,11 @@ void BattleInputSystem::update()
 		if (battle.AP != lastDrawnAP) {
 			ui.updateStats(stats.health, stats.getStat(MAX_HEALTH), battle.AP);
 
-			btnLightAttack->setText("Light Attack ("
+			btnLightAttack->setText("Light Attack (-"
 			                        + std::to_string(CombatSystem::getActionCost(BattleAction::LIGHT_ATTACK)) + " AP)");
 
-			btnHeavy->setText("Heavy Attack (" + std::to_string(CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK))
-			                  + " AP)");
+			btnHeavy->setText("Heavy Attack (-"
+			                  + std::to_string(CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK)) + " AP)");
 
 			int ultimateCost = CombatSystem::getActionCost(BattleAction::ULTIMATE_ATTACK);
 			int ultimateAttacksLeft = battle.maxUltimateAttacks - battle.numberOfUltimateAttacksUsed;
@@ -150,10 +150,10 @@ void BattleInputSystem::update()
 
 			int healCost = CombatSystem::getActionCost(BattleAction::HEAL);
 			int healsLeft = battle.maxHeals - battle.numberOfHealsUsed;
-			btnHeal->setText("Heal (" + std::to_string(healCost) + " AP) [" + std::to_string(healsLeft) + " Left]");
+			btnHeal->setText("Heal (-" + std::to_string(healCost) + " AP) [" + std::to_string(healsLeft) + " Left]");
 
 			int restCost = CombatSystem::getActionCost(BattleAction::REST);
-			btnRest->setText("Rest (" + std::to_string(restCost) + " AP)");
+			btnRest->setText("Rest (+2 AP)");
 
 			lastDrawnAP = battle.AP;
 		}
