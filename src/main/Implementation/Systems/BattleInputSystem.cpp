@@ -115,8 +115,6 @@ void BattleInputSystem::update()
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
 	auto &stats = manager.getComponent<StatsComponent>(playerId);
 
-	int numberOfHealsUsed = battle.numberOfHealsUsed;
-
 	ui.setHUDVisible(true);
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 	ui.setActionPanelVisible(showMenu);
@@ -152,7 +150,6 @@ void BattleInputSystem::update()
 			int healsLeft = battle.maxHeals - battle.numberOfHealsUsed;
 			btnHeal->setText("Heal (-" + std::to_string(healCost) + " AP) [" + std::to_string(healsLeft) + " Left]");
 
-			int restCost = CombatSystem::getActionCost(BattleAction::REST);
 			btnRest->setText("Rest (+2 AP)");
 
 			lastDrawnAP = battle.AP;
