@@ -9,8 +9,12 @@
 #include "Implementation/Components/WeaponComponent.hpp"
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 
+#include <chrono>
+#include <ctime>
 #include <fstream>
+#include <iomanip>
 #include <spdlog/spdlog.h>
+#include <sstream>
 
 std::string SaveManager::getSaveFilePath(int slotIndex)
 {
@@ -37,6 +41,14 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	nlohmann::json saveData;
 	saveData["slot"] = slotIndex;
 
+	auto now = std::chrono::system_clock::now();
+	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+
+	std::stringstream ss;
+	ss << std::put_time(std::localtime(&now_time), "%Y-%m-%d %H:%M:%S");
+
+	saveData["metadata"]["timestamp"] = ss.str();
+
 	auto playerEntityOpt = WorldUtils::getPlayer(manager);
 	if (playerEntityOpt.has_value()) {
 		EntityID player = playerEntityOpt.value();
@@ -57,7 +69,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 		saveData["player"]["stats"]["FAITH"] = stats.getStat(FAITH);
 		saveData["player"]["stats"]["MAX_HEALTH"] = stats.getStat(MAX_HEALTH);
 
-		// TODO: Save your Inventory component
+		// Save your Inventory component
 		auto &inventory = manager.getComponent<InventoryComponent>(player);
 		nlohmann::json inventoryJson = nlohmann::json::array();
 
@@ -74,7 +86,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 				}
 				itemJson["isEquipped"] = isEquipped;
 
-				// 3. Extract the actual stats from the ECS based on what the item is
+				// Extract stats
 				if (manager.hasComponent<WeaponComponent>(itemEntity)) {
 					auto &weapon = manager.getComponent<WeaponComponent>(itemEntity);
 
@@ -96,12 +108,29 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 
 		saveData["player"]["inventory"] = inventoryJson;
 
+		if (manager.hasComponent<PartOfLayerComponent>(player)) {
+			auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
+
+			saveData["player"]["layerData"]["level"] = static_cast<int>(layerComp.level);
+			saveData["player"]["layerData"]["layer"] = static_cast<int>(layerComp.layer);
+		}
+
 	} else {
 		spdlog::warn("SaveManager: No player found in ECS to save!");
 	}
 
 	saveData["worldState"]["deadUniqueEntities"] = GameState::getInstance().deadUniqueEntities;
 	saveData["worldState"]["entityStates"] = GameState::getInstance().entityStates;
+
+	manager.view<WorldComponent>().each([&](EntityID entity, WorldComponent &worldComp) {
+		saveData["worldState"]["worldComponent"]["widthPixel"] = worldComp.widthPixel;
+		saveData["worldState"]["worldComponent"]["heightPixel"] = worldComp.heightPixel;
+
+		saveData["worldState"]["worldComponent"]["currentLevel"] = static_cast<int>(worldComp.currentLevel);
+		saveData["worldState"]["worldComponent"]["currentLayer"] = static_cast<int>(worldComp.currentLayer);
+
+		saveData["worldState"]["worldComponent"]["menuOpened"] = worldComp.menuOpened;
+	});
 
 	std::string finalPath = getSaveFilePath(slotIndex);
 	std::ofstream file(finalPath);
@@ -155,7 +184,7 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 			return;
 		}
 
-		// RULE 2: Did its state change?
+		// Did its state change?
 		/*
 		if (savedStates.find(persistent.uuid) != savedStates.end()) {
 		    if (manager.hasComponent<InteractionComponent>(id)) {
@@ -172,28 +201,35 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 	spdlog::info("World State Overrides Applied: Pruned {} dead entities.", toDelete.size());
 }
 
-void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson)
+void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, EntityID &player)
 {
-	EntityID player = manager.createEntity();
-	manager.addComponentToEntity<PlayerComponent>(player);
 
-	manager.addComponentToEntity<TransformComponent>(player);
-	auto &trans = manager.getComponent<TransformComponent>(player);
-	trans.position.x = playerJson["position"]["x"];
-	trans.position.y = playerJson["position"]["y"];
+	if (manager.hasComponent<TransformComponent>(player)) {
+		auto &trans = manager.getComponent<TransformComponent>(player);
+		trans.position.x = playerJson["position"]["x"];
+		trans.position.y = playerJson["position"]["y"];
+	}
+	if (manager.hasComponent<TransformComponent>(player)) {
+		auto &stats = manager.getComponent<StatsComponent>(player);
+		stats.experience = playerJson["stats"].value("experience", 1.0f);
+		stats.experienceLevel = playerJson["stats"].value("experienceLevel", 1);
+		stats.numberOfFightsWon = playerJson["stats"].value("numberOfFightsWon", 0);
+		stats.health = playerJson["stats"].value("health", 100);
 
-	manager.addComponentToEntity<StatsComponent>(player);
-	auto &stats = manager.getComponent<StatsComponent>(player);
-	stats.experience = playerJson["player"]["stats"]["experience"];
-	stats.experienceLevel = playerJson["player"]["stats"]["experienceLevel"];
-	stats.numberOfFightsWon = playerJson["player"]["stats"]["numberOfFightsWon"];
-	stats.health = playerJson["player"]["stats"]["health"];
-
-	stats.addScalableStats(STRENGTH, playerJson["player"]["stats"]["STRENGTH"]);
-	stats.addScalableStats(DEXTERITY, playerJson["player"]["stats"]["DEXTERITY"]);
-	stats.addScalableStats(FAITH, playerJson["player"]["stats"]["FAITH"]);
-	stats.addScalableStats(MAX_HEALTH, playerJson["player"]["stats"]["MAX_HEALTH"]);
-
+		stats.addScalableStats(STRENGTH, playerJson["stats"].value("STRENGTH", 1));
+		stats.addScalableStats(DEXTERITY, playerJson["stats"].value("DEXTERITY", 1));
+		stats.addScalableStats(FAITH, playerJson["stats"].value("FAITH", 1));
+		stats.addScalableStats(MAX_HEALTH, playerJson["stats"].value("MAX_HEALTH", 100));
+	}
+	if (manager.hasComponent<InventoryComponent>(player)) {
+		auto &oldInv = manager.getComponent<InventoryComponent>(player);
+		for (const auto &[type, entitySet] : oldInv.items) {
+			for (EntityID id : entitySet) {
+				manager.destroyEntity(id);
+			}
+		}
+		manager.removeComponentFromEntity<InventoryComponent>(player);
+	}
 	manager.addComponentToEntity<InventoryComponent>(player);
 	auto &inventory = manager.getComponent<InventoryComponent>(player);
 
@@ -227,5 +263,30 @@ void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &
 			}
 		}
 	}
+	if (playerJson.contains("layerData")) {
+		auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
+
+		layerComp.level = static_cast<LEVEL_NAME>(playerJson["layerData"].value("level", 0));
+		layerComp.layer = static_cast<LAYERTYPE>(playerJson["layerData"].value("layer", 0));
+	}
 	spdlog::info("Player successfully injected into the world.");
+}
+
+void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann::json &worldStateJson)
+{
+	if (!worldStateJson.contains("worldComponent")) {
+		return;
+	}
+
+	const auto &wcJson = worldStateJson["worldComponent"];
+
+	manager.view<WorldComponent>().each([&](EntityID entity, WorldComponent &worldComp) {
+		worldComp.widthPixel = wcJson.value("widthPixel", 0u);
+		worldComp.heightPixel = wcJson.value("heightPixel", 0u);
+
+		worldComp.currentLevel = static_cast<LEVEL_NAME>(wcJson.value("currentLevel", 0));
+		worldComp.currentLayer = static_cast<LAYERTYPE>(wcJson.value("currentLayer", 0));
+
+		worldComp.menuOpened = wcJson.value("menuOpened", false);
+	});
 }
