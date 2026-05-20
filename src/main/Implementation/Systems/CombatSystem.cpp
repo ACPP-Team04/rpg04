@@ -5,6 +5,7 @@
 #include "Abstract/ECS/System/System.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
+#include "Abstract/Overwordl/Components/StateComponent.hpp"
 #include "Abstract/Utils/GraveConfig.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
@@ -120,6 +121,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;
 	}
+
 	switch (typeOfAction) {
 
 	case BattleAction::LIGHT_ATTACK: {
@@ -132,6 +134,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
+		manager.getComponent<StateComponent>(defender).setState(LIGHT_HIT);
 		break;
 	}
 	case BattleAction::HEAVY_ATTACK: {
@@ -145,6 +148,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
+		manager.getComponent<StateComponent>(defender).setState(HEAVY_HIT);
 		break;
 	}
 
@@ -160,6 +164,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto health = manager.getComponent<StatsComponent>(defender).health;
 		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
 		manager.getComponent<BattleComponent>(attacker).numberOfUltimateAttacksUsed += 1;
+		manager.getComponent<StateComponent>(defender).setState(ULTIMATE_HIT);
 		break;
 	}
 	case BattleAction::HEAL: {
@@ -323,6 +328,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 		auto &trans = manager.getComponent<TransformComponent>(playerID.value());
 		trans.position = {0, 1};
 		spdlog::get("combat")->info("You lost the battle! Game over");
+		manager.getComponent<StateComponent>(playerID.value()).setState(DIE,true);
 	}
 	audioSystem.switchMusic("overworld", true);
 }

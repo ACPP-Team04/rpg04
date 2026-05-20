@@ -3,10 +3,13 @@
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/Combat/Systems/StatsDistributorSystem.hpp"
+#include "Abstract/Overwordl/AnimationMovementSystem.hpp"
+#include "Abstract/Overwordl/AnimationSetterSystem.hpp"
 #include "Abstract/Overwordl/BoundingBoxSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 
+#include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/DialogSystem.hpp"
 #include "Abstract/Overwordl/DoorSystem.hpp"
@@ -52,6 +55,8 @@ struct ECSManager {
 	DoorSystem door_system;
 	SwitchBattleModeSystem switch_battle_mode_system;
 	EnemyHealthBarSystem enemyHealthBarSystem;
+	AnimationSetterSystem animation_setter_system;
+	AnimationMovementSystem animation_movement_system;
 
 	ECSManager(sf::RenderWindow &window, AudioManager &audioManager)
 	    : window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
@@ -60,7 +65,9 @@ struct ECSManager {
 	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
 	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
 	      combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
-	      switch_battle_mode_system(manager, audioSystem), enemyHealthBarSystem(manager, gui, window)
+	      switch_battle_mode_system(manager, audioSystem), enemyHealthBarSystem(manager, gui, window),
+          animation_movement_system(manager),
+	      animation_setter_system(manager)
 	{
 		gui.setWindow(window);
 	}
@@ -91,15 +98,16 @@ struct ECSManager {
 		boundingBoxSystem.update();
 		inputSystem.update();
 		movementSystem.update();
+		animation_movement_system.update();
 		boundingBoxSystem.update();
 		collisionSystem.update();
 		boundingBoxSystem.update();
 		interactionSystem.update();
-
 		door_system.update();
 		switchLayerSystem.update();
 		boundingBoxSystem.update();
 		cameraSystem.update();
+		animation_setter_system.update();
 		renderSystem.update();
 		switch_battle_mode_system.update();
 		battleInputSystem.update();

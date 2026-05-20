@@ -39,7 +39,7 @@
                     }
                 }],
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":30,
          "x":0,
          "y":0
@@ -56,6 +56,293 @@
                  "name":"",
                  "opacity":1,
                  "properties":[
+                        {
+                         "name":"animation",
+                         "propertytype":"ANIMATION_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+                             "sequences":[
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":18,
+                                                     "numFrames":5
+                                                    }
+                                                }],
+                                         "state":6
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":19,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":20,
+                                                     "numFrames":5
+                                                    }
+                                                }],
+                                         "state":4
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":34,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":32,
+                                                     "numFrames":5
+                                                    }
+                                                }],
+                                         "state":3
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":22,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":23,
+                                                     "numFrames":5
+                                                    }
+                                                }],
+                                         "state":2
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":49,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":48,
+                                                     "numFrames":5
+                                                    }
+                                                }],
+                                         "state":1
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":50,
+                                                     "numFrames":40
+                                                    }
+                                                }],
+                                         "state":5
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":51,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":52
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":53,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":2,
+                                                     "numFrames":-1
+                                                    }
+                                                }],
+                                         "state":7
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":51,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":52,
+                                                     "numFrames":12
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":53,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":2,
+                                                     "numFrames":-1
+                                                    }
+                                                }],
+                                         "state":8
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"AnimationSequence",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "sequence":[
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":51,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":52,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":53,
+                                                     "numFrames":5
+                                                    }
+                                                }, 
+                                                {
+                                                 "propertytype":"Animation",
+                                                 "type":"class",
+                                                 "value":
+                                                    {
+                                                     "entitySpriteId":2,
+                                                     "numFrames":-1
+                                                    }
+                                                }],
+                                         "state":9
+                                        }
+                                    }]
+                            }
+                        }, 
                         {
                          "name":"camera",
                          "propertytype":"CAMERA_COMPONENT",
@@ -115,8 +402,8 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":159.36445882586,
-                 "y":230.518655484382
+                 "x":183.031125492527,
+                 "y":298.851988817715
                 }, 
                 {
                  "gid":560,
@@ -239,22 +526,10 @@
                         }],
                  "rotation":0,
                  "type":"",
-                 "visible":false,
+                 "visible":true,
                  "width":16,
                  "x":208.454227276,
                  "y":129.003800135636
-                }, 
-                {
-                 "height":0,
-                 "id":9,
-                 "name":"",
-                 "opacity":1,
-                 "rotation":0,
-                 "type":"",
-                 "visible":false,
-                 "width":0.633956283431289,
-                 "x":74.806841444892,
-                 "y":54.5202403750908
                 }, 
                 {
                  "gid":345,
@@ -270,7 +545,7 @@
                          "value":
                             {
                              "action":"START_BATTLE",
-                             "focusRadius":20,
+                             "focusRadius":64,
                              "interactionKey":"F",
                              "trigger":"byInteractionKey"
                             }
@@ -288,8 +563,8 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":223.5,
-                 "y":230
+                 "x":65,
+                 "y":95.5
                 }, 
                 {
                  "gid":262,
@@ -357,8 +632,8 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":100.5,
-                 "y":271.5
+                 "x":46.5,
+                 "y":268.166666666667
                 }],
          "opacity":1,
          "properties":[
@@ -373,7 +648,7 @@
                     }
                 }],
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -404,6 +679,287 @@
                     {
                      "layerType":"OVERWORLD",
                      "levelName":"LEVEL2"
+                    }
+                }],
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":5,
+         "name":"Animations",
+         "objects":[
+                {
+                 "gid":480,
+                 "height":16,
+                 "id":18,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"palyeridle",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":224.166666666667,
+                 "y":244.333333333333
+                }, 
+                {
+                 "gid":481,
+                 "height":16,
+                 "id":19,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"playergoesdown",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":176.166666666667,
+                 "y":269.333333333333
+                }, 
+                {
+                 "gid":482,
+                 "height":16,
+                 "id":20,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"playergoesdown2",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":176.166666666667,
+                 "y":291.333333333333
+                }, 
+                {
+                 "gid":526,
+                 "height":16,
+                 "id":22,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"player_walk_left1",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":219.5,
+                 "y":216.666666666667
+                }, 
+                {
+                 "gid":527,
+                 "height":16,
+                 "id":23,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"player_walk_left2",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":243,
+                 "y":217.166666666667
+                }, 
+                {
+                 "gid":1786,
+                 "height":16,
+                 "id":32,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"player_walk_left1",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":179.166666666667,
+                 "y":199.833333333333
+                }, 
+                {
+                 "gid":1787,
+                 "height":16,
+                 "id":34,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"player_walk_left1",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":177.166666666667,
+                 "y":226.333333333333
+                }, 
+                {
+                 "gid":2147484174,
+                 "height":16,
+                 "id":48,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"player_walk_left1",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":116.25,
+                 "y":217.75
+                }, 
+                {
+                 "gid":2147484175,
+                 "height":16,
+                 "id":49,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"player_walk_left2",
+                         "propertytype":"ANIMATION_SPRITE_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":false,
+                 "width":16,
+                 "x":139.75,
+                 "y":218.25
+                }, 
+                {
+                 "gid":1303,
+                 "height":16,
+                 "id":50,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":144,
+                 "y":294
+                }, 
+                {
+                 "gid":1158,
+                 "height":16,
+                 "id":51,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":252.839079116513,
+                 "y":243.596587589108
+                }, 
+                {
+                 "gid":1159,
+                 "height":16,
+                 "id":52,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":253.306532663317,
+                 "y":266.969264929298
+                }, 
+                {
+                 "gid":1160,
+                 "height":16,
+                 "id":53,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":252.839079116513,
+                 "y":290.108215496085
+                }],
+         "opacity":1,
+         "properties":[
+                {
+                 "name":"layerConfig",
+                 "propertytype":"LayerConfig",
+                 "type":"class",
+                 "value":
+                    {
+                     "layerType":"OVERWORLD",
+                     "levelName":"ANIMATIONAREA"
                     }
                 }],
          "type":"objectgroup",
@@ -448,13 +1004,13 @@
                     }
                 }],
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":30,
          "x":0,
          "y":0
         }],
- "nextlayerid":5,
- "nextobjectid":18,
+ "nextlayerid":6,
+ "nextobjectid":54,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",
@@ -485,6 +1041,10 @@
          "tilecount":675,
          "tileheight":16,
          "tilewidth":16
+        }, 
+        {
+         "firstgid":1351,
+         "source":"Tilesheet_WithEnums.tsj"
         }],
  "tilewidth":16,
  "type":"map",

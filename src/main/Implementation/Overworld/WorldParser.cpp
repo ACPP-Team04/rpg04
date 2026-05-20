@@ -11,8 +11,10 @@
 #include "Abstract/Overwordl/Components/SpriteComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
+#include "Abstract/Overwordl/Components/AnimationComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
 #include "Abstract/Overwordl/Components/CollisionComponent.hpp"
+#include "Abstract/Overwordl/Components/StateComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "tileson.h"
@@ -28,6 +30,8 @@ WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window)
 {
     tson::Tileson t{&project};
     map = t.parse(fs::path(MAP));
+	std::ifstream f(MAP);
+	rawJson = nlohmann::json::parse(f);
 }
 
 
@@ -68,7 +72,7 @@ void equibFists(ArchetypeManager &manager, const WorldComponent &component)
 			EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
 			manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
 			icomp.addItem(weapon, ITEM_TYPE::WEAPON);
-			
+
 		}
 		if (!manager.hasComponent<StatsComponent>(entity)) {
 				manager.addComponentToEntity<StatsComponent>(entity);
@@ -113,7 +117,27 @@ void WorldParser::addTransformcomponent(ArchetypeManager &manager, EntityID id, 
 	float sy = (float)obj.getSize().y / (float)map->getTileSize().y;
 	manager.getComponent<TransformComponent>(id).scale.x = (sx > 0.f) ? sx : 1.f;
 	manager.getComponent<TransformComponent>(id).scale.y = (sy > 0.f) ? sy : 1.f;
+
 }
+
+void flipIfNeeded(ArchetypeManager &manager, EntityID id,tson::Object obj)
+{
+	SpriteComponent &sprite = manager.getComponent<SpriteComponent>(id);
+	switch (obj.getFlipFlags()) {
+
+	case tson::TileFlipFlags::None:
+		break;
+	case tson::TileFlipFlags::Diagonally:
+		break;
+	case tson::TileFlipFlags::Vertically:
+		sprite.tileInfo.pixelY += sprite.tileInfo.height;
+		sprite.tileInfo.height *=-1;
+	case tson::TileFlipFlags::Horizontally:
+		sprite.tileInfo.pixelX += sprite.tileInfo.width;
+		sprite.tileInfo.width *= -1;
+	}
+}
+
 
 void WorldParser::addRenderComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
 {
@@ -135,7 +159,7 @@ void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tso
 		int cols    = tileset->getColumns();
 		int tw      = tileset->getTileSize().x;
 		int th      = tileset->getTileSize().y;
-	
+
 		sprite.tileInfo = {
 			(localId % cols) * tw,
 			(localId / cols) * th,
@@ -143,13 +167,13 @@ void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tso
 			th
 		};
 		sprite.tilesetPath = (fs::path(MAP).parent_path() / tileset->getImagePath()).string();
-	
+
 	}
 	if (obj.getObjectType()==tson::ObjectType::Rectangle) {
 		if (map->getTilesets().empty()) {
 			throw std::runtime_error("You need to embedd a tileset!");
 		}
-		
+
 		auto firsTileset = map->getTilesets()[0];
 
 		int tilewidth = firsTileset.getTileSize().x;
@@ -188,6 +212,7 @@ void WorldParser::addBoundingBoxComponents(ArchetypeManager &manager, EntityID i
 	manager.addComponentToEntity<BoundIngBoxComponent>(id);
 }
 
+
 void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tuple)
 {
 	auto obj = std::get<0>(tuple);
@@ -195,10 +220,10 @@ void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tu
 	EntityID id = manager.createEntity();
 	manager.addComponentToEntity<TransformComponent>(id);
 	manager.getComponent<TransformComponent>(id).position.x = (float)obj.getPosition().x;
-	manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;
-	manager.addComponentToEntity<RenderComponent>(id);
+    manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;	manager.addComponentToEntity<RenderComponent>(id);
 	manager.getComponent<RenderComponent>(id).z_layer = 0;
 	manager.addComponentToEntity<SpriteComponent>(id);
+
 	auto &sprite = manager.getComponent<SpriteComponent>(id);
 
 	sprite.tileInfo = {obj.getDrawingRect().x,obj.getDrawingRect().y,obj.getDrawingRect().width,obj.getDrawingRect().height};
@@ -206,10 +231,46 @@ void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tu
 
 	manager.addComponentToEntity<PartOfLayerComponent>(id);
 	manager.getComponent<PartOfLayerComponent>(id).level = level;
+	manager.addComponentToEntity<StateComponent>(id);
 }
 
 
-void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple)
+
+void getAllObjectsWithAnimationComponent(nlohmann::json &rawMapJson,std::unordered_map<int, nlohmann::json>& animationDataByObjectId)
+{
+
+	for (auto& layer : rawMapJson["layers"]) {
+		if (!layer.contains("objects")) continue;
+		for (auto& obj : layer["objects"]) {
+			if (!obj.contains("properties")) continue;
+			for (auto& prop : obj["properties"]) {
+				if (prop["propertytype"].get<std::string>() == "ANIMATION_COMPONENT") {
+					animationDataByObjectId[obj["id"].get<int>()] = prop["value"];
+				}
+			}
+		}
+	}
+}
+void WorldParser::addAnimationComponent(ArchetypeManager &manager, EntityID id, nlohmann::json &data)
+{
+	manager.addComponentToEntity<AnimationComponent>(id);
+	auto &anim = manager.getComponent<AnimationComponent>(id);
+
+	for (auto& sequences : data["sequences"]) {
+		ENTITY_ANIMATIONS_STATE state = sequences["value"].value("state", ENTITY_ANIMATIONS_STATE());
+		AnimationSequence animSeq;
+		for (auto& seq : sequences["value"].value("sequence", nlohmann::json::array())) {
+			Animation animation = {
+				seq["value"].value("entitySpriteId", 0),
+				seq["value"].value("numFrames", 0)
+			};
+			animSeq.push_back(animation);
+		}
+		anim.addAnimation(state, animSeq);
+	}
+}
+
+void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple,std::unordered_map<int, nlohmann::json> &animationDataByObjectId)
 {
 
 
@@ -224,7 +285,13 @@ void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple)
 	addSpriteComponent(manager,id,obj);
 	addBoundingBoxComponents(manager, id, obj);
 	addPartOfLayerComponents(manager, id, obj, level);
+	if (animationDataByObjectId.contains(obj.getId())) {
+		addAnimationComponent(manager, id, animationDataByObjectId[obj.getId()]);
+	}
 	addTilesonComponents(manager, id, obj);
+	manager.addComponentToEntity<StateComponent>(id);
+	flipIfNeeded(manager, id, obj);
+
 
 
 }
@@ -234,6 +301,9 @@ void WorldParser::update()
 
 	EntityID world = manager.createEntity<WorldComponent>();
 	WorldComponent &worldComp = manager.getComponent<WorldComponent>(world);
+	std::unordered_map<int, nlohmann::json> animationDataByObjectId;
+	getAllObjectsWithAnimationComponent(rawJson, animationDataByObjectId);
+
 
 	std::vector<tson::Layer> objectLayers;
 	std::vector<tson::Layer> tileLayers;
@@ -265,7 +335,7 @@ void WorldParser::update()
 	}
 
 	for (auto &tr: objects) {
-		createEntity(tr.second);
+		createEntity(tr.second,animationDataByObjectId);
 	}
 
 
@@ -281,7 +351,7 @@ void WorldParser::update()
 		}
 	}
 
-	
+
 
 	parseRawEquipmentComponent(manager, worldComp);
 	equibFists(manager, worldComp);

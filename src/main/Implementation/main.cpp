@@ -2,6 +2,8 @@
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
 
+#include "Abstract/Overwordl/Components/AnimationComponent.hpp"
+#include "Abstract/Overwordl/Components/AnimationPartComponent.hpp"
 #include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
 #include "Abstract/Overwordl/Components/CollisionComponent.hpp"
@@ -51,6 +53,9 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AudioComponent>("AUDIO_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<AnimationPartComponent>("ANIMATION_SPRITE_COMPONENT");
+
+
 }
 
 void registerAudio()
@@ -93,7 +98,7 @@ int main()
 	registerAudio();
 	audioManager.playMusic("overworld", true);
 	auto player = WorldUtils::getPlayer(ecsManager.manager);
-	ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
+	//ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
 	window.setFramerateLimit(60);
 	while (window.isOpen()) {
 		ecsManager.update();

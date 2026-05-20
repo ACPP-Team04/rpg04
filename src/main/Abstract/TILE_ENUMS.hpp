@@ -14,6 +14,9 @@ enum LAYERTYPE {
 enum LEVEL_NAME {
     LEVEL1 = 0,
     LEVEL2 = 1,
+    LEVEL3 = 2,
+    LEVEL4 = 3,
+    ANIMATIONAREA = 4,
 };
 
 enum KEYS {
@@ -165,4 +168,17 @@ enum WEAPON_SCALING_FACTOR {
     SCALE_A = 0,
     SCALE_B = 1,
     SCALE_C = 2,
+};
+
+enum ENTITY_ANIMATIONS_STATE {
+    DEFAULT = 0,
+    WALK_LEFT = 1,
+    WALK_RIGHT = 2,
+    WALK_UP = 3,
+    WALK_DOWN = 4,
+    DIE = 5,
+    IDLE = 6,
+    LIGHT_HIT = 7,
+    HEAVY_HIT = 8,
+    ULTIMATE_HIT = 9,
 };

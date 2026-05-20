@@ -162,6 +162,9 @@ class ArchetypeManager {
 	template <typename T>
 	T &getComponent(EntityID entityId)
 	{
+		if (!this->entityIdToArchetype.contains(entityId)) {
+			throw std::runtime_error("Entity with this id does not exist! " + std::to_string(entityId.getId()));
+		}
 		EntityLocation location = getEntityLocation(entityId);
 		return std::get<0>(location.archetype->getComponentArrays<T>(location.index));
 	}

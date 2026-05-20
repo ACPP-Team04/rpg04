@@ -14,10 +14,10 @@ RenderSystem::RenderSystem(ArchetypeManager &manager, sf::RenderWindow &window) 
 
 void render(TransformComponent &tcomp, sf::RenderWindow &window, SpriteComponent &scomp)
 {
-
 	sf::Sprite sp = AssetManager::getInstance().getSpriteAt(scomp);
-	sp.setPosition(tcomp.position);
+
 	sp.setScale(tcomp.scale);
+	sp.setPosition(tcomp.position);
 	sp.setRotation(tcomp.rotation);
 	window.draw(sp);
 }
