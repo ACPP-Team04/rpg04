@@ -1,0 +1,17 @@
+{
+    "player": {
+        "position": {
+            "x": 267.0,
+            "y": 68.0
+        },
+        "stats": {
+            "experience": 1,
+            "health": 100
+        }
+    },
+    "slot": 1,
+    "worldState": {
+        "deadUniqueEntities": [],
+        "entityStates": {}
+    }
+}
