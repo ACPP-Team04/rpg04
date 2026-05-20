@@ -1,17 +1,54 @@
 {
+    "metadata": {
+        "timestamp": "2026-05-20 17:13:27"
+    },
     "player": {
+        "inventory": [
+            {
+                "isEquipped": true,
+                "itemType": 0,
+                "weaponData": {
+                    "heavyAttackBaseDmg": 18,
+                    "hitSoundHeavy": "heavy_fist_hit",
+                    "hitSoundLight": "light_fist_hit",
+                    "hitSoundUltimate": "ultimate_fist_hit",
+                    "lightAttackBaseDmg": 7,
+                    "scalingFactor": 0,
+                    "scalingStat": 0,
+                    "ultimateAttackBaseDmg": 35,
+                    "weaponType": 0
+                }
+            }
+        ],
+        "layerData": {
+            "layer": 0,
+            "level": 1
+        },
         "position": {
-            "x": 267.0,
-            "y": 68.0
+            "x": 139.0,
+            "y": 58.0
         },
         "stats": {
-            "experience": 1,
-            "health": 100
+            "DEXTERITY": 1,
+            "FAITH": 1,
+            "MAX_HEALTH": 100,
+            "STRENGTH": 1,
+            "experience": 1.0,
+            "experienceLevel": 1,
+            "health": 100,
+            "numberOfFightsWon": 0
         }
     },
     "slot": 1,
     "worldState": {
         "deadUniqueEntities": [],
-        "entityStates": {}
+        "entityStates": {},
+        "worldComponent": {
+            "currentLayer": 0,
+            "currentLevel": 1,
+            "heightPixel": 320,
+            "menuOpened": false,
+            "widthPixel": 480
+        }
     }
 }
