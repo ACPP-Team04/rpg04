@@ -346,7 +346,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 
 	// Simulate BattletInputSystem
 	battleComponentP.selectedAction = BattleAction::HEAL;
-	battleComponentP.target = enemy;
+	battleComponentP.target = player;
 	battleComponentP.battleState = BattleState::SELECTED_ACTION;
 	//
 
@@ -1141,4 +1141,152 @@ TEST(CombatSystemTest, passTurnOneDeathParticipant)
 	EXPECT_EQ(false, manager.getComponent<BattleComponent>(enemy2).isActiveTurn);
 	EXPECT_EQ(true, manager.getComponent<BattleComponent>(player).isActiveTurn);
 	EXPECT_EQ(BattleState::TURN_START, manager.getComponent<BattleComponent>(player).battleState);
+}
+
+TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithoutSettingTarget)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
+	auto &worldLayer = manager.getComponent<WorldComponent>(world);
+
+	worldLayer.currentLayer = LAYERTYPE::OVERWORLD;
+	worldLayer.currentLevel = LEVEL_NAME::LEVEL1;
+
+	playerLayer.layer = LAYERTYPE::OVERWORLD;
+	playerLayer.level = LEVEL_NAME::LEVEL1;
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
+
+	EntityID enemy = manager.createEntity();
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleManagerComponent>(battle);
+	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
+	bmc.participants = {player, enemy};
+	bmc.currentTurnIndex = 0;
+	bmc.isBattleOver = false;
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	combatSystem.update();
+
+	auto playerWeaponId = manager.createEntity<WeaponComponent>();
+	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(playerWeaponId);
+	playerWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_C;
+	playerWeapon.weaponType = WeaponType::RANGE;
+
+	auto enemyWeaponId = manager.createEntity<WeaponComponent>();
+	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemyWeaponId);
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
+	enemyWeapon.weaponType = WeaponType::RANGE;
+
+	auto &playerInventory = manager.getComponent<InventoryComponent>(player);
+	playerInventory.addItem(playerWeaponId, ITEM_TYPE::WEAPON);
+	playerInventory.equip(playerWeaponId, ITEM_TYPE::WEAPON);
+
+	auto &enemyInventory = manager.getComponent<InventoryComponent>(enemy);
+	enemyInventory.addItem(enemyWeaponId, ITEM_TYPE::WEAPON);
+	enemyInventory.equip(enemyWeaponId, ITEM_TYPE::WEAPON);
+
+	combatSystem.update();
+
+	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
+	statsComponentP.health = 100;
+	statsComponentP.stats[STATS::MAX_HEALTH] = 100;
+	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	statsComponentE.health = 80;
+	auto &inventoryComponentP = manager.getComponent<InventoryComponent>(player);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
+	EXPECT_EQ(true, battleComponentP.isActiveTurn);
+	EXPECT_EQ(false, battleComponentE.isActiveTurn);
+
+	// Simulate BattletInputSystem
+	battleComponentP.selectedAction = BattleAction::HEAL;
+	// No target set
+	battleComponentP.battleState = BattleState::SELECTED_ACTION;
+	//
+
+	EXPECT_THROW(combatSystem.update(), std::runtime_error);
+}
+
+TEST(CombatSystemTest, initialFightingSetupOneRoundRestWithoutSettingTarget)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	AISystem aiSystem = AISystem(manager);
+	EntityID world = manager.createEntity<WorldComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
+	auto &worldLayer = manager.getComponent<WorldComponent>(world);
+
+	worldLayer.currentLayer = LAYERTYPE::OVERWORLD;
+	worldLayer.currentLevel = LEVEL_NAME::LEVEL1;
+
+	playerLayer.layer = LAYERTYPE::OVERWORLD;
+	playerLayer.level = LEVEL_NAME::LEVEL1;
+	AudioManager audioManager = AudioManager();
+	AudioSystem audiosystem = AudioSystem(manager, audioManager);
+	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
+
+	EntityID enemy = manager.createEntity();
+	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleManagerComponent>(battle);
+	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
+	bmc.participants = {player, enemy};
+	bmc.currentTurnIndex = 0;
+	bmc.isBattleOver = false;
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	combatSystem.update();
+
+	auto playerWeaponId = manager.createEntity<WeaponComponent>();
+	WeaponComponent &playerWeapon = manager.getComponent<WeaponComponent>(playerWeaponId);
+	playerWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_C;
+	playerWeapon.weaponType = WeaponType::RANGE;
+
+	auto enemyWeaponId = manager.createEntity<WeaponComponent>();
+	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemyWeaponId);
+	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
+	enemyWeapon.weaponType = WeaponType::RANGE;
+
+	auto &playerInventory = manager.getComponent<InventoryComponent>(player);
+	playerInventory.addItem(playerWeaponId, ITEM_TYPE::WEAPON);
+	playerInventory.equip(playerWeaponId, ITEM_TYPE::WEAPON);
+
+	auto &enemyInventory = manager.getComponent<InventoryComponent>(enemy);
+	enemyInventory.addItem(enemyWeaponId, ITEM_TYPE::WEAPON);
+	enemyInventory.equip(enemyWeaponId, ITEM_TYPE::WEAPON);
+
+	combatSystem.update();
+
+	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
+	statsComponentP.health = 100;
+	statsComponentP.stats[STATS::MAX_HEALTH] = 100;
+	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	statsComponentE.health = 80;
+	auto &inventoryComponentP = manager.getComponent<InventoryComponent>(player);
+	battleComponentP.battleManagerId = battle;
+	battleComponentE.battleManagerId = battle;
+	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
+	EXPECT_EQ(true, battleComponentP.isActiveTurn);
+	EXPECT_EQ(false, battleComponentE.isActiveTurn);
+
+	// Simulate BattletInputSystem
+	battleComponentP.selectedAction = BattleAction::REST;
+	// No target set
+	battleComponentP.battleState = BattleState::SELECTED_ACTION;
+	//
+
+	EXPECT_THROW(combatSystem.update(), std::runtime_error);
 }
