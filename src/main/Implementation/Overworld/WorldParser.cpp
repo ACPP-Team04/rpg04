@@ -17,6 +17,8 @@
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "tileson.h"
 
+#include <Abstract/Overwordl/Components/InteractionComponent.hpp>
+#include <Abstract/Overwordl/Components/PersistanceComponent.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <fmt/base.h>
 #include <fmt/format.h>
@@ -26,35 +28,33 @@
 WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window)
     : System(manager), window(window), project(PRO)
 {
-    tson::Tileson t{&project};
-    map = t.parse(fs::path(MAP));
+	tson::Tileson t{&project};
+	map = t.parse(fs::path(MAP));
 }
 
-
-void WorldParser::undfoldLayers(std::vector<tson::Layer> & layers,std::vector<tson::Layer> & objectLayers, std::vector<tson::Layer> & tileLayers)
+void WorldParser::undfoldLayers(std::vector<tson::Layer> &layers, std::vector<tson::Layer> &objectLayers,
+                                std::vector<tson::Layer> &tileLayers)
 {
-	for (auto & layer : layers) {
-		if (layer.getType()==tson::LayerType::TileLayer) {
+	for (auto &layer : layers) {
+		if (layer.getType() == tson::LayerType::TileLayer) {
 			tileLayers.push_back(layer);
 		}
-		if (layer.getType()==tson::LayerType::ObjectGroup) {
+		if (layer.getType() == tson::LayerType::ObjectGroup) {
 			objectLayers.push_back(layer);
 		}
 		this->undfoldLayers(layer.getLayers(), objectLayers, tileLayers);
-
 	}
 }
 
-tson::Property getPropertyByPropertyType(tson::PropertyCollection props,std::string type)
+tson::Property getPropertyByPropertyType(tson::PropertyCollection props, std::string type)
 {
-	for (auto & prop : props.getProperties()) {
-		if (prop.second.getPropertyType()==type) {
+	for (auto &prop : props.getProperties()) {
+		if (prop.second.getPropertyType() == type) {
 			return prop.second;
 		}
 	}
 	throw std::logic_error(fmt::format("Unknown property type: {}", type));
 };
-
 
 tson::TiledClass getCustomPropertyAsClass(tson::Property prop)
 {
@@ -68,13 +68,12 @@ void equibFists(ArchetypeManager &manager, const WorldComponent &component)
 			EntityID weapon = manager.createEntity<ItemComponent, WeaponComponent>();
 			manager.getComponent<ItemComponent>(weapon).itemType = ITEM_TYPE::WEAPON;
 			icomp.addItem(weapon, ITEM_TYPE::WEAPON);
-			
 		}
 		if (!manager.hasComponent<StatsComponent>(entity)) {
-				manager.addComponentToEntity<StatsComponent>(entity);
-				std::cout << "Added stats component to entity: " << entity.getId() << std::endl;
-				std::cout <<manager.getComponent<StatsComponent>(entity).health<< std::endl;
-			}
+			manager.addComponentToEntity<StatsComponent>(entity);
+			std::cout << "Added stats component to entity: " << entity.getId() << std::endl;
+			std::cout << manager.getComponent<StatsComponent>(entity).health << std::endl;
+		}
 	});
 }
 void parseRawEquipmentComponent(ArchetypeManager &manager, const WorldComponent &component)
@@ -99,7 +98,7 @@ void parseRawEquipmentComponent(ArchetypeManager &manager, const WorldComponent 
 	}
 }
 
-void WorldParser::addTransformcomponent(ArchetypeManager &manager, EntityID id, tson::Object obj,LEVEL_NAME level)
+void WorldParser::addTransformcomponent(ArchetypeManager &manager, EntityID id, tson::Object obj, LEVEL_NAME level)
 {
 	manager.addComponentToEntity<PartOfLayerComponent>(id);
 	manager.getComponent<PartOfLayerComponent>(id).level = level;
@@ -132,37 +131,30 @@ void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tso
 	if (obj.getObjectType() == tson::ObjectType::Object) {
 		tson::Tileset *tileset = map->getTilesetByGid(obj.getGid());
 		int localId = obj.getGid() - tileset->getFirstgid();
-		int cols    = tileset->getColumns();
-		int tw      = tileset->getTileSize().x;
-		int th      = tileset->getTileSize().y;
-	
-		sprite.tileInfo = {
-			(localId % cols) * tw,
-			(localId / cols) * th,
-			tw,
-			th
-		};
+		int cols = tileset->getColumns();
+		int tw = tileset->getTileSize().x;
+		int th = tileset->getTileSize().y;
+
+		sprite.tileInfo = {(localId % cols) * tw, (localId / cols) * th, tw, th};
 		sprite.tilesetPath = (fs::path(MAP).parent_path() / tileset->getImagePath()).string();
-	
 	}
-	if (obj.getObjectType()==tson::ObjectType::Rectangle) {
+	if (obj.getObjectType() == tson::ObjectType::Rectangle) {
 		if (map->getTilesets().empty()) {
 			throw std::runtime_error("You need to embedd a tileset!");
 		}
-		
+
 		auto firsTileset = map->getTilesets()[0];
 
 		int tilewidth = firsTileset.getTileSize().x;
 		int tileheight = firsTileset.getTileSize().y;
 		sprite.tileInfo = {0, 0, tilewidth, tileheight};
 		sprite.tilesetPath = (fs::path(MAP).parent_path() / firsTileset.getImagePath()).string();
-
 	}
 }
 
 void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, tson::Object obj)
 {
-	for (auto& prop : obj.getProperties().getProperties()) {
+	for (auto &prop : obj.getProperties().getProperties()) {
 		std::string propType = prop.second.getPropertyType();
 		std::cout << "Adding: " << propType << std::endl;
 		ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
@@ -173,11 +165,10 @@ void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, t
 			func(manager, id, propClass);
 		}
 		std::cout << "Added:" << propType << std::endl;
-
 	}
 }
 
-void WorldParser::addPartOfLayerComponents(ArchetypeManager &manager, EntityID id, tson::Object obj,LEVEL_NAME level)
+void WorldParser::addPartOfLayerComponents(ArchetypeManager &manager, EntityID id, tson::Object obj, LEVEL_NAME level)
 {
 	manager.addComponentToEntity<PartOfLayerComponent>(id);
 	manager.getComponent<PartOfLayerComponent>(id).level = level;
@@ -188,7 +179,7 @@ void WorldParser::addBoundingBoxComponents(ArchetypeManager &manager, EntityID i
 	manager.addComponentToEntity<BoundIngBoxComponent>(id);
 }
 
-void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tuple)
+void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> &tuple)
 {
 	auto obj = std::get<0>(tuple);
 	auto level = std::get<1>(tuple);
@@ -201,32 +192,63 @@ void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tu
 	manager.addComponentToEntity<SpriteComponent>(id);
 	auto &sprite = manager.getComponent<SpriteComponent>(id);
 
-	sprite.tileInfo = {obj.getDrawingRect().x,obj.getDrawingRect().y,obj.getDrawingRect().width,obj.getDrawingRect().height};
+	sprite.tileInfo = {obj.getDrawingRect().x, obj.getDrawingRect().y, obj.getDrawingRect().width,
+	                   obj.getDrawingRect().height};
 	sprite.tilesetPath = (fs::path(MAP).parent_path() / obj.getTile()->getTileset()->getImagePath()).string();
 
 	manager.addComponentToEntity<PartOfLayerComponent>(id);
 	manager.getComponent<PartOfLayerComponent>(id).level = level;
 }
 
+void WorldParser::addPersistentIdComponent(ArchetypeManager &manager, EntityID id, tson::Object obj, LEVEL_NAME level)
+{
+	if (obj.getProperties().hasProperty("uuid")) {
+		std::string uniqueId = obj.getProperties().getProperty("uuid")->getValue<std::string>();
+		manager.addComponentToEntity<PersistanceComponent>(id);
+		manager.getComponent<PersistanceComponent>(id).uuid = uniqueId;
+		return;
+	}
 
-void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple)
+	if (manager.hasComponent<PlayerComponent>(id)) {
+		return;
+	}
+
+	bool needsPersistence = false;
+
+	if (manager.hasComponent<InteractionComponent>(id)) {
+		needsPersistence = true;
+	} else if (manager.hasComponent<ItemComponent>(id)) {
+		needsPersistence = true;
+	} else if (manager.hasComponent<InventoryComponent>(id)) {
+		needsPersistence = true;
+	}
+
+	if (needsPersistence) {
+		std::string objType = obj.getType().empty() ? "obj" : obj.getType();
+		std::string uniqueId =
+		    fmt::format("Lvl{}_{}_{}_{}", static_cast<int>(level), objType, obj.getPosition().x, obj.getPosition().y);
+
+		manager.addComponentToEntity<PersistanceComponent>(id);
+		manager.getComponent<PersistanceComponent>(id).uuid = uniqueId;
+	}
+}
+
+void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> &tuple)
 {
 
-
 	auto obj = std::get<0>(tuple);
-	if (obj.getObjectType()!=tson::ObjectType::Rectangle && obj.getObjectType()!=tson::ObjectType::Object) {
+	if (obj.getObjectType() != tson::ObjectType::Rectangle && obj.getObjectType() != tson::ObjectType::Object) {
 		throw std::runtime_error("We allow only rectangle objects");
 	}
 	auto level = std::get<1>(tuple);
 	EntityID id = manager.createEntityWithId(obj.getId());
 	addTransformcomponent(manager, id, obj, level);
 	addRenderComponent(manager, id, obj);
-	addSpriteComponent(manager,id,obj);
+	addSpriteComponent(manager, id, obj);
 	addBoundingBoxComponents(manager, id, obj);
 	addPartOfLayerComponents(manager, id, obj, level);
 	addTilesonComponents(manager, id, obj);
-
-
+	addPersistentIdComponent(manager, id, obj, level);
 }
 void WorldParser::update()
 {
@@ -241,47 +263,43 @@ void WorldParser::update()
 	worldComp.heightPixel = map->getSize().y * map->getTileSize().y;
 	worldComp.currentLevel = LEVEL_NAME::LEVEL1;
 	worldComp.currentLayer = LAYERTYPE::OVERWORLD;
-	window.setSize({worldComp.widthPixel,worldComp.heightPixel});
+	window.setSize({worldComp.widthPixel, worldComp.heightPixel});
 
 	sf::View view(sf::FloatRect({0.f, 0.f},
-								{static_cast<float>(worldComp.widthPixel), static_cast<float>(worldComp.heightPixel)}));
+	                            {static_cast<float>(worldComp.widthPixel), static_cast<float>(worldComp.heightPixel)}));
 	window.setView(view);
-
 
 	undfoldLayers(map->getLayers(), objectLayers, tileLayers);
 
-	std::map<int,std::tuple<tson::Object,LEVEL_NAME>> objects;
+	std::map<int, std::tuple<tson::Object, LEVEL_NAME>> objects;
 
-	for (auto & objlayer : objectLayers) {
+	for (auto &objlayer : objectLayers) {
 
 		tson::Property config = getPropertyByPropertyType(objlayer.getProperties(), "LayerConfig");
 
 		auto configObject = getCustomPropertyAsClass(config);
-		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject,"levelName");
-		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject,"layerType");
-		for (auto & obj : objlayer.getObjects()) {
-			objects[obj.getId()] = {obj,level_name};
+		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject, "levelName");
+		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject, "layerType");
+		for (auto &obj : objlayer.getObjects()) {
+			objects[obj.getId()] = {obj, level_name};
 		}
 	}
 
-	for (auto &tr: objects) {
+	for (auto &tr : objects) {
 		createEntity(tr.second);
 	}
-
 
 	for (auto &tileLayer : tileLayers) {
 		tson::Property config = getPropertyByPropertyType(tileLayer.getProperties(), "LayerConfig");
 		auto configObject = getCustomPropertyAsClass(config);
-		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject,"levelName");
-		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject,"layerType");
+		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject, "levelName");
+		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject, "layerType");
 
-		for(auto &[pos, tileObject] : tileLayer.getTileObjects()) {
+		for (auto &[pos, tileObject] : tileLayer.getTileObjects()) {
 			std::tuple<tson::TileObject, LEVEL_NAME> obj = std::make_tuple(tileObject, level_name);
 			createTileObject(obj);
 		}
 	}
-
-	
 
 	parseRawEquipmentComponent(manager, worldComp);
 	equibFists(manager, worldComp);
