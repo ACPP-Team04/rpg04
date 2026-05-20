@@ -5,6 +5,7 @@
 #include <optional>
 
 #include <SFML/Window/Keyboard.hpp>
+#include <spdlog/spdlog.h>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -19,6 +20,8 @@ class ArchetypeManager {
 	std::unordered_map<ArchetypeBitSignature, SharedArchetype> archetypes;
 	std::unordered_map<EntityID, EntityLocation> entityIdToArchetype;
 	std::unordered_map<EntityTag, std::vector<EntityID>> entityTagToEntityId;
+	using EntityDestroyedCallback = std::function<void(EntityID)>;
+
 	SharedArchetype getArchetypeBySignature(ArchetypeBitSignature signature) { return this->archetypes[signature]; }
 
 	void addArchtypeBySignature(SharedArchetype archetype)
@@ -229,6 +232,10 @@ class ArchetypeManager {
 		if (!hasArchetype(entityId)) {
 			return;
 		}
+		for (const auto &callback : destructionCallbacks) {
+			callback(entityId);
+		}
+
 		EntityLocation location = getEntityLocation(entityId);
 		removeEntityIdFromArchetype(entityId, location.archetype);
 
@@ -241,4 +248,22 @@ class ArchetypeManager {
 		}
 		deleteEntityLocation(entityId);
 	}
+	void subscribeToDestruction(EntityDestroyedCallback callback) { destructionCallbacks.push_back(callback); }
+
+	void clear()
+	{
+		this->entityIdToArchetype.clear();
+		this->entityTagToEntityId.clear();
+
+		for (auto &[signature, archetype] : this->archetypes) {
+			if (archetype) {
+				archetype->clear();
+			}
+		}
+
+		spdlog::info("ArchetypeManager: All entities and component memory storage cleared.");
+	}
+
+  private:
+	std::vector<EntityDestroyedCallback> destructionCallbacks;
 };

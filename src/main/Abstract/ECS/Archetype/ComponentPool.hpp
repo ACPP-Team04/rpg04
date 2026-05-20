@@ -17,6 +17,7 @@ struct IPool {
 	virtual void moveFrom(size_t indexTo, size_t indexFrom) = 0;
 	virtual void copyTo(size_t oldIndex, IPool *otherPool, size_t newIndex) = 0;
 	virtual std::unique_ptr<IPool> createEmpty() = 0;
+	virtual void clear() = 0;
 };
 
 template <typename T>
@@ -58,4 +59,5 @@ struct ComponentPool : IPool {
 	}
 
 	std::unique_ptr<IPool> createEmpty() override { return std::make_unique<ComponentPool<T>>(); }
+	void clear() override { this->components.clear(); }
 };

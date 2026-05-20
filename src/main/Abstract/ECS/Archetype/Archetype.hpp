@@ -61,6 +61,8 @@ class Archetype {
 
 	ArchetypeBitSignature getArchTypeSignature() { return this->type; }
 
+	void clear() { this->componentArea.clear(); }
+
   private:
 	ComponentArea componentArea;
 	ArchetypeBitSignature type;
