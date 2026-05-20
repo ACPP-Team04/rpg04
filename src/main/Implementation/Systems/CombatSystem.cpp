@@ -176,12 +176,25 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		break;
 	}
 	}
-	spdlog::get("combat")->info("Entity {} attacks Entity {} with {}!", attacker.getId(), defender.getId(),
-	                            static_cast<int>(typeOfAction));
-	spdlog::get("combat")->info("Entity {} has {} HP and {} AP left!", defender.getId(),
-	                            manager.getComponent<StatsComponent>(defender).health,
-	                            manager.getComponent<BattleComponent>(defender).AP);
-	spdlog::get("combat")->info("Entity {} has {} HP and {} AP left!", attacker.getId(),
+	if (defender == -1) {
+		throw std::runtime_error("Defender is not set for action execution");
+	}
+	bool isOffensive = (typeOfAction == BattleAction::LIGHT_ATTACK || typeOfAction == BattleAction::HEAVY_ATTACK
+	                    || typeOfAction == BattleAction::ULTIMATE_ATTACK);
+
+	if (isOffensive) {
+		spdlog::get("combat")->info("Entity {} attacks Entity {} with action {}!", attacker.getId(), defender.getId(),
+		                            static_cast<int>(typeOfAction));
+
+		spdlog::get("combat")->info("Defender Entity {} has {} HP and {} AP left!", defender.getId(),
+		                            manager.getComponent<StatsComponent>(defender).health,
+		                            manager.getComponent<BattleComponent>(defender).AP);
+	} else {
+		std::string actionName = (typeOfAction == BattleAction::HEAL) ? "heals" : "rests";
+		spdlog::get("combat")->info("Entity {} {}!", attacker.getId(), actionName);
+	}
+
+	spdlog::get("combat")->info("Attacker Entity {} has {} HP and {} AP left!", attacker.getId(),
 	                            manager.getComponent<StatsComponent>(attacker).health,
 	                            manager.getComponent<BattleComponent>(attacker).AP);
 }
