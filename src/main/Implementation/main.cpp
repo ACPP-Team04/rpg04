@@ -22,10 +22,13 @@
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 
+#include "Abstract/GameState/GameState.hpp"
 #include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
 #include <Abstract/Overwordl/Components/AudioComponent.hpp>
+#include <Abstract/Overwordl/Components/PersistanceComponent.hpp>
 #include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <SFML/Graphics.hpp>
 
 void registerComponents()
@@ -51,6 +54,7 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AudioComponent>("AUDIO_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<PersistanceComponent>("PERSISTANCE_COMPONENT");
 }
 
 void registerAudio()
@@ -79,6 +83,50 @@ void registerAudio()
 	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
 }
 
+void initializeEngine(ArchetypeManager &manager)
+{
+	manager.subscribeToDestruction([&manager](EntityID id) {
+		if (manager.hasComponent<PersistanceComponent>(id)) {
+			std::string uuid = manager.getComponent<PersistanceComponent>(id).uuid;
+			GameState::getInstance().deadUniqueEntities.insert(uuid);
+			spdlog::info("Observer: Recorded {} as dead.", uuid);
+		}
+	});
+}
+
+void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slotIndex)
+{
+	spdlog::info("Executing overarching load sequence for Slot {}...", slotIndex);
+
+	nlohmann::json saveData;
+	try {
+		saveData = SaveManager::loadSaveFile(slotIndex);
+	} catch (const std::exception &e) {
+		spdlog::error("Aborting load: Save file error: {}", e.what());
+		return;
+	}
+
+	manager.clear();
+
+	parser.update();
+
+	auto defaultPlayerOpt = WorldUtils::getPlayer(manager);
+	if (defaultPlayerOpt.has_value()) {
+		manager.destroyEntity(defaultPlayerOpt.value());
+	}
+
+	SaveManager::applyWorldStateOverrides(manager);
+
+	SaveManager::injectPlayer(manager, saveData["player"]);
+
+	auto newPlayer = WorldUtils::getPlayer(manager);
+	if (newPlayer.has_value()) {
+		manager.addComponentToEntity<CombatGodMode>(newPlayer.value());
+	}
+
+	spdlog::info("Load sequence completely finished!");
+}
+
 int main()
 {
 
@@ -93,6 +141,7 @@ int main()
 	registerAudio();
 	audioManager.playMusic("overworld", true);
 	auto player = WorldUtils::getPlayer(ecsManager.manager);
+	initializeEngine(ecsManager.manager);
 	ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
 	window.setFramerateLimit(60);
 	while (window.isOpen()) {
