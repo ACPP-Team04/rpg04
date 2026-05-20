@@ -19,6 +19,8 @@
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "tileson.h"
 
+#include <Abstract/Overwordl/Components/InteractionComponent.hpp>
+#include <Abstract/Overwordl/Components/PersistanceComponent.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <fmt/base.h>
 #include <fmt/format.h>

@@ -30,15 +30,16 @@
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/HealthBarSystem.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <Abstract/Overwordl/BonfireSystem.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
 struct ECSManager {
 
-	sf::RenderWindow &window;
-	tgui::Gui &gui;
+	sf::RenderWindow& window;
+	tgui::Gui& gui;
 	ArchetypeManager manager = ArchetypeManager();
-	AudioManager &audioManager;
+	AudioManager& audioManager;
 	AudioSystem audioSystem;
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
@@ -64,17 +65,18 @@ struct ECSManager {
 	HudSystem hudSystem;
 	CharacterPreProcessSystem character_preprocess_system;
 	WorldParser worldParser;
+	BonfireSystem bonfireSystem;
 
-	ECSManager(sf::RenderWindow &window, tgui::Gui &gui)
-	    : window(window), gui(gui), manager(), audioManager(AudioManager::getInstance()), audioSystem(manager, audioManager),
-	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
-	      dialogSystem(manager, window, gui), interactionSystem(manager), item_system(manager),
-	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
-	      combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
-	      switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
-	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
-	      hudSystem(manager, window, gui), character_preprocess_system(manager),worldParser(manager,window)
+	ECSManager(sf::RenderWindow& window, tgui::Gui& gui)
+		: window(window), gui(gui), manager(), audioManager(AudioManager::getInstance()), audioSystem(manager, audioManager),
+		renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
+		cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
+		dialogSystem(manager, window, gui), interactionSystem(manager), item_system(manager),
+		menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
+		combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
+		switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
+		animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
+		hudSystem(manager, window, gui), character_preprocess_system(manager), worldParser(manager, window), bonfireSystem(manager)
 
 	{
 		gui.setWindow(window);
@@ -86,7 +88,7 @@ struct ECSManager {
 	{
 		bool menuOpened = false;
 		this->manager.view<WorldComponent>().each(
-		    [&](auto entityId, WorldComponent &worldComponent) { menuOpened = worldComponent.menuOpened; });
+			[&](auto entityId, WorldComponent& worldComponent) { menuOpened = worldComponent.menuOpened; });
 		return menuOpened;
 	}
 
@@ -102,7 +104,7 @@ struct ECSManager {
 	}
 
 	template <typename Function>
-	void measureTime(const std::string &name, Function function)
+	void measureTime(const std::string& name, Function function)
 	{
 		sf::Clock clock;
 		clock.start();
@@ -112,7 +114,7 @@ struct ECSManager {
 
 	void setTargetAspect(float targetAspect) { cameraSystem.setTargetAspect(targetAspect); }
 
-	void setViewport(const sf::FloatRect &viewport) { cameraSystem.setViewport(viewport); }
+	void setViewport(const sf::FloatRect& viewport) { cameraSystem.setViewport(viewport); }
 
 	void update()
 	{
@@ -146,6 +148,7 @@ struct ECSManager {
 		dialogSystem.update();
 		item_system.update();
 		audioSystem.update();
+		bonfireSystem.update();
 		gui.draw();
 	}
 
