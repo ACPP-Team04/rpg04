@@ -9,8 +9,7 @@ struct TransformComponent : public Component<TransformComponent>,DefaultComponen
 	sf::Vector2f previousPosition;
 	sf::Vector2f size;
 
-	void readFromJson(tson::TiledClass &j)
-	{
+	void readFromJson(tson::TiledClass &j) {}
 
 	}
 
