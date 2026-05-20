@@ -13,7 +13,8 @@ class SaveManager {
 
 	static void applyWorldStateOverrides(ArchetypeManager &manager);
 
-	static void injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson);
+	static void injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, EntityID &playerID);
+	static void injectWorldComponent(ArchetypeManager &manager, const nlohmann::json &worldStateJson);
 
   private:
 	static std::string getSaveFilePath(int slotIndex);
