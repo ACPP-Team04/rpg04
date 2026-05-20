@@ -1,5 +1,7 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
+#include <SFML/System/Angle.hpp>
+#include <SFML/System/Vector2.hpp>
 
 struct TransformComponent : public Component<TransformComponent> {
 	sf::Vector2f position;
@@ -7,13 +9,7 @@ struct TransformComponent : public Component<TransformComponent> {
 	sf::Angle rotation = sf::Angle::Zero;
 	sf::Vector2f previousPosition;
 
-	void readFromJson(tson::TiledClass &j)
-	{
+	void readFromJson(tson::TiledClass &j) {}
 
-	}
-
-	void setRotation(float rotationDegrees)
-	{
-		this->rotation = sf::degrees(rotationDegrees);
-	}
+	void setRotation(float rotationDegrees) { this->rotation = sf::degrees(rotationDegrees); }
 };
