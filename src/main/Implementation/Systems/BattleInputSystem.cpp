@@ -79,6 +79,7 @@ void BattleInputSystem::connectCallbacks()
 			auto &b = manager.getComponent<BattleComponent>(playerId);
 			b.selectedAction = BattleAction::HEAL;
 			b.battleState = BattleState::SELECTING_TARGET;
+			b.target = playerId;
 		}
 	});
 	ui.getButton("BtnRest")->onPress([this]() {
@@ -91,6 +92,7 @@ void BattleInputSystem::connectCallbacks()
 			auto &b = manager.getComponent<BattleComponent>(playerId);
 			b.selectedAction = BattleAction::REST;
 			b.battleState = BattleState::SELECTING_TARGET;
+			b.target = playerId;
 		}
 	});
 }
