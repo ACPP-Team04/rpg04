@@ -27,6 +27,7 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
 #include <Abstract/GameConfig/GameConfig.hpp>
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <SFML/Graphics.hpp>
 #include <exception>
 
@@ -73,6 +74,50 @@ void applyGameConfig(ECSManager &ecsManager, EntityID player)
 		ecsManager.manager.addComponentToEntity<CombatGodMode>(player);
 		spdlog::info("God Mode applied to player!");
 	}
+}
+
+void initializeEngine(ArchetypeManager &manager)
+{
+	manager.subscribeToDestruction([&manager](EntityID id) {
+		if (manager.hasComponent<PersistanceComponent>(id)) {
+			std::string uuid = manager.getComponent<PersistanceComponent>(id).uuid;
+			GameState::getInstance().deadUniqueEntities.insert(uuid);
+			spdlog::info("Observer: Recorded {} as dead.", uuid);
+		}
+	});
+}
+
+void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slotIndex)
+{
+	spdlog::info("Executing overarching load sequence for Slot {}...", slotIndex);
+
+	nlohmann::json saveData;
+	try {
+		saveData = SaveManager::loadSaveFile(slotIndex);
+	} catch (const std::exception &e) {
+		spdlog::error("Aborting load: Save file error: {}", e.what());
+		return;
+	}
+
+	manager.clear();
+
+	parser.update();
+
+	auto defaultPlayerOpt = WorldUtils::getPlayer(manager);
+	if (defaultPlayerOpt.has_value()) {
+		manager.destroyEntity(defaultPlayerOpt.value());
+	}
+
+	SaveManager::applyWorldStateOverrides(manager);
+
+	SaveManager::injectPlayer(manager, saveData["player"]);
+
+	auto newPlayer = WorldUtils::getPlayer(manager);
+	if (newPlayer.has_value()) {
+		manager.addComponentToEntity<CombatGodMode>(newPlayer.value());
+	}
+
+	spdlog::info("Load sequence completely finished!");
 }
 
 int main()
