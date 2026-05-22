@@ -27,10 +27,12 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 
+#include "Abstract/GameState/GameState.hpp"
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/HealthBarSystem.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <Abstract/Overwordl/BonfireSystem.hpp>
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
