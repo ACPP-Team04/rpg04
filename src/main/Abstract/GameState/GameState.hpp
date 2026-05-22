@@ -14,6 +14,7 @@ class GameState {
 	std::set<std::string> deadUniqueEntities;
 
 	std::map<std::string, int> entityStates;
+	bool requestLoad = false;
 
 	void clearAll()
 	{
