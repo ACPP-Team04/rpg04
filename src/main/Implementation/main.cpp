@@ -89,7 +89,7 @@ void initializeEngine(ArchetypeManager &manager)
 
 void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slotIndex)
 {
-	spdlog::info("Executing overarching load sequence for Slot {}...", slotIndex);
+	spdlog::info("Executing load sequence for Slot {}...", slotIndex);
 
 	nlohmann::json saveData;
 	try {
@@ -102,20 +102,15 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slo
 	manager.clear();
 
 	parser.update();
-
-	auto defaultPlayerOpt = WorldUtils::getPlayer(manager);
-	if (defaultPlayerOpt.has_value()) {
-		manager.destroyEntity(defaultPlayerOpt.value());
-	}
-
 	SaveManager::applyWorldStateOverrides(manager);
-
-	SaveManager::injectPlayer(manager, saveData["player"]);
-
-	auto newPlayer = WorldUtils::getPlayer(manager);
-	if (newPlayer.has_value()) {
-		manager.addComponentToEntity<CombatGodMode>(newPlayer.value());
+	auto playerOpt = WorldUtils::getPlayer(manager);
+	if (!playerOpt.has_value()) {
+		spdlog::critical("WorldParser failed to spawn a default player!");
+		throw std::runtime_error("WorldParser failed to spawn a default player!");
 	}
+	SaveManager::injectWorldComponent(manager, saveData["worldState"]);
+
+	SaveManager::injectPlayer(manager, saveData["player"], playerOpt.value());
 
 	spdlog::info("Load sequence completely finished!");
 }
