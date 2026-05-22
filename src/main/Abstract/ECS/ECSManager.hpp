@@ -20,9 +20,11 @@
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 
+#include "Abstract/GameState/GameState.hpp"
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
 #include <Abstract/Overwordl/BonfireSystem.hpp>
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
@@ -75,6 +77,16 @@ struct ECSManager {
 			gui.handleEvent(*event);
 			if (event->is<sf::Event::Closed>())
 				window.close();
+
+			if (const auto *keyPress = event->getIf<sf::Event::KeyPressed>()) {
+				if (keyPress->code == sf::Keyboard::Key::L) {
+					if (SaveManager::doesSaveExist(1)) {
+						GameState::getInstance().requestLoad = true;
+					} else {
+						spdlog::warn("Cannot load: No save file exists yet in Slot 1!");
+					}
+				}
+			}
 		}
 	}
 	bool checkMenu()
