@@ -1,4 +1,3 @@
-
 #include "Abstract/Overwordl/ItemSystem.hpp"
 
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
@@ -11,7 +10,7 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 
-ItemSystem::ItemSystem(ArchetypeManager &manager) : System(manager) {}
+ItemSystem::ItemSystem(ArchetypeManager& manager) : System(manager) {}
 
 void ItemSystem::update()
 {
@@ -20,20 +19,20 @@ void ItemSystem::update()
 		return;
 	}
 
-	InputComponent &inputComponent = inputComponentOptional.value();
-	InventoryComponent &inventoryComponent = WorldUtils::getPlayersComponent<InventoryComponent>(manager).value();
+	InputComponent& inputComponent = inputComponentOptional.value();
+	InventoryComponent& inventoryComponent = WorldUtils::getPlayersComponent<InventoryComponent>(manager).value();
 
 	std::vector<EntityID> toAddInventoryComp;
 
-	WorldUtils::viewInCurrentLayer<ItemComponent>(manager, [&](const EntityID &entity, ItemComponent &item) {
+	WorldUtils::viewInCurrentLayer<ItemComponent>(manager, [&](const EntityID& entity, ItemComponent& item) {
 		if (inventoryComponent.containsItem(entity) && !manager.hasComponent<IsInInventoryComponent>(entity)) {
 			toAddInventoryComp.push_back(entity);
 		}
-	});
-	for (auto &entity : inventoryComponent.getItems(COLLECTABLE_COMPANION)) {
+		});
+	for (auto& entity : inventoryComponent.getItems(COLLECTABLE_COMPANION)) {
 		toAddInventoryComp.push_back(entity);
 	}
-	for (auto &e : toAddInventoryComp) {
+	for (auto& e : toAddInventoryComp) {
 		manager.addComponentToEntity<IsInInventoryComponent>(e);
 		if (manager.hasComponent<PartOfLayerComponent>(e)) {
 			manager.removeComponentFromEntity<PartOfLayerComponent>(e);
@@ -41,15 +40,15 @@ void ItemSystem::update()
 	}
 
 	WorldUtils::viewInCurrentLayer<InteractionComponent, ItemComponent>(
-	    manager, [&](auto &entity, InteractionComponent &interaction, ItemComponent &item) {
-		    if (!interaction.isActive) {
-			    return;
-		    }
-		    if (interaction.action == INTERACTION_ACTION::PICK_ITEM) {
-			    if (inputComponent.interact.justPressed) {
-				    return;
-			    }
-			    inventoryComponent.addItem(entity, item.itemType);
-		    }
-	    });
+		manager, [&](auto& entity, InteractionComponent& interaction, ItemComponent& item) {
+			if (!interaction.isActive) {
+				return;
+			}
+			if (interaction.action == INTERACTION_ACTION::PICK_ITEM) {
+				if (inputComponent.interact.justPressed) {
+					return;
+				}
+				inventoryComponent.addItem(entity, item.itemType);
+			}
+		});
 }
