@@ -11,12 +11,13 @@ auto updateKey = [](KeyState &key, bool isDown) {
 };
 void InputSystem::update()
 {
-	WorldUtils::viewInCurrentLayer<InputComponent>(manager,[&](const EntityID &id, InputComponent &comp) {
+	WorldUtils::viewInCurrentLayer<InputComponent>(manager, [&](const EntityID &id, InputComponent &comp) {
 		updateKey(comp.moveLeft, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A));
 		updateKey(comp.moveRight, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D));
 		updateKey(comp.moveDown, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S));
 		updateKey(comp.moveUp, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W));
 		updateKey(comp.interact, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F));
 		updateKey(comp.menuButton, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape));
+		updateKey(comp.inventoryButton, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I));
 	});
 }

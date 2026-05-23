@@ -7,7 +7,7 @@ struct KeyState {
 };
 
 struct InputComponent : public Component<InputComponent> {
-	KeyState moveUp, moveDown, moveRight, moveLeft, menuButton, interact;
+	KeyState moveUp, moveDown, moveRight, moveLeft, menuButton, interact, inventoryButton;
 
 	void readFromJson(tson::TiledClass &j) override
 	{
@@ -17,5 +17,6 @@ struct InputComponent : public Component<InputComponent> {
 		this->moveLeft = KeyState(j.get<bool>("left"));
 		this->menuButton = KeyState(j.get<bool>("button"));
 		this->interact = KeyState(j.get<bool>("interact"));
+		this->inventoryButton = KeyState(j.get<bool>("inventory"));
 	}
 };
