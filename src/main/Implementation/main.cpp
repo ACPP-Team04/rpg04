@@ -87,7 +87,7 @@ void registerAudio()
 int main()
 {
 
-	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
+	sf::RenderWindow window(sf::VideoMode({800, 600}), "My window");
 	registerComponents();
 	AudioManager audioManager;
 	ECSManager ecsManager = ECSManager(window, audioManager);

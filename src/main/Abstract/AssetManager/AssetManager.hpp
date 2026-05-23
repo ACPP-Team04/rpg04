@@ -36,6 +36,10 @@ struct AssetManager {
 		return {*chacheImage[tile.tilesetPath],
 		        sf::IntRect({tile.tileInfo.pixelX, tile.tileInfo.pixelY}, {tile.tileInfo.width, tile.tileInfo.height})};
 	}
+	sf::Texture getTextureAt(SpriteComponent &tile)
+	{
+		return getSpriteAt(tile).getTexture();
+	}
 
 	std::unordered_map<std::string, sf::SoundBuffer> soundBuffers = {};
 	std::unordered_map<std::string, std::string> musicPaths = {};

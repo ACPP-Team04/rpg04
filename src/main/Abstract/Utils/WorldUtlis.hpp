@@ -44,11 +44,12 @@ class WorldUtils {
 		return isCurrentLayer(manager, pComp.layer, pComp.level);
 	}
 	template <typename... T, typename Function>
-	static void viewInCurrentLayer(ArchetypeManager &manager, Function &&function)
+static void viewInCurrentLayer(ArchetypeManager &manager, Function &&function)
 	{
+		WorldComponent *world = getWorld(manager);
 
-		manager.view<T...>().each([&](auto &entity, T &...components) {
-			if (!isPartOfCurrentLayer(manager, entity)) {
+		manager.view<T..., PartOfLayerComponent>().each([&](auto &entity, T &...components, PartOfLayerComponent &layer) {
+			if (layer.level != world->currentLevel || layer.layer != world->currentLayer) {
 				return;
 			}
 			function(entity, components...);

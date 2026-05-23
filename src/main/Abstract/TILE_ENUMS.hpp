@@ -182,3 +182,17 @@ enum ENTITY_ANIMATIONS_STATE {
     HEAVY_HIT = 8,
     ULTIMATE_HIT = 9,
 };
+
+enum DIALOG_ACTIONS {
+    NO_ACTION = 0,
+    GET_ITEM = 1,
+    SWITCH_LAYER_DIALOG_ACTION = 2,
+};
+
+enum ENUM15 {
+};
+
+enum DIALOG_TYPE {
+    NODE = 0,
+    CHOICE = 1,
+};

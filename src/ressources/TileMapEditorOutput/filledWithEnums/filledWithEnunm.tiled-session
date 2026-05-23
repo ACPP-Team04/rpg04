@@ -16,11 +16,11 @@
             "scaleInEditor": 1
         },
         "map.tmj": {
-            "scale": 3,
+            "scale": 0.2023,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 202.66666666666666,
-                "y": 155.83333333333331
+                "x": -425.1112209589718,
+                "y": -182.89668808699946
             }
         },
         "map.tmj#Tilesheet_edited": {
@@ -38,7 +38,7 @@
         "Tilesheet_WithEnums.tsj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "ANIMATION_SPRITE_COMPONENT",
+    "property.type": "object",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

@@ -60,7 +60,6 @@ void InteractionSystem::update()
 			component.isActive = true;
 		}
 		if (component.inRange && !component.isActive) {
-			std::cout << magic_enum::enum_name(component.interactionKey) << std::endl;
 			return;
 		}
 	}

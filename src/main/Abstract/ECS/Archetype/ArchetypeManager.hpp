@@ -119,6 +119,9 @@ class ArchetypeManager {
 		ArchetypeBitSignature requestSignature = ArchetypeBitSignature::get<T...>();
 		View<T...> view;
 		std::vector<SharedArchetype> intersectionArchetypes;
+
+		sf::Clock clock;
+		clock.start();
 		for (auto [signature, arch] : this->archetypes) {
 			if (ArchetypeBitSignature::intersect(requestSignature, signature) == requestSignature) {
 				intersectionArchetypes.push_back(arch);

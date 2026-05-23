@@ -14,6 +14,7 @@
 #include "Abstract/Overwordl/Components/AnimationComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
 #include "Abstract/Overwordl/Components/CollisionComponent.hpp"
+#include "Abstract/Overwordl/Components/DialogComponent.hpp"
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
@@ -236,7 +237,8 @@ void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> & tu
 
 
 
-void getAllObjectsWithAnimationComponent(nlohmann::json &rawMapJson,std::unordered_map<int, nlohmann::json>& animationDataByObjectId)
+void getAllObjectsWithAnimationComponent(nlohmann::json &rawMapJson,std::unordered_map<int, nlohmann::json>& objectsWithComponent,
+                                         const std::string &componentName ="ANIMATION_COMPONENT")
 {
 
 	for (auto& layer : rawMapJson["layers"]) {
@@ -244,8 +246,8 @@ void getAllObjectsWithAnimationComponent(nlohmann::json &rawMapJson,std::unorder
 		for (auto& obj : layer["objects"]) {
 			if (!obj.contains("properties")) continue;
 			for (auto& prop : obj["properties"]) {
-				if (prop["propertytype"].get<std::string>() == "ANIMATION_COMPONENT") {
-					animationDataByObjectId[obj["id"].get<int>()] = prop["value"];
+				if (prop["propertytype"].get<std::string>() == componentName) {
+					objectsWithComponent[obj["id"].get<int>()] = prop["value"];
 				}
 			}
 		}
@@ -270,6 +272,13 @@ void WorldParser::addAnimationComponent(ArchetypeManager &manager, EntityID id, 
 	}
 }
 
+void WorldParser::parseDialogComponent(ArchetypeManager &manager,nlohmann::json &data,std::unordered_map<int,nlohmann::json>& objectsWithComponent)
+{
+	for (auto[id,compData]:objectsWithComponent) {
+		manager.addComponentToEntity<DialogComponent>(id);
+		manager.getComponent<DialogComponent>(id).readFromNlohmannJson(compData);
+	}
+}
 void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> & tuple,std::unordered_map<int, nlohmann::json> &animationDataByObjectId)
 {
 
@@ -302,8 +311,9 @@ void WorldParser::update()
 	EntityID world = manager.createEntity<WorldComponent>();
 	WorldComponent &worldComp = manager.getComponent<WorldComponent>(world);
 	std::unordered_map<int, nlohmann::json> animationDataByObjectId;
+	std::unordered_map<int, nlohmann::json> objectsWithDialogComponent;
 	getAllObjectsWithAnimationComponent(rawJson, animationDataByObjectId);
-
+	getAllObjectsWithAnimationComponent(rawJson, objectsWithDialogComponent,"DIALOG_COMPONENT");
 
 	std::vector<tson::Layer> objectLayers;
 	std::vector<tson::Layer> tileLayers;
@@ -311,13 +321,6 @@ void WorldParser::update()
 	worldComp.heightPixel = map->getSize().y * map->getTileSize().y;
 	worldComp.currentLevel = LEVEL_NAME::LEVEL1;
 	worldComp.currentLayer = LAYERTYPE::OVERWORLD;
-	window.setSize({worldComp.widthPixel,worldComp.heightPixel});
-
-	sf::View view(sf::FloatRect({0.f, 0.f},
-								{static_cast<float>(worldComp.widthPixel), static_cast<float>(worldComp.heightPixel)}));
-	window.setView(view);
-
-
 	undfoldLayers(map->getLayers(), objectLayers, tileLayers);
 
 	std::map<int,std::tuple<tson::Object,LEVEL_NAME>> objects;
@@ -352,7 +355,7 @@ void WorldParser::update()
 	}
 
 
-
+	parseDialogComponent(manager,rawJson,objectsWithDialogComponent);
 	parseRawEquipmentComponent(manager, worldComp);
 	equibFists(manager, worldComp);
 }

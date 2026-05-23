@@ -17,6 +17,8 @@ struct WorldParser : System {
 	void addBoundingBoxComponents(ArchetypeManager &manager, EntityID id, tson::Object obj);
 	void createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> &tuple);
 	void addAnimationComponent(ArchetypeManager &manager, EntityID id, nlohmann::json &data);
+	void parseDialogComponent(ArchetypeManager &manager, nlohmann::json &data,
+	                          std::unordered_map<int, nlohmann::json> &objectsWithComponent);
 	void createEntity(std::tuple<tson::Object, LEVEL_NAME> &tuple,
 	                  std::unordered_map<int, nlohmann::json> &animationDataByObjectId);
 	void update() override;

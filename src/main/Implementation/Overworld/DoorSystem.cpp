@@ -31,6 +31,7 @@ void DoorSystem::update()
 					    std::cout << "Door is closed!!!" << std::endl;
 				    }
 			    } else {
+			    	icomp.action = SWITCH_LAYER;
 				    std::cout << "Door open!!!" << std::endl;
 			    }
 		    }

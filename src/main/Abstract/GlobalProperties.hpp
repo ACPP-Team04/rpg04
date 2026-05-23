@@ -5,3 +5,4 @@
 #define MAP ROOT_DIR "/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj"
 #define FONT ROOT_DIR "/src/ressources/COMICATE.TTF"
 #define PRO ROOT_DIR "/src/ressources/TileMapEditorOutput/filledWithEnums/filledWithEnunm.tiled-project"
+#define DIALOG_WIDGETS_PATH "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/res.txt"

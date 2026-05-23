@@ -221,22 +221,117 @@
     {
         "color": "#ffa0a0a4",
         "drawFill": true,
-        "id": 17,
+        "id": 46,
         "members": [
             {
-                "name": "characterSize",
+                "name": "dialogType",
+                "propertyType": "DIALOG_TYPE",
                 "type": "int",
                 "value": 0
             },
             {
-                "name": "dialogSentences",
-                "type": "string",
-                "value": "[]"
+                "name": "isChoiceData",
+                "propertyType": "DIALOG_CHOICES",
+                "type": "class",
+                "value": {
+                }
             },
             {
-                "name": "fillColor",
-                "type": "color",
-                "value": "#fff7f7f7"
+                "name": "isNodeData",
+                "propertyType": "DIALOG_NODE",
+                "type": "class",
+                "value": {
+                }
+            },
+            {
+                "name": "text",
+                "type": "string",
+                "value": ""
+            }
+        ],
+        "name": "DIALOG",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "id": 49,
+        "name": "DIALOG_ACTIONS",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "NO_ACTION",
+            "GET_ITEM",
+            "SWITCH_LAYER_DIALOG_ACTION"
+        ],
+        "valuesAsFlags": false
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 47,
+        "members": [
+            {
+                "name": "action",
+                "propertyType": "DIALOG_ACTIONS",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "get_item_id",
+                "type": "object",
+                "value": 0
+            },
+            {
+                "name": "nextnodeId",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "switch_layer_id_destination_id",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "DIALOG_CHOICES",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 17,
+        "members": [
+            {
+                "name": "dialog_node",
+                "type": "list",
+                "value": [
+                    {
+                        "propertyType": "DIALOG",
+                        "type": "class",
+                        "value": {
+                        }
+                    }
+                ]
             }
         ],
         "name": "DIALOG_COMPONENT",
@@ -252,6 +347,42 @@
             "wangset",
             "project"
         ]
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 54,
+        "members": [
+            {
+                "name": "speaker",
+                "type": "object",
+                "value": 0
+            }
+        ],
+        "name": "DIALOG_NODE",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "id": 55,
+        "name": "DIALOG_TYPE",
+        "storageType": "int",
+        "type": "enum",
+        "values": [
+            "NODE",
+            "CHOICE"
+        ],
+        "valuesAsFlags": false
     },
     {
         "color": "#ffa0a0a4",
@@ -1222,5 +1353,54 @@
             "SCALE_C"
         ],
         "valuesAsFlags": false
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 50,
+        "members": [
+        ],
+        "name": "Klasse33",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
+    },
+    {
+        "id": 52,
+        "name": "Enum15",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+        ],
+        "valuesAsFlags": false
+    },
+    {
+        "color": "#ffa0a0a4",
+        "drawFill": true,
+        "id": 53,
+        "members": [
+        ],
+        "name": "Klasse34",
+        "type": "class",
+        "useAs": [
+            "property",
+            "map",
+            "layer",
+            "object",
+            "tile",
+            "tileset",
+            "wangcolor",
+            "wangset",
+            "project"
+        ]
     }
 ]
