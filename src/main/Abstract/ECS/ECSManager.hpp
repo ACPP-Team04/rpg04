@@ -32,10 +32,10 @@
 
 struct ECSManager {
 
-	sf::RenderWindow &window;
+	sf::RenderWindow& window;
 	tgui::Gui gui;
 	ArchetypeManager manager = ArchetypeManager();
-	AudioManager &audioManager;
+	AudioManager& audioManager;
 	AudioSystem audioSystem;
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
@@ -61,16 +61,16 @@ struct ECSManager {
 	CleanUpSystem clean_up_system;
 	HudSystem hudSystem;
 
-	ECSManager(sf::RenderWindow &window, AudioManager &audioManager)
-	    : window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
-	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
-	      dialogSystem(manager, window, gui), interactionSystem(manager), boundingBoxSystem(manager),
-	      item_system(manager), menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window),
-	      aiSystem(manager), combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
-	      switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
-	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
-	      hudSystem(manager, window, gui)
+	ECSManager(sf::RenderWindow& window, AudioManager& audioManager)
+		: window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
+		renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
+		cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
+		dialogSystem(manager, window, gui), interactionSystem(manager), boundingBoxSystem(manager),
+		item_system(manager), menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window),
+		aiSystem(manager), combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
+		switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
+		animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
+		hudSystem(manager, window, gui)
 
 	{
 		gui.setWindow(window);
@@ -89,14 +89,14 @@ struct ECSManager {
 	{
 		bool menuOpened = false;
 		this->manager.view<WorldComponent>().each(
-		    [&](auto entityId, WorldComponent &worldComponent) { menuOpened = worldComponent.menuOpened; });
+			[&](auto entityId, WorldComponent& worldComponent) { menuOpened = worldComponent.menuOpened; });
 		return menuOpened;
 	}
 
 	void init() { battleInputSystem.init(); }
 
 	template <typename Function>
-	void measureTime(const std::string &name, Function function)
+	void measureTime(const std::string& name, Function function)
 	{
 		sf::Clock clock;
 		clock.start();
@@ -108,31 +108,34 @@ struct ECSManager {
 	{
 		processEvents();
 		window.clear(sf::Color::Transparent);
-		measureTime("HudSystem", [this] { hudSystem.update(); });
-		measureTime("BoundingBox (1)", [this] { boundingBoxSystem.update(); });
-		measureTime("Input", [this] { inputSystem.update(); });
-		measureTime("Movement", [this] { movementSystem.update(); });
-		measureTime("AnimationMovement", [this] { animation_movement_system.update(); });
-		measureTime("BoundingBox (2)", [this] { boundingBoxSystem.update(); });
-		measureTime("Collision", [this] { collisionSystem.update(); });
-		measureTime("BoundingBox (3)", [this] { boundingBoxSystem.update(); });
-		measureTime("Interaction", [this] { interactionSystem.update(); });
-		measureTime("Door", [this] { door_system.update(); });
-		measureTime("SwitchLayer", [this] { switchLayerSystem.update(); });
-		measureTime("BoundingBox (4)", [this] { boundingBoxSystem.update(); });
-		measureTime("Camera", [this] { cameraSystem.update(); });
-		measureTime("AnimationSetter", [this] { animation_setter_system.update(); });
-		measureTime("Render", [this] { renderSystem.update(); });
-		measureTime("SwitchBattleMode", [this] { switch_battle_mode_system.update(); });
-		measureTime("BattleInput", [this] { battleInputSystem.update(); });
-		measureTime("Combat", [this] { combatSystem.update(); });
-		measureTime("HealthBar", [this] { healthBarSystem.update(); });
-		measureTime("BoundingBox (5)", [this] { boundingBoxSystem.update(); });
-		measureTime("StatsDistributor", [this] { statsDistributorSystem.update(); });
-		measureTime("Dialog", [this] { dialogSystem.update(); });
-		measureTime("Item", [this] { item_system.update(); });
-		measureTime("Audio", [this] { audioSystem.update(); });
-		// measureTime("CleanUp", [this] { clean_up_system.update(); });
+		boundingBoxSystem.update();
+		inputSystem.update();
+		menuSystem.update();
+		bool isPaused = checkMenu();
+		if (isPaused) {
+			gui.draw();
+			return;
+		}
+		movementSystem.update();
+		boundingBoxSystem.update();
+		collisionSystem.update();
+		boundingBoxSystem.update();
+		interactionSystem.update();
+
+		door_system.update();
+		switchLayerSystem.update();
+		boundingBoxSystem.update();
+		cameraSystem.update();
+		renderSystem.update();
+		switch_battle_mode_system.update();
+		battleInputSystem.update();
+		combatSystem.update();
+		healthBarSystem.update();
+		boundingBoxSystem.update();
+		statsDistributorSystem.update();
+		dialogSystem.update();
+		item_system.update();
+		audioSystem.update();
 		gui.draw();
 	}
 };
