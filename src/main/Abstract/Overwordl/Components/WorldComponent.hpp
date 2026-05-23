@@ -4,7 +4,7 @@
 
 #include <unordered_map>
 
-
+enum class ACTIVE_MENU { NONE, PAUSE_MENU, INVENTORY_MENU };
 
 struct WorldComponent : public Component<WorldComponent> {
 	unsigned widthPixel;
@@ -14,9 +14,7 @@ struct WorldComponent : public Component<WorldComponent> {
 	LAYERTYPE currentLayer = (LAYERTYPE)0;
 	std::unordered_map<LAYERTYPE, MENUS> menus;
 	bool menuOpened = false;
+	ACTIVE_MENU currentMenu = ACTIVE_MENU::NONE;
 
-	void readFromJson(tson::TiledClass &j)
-	{
-	}
-
+	void readFromJson(tson::TiledClass &j) {}
 };

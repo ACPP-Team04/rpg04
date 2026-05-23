@@ -90,6 +90,12 @@ struct ECSManager {
 		window.clear(sf::Color::Transparent);
 		boundingBoxSystem.update();
 		inputSystem.update();
+		menuSystem.update();
+		bool isPaused = checkMenu();
+		if (isPaused) {
+			gui.draw();
+			return;
+		}
 		movementSystem.update();
 		boundingBoxSystem.update();
 		collisionSystem.update();
