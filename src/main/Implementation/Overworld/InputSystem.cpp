@@ -18,5 +18,6 @@ void InputSystem::update()
 		updateKey(comp.moveUp, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W));
 		updateKey(comp.interact, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F));
 		updateKey(comp.menuButton, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape));
+		updateKey(comp.inventoryButton, sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I));
 	});
 }
