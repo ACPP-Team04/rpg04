@@ -4,10 +4,11 @@
 #include "Abstract/Utils/WorldUtlis.hpp"
 struct ItemComponent : public Component<ItemComponent> {
 	ITEM_TYPE itemType;
-	bool equiped = false;
+	std::string name = "unknown item";
 
 	void readFromJson(tson::TiledClass &j) override
 	{
-		itemType = WorldUtils::getEnumValue<ITEM_TYPE>(j,"itemType");
+		itemType = WorldUtils::getEnumValue<ITEM_TYPE>(j, "itemType");
+		name = j.get<std::string>("name");
 	}
 };
