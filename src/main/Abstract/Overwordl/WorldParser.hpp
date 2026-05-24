@@ -7,7 +7,7 @@
 #include "tileson.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <nlohmann/json.hpp>
-
+#include <algorithm>
 struct WorldParser : System {
 	tson::Project project;
 	sf::RenderWindow &window;
