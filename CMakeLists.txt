@@ -37,6 +37,7 @@ set_property(TARGET main PROPERTY CXX_STANDARD 20)
 target_link_libraries(main PRIVATE game-lib)
 target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(main PRIVATE magic_enum::magic_enum)
+target_precompile_headers(main PRIVATE <algorithm>)
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/external/tileson/include)
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
