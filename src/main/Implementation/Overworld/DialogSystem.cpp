@@ -7,6 +7,8 @@
 #include "Abstract/Overwordl/Components/DialogComponent.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemComponent.hpp"
 #include "Abstract/Overwordl/Components/NPC_COMPONENT.hpp"
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/Components/SpriteComponent.hpp"
@@ -28,9 +30,23 @@ DialogSystem::DialogSystem(ArchetypeManager &manager, sf::RenderWindow &window, 
 {
 }
 
+bool isPanelOpened(tgui::Gui &gui, std::string name)
+{
+	auto panel = gui.get<tgui::Panel>(name);
+	return panel != nullptr;
+}
+
 void openPanel(tgui::Gui &gui)
 {
 	gui.loadWidgetsFromFile(DIALOG_WIDGETS_PATH, false);
+}
+
+void openPanelIfNotOpened(tgui::Gui &gui)
+{
+	if (isPanelOpened(gui, "DialogPanel")) {
+		return;
+	}
+	openPanel(gui);
 }
 
 template <typename T>
@@ -57,18 +73,6 @@ void closeDialogPanelIfOpened(tgui::Gui &gui)
 {
 	deletePanel(gui, "DialogPanel");
 }
-void setDialogCompActiveState(DialogComponent &comp, tgui::Gui &gui, bool dialogCompState)
-{
-	if (dialogCompState == comp.isActive) {
-		return;
-	}
-	comp.isActive = dialogCompState;
-	if (dialogCompState) {
-		openPanel(gui);
-		return;
-	}
-	deletePanel(gui, "DialogPanel");
-}
 
 void setPicture(ArchetypeManager &manager, int speakerId, std::shared_ptr<tgui::Picture> speakerPicture)
 {
@@ -83,6 +87,34 @@ void setPicture(ArchetypeManager &manager, int speakerId, std::shared_ptr<tgui::
 	speakerPicture->getRenderer()->setTexture(tguiTex);
 }
 
+void executeAction(ArchetypeManager &manager, DialogAction &action, EntityID &entityId) {
+	EntityID player = WorldUtils::getPlayer(manager).value();
+	switch (action.action) {
+	case DIALOG_ACTIONS::GET_ITEM: {
+		auto &getItem = dynamic_cast<GET_ITEM_ACTION&>(action);
+		if (!manager.hasComponent<ItemComponent>(getItem.itemId)) {
+			throw std::runtime_error("Try to collect a item which has no item component");
+		}
+		auto &item = manager.getComponent<ItemComponent>(getItem.itemId);
+		manager.getComponent<InventoryComponent>(player).addItem(getItem.itemId,item.itemType);
+		manager.removeComponentFromEntity<RenderComponent,InteractionComponent>(getItem.itemId);
+		break;
+	}
+	case DIALOG_ACTIONS::SWITCH_LAYER_DIALOG_ACTION: {
+		auto &switchLayer = dynamic_cast<SwitchLayerAction&>(action);
+		auto &layerinfo = manager.getComponent<PartOfLayerComponent>(switchLayer.destinationId);
+		auto &transform = manager.getComponent<TransformComponent>(switchLayer.destinationId);
+		manager.getComponent<PartOfLayerComponent>(player).layer = layerinfo.layer;
+		manager.getComponent<PartOfLayerComponent>(player).level = layerinfo.level;
+		manager.getComponent<TransformComponent>(player).position = transform.position;
+		WorldUtils::getWorld(manager)->currentLayer = layerinfo.layer;
+		WorldUtils::getWorld(manager)->currentLevel = layerinfo.level;
+		break;
+	}
+	default: break;
+	}
+}
+
 void createButton(ArchetypeManager &manager, DialogComponent &comp, DialogChoice &choice, int choiceIndex,
                   std::shared_ptr<tgui::PanelListBox> &box, EntityID &id)
 {
@@ -91,25 +123,30 @@ void createButton(ArchetypeManager &manager, DialogComponent &comp, DialogChoice
 	button->setSize("100%", "100%");
 	button->onPress([choiceIndex, &manager, &id, button]() {
 		button->setEnabled(false);
-		manager.getComponent<DialogComponent>(id).advance(choiceIndex);
+		auto &dc = manager.getComponent<DialogComponent>(id);
+		auto &choice = dc.current().choices[choiceIndex];
+		if (choice.action && choice.action->action != DIALOG_ACTIONS::NO_ACTION) {
+			executeAction(manager, *choice.action, id);
+
+		}
+		dc.advance(choiceIndex);
 	});
 	auto itemPanel = box->addItem();
 	itemPanel->add(button);
 }
-void handleDialogAndReturnCompletion(ArchetypeManager &manager, DialogComponent &comp, tgui::Gui &gui, EntityID &id)
+void handleDialog(ArchetypeManager &manager, DialogComponent &comp, tgui::Gui &gui, EntityID &id)
 {
 	std::shared_ptr<tgui::Panel> dialog = getWidget<tgui::Panel>(gui, "DialogPanel");
 	std::shared_ptr<tgui::Label> dialogNodeText = getWidget<tgui::Label>(gui, "SpeakerText");
 	std::shared_ptr<tgui::PanelListBox> choicesBox = dialog->get<tgui::PanelListBox>("ChoicesBox");
 	std::shared_ptr<tgui::Picture> speakerPicture = dialog->get<tgui::Picture>("SpeakerPicture");
-	if (comp.isPassedOnce()) {
-		return;
-	}
+
 	DialogNode &node = comp.current();
 	if (node.speakerId > 0) {
 		setPicture(manager, node.speakerId, speakerPicture);
 	}
 	dialogNodeText.get()->setText(node.text);
+
 	int choiceIndex = 0;
 	choicesBox->removeAllItems();
 	for (auto &choice : node.choices) {
@@ -119,34 +156,41 @@ void handleDialogAndReturnCompletion(ArchetypeManager &manager, DialogComponent 
 	comp.currentNodeSent = true;
 }
 
-
 void DialogSystem::update()
 {
-
-	WorldUtils::viewInCurrentLayer<InteractionComponent, NPC_Component, DialogComponent, TransformComponent,
-	                               RenderComponent, SpriteComponent>(
-	    manager, [&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent,
-	                 DialogComponent &dialogComp, auto &transform, auto &render, auto &sprite) {
-		    if (!interactioncomp.isActive || !dialogComp.isActive || dialogComp.isPassedOnce()) {
-			    dialogComp.stop();
-		    	closeDialogPanelIfOpened(gui);
-		    	return;
+	manager.view<InteractionComponent, NPC_Component, DialogComponent, TransformComponent,
+	                               RenderComponent, SpriteComponent,PartOfLayerComponent>().each(
+	    [&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent,
+	                 DialogComponent &dialogComp, auto &transform, auto &render, auto &sprite,auto &partOfLayer) {
+		    if (!interactioncomp.isActive) {
+			    if (hasActiveDialog && activeDialogEntity == entity) {
+				    dialogComp.stop();
+				    closeDialogPanelIfOpened(gui);
+			    }
+			    return;
 		    }
 
+		    if (dialogComp.isPassedOnce()) {
+			    interactioncomp.isActive = false;
+			    dialogComp.stop();
+			    closeDialogPanelIfOpened(gui);
+			    hasActiveDialog = false;
+			    return;
+		    }
+		    if (!hasActiveDialog) {
+			    hasActiveDialog = true;
+			    activeDialogEntity = entity;
+		    }
 
-			    if (dialogComp.isPassedOnce()) {
-				    interactioncomp.isActive = false;
-				    setDialogCompActiveState(dialogComp, gui, false);
-				    dialogComp.currentNodeSent = false;
-				    return;
-			    }
-			    if (dialogComp.currentNodeSent) {
-				    return;
-			    }
-			    setDialogCompActiveState(dialogComp, gui, true);
-			    handleDialogAndReturnCompletion(manager, dialogComp, gui, entity);
-				return;
+		    if (activeDialogEntity != entity)
+			    return;
 
-
+		    if (dialogComp.currentNodeSent) {
+			    return;
+		    }
+		    openPanelIfNotOpened(gui);
+		    handleDialog(manager, dialogComp, gui, entity);
 	    });
+
+
 };

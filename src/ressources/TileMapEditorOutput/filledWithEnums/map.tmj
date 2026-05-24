@@ -808,6 +808,64 @@
                  "width":16,
                  "x":342.802716887928,
                  "y":206.363692497684
+                }, 
+                {
+                 "gid":1743,
+                 "height":16,
+                 "id":55,
+                 "name":"",
+                 "opacity":1,
+                 "properties":[
+                        {
+                         "name":"dia",
+                         "propertytype":"INTERACTION_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+                             "action":"START_DIALOG",
+                             "focusRadius":40,
+                             "interactionKey":"F",
+                             "trigger":"byInteractionKey"
+                            }
+                        }, 
+                        {
+                         "name":"dialog",
+                         "propertytype":"DIALOG_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+                             "dialog_node":[
+                                    {
+                                     "propertytype":"DIALOG",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "dialogType":1,
+                                         "isChoiceData":
+                                            {
+                                             "action":0,
+                                             "nextnodeId":0
+                                            },
+                                         "text":"Hallo hurnesohn"
+                                        }
+                                    }]
+                            }
+                        }, 
+                        {
+                         "name":"npc",
+                         "propertytype":"NPC_COMPONENT",
+                         "type":"class",
+                         "value":
+                            {
+
+                            }
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":379.861375471359,
+                 "y":73.5413898365954
                 }],
          "opacity":1,
          "properties":[
@@ -1224,7 +1282,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":55,
+ "nextobjectid":56,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.12.1",

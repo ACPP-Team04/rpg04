@@ -38,7 +38,7 @@
         "Tilesheet_WithEnums.tsj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "object",
+    "property.type": "DIALOG_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

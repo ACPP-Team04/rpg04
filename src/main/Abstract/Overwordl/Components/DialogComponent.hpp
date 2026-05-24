@@ -188,6 +188,7 @@ struct DialogComponent : public Component<DialogComponent> {
 	void stop()
 	{
 		this->isActive = false;
+		this->currentNodeSent = false;
 	}
 
 	void start()
