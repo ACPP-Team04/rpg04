@@ -1,10 +1,10 @@
 #pragma once
-#include <algorithm>
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
+#include "tileson.h"
+#include <algorithm>
 #include <functional>
 #include <unordered_map>
-#include "tileson.h"
 using FunctionCreator = std::function<void(ArchetypeManager &, EntityID, tson::TiledClass &)>;
 
 class ComponentRegistry {

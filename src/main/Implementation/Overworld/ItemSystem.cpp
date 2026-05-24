@@ -1,9 +1,10 @@
-#pragma once
+
 #include "Abstract/Overwordl/ItemSystem.hpp"
 
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/IsInInventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
@@ -18,8 +19,24 @@ void ItemSystem::update()
 	if (!inputComponentOptional.has_value()) {
 		return;
 	}
+
 	InputComponent &inputComponent = inputComponentOptional.value();
 	InventoryComponent &inventoryComponent = WorldUtils::getPlayersComponent<InventoryComponent>(manager).value();
+
+	std::vector<EntityID> toAddInventoryComp;
+
+	WorldUtils::viewInCurrentLayer<ItemComponent>(manager, [&](const EntityID &entity, ItemComponent &item) {
+		if (inventoryComponent.containsItem(entity) && !manager.hasComponent<IsInInventoryComponent>(entity)) {
+			toAddInventoryComp.push_back(entity);
+		}
+	});
+	for (auto &entity : inventoryComponent.getItems(COLLECTABLE_COMPANION)) {
+		toAddInventoryComp.push_back(entity);
+	}
+	for (auto &e : toAddInventoryComp) {
+		manager.addComponentToEntity<IsInInventoryComponent>(e);
+	}
+
 	WorldUtils::viewInCurrentLayer<InteractionComponent, ItemComponent>(
 	    manager, [&](auto &entity, InteractionComponent &interaction, ItemComponent &item) {
 		    if (!interaction.isActive) {
@@ -30,8 +47,6 @@ void ItemSystem::update()
 				    return;
 			    }
 			    inventoryComponent.addItem(entity, item.itemType);
-			    this->manager.removeComponentFromEntity<RenderComponent>(entity);
-			    this->manager.removeComponentFromEntity<InteractionComponent>(entity);
 		    }
 	    });
 }

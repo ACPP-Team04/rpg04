@@ -22,8 +22,9 @@ struct WorldParser : System {
 	void createEntity(std::tuple<tson::Object, LEVEL_NAME> &tuple,
 	                  std::unordered_map<int, nlohmann::json> &animationDataByObjectId);
 	void update() override;
-	void undfoldLayers(std::vector<tson::Layer>& layer,std::vector<tson::Layer> &objectLayers, std::vector<tson::Layer> &tileLayers);
-	void addTransformcomponent(ArchetypeManager &manager, EntityID id, tson::Object obj,LEVEL_NAME level);
+	void undfoldLayers(std::vector<tson::Layer> &layer, std::vector<tson::Layer> &objectLayers,
+	                   std::vector<tson::Layer> &tileLayers);
+	void addTransformcomponent(ArchetypeManager &manager, EntityID id, tson::Object obj, LEVEL_NAME level);
 	void addRenderComponent(ArchetypeManager &manager, EntityID id, tson::Object obj);
 	void addSpriteComponent(ArchetypeManager &manager, EntityID id, tson::Object obj);
 	void addTilesonComponents(ArchetypeManager &manager, EntityID id, tson::Object obj);

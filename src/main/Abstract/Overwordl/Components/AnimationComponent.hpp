@@ -14,13 +14,9 @@ struct Animation {
 class AnimationSequence {
 	std::deque<Animation> sequence;
 
-public:
-
-	void push_back(Animation animation)
-	{
-		sequence.push_back(animation);
-	}
-	std::tuple<Animation,bool> getCurrentAnimation(const int framesElapsed)
+  public:
+	void push_back(Animation animation) { sequence.push_back(animation); }
+	std::tuple<Animation, bool> getCurrentAnimation(const int framesElapsed)
 	{
 		bool resetFrame = false;
 		const Animation currentAnimation = sequence.front();
@@ -29,28 +25,25 @@ public:
 			sequence.push_back(currentAnimation);
 			resetFrame = true;
 		}
-		return std::make_tuple(currentAnimation,resetFrame);
+		return std::make_tuple(currentAnimation, resetFrame);
 	}
 };
 
-
-class AnimationComponent: public Component<AnimationComponent> {
-private:
-	std::unordered_map<ENTITY_ANIMATIONS_STATE,AnimationSequence> animations;
+class AnimationComponent : public Component<AnimationComponent> {
+  private:
+	std::unordered_map<ENTITY_ANIMATIONS_STATE, AnimationSequence> animations;
 	std::optional<int> currentAnimationEntityId = 0;
 	int framesElapsed{};
 
-public:
-	void readFromJson(tson::TiledClass &j) override
+  public:
+	void readFromJson(tson::TiledClass &j) override {}
+	void setCurrentAnimation(ENTITY_ANIMATIONS_STATE state)
 	{
-
-	}
-	void setCurrentAnimation(ENTITY_ANIMATIONS_STATE state) {
 		if (!this->animations.contains(state)) {
 			this->currentAnimationEntityId = std::nullopt;
 			return;
 		}
-		AnimationSequence& sequence = animations.at(state);
+		AnimationSequence &sequence = animations.at(state);
 		auto [anim, reset] = sequence.getCurrentAnimation(framesElapsed);
 
 		if (reset) {
@@ -59,14 +52,10 @@ public:
 			framesElapsed++;
 		}
 		currentAnimationEntityId = anim.entityAnimationSpriteId;
-
 	}
 
-
-	std::optional<int> getCurrentAnimation() const {
-		return currentAnimationEntityId;
-	}
-	void addAnimation(ENTITY_ANIMATIONS_STATE state, const AnimationSequence & animation_sequence)
+	std::optional<int> getCurrentAnimation() const { return currentAnimationEntityId; }
+	void addAnimation(ENTITY_ANIMATIONS_STATE state, const AnimationSequence &animation_sequence)
 	{
 		this->animations[state] = animation_sequence;
 	}

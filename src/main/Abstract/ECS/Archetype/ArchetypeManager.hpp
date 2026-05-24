@@ -1,7 +1,9 @@
 #pragma once
 #include "Abstract/ECS/Entity/EntityTag.hpp"
+#include "Abstract/TILE_ENUMS.hpp"
 #include "Archetype.hpp"
 #include "View.hpp"
+
 #include <optional>
 
 #include <SFML/Window/Keyboard.hpp>
@@ -142,6 +144,7 @@ class ArchetypeManager {
 		this->addEntityTag(tag, entityId);
 		return entityId;
 	}
+
 	template <typename... T>
 	EntityID createEntity()
 	{
@@ -201,6 +204,27 @@ class ArchetypeManager {
 		SharedArchetype newArchetype = Archetype::createEmptyArchTypeBySignature(newArchTypeSignature);
 
 		oldArchetype->getComponentArea()->copyStructureTo(newArchetype->getComponentArea(), newArchTypeSignature);
+		addArchtypeBySignature(newArchetype);
+		this->addEntityIdsToArchType(entityId, newArchetype);
+	}
+
+	template <typename... T>
+	void removeAllExcept(EntityID entityId)
+	{
+		if (!hasArchetype(entityId)) {
+			throw std::runtime_error("Entity with this id does not exist!");
+		}
+
+		ArchetypeBitSignature keepSignature = ArchetypeBitSignature::get<T...>();
+
+		EntityLocation location = getEntityLocation(entityId);
+		ArchetypeBitSignature oldSignature = location.archetype->getArchTypeSignature();
+		ArchetypeBitSignature newSignature(oldSignature.signature & keepSignature.signature);
+
+		SharedArchetype oldArchetype = getArchetypeBySignature(oldSignature);
+		SharedArchetype newArchetype = Archetype::createEmptyArchTypeBySignature(newSignature);
+
+		oldArchetype->getComponentArea()->copyStructureTo(newArchetype->getComponentArea(), newSignature);
 		addArchtypeBySignature(newArchetype);
 		this->addEntityIdsToArchType(entityId, newArchetype);
 	}

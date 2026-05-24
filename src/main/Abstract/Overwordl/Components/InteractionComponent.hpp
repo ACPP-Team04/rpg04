@@ -13,6 +13,7 @@ struct InteractionComponent : public Component<InteractionComponent> {
 	bool inRange = false;
 	float focusRadius;
 	bool mustLeaveRadius = false;
+	bool deactivated = false;
 
 	void readFromJson(tson::TiledClass &j) override
 	{

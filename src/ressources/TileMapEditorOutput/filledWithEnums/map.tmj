@@ -707,7 +707,8 @@
                                          "isChoiceData":
                                             {
                                              "action":1,
-                                             "get_item_id":54
+                                             "get_item_id":54,
+                                             "nextnodeId":7
                                             },
                                          "text":"Ja Gib her"
                                         }
@@ -741,6 +742,45 @@
                                              "switch_layer_id_destination_id":17
                                             },
                                          "text":"Ok passt Super"
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"DIALOG",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "dialogType":0,
+                                         "isNodeData":
+                                            {
+                                             "speaker":14
+                                            },
+                                         "text":"Darf ich mit dir mitgehen?"
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"DIALOG",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "dialogType":1,
+                                         "isChoiceData":
+                                            {
+                                             "action":3
+                                            },
+                                         "text":"Ja"
+                                        }
+                                    }, 
+                                    {
+                                     "propertytype":"DIALOG",
+                                     "type":"class",
+                                     "value":
+                                        {
+                                         "dialogType":1,
+                                         "isChoiceData":
+                                            {
+                                             "action":0
+                                            },
+                                         "text":"Nein"
                                         }
                                     }],
                              "fillColor":"#ff9ff71c"

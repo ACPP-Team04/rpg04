@@ -44,16 +44,17 @@ class WorldUtils {
 		return isCurrentLayer(manager, pComp.layer, pComp.level);
 	}
 	template <typename... T, typename Function>
-static void viewInCurrentLayer(ArchetypeManager &manager, Function &&function)
+	static void viewInCurrentLayer(ArchetypeManager &manager, Function &&function)
 	{
 		WorldComponent *world = getWorld(manager);
 
-		manager.view<T..., PartOfLayerComponent>().each([&](auto &entity, T &...components, PartOfLayerComponent &layer) {
-			if (layer.level != world->currentLevel || layer.layer != world->currentLayer) {
-				return;
-			}
-			function(entity, components...);
-		});
+		manager.view<T..., PartOfLayerComponent>().each(
+		    [&](auto &entity, T &...components, PartOfLayerComponent &layer) {
+			    if (layer.level != world->currentLevel || layer.layer != world->currentLayer) {
+				    return;
+			    }
+			    function(entity, components...);
+		    });
 	}
 
 	static std::optional<EntityID> getPlayer(ArchetypeManager &manager)

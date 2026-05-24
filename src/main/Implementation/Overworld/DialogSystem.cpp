@@ -8,6 +8,7 @@
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/IsInInventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemComponent.hpp"
 #include "Abstract/Overwordl/Components/NPC_COMPONENT.hpp"
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
@@ -87,21 +88,23 @@ void setPicture(ArchetypeManager &manager, int speakerId, std::shared_ptr<tgui::
 	speakerPicture->getRenderer()->setTexture(tguiTex);
 }
 
-void executeAction(ArchetypeManager &manager, DialogAction &action, EntityID &entityId) {
+void executeAction(ArchetypeManager &manager, DialogAction &action, EntityID &entityId)
+{
 	EntityID player = WorldUtils::getPlayer(manager).value();
+	WorldComponent *world = WorldUtils::getWorld(manager);
 	switch (action.action) {
 	case DIALOG_ACTIONS::GET_ITEM: {
-		auto &getItem = dynamic_cast<GET_ITEM_ACTION&>(action);
+		auto &getItem = dynamic_cast<GET_ITEM_ACTION &>(action);
 		if (!manager.hasComponent<ItemComponent>(getItem.itemId)) {
 			throw std::runtime_error("Try to collect a item which has no item component");
 		}
 		auto &item = manager.getComponent<ItemComponent>(getItem.itemId);
-		manager.getComponent<InventoryComponent>(player).addItem(getItem.itemId,item.itemType);
-		manager.removeComponentFromEntity<RenderComponent,InteractionComponent>(getItem.itemId);
+		manager.getComponent<InventoryComponent>(player).addItem(getItem.itemId, item.itemType);
+		world->pushMessageToHud("New item added!");
 		break;
 	}
 	case DIALOG_ACTIONS::SWITCH_LAYER_DIALOG_ACTION: {
-		auto &switchLayer = dynamic_cast<SwitchLayerAction&>(action);
+		auto &switchLayer = dynamic_cast<SwitchLayerAction &>(action);
 		auto &layerinfo = manager.getComponent<PartOfLayerComponent>(switchLayer.destinationId);
 		auto &transform = manager.getComponent<TransformComponent>(switchLayer.destinationId);
 		manager.getComponent<PartOfLayerComponent>(player).layer = layerinfo.layer;
@@ -109,9 +112,16 @@ void executeAction(ArchetypeManager &manager, DialogAction &action, EntityID &en
 		manager.getComponent<TransformComponent>(player).position = transform.position;
 		WorldUtils::getWorld(manager)->currentLayer = layerinfo.layer;
 		WorldUtils::getWorld(manager)->currentLevel = layerinfo.level;
+		world->pushMessageToHud("...");
 		break;
 	}
-	default: break;
+	case DIALOG_ACTIONS::COMPANION: {
+		manager.getComponent<InventoryComponent>(player).addItem(entityId, ITEM_TYPE::COLLECTABLE_COMPANION);
+		world->pushMessageToHud("New Companion added!");
+		break;
+	}
+	default:
+		break;
 	}
 }
 
@@ -127,7 +137,6 @@ void createButton(ArchetypeManager &manager, DialogComponent &comp, DialogChoice
 		auto &choice = dc.current().choices[choiceIndex];
 		if (choice.action && choice.action->action != DIALOG_ACTIONS::NO_ACTION) {
 			executeAction(manager, *choice.action, id);
-
 		}
 		dc.advance(choiceIndex);
 	});
@@ -158,10 +167,11 @@ void handleDialog(ArchetypeManager &manager, DialogComponent &comp, tgui::Gui &g
 
 void DialogSystem::update()
 {
-	manager.view<InteractionComponent, NPC_Component, DialogComponent, TransformComponent,
-	                               RenderComponent, SpriteComponent,PartOfLayerComponent>().each(
-	    [&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent,
-	                 DialogComponent &dialogComp, auto &transform, auto &render, auto &sprite,auto &partOfLayer) {
+	manager
+	    .view<InteractionComponent, NPC_Component, DialogComponent, TransformComponent, RenderComponent,
+	          SpriteComponent, PartOfLayerComponent>()
+	    .each([&](auto &entity, InteractionComponent &interactioncomp, auto &npccomponent, DialogComponent &dialogComp,
+	              auto &transform, auto &render, auto &sprite, auto &partOfLayer) {
 		    if (!interactioncomp.isActive) {
 			    if (hasActiveDialog && activeDialogEntity == entity) {
 				    dialogComp.stop();
@@ -175,6 +185,7 @@ void DialogSystem::update()
 			    dialogComp.stop();
 			    closeDialogPanelIfOpened(gui);
 			    hasActiveDialog = false;
+			    interactioncomp.deactivated = true;
 			    return;
 		    }
 		    if (!hasActiveDialog) {
@@ -191,6 +202,4 @@ void DialogSystem::update()
 		    openPanelIfNotOpened(gui);
 		    handleDialog(manager, dialogComp, gui, entity);
 	    });
-
-
 };

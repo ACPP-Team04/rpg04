@@ -27,10 +27,9 @@ void resolveCollision(CollisionComponent &collision, TransformComponent &transfo
 void CollisionSystem::update()
 {
 	std::vector<EntityID> entities;
-	WorldUtils::viewInCurrentLayer<CollisionComponent, BoundIngBoxComponent, TransformComponent>(manager,
-	    [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) {
+	WorldUtils::viewInCurrentLayer<CollisionComponent, BoundIngBoxComponent, TransformComponent>(
+	    manager, [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) {
 		    entities.push_back(entityA);
-
 	    });
 
 	for (int i = 0; i < entities.size(); i++) {
@@ -46,9 +45,9 @@ void CollisionSystem::update()
 			auto &transformB = manager.getComponent<TransformComponent>(entities.at(j));
 			auto &collisionB = manager.getComponent<CollisionComponent>(entities.at(j));
 			if (collisionA.action == COLLISION_ACTION::KEEP_POSITION
-				    && collisionB.action == COLLISION_ACTION::KEEP_POSITION) {
-					continue;
-				}
+			    && collisionB.action == COLLISION_ACTION::KEEP_POSITION) {
+				continue;
+			}
 			if (collides(bbA, bbB)) {
 				resolveCollision(collisionA, transformA, collidesOverlap(bbA.bounds, bbB.bounds));
 				resolveCollision(collisionB, transformB, collidesOverlap(bbA.bounds, bbB.bounds));

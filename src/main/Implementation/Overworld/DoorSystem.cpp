@@ -17,8 +17,8 @@ bool inventoryHasKey(ArchetypeManager &manager, InventoryComponent &comp, int ke
 void DoorSystem::update()
 {
 	InventoryComponent &comp = WorldUtils::getPlayersComponent<InventoryComponent>(manager).value();
-	WorldUtils::viewInCurrentLayer<InteractionComponent, IsLockedComponent>(manager,
-	    [&](EntityID id, InteractionComponent &icomp, IsLockedComponent &lcomp) {
+	WorldUtils::viewInCurrentLayer<InteractionComponent, IsLockedComponent>(
+	    manager, [&](EntityID id, InteractionComponent &icomp, IsLockedComponent &lcomp) {
 		    if (!icomp.isActive) {
 			    return;
 		    }
@@ -31,7 +31,7 @@ void DoorSystem::update()
 					    std::cout << "Door is closed!!!" << std::endl;
 				    }
 			    } else {
-			    	icomp.action = SWITCH_LAYER;
+				    icomp.action = SWITCH_LAYER;
 				    std::cout << "Door open!!!" << std::endl;
 			    }
 		    }

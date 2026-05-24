@@ -53,6 +53,13 @@ struct GET_ITEM_ACTION : public DialogAction {
 	}
 };
 
+struct COMPANION_ACTION : public DialogAction {
+	COMPANION_ACTION() { this->action = DIALOG_ACTIONS::COMPANION; }
+	void readFromNlohmannJson(const nlohmann::json &j) override {
+
+	};
+};
+
 struct DialogChoice {
 	std::string text;
 	int nextNodeIndex = -1;
@@ -70,6 +77,9 @@ struct DialogChoice {
 			break;
 		case DIALOG_ACTIONS::SWITCH_LAYER_DIALOG_ACTION:
 			this->action = std::make_shared<SwitchLayerAction>();
+			break;
+		case DIALOG_ACTIONS::COMPANION:
+			this->action = std::make_shared<COMPANION_ACTION>();
 			break;
 		default:
 			this->action = std::make_shared<DialogAction>();
@@ -174,8 +184,6 @@ struct DialogComponent : public Component<DialogComponent> {
 				nodes[i].nextNodeIndex = (i + 1 < nodes.size()) ? (int)(i + 1) : -1;
 			}
 		}
-
-
 	}
 
 	void reset()

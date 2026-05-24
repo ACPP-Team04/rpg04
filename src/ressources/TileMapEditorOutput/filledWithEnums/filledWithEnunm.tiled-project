@@ -282,7 +282,8 @@
             "values": [
                 "NO_ACTION",
                 "GET_ITEM",
-                "SWITCH_LAYER_DIALOG_ACTION"
+                "SWITCH_LAYER_DIALOG_ACTION",
+                "COMPANION"
             ],
             "valuesAsFlags": false
         },
@@ -447,6 +448,15 @@
                 "LIGHT_HIT",
                 "HEAVY_HIT",
                 "ULTIMATE_HIT"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 52,
+            "name": "Enum15",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
             ],
             "valuesAsFlags": false
         },
@@ -654,7 +664,8 @@
             "values": [
                 "WEAPON",
                 "HEALING",
-                "COLLECTABLE"
+                "COLLECTABLE",
+                "COLLECTABLE_COMPANION"
             ],
             "valuesAsFlags": false
         },
@@ -839,6 +850,46 @@
             "members": [
             ],
             "name": "Klasse30",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 50,
+            "members": [
+            ],
+            "name": "Klasse33",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 53,
+            "members": [
+            ],
+            "name": "Klasse34",
             "type": "class",
             "useAs": [
                 "property",
@@ -1364,55 +1415,6 @@
                 "SCALE_C"
             ],
             "valuesAsFlags": false
-        },
-        {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
-            "id": 50,
-            "members": [
-            ],
-            "name": "Klasse33",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset",
-                "project"
-            ]
-        },
-        {
-            "id": 52,
-            "name": "Enum15",
-            "storageType": "string",
-            "type": "enum",
-            "values": [
-            ],
-            "valuesAsFlags": false
-        },
-        {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
-            "id": 53,
-            "members": [
-            ],
-            "name": "Klasse34",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset",
-                "project"
-            ]
         }
     ]
 }

@@ -23,8 +23,8 @@ BoundingBoxSystem::BoundingBoxSystem(ArchetypeManager &manager) : System(manager
 
 void BoundingBoxSystem::update()
 {
-	WorldUtils::viewInCurrentLayer<SpriteComponent, TransformComponent, BoundIngBoxComponent>(manager,
-	    [&](auto &entity, auto &sprite, auto &transform, auto &bb) {
+	WorldUtils::viewInCurrentLayer<SpriteComponent, TransformComponent, BoundIngBoxComponent>(
+	    manager, [&](auto &entity, auto &sprite, auto &transform, auto &bb) {
 		    auto s = getSpriteWithPosition(sprite, transform);
 		    bb.bounds = s.getGlobalBounds();
 	    });

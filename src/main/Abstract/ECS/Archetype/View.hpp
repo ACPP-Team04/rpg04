@@ -10,7 +10,7 @@ struct View {
 	template <typename Function>
 	void each(Function &&function)
 	{
-		for (const SharedArchetype& archetype : this->archetypes) {
+		for (const SharedArchetype &archetype : this->archetypes) {
 			EntityID *entityIds = archetype->getEntityList();
 			auto allComponentArrays = archetype->getComponentArrays<T...>();
 
