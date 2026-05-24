@@ -21,8 +21,10 @@ struct BattleComponent : Component<BattleComponent> {
 	float AP{2};
 	int numberOfUltimateAttacksUsed{0};
 	int numberOfHealsUsed{0};
+	int maxUltimateAttacks{1};
+	int maxHeals{2};
 	BattleAction selectedAction;
-	EntityID target;
+	EntityID target{-1};
 	bool isPlayerTeam;
 	bool isActiveTurn = false;
 	BattleState battleState = BattleState::TURN_START;

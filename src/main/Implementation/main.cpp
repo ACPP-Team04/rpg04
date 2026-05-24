@@ -26,6 +26,7 @@
 
 #include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
+#include <Abstract/GameConfig/GameConfig.hpp>
 #include <Abstract/Overwordl/Components/AudioComponent.hpp>
 #include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <SFML/Graphics.hpp>
@@ -82,6 +83,16 @@ void registerAudio()
 	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
 }
 
+void applyGameConfig(ECSManager &ecsManager, EntityID player)
+{
+	std::string configPath = std::string(ROOT_DIR) + "/src/ressources/config.json";
+	GameConfig::getInstance().loadConfig(configPath);
+	if (GameConfig::getInstance().isGodModeEnabled()) {
+		ecsManager.manager.addComponentToEntity<CombatGodMode>(player);
+		spdlog::info("God Mode applied to player!");
+	}
+}
+
 int main()
 {
 
@@ -97,6 +108,7 @@ int main()
 	audioManager.playMusic("overworld", true);
 	auto player = WorldUtils::getPlayer(ecsManager.manager);
 	// ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
+	applyGameConfig(ecsManager, player.value());
 	window.setFramerateLimit(60);
 	while (window.isOpen()) {
 		ecsManager.update();
