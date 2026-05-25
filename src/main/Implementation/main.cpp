@@ -55,6 +55,8 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AudioComponent>("AUDIO_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AnimationPartComponent>("ANIMATION_SPRITE_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<AnimationComponent>("ANIMATION_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
 }
 
 void registerAudio()
@@ -99,6 +101,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
 	registerComponents();
 	AudioManager audioManager;
+
 	ECSManager ecsManager = ECSManager(window, audioManager);
 	WorldParser parser = WorldParser(ecsManager.manager, window);
 	window.clear(sf::Color::Transparent);

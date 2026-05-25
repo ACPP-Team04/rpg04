@@ -21,6 +21,29 @@ void render(TransformComponent &tcomp, sf::RenderWindow &window, SpriteComponent
 	sp.setRotation(tcomp.rotation);
 	window.draw(sp);
 }
+
+void RenderSystem::renderTiles(WorldComponent *world)
+{
+	sf::View view = window.getView();
+	sf::Vector2f center = view.getCenter();
+	sf::Vector2f size   = view.getSize();
+
+	int startX = std::max(0, (int)((center.x - size.x / 2) / world->tileWidth));
+	int startY = std::max(0, (int)((center.y - size.y / 2) / world->tileHeight));
+	int endX = std::min((int)world->width,  startX + (int)(size.x / world->tileWidth) + 2);
+	int endY = std::min((int)world->height, startY + (int)(size.y / world->tileHeight) + 2);
+	for (auto& tileLayer : world->worlds[world->currentGroup].tileLayers) {
+		for (int y = startY; y < endY; y++) {
+			for (int x = startX; x < endX; x++) {
+				auto &tile = tileLayer.tiles[y][x];
+				if (tile.tileInfo.tilesetPath.empty()) continue;
+				sf::Sprite sp = AssetManager::getInstance().getSpriteAt(tile.tileInfo);
+				sp.setPosition(tile.position);
+				window.draw(sp);
+			}
+		}
+	}
+}
 void RenderSystem::update()
 {
 	auto renderLogic = [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp,
@@ -44,17 +67,12 @@ void RenderSystem::update()
 		}
 	};
 
-	WorldUtils::viewInCurrentLayer<RenderComponent, TransformComponent, SpriteComponent>(
-	    manager, [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp, SpriteComponent &scomp) {
-		    if (comp.z_layer == 0) {
-			    renderLogic(id, comp, tcomp, scomp);
-		    }
-	    });
+	WorldComponent *world = WorldUtils::getWorld(manager);
+
+	renderTiles(world);
 
 	WorldUtils::viewInCurrentLayer<RenderComponent, TransformComponent, SpriteComponent>(
 	    manager, [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp, SpriteComponent &scomp) {
-		    if (comp.z_layer) {
-			    renderLogic(id, comp, tcomp, scomp);
-		    }
+	    	renderLogic(id, comp, tcomp, scomp);
 	    });
 }

@@ -1,13 +1,40 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
+#include "SpriteComponent.hpp"
+#include "tileson.h"
+#include <SFML/System/Vector2.hpp>
 
+#include <nlohmann/json.hpp>
 #include <queue>
 #include <unordered_map>
 
+struct Tile {
+	TileInfo tileInfo;
+	sf::Vector2f position;
+};
+struct TileLayer {
+
+	std::vector<std::vector<Tile>> tiles;
+
+	void init(int width, int height) { tiles.assign(height, std::vector<Tile>(width)); }
+};
+
+struct World {
+	std::string name;
+	int id;
+	std::vector<TileLayer> tileLayers;
+};
 struct WorldComponent : public Component<WorldComponent> {
-	unsigned widthPixel;
-	unsigned heightPixel;
+	unsigned width = 0;
+	unsigned height = 0;
+	unsigned widthPixel = 0;
+	unsigned heightPixel = 0;
+	unsigned tileWidth = 0;
+	unsigned tileHeight = 0;
+
+	std::unordered_map<int, World> worlds = {};
+	int currentGroup;
 
 	LEVEL_NAME currentLevel = (LEVEL_NAME)0;
 	LAYERTYPE currentLayer = (LAYERTYPE)0;
@@ -18,7 +45,63 @@ struct WorldComponent : public Component<WorldComponent> {
 
 	bool menuOpened = false;
 
-	void readFromJson(tson::TiledClass &j) {}
+	void readFromJson(tson::TiledClass &j) override {};
+
+	void readFromJson(const std::unique_ptr<tson::Map> &map, nlohmann::json &rawJson)
+	{
+		tileWidth = map->getTileSize().x;
+		tileHeight = map->getTileSize().y;
+		width = map->getSize().x;
+		height = map->getSize().y;
+		widthPixel = width * tileWidth;
+		heightPixel = height * tileHeight;
+
+		readLayersFromJson(rawJson["layers"], rawJson["tilesets"], -1, "");
+		int g = 2;
+	}
+
+	void readLayersFromJson(nlohmann::json &layers, nlohmann::json &tilesets, int groupId, std::string groupName)
+	{
+		for (auto &layer : layers) {
+			if (layer["type"] == "group") {
+				int id = layer["id"].get<int>();
+				worlds[id] = {layer["name"].get<std::string>(), id};
+				readLayersFromJson(layer["layers"], tilesets, id, layer["name"].get<std::string>());
+			} else if (layer["type"] == "tilelayer") {
+				TileLayer tileLayer;
+				tileLayer.init(width, height);
+				auto &data = layer["data"];
+				for (int i = 0; i < (int)data.size(); i++) {
+					int gid = data[i].get<int>();
+					if (gid == 0)
+						continue;
+					int x = i % width;
+					int y = i / width;
+					for (auto &ts : tilesets) {
+						if (!ts.contains("columns"))
+							continue;
+						int firstgid = ts["firstgid"].get<int>();
+						int count = ts["tilecount"].get<int>();
+						if (gid < firstgid || gid >= firstgid + count)
+							continue;
+						int localId = gid - firstgid;
+						int cols = ts["columns"].get<int>();
+						int tw = ts["tilewidth"].get<int>();
+						int th = ts["tileheight"].get<int>();
+						tileLayer.tiles[y][x].tileInfo.pixelX = (localId % cols) * tw;
+						tileLayer.tiles[y][x].tileInfo.pixelY = (localId / cols) * th;
+						tileLayer.tiles[y][x].tileInfo.width = tw;
+						tileLayer.tiles[y][x].tileInfo.height = th;
+						tileLayer.tiles[y][x].tileInfo.tilesetPath =
+						    (fs::path(MAP).parent_path() / ts["image"].get<std::string>()).string();
+						tileLayer.tiles[y][x].position = {(float)(x * tileWidth), (float)(y * tileHeight)};
+						break;
+					}
+				}
+				worlds[groupId].tileLayers.push_back(tileLayer);
+			}
+		}
+	}
 
 	void pushMessageToHud(std::string text) { this->toast.push(text); }
 

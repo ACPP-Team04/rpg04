@@ -36,12 +36,9 @@ void SwitchLayerSystem::update()
 		int destination = switchLayer->destination;
 		PartOfLayerComponent &destinationP = manager.getComponent<PartOfLayerComponent>(destination);
 		TransformComponent &transform = manager.getComponent<TransformComponent>(destination);
-
-		partOfLayer.layer = destinationP.layer;
-		partOfLayer.level = destinationP.level;
+		partOfLayer.groupId = destinationP.groupId;
 		manager.getComponent<TransformComponent>(player).position = transform.position;
-		currentLayer->currentLevel = destinationP.level;
-		currentLayer->currentLayer = destinationP.layer;
+		currentLayer->currentGroup = destinationP.groupId;
 
 		switchPos->isActive = false;
 		switchPos->mustLeaveRadius = true;

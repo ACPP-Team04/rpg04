@@ -5,13 +5,20 @@
 #include <algorithm>
 #include <functional>
 #include <unordered_map>
-using FunctionCreator = std::function<void(ArchetypeManager &, EntityID, tson::TiledClass &)>;
 
+struct ParseContext {
+	int groupId;
+	tson::Vector2i tileSize;
+	const std::unique_ptr<tson::Map> &map;
+};
+using FunctionCreator = std::function<void(ArchetypeManager &, EntityID, tson::TiledClass &)>;
+using DefaultComponentCreator = std::function<void(ArchetypeManager &, EntityID, tson::Object &)>;
 class ComponentRegistry {
 
   public:
 	~ComponentRegistry() = default;
 	std::unordered_map<std::string, FunctionCreator> components;
+
 
 	template <typename T>
 	void registerComponent(const std::string &name)
@@ -20,6 +27,12 @@ class ComponentRegistry {
 			mgr.addComponentToEntity<T>(id);
 			mgr.getComponent<T>(id).readFromJson(data);
 		};
+	}
+	template <typename T>
+	void addDefaultComponent(ArchetypeManager &mgr, EntityID id, tson::Object &obj, ParseContext &context)
+	{
+		mgr.addComponentToEntity<T>(id);
+		mgr.getComponent<T>(id).readFromObject(obj, context);
 	}
 
 	static ComponentRegistry &getInstance()

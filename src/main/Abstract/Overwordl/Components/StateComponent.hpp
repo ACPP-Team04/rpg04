@@ -1,12 +1,16 @@
+#pragma once
+
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
-class StateComponent : Component<StateComponent> {
+#include "DefaultComponent.hpp"
+class StateComponent : Component<StateComponent>,DefaultComponent {
   private:
-	ENTITY_ANIMATIONS_STATE state;
+	ENTITY_ANIMATIONS_STATE state =IDLE;
 	bool locked = false;
 
   public:
 	void readFromJson(tson::TiledClass &j) override {}
+	void readFromObject(tson::Object &object, ParseContext &context) override{};
 
 	void setState(ENTITY_ANIMATIONS_STATE newState, bool lock = false)
 	{

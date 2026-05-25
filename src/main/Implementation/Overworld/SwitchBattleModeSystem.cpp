@@ -55,15 +55,11 @@ void SwitchBattleModeSystem::update()
 	if (world == nullptr) {
 		return;
 	}
-	this->manager.getComponent<PartOfLayerComponent>(bManager).layer = world->currentLayer;
-	this->manager.getComponent<PartOfLayerComponent>(bManager).level = world->currentLevel;
+	this->manager.getComponent<PartOfLayerComponent>(bManager).groupId = world->currentGroup;
 
 	EntityID battleManagerId = 0;
 	bool found = false;
-	this->manager.view<BattleManagerComponent>().each([&](auto entity, BattleManagerComponent &component) {
-		if (!WorldUtils::isPartOfCurrentLayer(this->manager, entity)) {
-			return;
-		}
+	WorldUtils::viewInCurrentLayer<BattleManagerComponent>(this->manager,[&](auto entity, BattleManagerComponent &component) {
 		battleManagerId = entity;
 		component.participants = {player, initialEnemyId};
 		found = true;
@@ -96,12 +92,9 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector
                                                                 EntityID playerId)
 {
 	std::vector<EntityID> enemiesIdList;
-	this->manager.view<InventoryComponent, TransformComponent>().each(
+	WorldUtils::viewInCurrentLayer<InventoryComponent, TransformComponent>(this->manager,
 	    [&](auto entityId, auto &eqComponent, auto &transformComponent) {
 		    if (entityId == playerId) {
-			    return;
-		    }
-		    if (!WorldUtils::isPartOfCurrentLayer(this->manager, entityId)) {
 			    return;
 		    }
 		    if (SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position) <= radius * radius) {

@@ -107,11 +107,9 @@ void executeAction(ArchetypeManager &manager, DialogAction &action, EntityID &en
 		auto &switchLayer = dynamic_cast<SwitchLayerAction &>(action);
 		auto &layerinfo = manager.getComponent<PartOfLayerComponent>(switchLayer.destinationId);
 		auto &transform = manager.getComponent<TransformComponent>(switchLayer.destinationId);
-		manager.getComponent<PartOfLayerComponent>(player).layer = layerinfo.layer;
-		manager.getComponent<PartOfLayerComponent>(player).level = layerinfo.level;
+		manager.getComponent<PartOfLayerComponent>(player).groupId = layerinfo.groupId;
 		manager.getComponent<TransformComponent>(player).position = transform.position;
-		WorldUtils::getWorld(manager)->currentLayer = layerinfo.layer;
-		WorldUtils::getWorld(manager)->currentLevel = layerinfo.level;
+		WorldUtils::getWorld(manager)->currentGroup = layerinfo.groupId;
 		world->pushMessageToHud("...");
 		break;
 	}

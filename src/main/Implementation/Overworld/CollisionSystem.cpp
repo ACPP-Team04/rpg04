@@ -26,11 +26,18 @@ void resolveCollision(CollisionComponent &collision, TransformComponent &transfo
 }
 void CollisionSystem::update()
 {
+	WorldComponent *world = WorldUtils::getWorld(manager);
+	WorldUtils::viewInCurrentLayer<TransformComponent, SpriteComponent>(
+	    manager, [&](EntityID &id, TransformComponent &comp, SpriteComponent &sprite) {
+		    float w = sprite.tileInfo.width * comp.scale.x;
+		    float h = sprite.tileInfo.height * comp.scale.y;
+
+		    comp.position.x = std::clamp(comp.position.x, 0.f, (float)world->widthPixel - w);
+		    comp.position.y = std::clamp(comp.position.y, 0.f, (float)world->heightPixel - h);
+	    });
 	std::vector<EntityID> entities;
 	WorldUtils::viewInCurrentLayer<CollisionComponent, BoundIngBoxComponent, TransformComponent>(
-	    manager, [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) {
-		    entities.push_back(entityA);
-	    });
+	    manager, [&](const auto &entityA, auto &collisionAm, auto &bbb, auto &tcomp) { entities.push_back(entityA); });
 
 	for (int i = 0; i < entities.size(); i++) {
 		for (int j = 0; j < entities.size(); j++) {

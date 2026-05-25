@@ -9,19 +9,6 @@
 #include <magic_enum/magic_enum.hpp>
 class WorldUtils {
   public:
-	static bool isCurrentLayer(ArchetypeManager &manager, LAYERTYPE targetType)
-	{
-		WorldComponent *world = nullptr;
-		manager.view<WorldComponent>().each([&](auto id, auto &comp) { world = &comp; });
-		return (world && world->currentLayer == targetType);
-	}
-
-	static bool isCurrentLayer(ArchetypeManager &manager, LAYERTYPE targetType, LEVEL_NAME level_name)
-	{
-		WorldComponent *world = nullptr;
-		manager.view<WorldComponent>().each([&](auto id, auto &comp) { world = &comp; });
-		return (world->currentLevel == level_name);
-	}
 
 	static WorldComponent *getWorld(ArchetypeManager &manager)
 	{
@@ -35,14 +22,7 @@ class WorldUtils {
 		return world;
 	}
 
-	static bool isPartOfCurrentLayer(ArchetypeManager &manager, const EntityID &entity)
-	{
-		if (!manager.hasComponent<PartOfLayerComponent>(entity)) {
-			throw std::runtime_error("Entity does not have the PartOfLayer component!");
-		}
-		const auto &pComp = manager.getComponent<PartOfLayerComponent>(entity);
-		return isCurrentLayer(manager, pComp.layer, pComp.level);
-	}
+
 	template <typename... T, typename Function>
 	static void viewInCurrentLayer(ArchetypeManager &manager, Function &&function)
 	{
@@ -50,7 +30,7 @@ class WorldUtils {
 
 		manager.view<T..., PartOfLayerComponent>().each(
 		    [&](auto &entity, T &...components, PartOfLayerComponent &layer) {
-			    if (layer.level != world->currentLevel || layer.layer != world->currentLayer) {
+			    if (world->currentGroup != layer.groupId) {
 				    return;
 			    }
 			    function(entity, components...);
@@ -68,7 +48,7 @@ class WorldUtils {
 	static std::vector<EntityID> getPlayers(ArchetypeManager &manager)
 	{
 		std::vector<EntityID> result;
-		viewInCurrentLayer<PlayerComponent>(manager, [&](auto &entity, auto &component) { result.push_back(entity); });
+		manager.view<PlayerComponent>().each(([&](auto &entity, auto &component) { result.push_back(entity); }));
 		return result;
 	}
 
