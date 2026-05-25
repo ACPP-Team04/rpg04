@@ -341,6 +341,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 		auto &trans = manager.getComponent<TransformComponent>(playerID.value());
 		trans.position = {0, 1};
 		spdlog::get("combat")->info("You lost the battle! Game over");
+		
 		manager.getComponent<StateComponent>(playerID.value()).setState(DIE,true);
 	}
 	audioSystem.switchMusic("overworld", true);

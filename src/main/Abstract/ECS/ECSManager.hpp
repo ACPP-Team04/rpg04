@@ -30,7 +30,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
-// Call escManager.init() after construction to initialize the battle UI layout and callbacks
 struct ECSManager {
 
 	sf::RenderWindow &window;
@@ -96,35 +95,44 @@ struct ECSManager {
 
 	void init() { battleInputSystem.init(); }
 
+	template <typename Function>
+	void measureTime(const std::string &name, Function function)
+	{
+		sf::Clock clock;
+		clock.start();
+		function();
+		std::cout << name << ": " << clock.getElapsedTime().asMicroseconds() << " us\n";
+	}
+
 	void update()
 	{
 		processEvents();
 		window.clear(sf::Color::Transparent);
-		hudSystem.update();
-		boundingBoxSystem.update();
-		inputSystem.update();
-		movementSystem.update();
-		animation_movement_system.update();
-		boundingBoxSystem.update();
-		collisionSystem.update();
-		boundingBoxSystem.update();
-		interactionSystem.update();
-		door_system.update();
-		switchLayerSystem.update();
-		boundingBoxSystem.update();
-		cameraSystem.update();
-		animation_setter_system.update();
-		renderSystem.update();
-		switch_battle_mode_system.update();
-		battleInputSystem.update();
-		combatSystem.update();
-		enemyHealthBarSystem.update();
-		boundingBoxSystem.update();
-		statsDistributorSystem.update();
-		dialogSystem.update();
-		item_system.update();
-		audioSystem.update();
-		clean_up_system.update();
+		measureTime("HudSystem", [this] { hudSystem.update(); });
+		measureTime("BoundingBox (1)", [this] { boundingBoxSystem.update(); });
+		measureTime("Input", [this] { inputSystem.update(); });
+		measureTime("Movement", [this] { movementSystem.update(); });
+		measureTime("AnimationMovement", [this] { animation_movement_system.update(); });
+		measureTime("BoundingBox (2)", [this] { boundingBoxSystem.update(); });
+		measureTime("Collision", [this] { collisionSystem.update(); });
+		measureTime("BoundingBox (3)", [this] { boundingBoxSystem.update(); });
+		measureTime("Interaction", [this] { interactionSystem.update(); });
+		measureTime("Door", [this] { door_system.update(); });
+		measureTime("SwitchLayer", [this] { switchLayerSystem.update(); });
+		measureTime("BoundingBox (4)", [this] { boundingBoxSystem.update(); });
+		measureTime("Camera", [this] { cameraSystem.update(); });
+		measureTime("AnimationSetter", [this] { animation_setter_system.update(); });
+		measureTime("Render", [this] { renderSystem.update(); });
+		measureTime("SwitchBattleMode", [this] { switch_battle_mode_system.update(); });
+		measureTime("BattleInput", [this] { battleInputSystem.update(); });
+		measureTime("Combat", [this] { combatSystem.update(); });
+		measureTime("EnemyHealthBar", [this] { enemyHealthBarSystem.update(); });
+		measureTime("BoundingBox (5)", [this] { boundingBoxSystem.update(); });
+		measureTime("StatsDistributor", [this] { statsDistributorSystem.update(); });
+		measureTime("Dialog", [this] { dialogSystem.update(); });
+		measureTime("Item", [this] { item_system.update(); });
+		measureTime("Audio", [this] { audioSystem.update(); });
+		measureTime("CleanUp", [this] { clean_up_system.update(); });
 		gui.draw();
 	}
 };

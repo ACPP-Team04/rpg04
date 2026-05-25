@@ -200,7 +200,8 @@ void WorldParser::addBoundingBoxComponents(ArchetypeManager &manager, EntityID i
 	manager.addComponentToEntity<BoundIngBoxComponent>(id);
 }
 
-void WorldParser::createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> &tuple)
+void WorldParser::
+createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> &tuple)
 {
 	auto obj = std::get<0>(tuple);
 	auto level = std::get<1>(tuple);
