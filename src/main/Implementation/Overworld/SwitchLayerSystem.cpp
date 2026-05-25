@@ -17,12 +17,14 @@ void SwitchLayerSystem::update()
 		return;
 
 	std::vector<std::pair<SwitchLayerComponent *, InteractionComponent *>> switchPoints;
-	WorldUtils::viewInCurrentLayer<SwitchLayerComponent, InteractionComponent>(manager,
-		[&](const EntityID &id, SwitchLayerComponent &lcomp, InteractionComponent &icomp) {
-			if (icomp.action != INTERACTION_ACTION::SWITCH_LAYER) return;
-			if (!icomp.isActive) return;
-			switchPoints.emplace_back(&lcomp, &icomp);
-		});
+	WorldUtils::viewInCurrentLayer<SwitchLayerComponent, InteractionComponent>(
+	    manager, [&](const EntityID &id, SwitchLayerComponent &lcomp, InteractionComponent &icomp) {
+		    if (icomp.action != INTERACTION_ACTION::SWITCH_LAYER)
+			    return;
+		    if (!icomp.isActive)
+			    return;
+		    switchPoints.emplace_back(&lcomp, &icomp);
+	    });
 
 	if (switchPoints.empty())
 		return;

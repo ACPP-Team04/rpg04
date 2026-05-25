@@ -1,5 +1,7 @@
 #pragma once
 #include "Archetype.hpp"
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 #include <vector>
 template <typename... T>
 struct View {
@@ -8,7 +10,7 @@ struct View {
 	template <typename Function>
 	void each(Function &&function)
 	{
-		for (SharedArchetype archetype : this->archetypes) {
+		for (const SharedArchetype &archetype : this->archetypes) {
 			EntityID *entityIds = archetype->getEntityList();
 			auto allComponentArrays = archetype->getComponentArrays<T...>();
 

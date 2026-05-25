@@ -1,6 +1,6 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
-
+#include <SFML/Graphics.hpp>
 struct TransformComponent : public Component<TransformComponent> {
 	sf::Vector2f position;
 	sf::Vector2f scale{1.0f, 1.0f};

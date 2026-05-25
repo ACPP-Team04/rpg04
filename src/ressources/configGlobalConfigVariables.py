@@ -2,15 +2,19 @@ import json
 import pandas as pd
 import sys
 import os
+
 APPLICATIONFILE = os.path.abspath("./application_config.json")
 APPLICATIONCFILE = os.path.abspath("../main/Abstract/GlobalProperties.hpp")
+
+
 def loadJsonFile(path):
     with open(path, 'r') as f:
         return json.load(f)
 
+
 def createStaticVariables(path):
     res = loadJsonFile(path)
-    with open(APPLICATIONCFILE,'w') as f:
+    with open(APPLICATIONCFILE, 'w') as f:
         header = f"""
 #pragma once     
         """
@@ -23,5 +27,6 @@ def createStaticVariables(path):
                 formatted_value = value
             header += f"#define {prop.upper()} {formatted_value}\n"
         f.write(header)
+
 
 createStaticVariables(APPLICATIONFILE)

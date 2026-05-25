@@ -4,6 +4,9 @@
         "."
     ],
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
         "Tilesheet_WithEnums.tsj": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -13,19 +16,20 @@
             "scaleInEditor": 1
         },
         "map.tmj": {
-            "scale": 2,
+            "scale": 0.2023,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 307,
-                "y": 22.25
+                "x": -425.1112209589718,
+                "y": -182.89668808699946
             }
         },
         "map.tmj#Tilesheet_edited": {
             "scaleInDock": 1
         }
     },
+    "frame.defaultDuration": 100,
     "last.imagePath": "//wsl.localhost/Ubuntu/home/marco/rpg04/src/ressources/TileMapEditorOutput",
-    "last.objectTypesPath": "//wsl.localhost/Ubuntu/home/marco/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/properties.json",
+    "last.objectTypesPath": "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/TileMapEditorOutput/filledWithEnums/properties.json",
     "map.lastUsedFormat": "json",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
@@ -34,12 +38,13 @@
         "Tilesheet_WithEnums.tsj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "LayerConfig",
+    "property.type": "DIALOG_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",
         "Tilesheet_edited.tsx"
     ],
+    "textEdit.monospace": true,
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {
         "height": 16,

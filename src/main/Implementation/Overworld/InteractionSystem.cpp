@@ -40,11 +40,16 @@ void InteractionSystem::update()
 		    }
 	    });
 
-	if (!candidateFound)
+	if (!candidateFound) {
+		WorldUtils::getWorld(manager)->removePersistentMessage("Press F to interact");
 		return;
+	}
 
 	auto &component = manager.getComponent<InteractionComponent>(nearestInteractionEntity);
 
+	if (component.deactivated) {
+		return;
+	}
 	if (component.trigger == INTERACTION_TRIGGER::onEnter) {
 		component.isActive = true;
 		return;
@@ -59,9 +64,12 @@ void InteractionSystem::update()
 		if (inputComponent.interact.justPressed) {
 			component.isActive = true;
 		}
+		WorldComponent *worldComponent = WorldUtils::getWorld(manager);
 		if (component.inRange && !component.isActive) {
-			std::cout << magic_enum::enum_name(component.interactionKey) << std::endl;
+
+			worldComponent->addPersistentMessage("Press F to interact");
 			return;
 		}
+		worldComponent->removePersistentMessage("Press F to interact");
 	}
 }

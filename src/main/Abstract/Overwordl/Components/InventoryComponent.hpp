@@ -9,10 +9,7 @@ struct InventoryComponent : public Component<InventoryComponent> {
 
 	std::unordered_map<ITEM_TYPE, EntityID> equiped;
 
-	void readFromJson(tson::TiledClass &j) override
-	{
-
-	}
+	void readFromJson(tson::TiledClass &j) override {}
 
 	void addItem(EntityID entity, ITEM_TYPE item)
 	{
@@ -81,9 +78,8 @@ struct InventoryComponent : public Component<InventoryComponent> {
 			if (equiped.contains(item)) {
 				return equiped[item];
 			}
-		} 
+		}
 		throw std::runtime_error("No equipment");
-		
 	}
 
 	bool hasEquippedItem(ITEM_TYPE item)

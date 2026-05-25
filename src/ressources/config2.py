@@ -1,18 +1,20 @@
 import json
 import os
 
-
 TILEJSONFILE = "./TileMapEditorOutput/zombieset.tsj"
 PROPERTYES_JSON = "./TileMapEditorOutput/propertytypes.json"
 ENUM_FILE_LOCATION = "../main/Abstract/TILE_ENUMS.hpp"
 TILEWIDTH = 16
 TILEHEIGHT = 16
 TILECOLUMNS = 45
-APPLICATIONCFILE ="../main/Abstract/GlobalProperties.hpp"
+APPLICATIONCFILE = "../main/Abstract/GlobalProperties.hpp"
 APPLICATIONFILE = "./application_config.json"
+
+
 def loadJsonFile(path):
     with open(path, 'r') as f:
         return json.load(f)
+
 
 class TileInfo:
     def __init__(self, id, name, variant=""):
@@ -49,7 +51,6 @@ class TileInfo:
         return [pixelX, pixelY, fullWidth, fullHeight]
 
     def getPartPixelInfo(self, x, y):
-
         actual_id = self.id + x + (y * self.tileColumns)
 
         column = actual_id % self.tileColumns
@@ -70,6 +71,7 @@ def parseTileInfo(tileId, valueDict, nameFromProp):
 
     return info
 
+
 res = loadJsonFile(TILEJSONFILE)
 tileInfos = {}
 
@@ -81,6 +83,7 @@ if 'tiles' in res:
                 info = parseTileInfo(id, prop['value'], prop['name'])
                 tileInfos[id] = info
                 break
+
 
 def generateAllEnums(tileDict):
     enums = set()
@@ -99,14 +102,16 @@ def generateAllEnumsWithPixelInfo(tileDict):
     enums = {}
     for id in tileDict:
         info = tileDict[id]
-        enums[info.getEnumNameParent()] = {"pixelInfo":info.getParentPixelInfo(),"id":id, "type":"hasPart"}
+        enums[info.getEnumNameParent()] = {"pixelInfo": info.getParentPixelInfo(), "id": id, "type": "hasPart"}
         if info.hasPart:
             for y in range(info.partHeight):
                 for x in range(info.partWidth):
                     actualId = id + x + (y * TILECOLUMNS)
-                    enums[info.getEnumNamePart(x, y)] = {"pixelInfo":info.getPartPixelInfo(x,y),"id":actualId, "type":"isPart"}
+                    enums[info.getEnumNamePart(x, y)] = {"pixelInfo": info.getPartPixelInfo(x, y), "id": actualId,
+                                                         "type": "isPart"}
 
     return enums
+
 
 def updateTilesetWithenum(data, tileInfos):
     idToEnum = {}
@@ -137,8 +142,7 @@ def updateTilesetWithenum(data, tileInfos):
             if prop["name"] == "render_component":
                 prop["type"] = "class"
                 prop["propertytype"] = "RENDER_COMPONENT"
-                prop["value"] = {"activeTile":enumName}
-
+                prop["value"] = {"activeTile": enumName}
 
             if prop["name"] == "transform_component":
                 prop["type"] = "class"
@@ -151,7 +155,7 @@ def updateTilesetWithenum(data, tileInfos):
             tileObj["properties"].append({
                 "name": "render_component",
                 "type": "class",
-                "propertytype":"RENDER_COMPONENT",
+                "propertytype": "RENDER_COMPONENT",
                 "value": {
                     "activeTile": f"{enumName}"
                 }
@@ -159,12 +163,13 @@ def updateTilesetWithenum(data, tileInfos):
             tileObj["properties"].append({
                 "name": "transform_component",
                 "type": "class",
-                "propertytype":"TRANSFORM_COMPONENT",
+                "propertytype": "TRANSFORM_COMPONENT",
                 "value": {}
             })
     data['tiles'] = sorted(data['tiles'], key=lambda x: x['id'])
-    with open(TILEJSONFILE,"w") as file:
+    with open(TILEJSONFILE, "w") as file:
         json.dump(data, file, indent=4)
+
 
 propJson = loadJsonFile(PROPERTYES_JSON)
 new_values = generateAllEnums(tileInfos)
@@ -190,9 +195,11 @@ else:
         "valuesAsFlags": False
     })
 
-updateTilesetWithenum(res,tileInfos)
+updateTilesetWithenum(res, tileInfos)
+
+
 def generateENUMFile(enumList):
-    with open(ENUM_FILE_LOCATION,"w") as file:
+    with open(ENUM_FILE_LOCATION, "w") as file:
         header_content = """#pragma once
 #include <string>
 #include <vector>
@@ -215,7 +222,7 @@ enum TileType{
 
         header_content += "};\n\n"
 
-        header_content +="""
+        header_content += """
 inline const std::unordered_map<std::string, TileInfo> TILE_DICT = {
 """
         for name in enumList.keys():
@@ -230,14 +237,16 @@ inline const std::unordered_map<std::string, TileInfo> TILE_DICT = {
         header_content += "};"
         file.write(header_content)
 
+
 with open(PROPERTYES_JSON, 'w') as file:
     json.dump(propJson, file, indent=4)
 
 generateENUMFile(generateAllEnumsWithPixelInfo(tileInfos))
 
+
 def createStaticVariables(path):
     res = loadJsonFile(path)
-    with open(APPLICATIONCFILE,'w') as f:
+    with open(APPLICATIONCFILE, 'w') as f:
         header = f"""
 #pragma once     
         """

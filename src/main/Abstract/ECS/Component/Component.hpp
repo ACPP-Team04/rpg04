@@ -1,8 +1,7 @@
 #pragma once
-#include <algorithm>
 #include "ComponentTypeInfo.hpp"
 #include "tileson.h"
-
+#include <algorithm>
 
 template <typename T>
 class Component {

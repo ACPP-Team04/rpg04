@@ -1,7 +1,9 @@
 #pragma once
 #include "Abstract/ECS/Entity/EntityTag.hpp"
+#include "Abstract/TILE_ENUMS.hpp"
 #include "Archetype.hpp"
 #include "View.hpp"
+
 #include <optional>
 
 #include <SFML/Window/Keyboard.hpp>
@@ -119,6 +121,9 @@ class ArchetypeManager {
 		ArchetypeBitSignature requestSignature = ArchetypeBitSignature::get<T...>();
 		View<T...> view;
 		std::vector<SharedArchetype> intersectionArchetypes;
+
+		sf::Clock clock;
+		clock.start();
 		for (auto [signature, arch] : this->archetypes) {
 			if (ArchetypeBitSignature::intersect(requestSignature, signature) == requestSignature) {
 				intersectionArchetypes.push_back(arch);
@@ -139,6 +144,7 @@ class ArchetypeManager {
 		this->addEntityTag(tag, entityId);
 		return entityId;
 	}
+
 	template <typename... T>
 	EntityID createEntity()
 	{
@@ -162,6 +168,9 @@ class ArchetypeManager {
 	template <typename T>
 	T &getComponent(EntityID entityId)
 	{
+		if (!this->entityIdToArchetype.contains(entityId)) {
+			throw std::runtime_error("Entity with this id does not exist! " + std::to_string(entityId.getId()));
+		}
 		EntityLocation location = getEntityLocation(entityId);
 		return std::get<0>(location.archetype->getComponentArrays<T>(location.index));
 	}
@@ -195,6 +204,27 @@ class ArchetypeManager {
 		SharedArchetype newArchetype = Archetype::createEmptyArchTypeBySignature(newArchTypeSignature);
 
 		oldArchetype->getComponentArea()->copyStructureTo(newArchetype->getComponentArea(), newArchTypeSignature);
+		addArchtypeBySignature(newArchetype);
+		this->addEntityIdsToArchType(entityId, newArchetype);
+	}
+
+	template <typename... T>
+	void removeAllExcept(EntityID entityId)
+	{
+		if (!hasArchetype(entityId)) {
+			throw std::runtime_error("Entity with this id does not exist!");
+		}
+
+		ArchetypeBitSignature keepSignature = ArchetypeBitSignature::get<T...>();
+
+		EntityLocation location = getEntityLocation(entityId);
+		ArchetypeBitSignature oldSignature = location.archetype->getArchTypeSignature();
+		ArchetypeBitSignature newSignature(oldSignature.signature & keepSignature.signature);
+
+		SharedArchetype oldArchetype = getArchetypeBySignature(oldSignature);
+		SharedArchetype newArchetype = Archetype::createEmptyArchTypeBySignature(newSignature);
+
+		oldArchetype->getComponentArea()->copyStructureTo(newArchetype->getComponentArea(), newSignature);
 		addArchtypeBySignature(newArchetype);
 		this->addEntityIdsToArchType(entityId, newArchetype);
 	}

@@ -12,9 +12,5 @@ struct SpriteComponent : public Component<SpriteComponent> {
 	TileInfo tileInfo;
 	std::string tilesetPath;
 
-	void readFromJson(tson::TiledClass &j) override
-
-	{
-	}
-
+	void readFromJson(tson::TiledClass &j) override {}
 };

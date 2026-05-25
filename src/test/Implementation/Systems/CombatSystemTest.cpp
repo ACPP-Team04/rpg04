@@ -2,7 +2,10 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
+#include "Abstract/Overwordl/Components/AnimationComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
+#include "Abstract/Overwordl/Components/StateComponent.hpp"
+
 #include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemHealstatsComponent.hpp>
 #include <Abstract/Overwordl/Components/PartOfLayerComponent.hpp>
@@ -15,7 +18,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 
 	ArchetypeManager manager = ArchetypeManager();
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -32,7 +35,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
@@ -103,7 +106,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -119,7 +122,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
@@ -197,7 +200,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -210,7 +213,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
@@ -284,7 +287,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -300,7 +303,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
@@ -374,7 +377,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -390,7 +393,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
@@ -466,7 +469,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -557,7 +560,7 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -573,7 +576,7 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -595,7 +598,7 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -611,7 +614,7 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
@@ -636,7 +639,7 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -651,7 +654,7 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	statsComponentP.stats[MAX_HEALTH] = 110;
@@ -704,7 +707,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -720,7 +723,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
 	auto &statsComponentE = manager.getComponent<StatsComponent>(enemy);
@@ -775,7 +778,7 @@ TEST(CombatSystemTest, checkDeathConditionPlayerLost)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -793,7 +796,7 @@ TEST(CombatSystemTest, checkDeathConditionPlayerLost)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -816,7 +819,7 @@ TEST(CombatSystemTest, checkDeathConditionPlayerWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -834,7 +837,7 @@ TEST(CombatSystemTest, checkDeathConditionPlayerWon)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -861,7 +864,7 @@ TEST(CombatSystemTest, checkDeathConditionNextRound)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -879,7 +882,7 @@ TEST(CombatSystemTest, checkDeathConditionNextRound)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -906,7 +909,7 @@ TEST(CombatSystemTest, getAttackerBaseCase)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -924,7 +927,7 @@ TEST(CombatSystemTest, getAttackerBaseCase)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -953,7 +956,7 @@ TEST(CombatSystemTest, getAttackerSkipDeathEnemy)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -972,7 +975,7 @@ TEST(CombatSystemTest, getAttackerSkipDeathEnemy)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -1001,7 +1004,7 @@ TEST(CombatSystemTest, getAttackerCheckBoundaryCondition)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -1019,7 +1022,7 @@ TEST(CombatSystemTest, getAttackerCheckBoundaryCondition)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -1048,7 +1051,7 @@ TEST(CombatSystemTest, passTurnAllActiveParticipants)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -1066,7 +1069,7 @@ TEST(CombatSystemTest, passTurnAllActiveParticipants)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -1096,7 +1099,7 @@ TEST(CombatSystemTest, passTurnOneDeathParticipant)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -1114,7 +1117,7 @@ TEST(CombatSystemTest, passTurnOneDeathParticipant)
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent, TransformComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy2);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	auto &statsComponentP = manager.getComponent<StatsComponent>(player);
@@ -1148,7 +1151,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithoutSettingTarget)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -1164,7 +1167,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithoutSettingTarget)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
@@ -1222,7 +1225,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestWithoutSettingTarget)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent,StateComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -1238,7 +1241,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestWithoutSettingTarget)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, StatsComponent, InventoryComponent,StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
