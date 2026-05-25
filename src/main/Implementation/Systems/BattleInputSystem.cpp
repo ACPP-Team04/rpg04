@@ -34,90 +34,106 @@ void BattleInputSystem::connectCallbacks()
 	}
 
 	ui.getButton("BtnLight")->onPress([this]() {
-		auto player = WorldUtils::getPlayer(manager);
-		EntityID playerId;
-		if (player.has_value()) {
-			playerId = player.value();
+		auto activeIdOpt = getActiveLocalController();
+		if (!activeIdOpt.has_value()) {
+			return;
 		}
-		if (manager.hasComponent<BattleComponent>(playerId)) {
-			auto &b = manager.getComponent<BattleComponent>(playerId);
+		if (manager.hasComponent<BattleComponent>(activeIdOpt.value())) {
+			auto &b = manager.getComponent<BattleComponent>(activeIdOpt.value());
 			b.selectedAction = BattleAction::LIGHT_ATTACK;
 			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 	ui.getButton("BtnHeavy")->onPress([this]() {
-		auto player = WorldUtils::getPlayer(manager);
-		EntityID playerId;
-		if (player.has_value()) {
-			playerId = player.value();
+		auto activeIdOpt = getActiveLocalController();
+		if (!activeIdOpt.has_value()) {
+			return;
 		}
-		if (manager.hasComponent<BattleComponent>(playerId)) {
-			auto &b = manager.getComponent<BattleComponent>(playerId);
+		if (manager.hasComponent<BattleComponent>(activeIdOpt.value())) {
+			auto &b = manager.getComponent<BattleComponent>(activeIdOpt.value());
 			b.selectedAction = BattleAction::HEAVY_ATTACK;
 			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 	ui.getButton("BtnUltimate")->onPress([this]() {
-		auto player = WorldUtils::getPlayer(manager);
-		EntityID playerId;
-		if (player.has_value()) {
-			playerId = player.value();
+		auto activeIdOpt = getActiveLocalController();
+		if (!activeIdOpt.has_value()) {
+			return;
 		}
-		if (manager.hasComponent<BattleComponent>(playerId)) {
-			auto &b = manager.getComponent<BattleComponent>(playerId);
+		if (manager.hasComponent<BattleComponent>(activeIdOpt.value())) {
+			auto &b = manager.getComponent<BattleComponent>(activeIdOpt.value());
 			b.selectedAction = BattleAction::ULTIMATE_ATTACK;
 			b.battleState = BattleState::SELECTING_TARGET;
 		}
 	});
 	ui.getButton("BtnHeal")->onPress([this]() {
-		auto player = WorldUtils::getPlayer(manager);
-		EntityID playerId;
-		if (player.has_value()) {
-			playerId = player.value();
+		auto activeIdOpt = getActiveLocalController();
+		if (!activeIdOpt.has_value()) {
+			return;
 		}
-		if (manager.hasComponent<BattleComponent>(playerId)) {
-			auto &b = manager.getComponent<BattleComponent>(playerId);
+		if (manager.hasComponent<BattleComponent>(activeIdOpt.value())) {
+			auto &b = manager.getComponent<BattleComponent>(activeIdOpt.value());
 			b.selectedAction = BattleAction::HEAL;
 			b.battleState = BattleState::SELECTING_TARGET;
-			b.target = playerId;
+			b.target = activeIdOpt.value();
 		}
 	});
 	ui.getButton("BtnRest")->onPress([this]() {
-		auto player = WorldUtils::getPlayer(manager);
-		EntityID playerId;
-		if (player.has_value()) {
-			playerId = player.value();
+		auto activeIdOpt = getActiveLocalController();
+		if (!activeIdOpt.has_value()) {
+			return;
 		}
-		if (manager.hasComponent<BattleComponent>(playerId)) {
-			auto &b = manager.getComponent<BattleComponent>(playerId);
+		if (manager.hasComponent<BattleComponent>(activeIdOpt.value())) {
+			auto &b = manager.getComponent<BattleComponent>(activeIdOpt.value());
 			b.selectedAction = BattleAction::REST;
 			b.battleState = BattleState::SELECTING_TARGET;
-			b.target = playerId;
+			b.target = activeIdOpt.value();
 		}
 	});
 }
 
+std::optional<EntityID> BattleInputSystem::getActiveLocalController()
+{
+	std::optional<EntityID> activeEntity = std::nullopt;
+
+	manager.view<BattleManagerComponent>().each([&](EntityID bmcId, BattleManagerComponent &bmc) {
+		if (bmc.participants.empty() || bmc.isBattleOver) {
+			return;
+		}
+
+		for (EntityID participant : bmc.participants) {
+			if (manager.hasComponent<BattleComponent>(participant)) {
+				auto &bComp = manager.getComponent<BattleComponent>(participant);
+				if (bComp.isActiveTurn && bComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
+					activeEntity = participant;
+				}
+			}
+		}
+	});
+
+	return activeEntity;
+}
+
 void BattleInputSystem::update()
 {
-	auto view = manager.view<BattleManagerComponent>();
-
-	if (view.archetypes.size() == 0) {
-		return;
-	}
-	auto player = WorldUtils::getPlayer(manager);
-	if (!player.has_value()) {
-		return;
-	}
-	EntityID playerId = player.value();
-
-	if (!manager.hasComponent<BattleComponent>(playerId)) {
+	bool battleIsActive = false;
+	manager.view<BattleManagerComponent>().each([&](EntityID id, auto &bmc) { battleIsActive = true; });
+	if (!battleIsActive) {
 		ui.setHUDVisible(false);
+		ui.setActionPanelVisible(false);
 		return;
 	}
-	auto &battle = manager.getComponent<BattleComponent>(playerId);
-	auto &stats = manager.getComponent<StatsComponent>(playerId);
-
 	ui.setHUDVisible(true);
+
+	auto activeIdOpt = getActiveLocalController();
+	if (!activeIdOpt.has_value()) {
+		return;
+	}
+
+	EntityID activeId = activeIdOpt.value();
+	auto &battle = manager.getComponent<BattleComponent>(activeId);
+	auto &stats = manager.getComponent<StatsComponent>(activeId);
+
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 	ui.setActionPanelVisible(showMenu);
 
@@ -134,7 +150,15 @@ void BattleInputSystem::update()
 		auto btnRest = ui.getButton("BtnRest");
 		btnRest->setEnabled(CombatSystem::validateAction(BattleAction::REST, battle));
 
-		if (battle.AP != lastDrawnAP) {
+		if (battle.AP != lastDrawnAP || activeId != lastActiveId) {
+			auto turnLabel = ui.getLabel("TurnLabel");
+			auto playerOpt = WorldUtils::getPlayer(manager);
+
+			if (playerOpt.has_value() && activeId == playerOpt.value()) {
+				turnLabel->setText("Hero's Turn");
+			} else {
+				turnLabel->setText("Companion's Turn");
+			}
 			ui.updateStats(stats.health, stats.getStat(MAX_HEALTH), battle.AP);
 
 			btnLightAttack->setText("Light Attack (-"
@@ -155,11 +179,12 @@ void BattleInputSystem::update()
 			btnRest->setText("Rest (+2 AP)");
 
 			lastDrawnAP = battle.AP;
+			lastActiveId = activeId;
 		}
 
 	} else if (showTargetMenu) {
 		auto validTargets = getTargetsInBattle(
-		    playerId, manager.getComponent<BattleComponent>(playerId).battleManagerId, this->manager);
+		    activeId, manager.getComponent<BattleComponent>(activeId).battleManagerId, this->manager);
 		if (validTargets.empty()) {
 			throw std::runtime_error("No valid targets in battle for player");
 		}
@@ -211,13 +236,21 @@ void BattleInputSystem::update()
 std::vector<EntityID> BattleInputSystem::getTargetsInBattle(const EntityID playerId, const EntityID battleMangerId,
                                                             ArchetypeManager &manager)
 {
-	const auto &bmc = manager.getComponent<BattleManagerComponent>(battleMangerId).participants;
-	std::vector<EntityID> targets;
-	for (EntityID entity : bmc) {
-		// TODO: add logic for not attacking companions later
-		if (entity != playerId && !manager.hasComponent<DeathComponent>(entity)) {
-			targets.push_back(entity);
+	const auto &bmcParticipants = manager.getComponent<BattleManagerComponent>(battleMangerId).participants;
+	const auto &battleComp = manager.getComponent<BattleComponent>(playerId);
+	std::vector<EntityID> validTargets;
+	for (EntityID p : bmcParticipants) {
+		if (manager.hasComponent<DeathComponent>(p)) {
+			continue;
+		}
+
+		if (manager.hasComponent<BattleComponent>(p)) {
+			auto &targetBattleComp = manager.getComponent<BattleComponent>(p);
+
+			if (targetBattleComp.faction != battleComp.faction) {
+				validTargets.push_back(p);
+			}
 		}
 	}
-	return targets;
+	return validTargets;
 }

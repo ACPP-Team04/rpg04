@@ -39,7 +39,7 @@ void CombatSystem::update()
 			EntityID currentAttacker = this->getAttacker(bmc);
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			if (bmc.isBattleOver) {
-				cleanUpBattle(battleId, currentAttacker, battle.battleState);
+				cleanUpBattle(battleId, battle.faction, battle.battleState);
 				spdlog::get("combat")->info("Cleanup is done");
 				auto playerOpt = WorldUtils::getPlayer(manager);
 				if (playerOpt.has_value()) {
@@ -54,7 +54,8 @@ void CombatSystem::update()
 			case BattleState::TURN_START: {
 
 				battle.battleState = BattleState::WAITING_FOR_INPUT;
-				if (currentAttacker != playerId) {
+				auto &attackerBattleComp = manager.getComponent<BattleComponent>(currentAttacker);
+				if (attackerBattleComp.controller == BATTLE_CONTROLLER::AI) {
 					aiSystem.executeAILogic(currentAttacker, bmc.participants);
 				}
 
@@ -74,7 +75,8 @@ void CombatSystem::update()
 				auto result = this->checkDeathCondition(battle.target, currentAttacker);
 				if (result == BattleState::VICTORY) {
 					audioSystem.enqueueSound("victory_sound");
-					battle.battleState = BattleState::STATS_DISTRIBUTION;
+					bmc.currentTurnIndex = 0;
+					manager.getComponent<BattleComponent>(playerId).battleState = BattleState::STATS_DISTRIBUTION;
 				} else {
 					battle.battleState = result;
 				}
@@ -244,17 +246,23 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 	} else {
 		throw std::runtime_error("No player found in checkDeathCondition");
 	}
-	bool playerIsAttacking = attacker == playerId;
-	bool playerIsDefending = defender == playerId;
+	auto &defenderBattleComp = manager.getComponent<BattleComponent>(defender);
 
-	if (healthDefender <= 0 && playerIsDefending) {
-		if (manager.hasComponent<CombatGodMode>(playerId)) {
+	if (defenderBattleComp.faction == BATTLE_FACTION::PLAYER_PARTY) {
+		if (defender == playerId && manager.hasComponent<CombatGodMode>(playerId)) {
 			manager.getComponent<StatsComponent>(defender).health = 100;
 			spdlog::get("combat")->info("Healing player back to 100, because of god mode");
 			return BattleState::NEXT_ROUND;
 		}
-		return BattleState::DEFEAT;
-	} else if (healthDefender <= 0 && playerIsAttacking) {
+		manager.addComponentToEntity<DeathComponent>(defender);
+		auto &dc = manager.getComponent<DeathComponent>(defender);
+		dc.graveTile = GraveConfig::defaultTile;
+		dc.graveTilesetPath = GraveConfig::tilesetPath;
+
+		if (defender == playerId) {
+			return BattleState::DEFEAT;
+		}
+	} else {
 		manager.addComponentToEntity<DeathComponent>(defender);
 		auto &dc = manager.getComponent<DeathComponent>(defender);
 		dc.graveTile = GraveConfig::defaultTile;
@@ -287,7 +295,7 @@ EntityID CombatSystem::getAttacker(BattleManagerComponent &bmc)
 		throw std::runtime_error("No participants in battle");
 	}
 	int numberOfParticipants = bmc.participants.size();
-	auto attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
+	EntityID attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
 	if (!manager.hasComponent<DeathComponent>(attacker)) {
 		return attacker;
 	}
@@ -302,34 +310,47 @@ EntityID CombatSystem::getAttacker(BattleManagerComponent &bmc)
 	}
 	return attacker;
 }
-void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState)
+void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winningBattleFaction, BattleState battleState)
 {
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battleManagerId);
-	auto playerID = WorldUtils::getPlayer(manager);
+	auto playerIdOpt = WorldUtils::getPlayer(manager);
+	if (!playerIdOpt.has_value())
+		return;
 	std::vector<EntityID> defeatedEnemies;
-
-	manager.addComponentToEntity<InputComponent>(playerID.value());
-
 	auto participantsCopy = bmc.participants;
+
 	for (EntityID entity : participantsCopy) {
+		BATTLE_FACTION battleFaction = manager.getComponent<BattleComponent>(entity).faction;
 		manager.removeComponentFromEntity<BattleComponent>(entity);
-		auto &stats = manager.getComponent<StatsComponent>(entity);
-		if (stats.health > stats.getStat(STATS::MAX_HEALTH)) {
-			spdlog::get("combat")->warn(
-			    "HP of Entity {} have been set to max_health {}, which is lower than current health {}", entity.getId(),
-			    stats.getStat(STATS::MAX_HEALTH), stats.health);
-		}
-		stats.health = stats.getStat(STATS::MAX_HEALTH);
-		if (entity == winningEntity && battleState == BattleState::VICTORY) {
+		if (battleFaction == winningBattleFaction) {
+			auto &stats = manager.getComponent<StatsComponent>(entity);
+			if (stats.health > stats.getStat(STATS::MAX_HEALTH)) {
+				spdlog::get("combat")->warn(
+				    "HP of Entity {} have been set to max_health {}, which is lower than current health {}",
+				    entity.getId(), stats.getStat(STATS::MAX_HEALTH), stats.health);
+			}
+			stats.health = stats.getStat(STATS::MAX_HEALTH);
 			stats.experienceLevel += 1;
 			stats.numberOfFightsWon += 1;
-		} else if (entity != playerID.value()) {
+
+			// TODO: Do we want companions to be permantly death?
+			if (manager.hasComponent<DeathComponent>(entity)) {
+				manager.removeComponentFromEntity<DeathComponent>(entity);
+			}
+			// Hide companions again
+			if (entity != playerIdOpt.value()) {
+				if (manager.hasComponent<PartOfLayerComponent>(entity)) {
+					manager.removeComponentFromEntity<PartOfLayerComponent>(entity);
+				}
+			}
+		} else {
 			defeatedEnemies.push_back(entity);
 		}
 	}
 	manager.destroyEntity(battleManagerId);
 
 	if (battleState == BattleState::VICTORY) {
+		manager.addComponentToEntity<InputComponent>(playerIdOpt.value());
 		for (EntityID defeatedEnemy : defeatedEnemies) {
 			manager.destroyEntity(defeatedEnemy);
 		}
@@ -338,11 +359,11 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, EntityID winningEntit
 	} else if (battleState == BattleState::DEFEAT) {
 		// port away from enemy Fix for now
 		audioSystem.enqueueSound("defeat_sound");
-		auto &trans = manager.getComponent<TransformComponent>(playerID.value());
+
+		auto &trans = manager.getComponent<TransformComponent>(playerIdOpt.value());
 		trans.position = {0, 1};
+		manager.getComponent<StateComponent>(playerIdOpt.value()).setState(DIE, true);
 		spdlog::get("combat")->info("You lost the battle! Game over");
-		
-		manager.getComponent<StateComponent>(playerID.value()).setState(DIE,true);
 	}
 	audioSystem.switchMusic("overworld", true);
 }
