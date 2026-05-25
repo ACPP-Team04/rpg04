@@ -35,6 +35,9 @@ void ItemSystem::update()
 	}
 	for (auto &e : toAddInventoryComp) {
 		manager.addComponentToEntity<IsInInventoryComponent>(e);
+		if (manager.hasComponent<PartOfLayerComponent>(e)) {
+			manager.removeComponentFromEntity<PartOfLayerComponent>(e);
+		}
 	}
 
 	WorldUtils::viewInCurrentLayer<InteractionComponent, ItemComponent>(
