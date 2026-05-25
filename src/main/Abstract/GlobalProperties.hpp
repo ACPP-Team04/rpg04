@@ -8,3 +8,4 @@
 #define DIALOG_WIDGETS_PATH "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/res.txt"
 #define HUD_WIGDETS_PATH "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/hud.txt"
 #define TOAST_FRAME_DURATION 180
+#define PEROMANCE_TEST_MODE true
