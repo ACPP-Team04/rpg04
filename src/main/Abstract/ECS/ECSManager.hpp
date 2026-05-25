@@ -26,7 +26,7 @@
 #include "Archetype/ArchetypeManager.hpp"
 
 #include <Abstract/Audio/AudioSystem.hpp>
-#include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
+#include <Abstract/Combat/Systems/HealthBarSystem.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
@@ -55,7 +55,7 @@ struct ECSManager {
 	ItemSystem item_system;
 	DoorSystem door_system;
 	SwitchBattleModeSystem switch_battle_mode_system;
-	EnemyHealthBarSystem enemyHealthBarSystem;
+	HealthBarSystem healthBarSystem;
 	AnimationSetterSystem animation_setter_system;
 	AnimationMovementSystem animation_movement_system;
 	CleanUpSystem clean_up_system;
@@ -68,7 +68,7 @@ struct ECSManager {
 	      dialogSystem(manager, window, gui), interactionSystem(manager), boundingBoxSystem(manager),
 	      item_system(manager), menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window),
 	      aiSystem(manager), combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
-	      switch_battle_mode_system(manager, audioSystem), enemyHealthBarSystem(manager, gui, window),
+	      switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
 	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
 	      hudSystem(manager, window, gui)
 
