@@ -126,13 +126,13 @@ struct ECSManager {
 		measureTime("SwitchBattleMode", [this] { switch_battle_mode_system.update(); });
 		measureTime("BattleInput", [this] { battleInputSystem.update(); });
 		measureTime("Combat", [this] { combatSystem.update(); });
-		measureTime("EnemyHealthBar", [this] { enemyHealthBarSystem.update(); });
+		measureTime("HealthBar", [this] { healthBarSystem.update(); });
 		measureTime("BoundingBox (5)", [this] { boundingBoxSystem.update(); });
 		measureTime("StatsDistributor", [this] { statsDistributorSystem.update(); });
 		measureTime("Dialog", [this] { dialogSystem.update(); });
 		measureTime("Item", [this] { item_system.update(); });
 		measureTime("Audio", [this] { audioSystem.update(); });
-		measureTime("CleanUp", [this] { clean_up_system.update(); });
+		// measureTime("CleanUp", [this] { clean_up_system.update(); });
 		gui.draw();
 	}
 };
