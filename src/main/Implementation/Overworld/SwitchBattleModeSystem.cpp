@@ -46,6 +46,13 @@ void SwitchBattleModeSystem::update()
 		return;
 	std::vector<EntityID> participantsList;
 	participantsList.push_back(player);
+	auto &invP = manager.getComponent<InventoryComponent>(player);
+
+	if (invP.hasEquippedItem(ITEM_TYPE::COLLECTABLE_COMPANION)) {
+		auto companionId = invP.getEquippedItem(ITEM_TYPE::COLLECTABLE_COMPANION);
+		participantsList.push_back(companionId);
+	}
+
 	auto enemyList =
 	    getEnemiesInRatio(manager.getComponent<TransformComponent>(initialEnemyId).position, 50.0f, player);
 	participantsList.insert(participantsList.end(), enemyList.begin(), enemyList.end());
