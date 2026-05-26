@@ -9,18 +9,36 @@
 
 #include "Implementation/Components/StatsComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <random>
 
 AISystem::AISystem(ArchetypeManager &manager) : System(manager) {};
 
-std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<EntityID> participants)
+std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<EntityID> &participants)
 {
+	auto &aiBattleComp = manager.getComponent<BattleComponent>(aiId);
+
+	std::vector<EntityID> validTargets;
+
 	for (EntityID p : participants) {
-		// TODO: also check for the companions of the player and then select between the targets
-		if (aiId != p && manager.hasComponent<PlayerComponent>(p) && !manager.hasComponent<DeathComponent>(p)) {
-			return p;
+		if (aiId == p || manager.hasComponent<DeathComponent>(p)) {
+			continue;
+		}
+
+		if (manager.hasComponent<BattleComponent>(p)) {
+			auto &targetBattleComp = manager.getComponent<BattleComponent>(p);
+
+			if (targetBattleComp.faction != aiBattleComp.faction) {
+				validTargets.push_back(p);
+			}
 		}
 	}
-	return std::nullopt;
+
+	if (validTargets.empty()) {
+		return std::nullopt;
+	}
+
+	int randomIndex = rand() % validTargets.size();
+	return validTargets[randomIndex];
 }
 void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 {

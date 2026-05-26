@@ -36,7 +36,7 @@ class CombatSystem : public System {
 
 	sf::Clock clock;
 
-	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState);
+	void cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winningBattleFaction, BattleState battleState);
 	static bool validateAction(BattleAction action, const BattleComponent &battle);
 
   private:
