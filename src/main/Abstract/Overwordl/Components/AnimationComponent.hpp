@@ -78,7 +78,7 @@ class AnimationComponent : public Component<AnimationComponent> {
 		currentAnimationEntityId = anim.entityAnimationSpriteId;
 	}
 
-	std::optional<int> getCurrentAnimation() const { return currentAnimationEntityId; }
+	std::optional<int>  getCurrentAnimation() const { return currentAnimationEntityId; }
 	void addAnimation(ENTITY_ANIMATIONS_STATE state, const AnimationSequence &animation_sequence)
 	{
 		this->animations[state] = animation_sequence;

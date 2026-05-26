@@ -3,6 +3,7 @@
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
@@ -25,7 +26,7 @@ std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<
 void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 {
 	BattleComponent &aiBattle = manager.getComponent<BattleComponent>(aiId);
-	StatsComponent &aiStats = manager.getComponent<StatsComponent>(aiId);
+	StatsComponent &aiStats = manager.getComponent<CharacterComponent>(aiId).stats;
 
 	auto targetOpt = selectTarget(aiId, participants);
 	if (!targetOpt.has_value()) {

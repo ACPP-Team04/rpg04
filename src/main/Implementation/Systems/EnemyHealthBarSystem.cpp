@@ -1,5 +1,6 @@
 #include "Abstract/Combat/Systems/EnemyHealthBarSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
@@ -44,7 +45,7 @@ void EnemyHealthBarSystem::update()
 			}
 			activeEnemies.push_back(id);
 
-			auto &stats = manager.getComponent<StatsComponent>(id);
+			auto &stats = manager.getComponent<CharacterComponent>(id).stats;
 			auto &transform = manager.getComponent<TransformComponent>(id);
 
 			sf::Vector2i pixelPos = window.mapCoordsToPixel(transform.position);

@@ -7,6 +7,7 @@
 #include "Abstract/Overwordl/AnimationSetterSystem.hpp"
 #include "Abstract/Overwordl/BoundingBoxSystem.hpp"
 #include "Abstract/Overwordl/CameraSystem.hpp"
+#include "Abstract/Overwordl/CharacterPreProcessSystem.hpp"
 #include "Abstract/Overwordl/CleanUpSystem.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 
@@ -60,7 +61,7 @@ struct ECSManager {
 	AnimationMovementSystem animation_movement_system;
 	CleanUpSystem clean_up_system;
 	HudSystem hudSystem;
-
+	CharacterPreProcessSystem character_preprocess_system;
 	ECSManager(sf::RenderWindow &window, AudioManager &audioManager)
 	    : window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
 	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
@@ -70,7 +71,8 @@ struct ECSManager {
 	      aiSystem(manager), combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
 	      switch_battle_mode_system(manager, audioSystem), enemyHealthBarSystem(manager, gui, window),
 	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
-	      hudSystem(manager, window, gui)
+	      hudSystem(manager, window, gui),
+		character_preprocess_system(manager)
 
 	{
 		gui.setWindow(window);
@@ -93,7 +95,12 @@ struct ECSManager {
 		return menuOpened;
 	}
 
-	void init() { battleInputSystem.init(); }
+	void init()
+	{
+		battleInputSystem.init();
+		character_preprocess_system.update();
+
+	}
 
 	template <typename Function>
 	void measureTime(const std::string &name, Function function)
@@ -132,7 +139,7 @@ struct ECSManager {
 		measureTime("Dialog", [this] { dialogSystem.update(); });
 		measureTime("Item", [this] { item_system.update(); });
 		measureTime("Audio", [this] { audioSystem.update(); });
-		measureTime("CleanUp", [this] { clean_up_system.update(); });
+
 		gui.draw();
 	}
 };

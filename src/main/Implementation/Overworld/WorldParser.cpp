@@ -30,10 +30,6 @@ WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window)
     : System(manager), window(window), project(PRO),t(&project)
 {
 	map = t.parse(fs::path(MAP));
-	std::cout << "Anzahl geladener Tilesets: " << map->getTilesets().size() << std::endl;
-	for(auto &tileset : map->getTilesets()) {
-		std::cout << "Tileset Name: " << tileset.getName() << " | Tiles Anzahl: " << tileset.getTiles().size() << std::endl;
-	}
 	std::ifstream f(MAP);
 	rawJson = nlohmann::json::parse(f);
 }
@@ -164,7 +160,6 @@ void WorldParser::update()
 	worldComp.currentGroup = manager.getComponent<PartOfLayerComponent>(player).groupId;
 
 	/*
-	parseDialogComponent(manager, rawJson, objectsWithDialogComponent);
 	parseRawEquipmentComponent(manager, worldComp);
 	equibFists(manager, worldComp);*/
 }

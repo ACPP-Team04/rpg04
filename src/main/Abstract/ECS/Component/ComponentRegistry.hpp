@@ -1,16 +1,12 @@
 #pragma once
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
+#include "ParseContext.hpp"
 #include "tileson.h"
 #include <algorithm>
 #include <functional>
 #include <unordered_map>
 
-struct ParseContext {
-	int groupId;
-	tson::Vector2i tileSize;
-	const std::unique_ptr<tson::Map> &map;
-};
 using FunctionCreator = std::function<void(ArchetypeManager &, EntityID, tson::TiledClass &)>;
 using DefaultComponentCreator = std::function<void(ArchetypeManager &, EntityID, tson::Object &)>;
 class ComponentRegistry {

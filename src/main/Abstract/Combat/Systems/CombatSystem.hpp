@@ -4,8 +4,8 @@
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+
 #include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Components/BattleManagerComponent.hpp>

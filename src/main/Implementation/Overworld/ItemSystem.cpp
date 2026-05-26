@@ -1,6 +1,7 @@
 
 #include "Abstract/Overwordl/ItemSystem.hpp"
 
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
@@ -15,28 +16,16 @@ ItemSystem::ItemSystem(ArchetypeManager &manager) : System(manager) {}
 
 void ItemSystem::update()
 {
-	auto inputComponentOptional = WorldUtils::getPlayersComponent<InputComponent>(manager);
-	if (!inputComponentOptional.has_value()) {
+	WorldComponent *world = WorldUtils::getWorld(manager);
+	EntityID player = WorldUtils::getPlayer(manager).value();
+
+	if (!manager.hasComponent<InputComponent>(player)) {
 		return;
 	}
-
-	InputComponent &inputComponent = inputComponentOptional.value();
-	InventoryComponent &inventoryComponent = WorldUtils::getPlayersComponent<InventoryComponent>(manager).value();
-
-	std::vector<EntityID> toAddInventoryComp;
-
-	WorldUtils::viewInCurrentLayer<ItemComponent>(manager, [&](const EntityID &entity, ItemComponent &item) {
-		if (inventoryComponent.containsItem(entity) && !manager.hasComponent<IsInInventoryComponent>(entity)) {
-			toAddInventoryComp.push_back(entity);
-		}
-	});
-	for (auto &entity : inventoryComponent.getItems(COLLECTABLE_COMPANION)) {
-		toAddInventoryComp.push_back(entity);
-	}
-	for (auto &e : toAddInventoryComp) {
-		manager.addComponentToEntity<IsInInventoryComponent>(e);
-	}
-
+	CharacterComponent &character_component = manager.getComponent<CharacterComponent>(player);
+	std::cout << "CharacterCatch" << std::endl;
+	InputComponent &inputComponent = manager.getComponent<InputComponent>(player);
+	std::cout << character_component.inventory.items.size() << std::endl;
 	WorldUtils::viewInCurrentLayer<InteractionComponent, ItemComponent>(
 	    manager, [&](auto &entity, InteractionComponent &interaction, ItemComponent &item) {
 		    if (!interaction.isActive) {
@@ -46,7 +35,9 @@ void ItemSystem::update()
 			    if (inputComponent.interact.justPressed) {
 				    return;
 			    }
-			    inventoryComponent.addItem(entity, item.itemType);
+
+		    	world->pushMessageToHud("New Item Added");
+			    manager.getComponent<PartOfLayerComponent>(entity).groupId = character_component.inventory.inventoryWorldId;
 		    }
 	    });
 }

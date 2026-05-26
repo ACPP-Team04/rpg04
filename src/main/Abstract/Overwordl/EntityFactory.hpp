@@ -42,7 +42,6 @@ public:
 	void readFromJson(const std::unique_ptr<tson::Map>& map)
 	{
 		for (auto& layer : map->getLayers()) {
-			if (!layer.isVisible()) continue;
 			readFromJson(layer, map, -1);
 		}
 	}
@@ -64,7 +63,6 @@ public:
 		switch (layer.getType()) {
 		case tson::LayerType::Group: {
 			for (auto& subLayer : layer.getLayers()) {
-				if (!subLayer.isVisible()) continue;
 				readFromJson(subLayer, map, layer.getId());
 			}
 			break;

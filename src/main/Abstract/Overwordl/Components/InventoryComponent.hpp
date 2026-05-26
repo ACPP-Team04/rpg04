@@ -4,12 +4,17 @@
 #include "Abstract/TILE_ENUMS.hpp"
 
 struct InventoryComponent : public Component<InventoryComponent> {
+
+	int inventoryWorldId;
 	std::vector<EntityID> inventory;
 	std::unordered_map<ITEM_TYPE, std::unordered_set<EntityID>> items;
 
 	std::unordered_map<ITEM_TYPE, EntityID> equiped;
 
-	void readFromJson(tson::TiledClass &j) override {}
+	void readFromJson(tson::TiledClass &j) override
+	{
+		inventoryWorldId = j.get<int>("inventoryWorldId");
+	}
 
 	void addItem(EntityID entity, ITEM_TYPE item)
 	{

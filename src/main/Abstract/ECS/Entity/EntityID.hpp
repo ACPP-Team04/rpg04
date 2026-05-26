@@ -14,6 +14,12 @@ class EntityID {
 		id = other.id;
 		return *this;
 	}
+
+	static EntityID fromExistingId(int id) {
+		EntityID e;
+		e.id = id;
+		return e;
+	}
 	EntityID &operator=(EntityID &&other) noexcept
 	{
 		if (this == &other)
@@ -29,6 +35,7 @@ class EntityID {
 	{
 		if (explicitId >= IdCounter)
 			IdCounter = explicitId + 1;
+		std::cout << "ENTITY ID ---------------------------------------------------------"<< IdCounter << std::endl;
 	}
 
   private:

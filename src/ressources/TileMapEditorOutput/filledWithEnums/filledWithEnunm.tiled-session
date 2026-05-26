@@ -16,11 +16,16 @@
             "scaleInEditor": 1
         },
         "map.tmj": {
-            "scale": 0.2023,
-            "selectedLayer": 1,
+            "expandedGroupLayers": [
+                7,
+                8,
+                6
+            ],
+            "scale": 0.4889,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": -425.1112209589718,
-                "y": -182.89668808699946
+                "x": 828.3902638576396,
+                "y": 389.6502352219268
             }
         },
         "map.tmj#Tilesheet_edited": {
@@ -38,7 +43,7 @@
         "Tilesheet_WithEnums.tsj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "DIALOG_COMPONENT",
+    "property.type": "CharacterComponent",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

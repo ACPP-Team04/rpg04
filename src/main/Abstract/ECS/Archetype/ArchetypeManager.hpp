@@ -174,6 +174,12 @@ class ArchetypeManager {
 		EntityLocation location = getEntityLocation(entityId);
 		return std::get<0>(location.archetype->getComponentArrays<T>(location.index));
 	}
+
+	template <typename T>
+	T &getComponent(int entityId)
+	{
+		return getComponent<T>(EntityID::fromExistingId(entityId));
+	}
 	template <typename T>
 	bool hasComponent(EntityID entityId)
 	{

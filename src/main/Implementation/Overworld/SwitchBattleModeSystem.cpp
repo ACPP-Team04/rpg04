@@ -2,6 +2,7 @@
 #include "Abstract/Overwordl/SwitchBattleModeSystem.hpp"
 
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
@@ -39,6 +40,10 @@ void SwitchBattleModeSystem::update()
 		return;
 	}
 	EntityID player = WorldUtils::getPlayer(manager).value();
+	if (!manager.hasComponent<CharacterComponent>(player)) {
+		return;
+	}
+
 	EntityID initialEnemyId = interActorId.value();
 	icomp->isActive = false;
 
@@ -55,34 +60,18 @@ void SwitchBattleModeSystem::update()
 	if (world == nullptr) {
 		return;
 	}
+	std::cout << "Battlemanager created" << bManager.getId() << std::endl;
 	this->manager.getComponent<PartOfLayerComponent>(bManager).groupId = world->currentGroup;
 
-	EntityID battleManagerId = 0;
-	bool found = false;
-	WorldUtils::viewInCurrentLayer<BattleManagerComponent>(this->manager,[&](auto entity, BattleManagerComponent &component) {
-		battleManagerId = entity;
-		component.participants = {player, initialEnemyId};
-		found = true;
-	});
 
 	prepareForBattle(participantsList, player);
 	this->manager.getComponent<BattleManagerComponent>(bManager).participants = participantsList;
 
 	for (const auto &participant : participantsList) {
-		this->manager.getComponent<BattleComponent>(participant).battleManagerId = battleManagerId;
-		auto inventory = this->manager.getComponent<InventoryComponent>(participant);
-		auto weapon = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
 		if (!this->manager.hasComponent<BattleComponent>(participant)) {
 			throw std::runtime_error("Batteling entity does not have a battle component");
 		}
-		if (!this->manager.hasComponent<StatsComponent>(participant)) {
-			throw std::runtime_error("Batteling entity does not have a stat component");
-		}
-		std::cout << "Health for entity " << participant.getId() << ": "
-		          << this->manager.getComponent<StatsComponent>(participant).health << std::endl;
-		if (!this->manager.hasComponent<InventoryComponent>(participant)) {
-			throw std::runtime_error("Batteling entity does not have a inventory component");
-		}
+		manager.getComponent<BattleComponent>(participant).battleManagerId = bManager;
 	}
 	audioSystem.switchMusic("combat", true);
 	spdlog::get("combat")->info("Switched to battle mode");
@@ -92,11 +81,14 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector
                                                                 EntityID playerId)
 {
 	std::vector<EntityID> enemiesIdList;
-	WorldUtils::viewInCurrentLayer<InventoryComponent, TransformComponent>(this->manager,
-	    [&](auto entityId, auto &eqComponent, auto &transformComponent) {
+	WorldUtils::viewInCurrentLayer<CharacterComponent, TransformComponent>(this->manager,
+	    [&](auto entityId, CharacterComponent &eqComponent, auto &transformComponent) {
 		    if (entityId == playerId) {
 			    return;
 		    }
+	    	if (!eqComponent.fightable) {
+	    		return;
+	    	}
 		    if (SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position) <= radius * radius) {
 			    enemiesIdList.push_back(entityId);
 		    }

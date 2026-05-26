@@ -1,6 +1,7 @@
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/System/System.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
@@ -115,7 +116,8 @@ void BattleInputSystem::update()
 		return;
 	}
 	auto &battle = manager.getComponent<BattleComponent>(playerId);
-	auto &stats = manager.getComponent<StatsComponent>(playerId);
+	auto &stats = manager.getComponent<CharacterComponent>(playerId).stats;
+	std::cout << "AfterChar"<< std::endl;
 
 	ui.setHUDVisible(true);
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
@@ -158,6 +160,8 @@ void BattleInputSystem::update()
 		}
 
 	} else if (showTargetMenu) {
+		auto & b = manager.getComponent<BattleComponent>(playerId);
+		std::cout << "BattleComponent"<< b.battleManagerId.getId() << std::endl;
 		auto validTargets = getTargetsInBattle(
 		    playerId, manager.getComponent<BattleComponent>(playerId).battleManagerId, this->manager);
 		if (validTargets.empty()) {
