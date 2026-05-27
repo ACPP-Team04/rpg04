@@ -27,7 +27,6 @@
 
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/HealthBarSystem.hpp>
-#include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
@@ -104,6 +103,38 @@ struct ECSManager {
 	void setViewport(const sf::FloatRect &viewport) { cameraSystem.setViewport(viewport); }
 
 	void update()
+	{
+		if(false){
+			updateMeasureCalc();
+			return;
+		}
+		hudSystem.update();
+		boundingBoxSystem.update();
+		inputSystem.update();
+		movementSystem.update();
+		animation_movement_system.update();
+		boundingBoxSystem.update();
+		collisionSystem.update();
+		boundingBoxSystem.update();
+		interactionSystem.update();
+		door_system.update();
+		switchLayerSystem.update();
+		boundingBoxSystem.update();
+		cameraSystem.update();
+		animation_setter_system.update();
+		renderSystem.update();
+		switch_battle_mode_system.update();
+		battleInputSystem.update();
+		combatSystem.update();
+		healthBarSystem.update();
+		boundingBoxSystem.update();
+		statsDistributorSystem.update();
+		dialogSystem.update();
+		item_system.update();
+		audioSystem.update();
+	}
+
+	void updateMeasureCalc()
 	{
 		measureTime("HudSystem", [this] { hudSystem.update(); });
 		measureTime("BoundingBox (1)", [this] { boundingBoxSystem.update(); });

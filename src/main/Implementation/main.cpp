@@ -31,6 +31,7 @@
 #include <Abstract/Overwordl/Components/AudioComponent.hpp>
 #include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <SFML/Graphics.hpp>
+#include <exception>
 
 namespace {
 constexpr sf::Vector2f logicalSize{800.f, 600.f};
@@ -131,51 +132,69 @@ void applyGameConfig(ECSManager &ecsManager, EntityID player)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
-	                        "Zombie Knight");
-	tgui::Gui gui(window);
+	try {
+		sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
+		                        "Zombie Knight");
+		tgui::Gui gui(window);
 
-	window.setFramerateLimit(60);
+		window.setFramerateLimit(60);
 
-	registerComponents();
-	AudioManager audioManager;
-	ECSManager ecsManager = ECSManager(window, audioManager, gui);
-	WorldParser parser = WorldParser(ecsManager.manager, window);
-	parser.update();
-	ecsManager.init();
-	registerAudio();
-	audioManager.playMusic("overworld", true);
-	auto player = WorldUtils::getPlayer(ecsManager.manager);
-	// ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
-	applyGameConfig(ecsManager, player.value());
-	window.setFramerateLimit(60);
+		spdlog::info("Registering components...");
+		registerComponents();
+		AudioManager audioManager;
+		spdlog::info("Creating ECS manager...");
+		ECSManager ecsManager = ECSManager(window, audioManager, gui);
+		spdlog::info("Parsing world...");
+		WorldParser parser = WorldParser(ecsManager.manager, window);
+		parser.update();
+		spdlog::info("Initializing UI systems...");
+		ecsManager.init();
+		spdlog::info("Registering audio...");
+		registerAudio();
+		audioManager.playMusic("overworld", true);
+		auto player = WorldUtils::getPlayer(ecsManager.manager);
+		if (!player.has_value()) {
+			throw std::runtime_error("Startup failed: no player entity was created by WorldParser.");
+		}
+		// ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
+		applyGameConfig(ecsManager, player.value());
+		window.setFramerateLimit(60);
 
-	applyResize(window, gui, ecsManager);
+		applyResize(window, gui, ecsManager);
 
-	auto gameState = GameState::MainMenu;
-	setUpMainMenu(gui, gameState);
-	while (window.isOpen()) {
-		window.clear(sf::Color::Black);
+		auto gameState = GameState::MainMenu;
+		setUpMainMenu(gui, gameState);
+		while (window.isOpen()) {
+			window.clear(sf::Color::Black);
 
-		while (const std::optional event = window.pollEvent()) {
-			gui.handleEvent(*event);
-			if (event->is<sf::Event::Closed>()) {
+			while (const std::optional event = window.pollEvent()) {
+				gui.handleEvent(*event);
+				if (event->is<sf::Event::Closed>()) {
+					window.close();
+				}
+				if (event->is<sf::Event::Resized>()) {
+					applyResize(window, gui, ecsManager);
+				}
+			}
+
+			if (gameState == GameState::Game) {
+				ecsManager.update();
+			}
+
+			if (gameState == GameState::Quit) {
 				window.close();
 			}
-			if (event->is<sf::Event::Resized>()) {
-				applyResize(window, gui, ecsManager);
-			}
-		}
 
-		if (gameState == GameState::Game) {
-			ecsManager.update();
+			gui.draw();
+			window.display();
 		}
-
-		if (gameState == GameState::Quit) {
-			window.close();
-		}
-
-		gui.draw();
-		window.display();
+	} catch (const std::exception &e) {
+		spdlog::critical("Fatal startup/runtime error: {}", e.what());
+		return 1;
+	} catch (...) {
+		spdlog::critical("Fatal startup/runtime error: unknown exception");
+		return 1;
 	}
+
+	return 0;
 }
