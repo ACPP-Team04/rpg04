@@ -31,7 +31,14 @@ WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window)
 {
 	tson::Tileson t{&project};
 	map = t.parse(fs::path(MAP));
+	if (!map) {
+		throw std::runtime_error(std::string("Failed to parse map: ") + MAP);
+	}
+
 	std::ifstream f(MAP);
+	if (!f.is_open()) {
+		throw std::runtime_error(std::string("Failed to open map json: ") + MAP);
+	}
 	rawJson = nlohmann::json::parse(f);
 }
 
@@ -74,8 +81,8 @@ void equibFists(ArchetypeManager &manager, const WorldComponent &component)
 		}
 		if (!manager.hasComponent<StatsComponent>(entity)) {
 			manager.addComponentToEntity<StatsComponent>(entity);
-			std::cout << "Added stats component to entity: " << entity.getId() << std::endl;
-			std::cout << manager.getComponent<StatsComponent>(entity).health << std::endl;
+			spdlog::info("Added stats component to entity: {}", entity.getId());
+			spdlog::info("Entity health: {}", manager.getComponent<StatsComponent>(entity).health);
 		}
 	});
 }
@@ -138,7 +145,6 @@ void flipIfNeeded(ArchetypeManager &manager, EntityID id, tson::Object obj)
 void WorldParser::addRenderComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
 {
 	if (obj.isVisible()) {
-		std::cout << obj.getId() << std::endl;
 		manager.addComponentToEntity<RenderComponent>(id);
 		manager.getComponent<RenderComponent>(id).z_layer = 1;
 	}
@@ -177,7 +183,7 @@ void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, t
 {
 	for (auto &prop : obj.getProperties().getProperties()) {
 		std::string propType = prop.second.getPropertyType();
-		std::cout << "Adding: " << propType << std::endl;
+		spdlog::info("Adding: ", propType);
 		ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
 		auto func = componentRegistry.getCreationFunctions(propType);
 		auto propClass = getCustomPropertyAsClass(prop.second);
@@ -185,7 +191,7 @@ void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, t
 
 			func(manager, id, propClass);
 		}
-		std::cout << "Added:" << propType << std::endl;
+		spdlog::info("Added: ", propType);
 	}
 }
 
