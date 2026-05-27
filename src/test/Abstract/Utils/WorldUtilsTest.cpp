@@ -16,11 +16,9 @@ TEST(WorldUtils, returnTrueWhenFindingPlayer)
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
-	worldLayer.currentLayer = LAYERTYPE::OVERWORLD;
-	worldLayer.currentLevel = LEVEL_NAME::LEVEL1;
+	worldLayer.currentGroup = 93;
 
-	playerLayer.layer = LAYERTYPE::OVERWORLD;
-	playerLayer.level = LEVEL_NAME::LEVEL1;
+	playerLayer.groupId = 93;
 
 	EXPECT_EQ(true, WorldUtils::getPlayer(manager).has_value());
 }
@@ -34,11 +32,9 @@ TEST(WorldUtils, returnNullOptWhenPlayerDoesNotHaveComponent)
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
-	worldLayer.currentLayer = LAYERTYPE::OVERWORLD;
-	worldLayer.currentLevel = LEVEL_NAME::LEVEL1;
+	worldLayer.currentGroup = 93;
 
-	playerLayer.layer = LAYERTYPE::OVERWORLD;
-	playerLayer.level = LEVEL_NAME::LEVEL1;
+	playerLayer.groupId = 93;
 
 	EXPECT_EQ(false, WorldUtils::getPlayersComponent<InputComponent>(manager).has_value());
 }
