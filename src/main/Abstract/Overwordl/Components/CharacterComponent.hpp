@@ -17,5 +17,7 @@ struct CharacterComponent : Component<CharacterComponent> {
 		inventory.readFromJson(inv);
 		equipedWeapon = j.get<unsigned int>("equippedWeaponId");
 		equipedCompanion = j.get<unsigned int>("equippedCompanion");
+		auto stat = j.get<tson::TiledClass>("stats");
+		stats.readFromJson(stat);
 	}
 };

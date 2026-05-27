@@ -3,8 +3,11 @@
 
 class EntityID {
   public:
-	EntityID() : id(IdCounter++) {}
 	~EntityID() = default;
+	EntityID ()
+	{
+		id = -1;
+	}
 	EntityID(const EntityID &other) : id(other.id) {}
 	EntityID(EntityID &&other) noexcept : id(other.id) {}
 	EntityID &operator=(const EntityID &other)
@@ -14,12 +17,6 @@ class EntityID {
 		id = other.id;
 		return *this;
 	}
-
-	static EntityID fromExistingId(int id) {
-		EntityID e;
-		e.id = id;
-		return e;
-	}
 	EntityID &operator=(EntityID &&other) noexcept
 	{
 		if (this == &other)
@@ -28,22 +25,43 @@ class EntityID {
 		return *this;
 	}
 
-	inline static int IdCounter = 0;
-
-	int getId() const { return this->id; }
-	EntityID(int explicitId) : id(explicitId)
+	static EntityID fromExistingId(int entityId)
+	{
+		EntityID e(entityId);
+		return e;
+	}
+	static EntityID createWithId(int explicitId)
 	{
 		if (explicitId >= IdCounter)
 			IdCounter = explicitId + 1;
-		std::cout << "ENTITY ID ---------------------------------------------------------"<< IdCounter << std::endl;
+
+		EntityID e(explicitId);
+		return e;
+
 	}
 
-  private:
-	int id;
+	static EntityID create()
+	{
+		EntityID e(IdCounter++);
+		return e;
+	}
 
+	inline static int IdCounter = 0;
+
+	int getId() const { return this->id; }
+
+
+  private:
+	EntityID(int idNew) : id(idNew) {}
+	int id;
 	friend bool operator==(const EntityID &a, const EntityID &b) { return a.id == b.id; }
 
 	friend bool operator!=(const EntityID a, const EntityID &b) { return a.id != b.id; }
+	friend bool operator==(const EntityID &a, int b) { return a.id == b; }
+	friend bool operator==(int a, const EntityID &b) { return a == b.id; }
+	friend bool operator!=(const EntityID &a, int b) { return a.id != b; }
+	friend bool operator!=(int a, const EntityID &b) { return a != b.id; }
+
 };
 
 namespace std {

@@ -190,7 +190,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	}
 	}
 
-	if (defender == -1) {
+	if (defender.getId() == -1) {
 		throw std::runtime_error("Defender is not set for action execution");
 	}
 

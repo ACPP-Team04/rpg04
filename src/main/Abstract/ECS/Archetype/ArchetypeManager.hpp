@@ -148,14 +148,14 @@ class ArchetypeManager {
 	template <typename... T>
 	EntityID createEntity()
 	{
-		EntityID entityId = EntityID();
+		EntityID entityId = EntityID::create();
 		this->addEntityIdsToArchType<T...>(entityId);
 		return entityId;
 	}
 	template <typename... T>
 	EntityID createEntityWithId(int id)
 	{
-		auto entityId = EntityID(id);
+		auto entityId = EntityID::createWithId(id);
 		if (hasArchetype(entityId)) {
 			throw std::runtime_error("Entity with this id already exists!");
 		}

@@ -46,26 +46,6 @@ void RenderSystem::renderTiles(WorldComponent *world)
 }
 void RenderSystem::update()
 {
-	auto renderLogic = [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp,
-	                       SpriteComponent &scomp) {
-		if (manager.hasComponent<DeathComponent>(id)) {
-			/*
-			// DEBUG
-			sf::RectangleShape debugBox;
-			debugBox.setSize({(float)scomp.tileInfo.width, (float)scomp.tileInfo.height});
-			debugBox.setPosition(tcomp.position);
-			debugBox.setFillColor(sf::Color::Red);
-			window.draw(debugBox);
-			*/
-			auto &deathC = manager.getComponent<DeathComponent>(id);
-			SpriteComponent graveVisuals;
-			graveVisuals.tileInfo = deathC.graveTile;
-			graveVisuals.tilesetPath = deathC.graveTilesetPath;
-			render(tcomp, window, graveVisuals);
-		} else {
-			render(tcomp, window, scomp);
-		}
-	};
 
 	WorldComponent *world = WorldUtils::getWorld(manager);
 
@@ -73,6 +53,6 @@ void RenderSystem::update()
 
 	WorldUtils::viewInCurrentLayer<RenderComponent, TransformComponent, SpriteComponent>(
 	    manager, [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp, SpriteComponent &scomp) {
-	    	renderLogic(id, comp, tcomp, scomp);
+	    	render(tcomp, window, scomp);
 	    });
 }

@@ -29,5 +29,7 @@ struct ItemComponent : public Component<ItemComponent> {
 		if (itemType != WEAPON) return;
 		auto weaponstats = j.get<tson::TiledClass>("weaponStats");
 		weaponStats.readFromJson(weaponstats);
+
+
 	}
 };

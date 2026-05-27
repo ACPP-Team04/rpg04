@@ -78,7 +78,7 @@ void closeDialogPanelIfOpened(tgui::Gui &gui)
 
 void setPicture(ArchetypeManager &manager, int speakerId, std::shared_ptr<tgui::Picture> speakerPicture)
 {
-	if (!manager.hasComponent<SpriteComponent>(speakerId)) {
+	if (!manager.hasComponent<SpriteComponent>(EntityID::fromExistingId(speakerId))) {
 		return;
 	}
 

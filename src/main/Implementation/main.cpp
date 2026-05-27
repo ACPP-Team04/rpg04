@@ -114,7 +114,7 @@ int main()
 	window.setFramerateLimit(60);
 	while (window.isOpen()) {
 		ecsManager.update();
-
+		std::cout << EntityID::IdCounter << std::endl;
 		window.display();
 	}
 }

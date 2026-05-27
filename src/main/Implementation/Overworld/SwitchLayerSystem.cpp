@@ -43,7 +43,7 @@ void SwitchLayerSystem::update()
 		switchPos->isActive = false;
 		switchPos->mustLeaveRadius = true;
 
-		if (manager.hasComponent<SwitchLayerComponent>(destination)) {
+		if (manager.hasComponent<SwitchLayerComponent>(EntityID::fromExistingId(destination))) {
 			manager.getComponent<InteractionComponent>(destination).mustLeaveRadius = true;
 		}
 	}

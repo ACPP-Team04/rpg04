@@ -51,7 +51,7 @@ struct InventoryComponent : public Component<InventoryComponent> {
 	bool containsItem(int entity)
 	{
 		for (auto &item : items) {
-			if (item.second.contains(entity)) {
+			if (item.second.contains(EntityID::fromExistingId(entity))) {
 				return true;
 			}
 		}
