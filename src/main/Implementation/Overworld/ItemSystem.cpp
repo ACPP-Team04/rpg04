@@ -9,6 +9,9 @@
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
+#include <Abstract/Overwordl/Components/BoundingBoxComponent.hpp>
+#include <Abstract/Overwordl/Components/CollisionComponent.hpp>
+#include <spdlog/spdlog.h>
 
 ItemSystem::ItemSystem(ArchetypeManager& manager) : System(manager) {}
 
