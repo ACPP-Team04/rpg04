@@ -48,7 +48,8 @@ void EnemyHealthBarSystem::update()
 			auto &transform = manager.getComponent<TransformComponent>(id);
 
 			sf::Vector2i pixelPos = window.mapCoordsToPixel(transform.position);
-			sf::Vector2f screenPos = sf::Vector2f(pixelPos);
+			const tgui::Vector2f guiPos = gui.mapPixelToCoords(tgui::Vector2i(pixelPos));
+			sf::Vector2f screenPos{guiPos.x, guiPos.y};
 
 			if (!enemyBars.contains(id)) {
 				createEnemyBar(id);

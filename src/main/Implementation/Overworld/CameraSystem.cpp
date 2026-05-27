@@ -7,10 +7,29 @@
 
 CameraSystem::CameraSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
-
-sf::Vector2f getCameraSize(WorldComponent &world, CameraComponent &camera)
+void CameraSystem::setTargetAspect(float newTargetAspect)
 {
-	return {(float)world.widthPixel * camera.scaleSize.x, (float)world.heightPixel * camera.scaleSize.y};
+	targetAspect = newTargetAspect;
+}
+
+void CameraSystem::setViewport(const sf::FloatRect &newViewport)
+{
+	viewport = newViewport;
+}
+
+sf::Vector2f getCameraSize(WorldComponent &world, CameraComponent &camera, float targetAspect)
+{
+	sf::Vector2f cameraSize{(float)world.widthPixel * camera.scaleSize.x,
+	                        (float)world.heightPixel * camera.scaleSize.y};
+	const float cameraAspect = cameraSize.x / cameraSize.y;
+
+	if (cameraAspect > targetAspect) {
+		cameraSize.x = cameraSize.y * targetAspect;
+	} else if (cameraAspect < targetAspect) {
+		cameraSize.y = cameraSize.x / targetAspect;
+	}
+
+	return cameraSize;
 }
 void CameraSystem::update()
 {
@@ -20,7 +39,8 @@ void CameraSystem::update()
 		    camera.center = transform.position;
 		    sf::View cameraView;
 		    cameraView.setCenter(camera.center);
-		    cameraView.setSize(getCameraSize(*world, camera));
+		    cameraView.setSize(getCameraSize(*world, camera, targetAspect));
+		    cameraView.setViewport(viewport);
 		    window.setView(cameraView);
 	    });
 }

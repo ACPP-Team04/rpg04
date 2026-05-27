@@ -21,6 +21,7 @@
 #include "Archetype/ArchetypeManager.hpp"
 
 #include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
@@ -28,7 +29,7 @@
 struct ECSManager {
 
 	sf::RenderWindow &window;
-	tgui::Gui gui;
+	tgui::Gui &gui;
 	ArchetypeManager manager = ArchetypeManager();
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
@@ -50,8 +51,8 @@ struct ECSManager {
 	SwitchBattleModeSystem switch_battle_mode_system;
 	EnemyHealthBarSystem enemyHealthBarSystem;
 
-	ECSManager(sf::RenderWindow &window)
-	    : window(window), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
+	ECSManager(sf::RenderWindow &window, tgui::Gui &gui)
+	    : window(window), gui(gui), renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window), interactionSystem(manager), boundingBoxSystem(manager), item_system(manager),
 	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
@@ -62,14 +63,7 @@ struct ECSManager {
 	}
 
 	~ECSManager() = default;
-	void processEvents()
-	{
-		while (const std::optional event = window.pollEvent()) {
-			gui.handleEvent(*event);
-			if (event->is<sf::Event::Closed>())
-				window.close();
-		}
-	}
+
 	bool checkMenu()
 	{
 		bool menuOpened = false;
@@ -80,10 +74,12 @@ struct ECSManager {
 
 	void init() { battleInputSystem.init(); }
 
+	void setTargetAspect(float targetAspect) { cameraSystem.setTargetAspect(targetAspect); }
+
+	void setViewport(const sf::FloatRect &viewport) { cameraSystem.setViewport(viewport); }
+
 	void update()
 	{
-		processEvents();
-		window.clear(sf::Color::Transparent);
 		boundingBoxSystem.update();
 		inputSystem.update();
 		movementSystem.update();
@@ -91,7 +87,7 @@ struct ECSManager {
 		collisionSystem.update();
 		boundingBoxSystem.update();
 		interactionSystem.update();
-		
+
 		door_system.update();
 		switchLayerSystem.update();
 		boundingBoxSystem.update();
@@ -105,6 +101,5 @@ struct ECSManager {
 		statsDistributorSystem.update();
 		dialogSystem.update();
 		item_system.update();
-		gui.draw();
 	}
 };

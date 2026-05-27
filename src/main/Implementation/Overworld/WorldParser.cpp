@@ -241,12 +241,6 @@ void WorldParser::update()
 	worldComp.heightPixel = map->getSize().y * map->getTileSize().y;
 	worldComp.currentLevel = LEVEL_NAME::LEVEL1;
 	worldComp.currentLayer = LAYERTYPE::OVERWORLD;
-	window.setSize({worldComp.widthPixel,worldComp.heightPixel});
-
-	sf::View view(sf::FloatRect({0.f, 0.f},
-								{static_cast<float>(worldComp.widthPixel), static_cast<float>(worldComp.heightPixel)}));
-	window.setView(view);
-
 
 	undfoldLayers(map->getLayers(), objectLayers, tileLayers);
 
