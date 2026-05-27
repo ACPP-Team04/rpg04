@@ -183,7 +183,7 @@ void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, t
 {
 	for (auto &prop : obj.getProperties().getProperties()) {
 		std::string propType = prop.second.getPropertyType();
-		spdlog::info("Adding: ", propType);
+		spdlog::info("Adding: {}", propType);
 		ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
 		auto func = componentRegistry.getCreationFunctions(propType);
 		auto propClass = getCustomPropertyAsClass(prop.second);
@@ -191,7 +191,7 @@ void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, t
 
 			func(manager, id, propClass);
 		}
-		spdlog::info("Added: ", propType);
+		spdlog::info("Added: {}", propType);
 	}
 }
 
@@ -276,7 +276,6 @@ void WorldParser::parseDialogComponent(ArchetypeManager &manager, nlohmann::json
 void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> &tuple,
                                std::unordered_map<int, nlohmann::json> &animationDataByObjectId)
 {
-
 	auto obj = std::get<0>(tuple);
 	if (obj.getObjectType() != tson::ObjectType::Rectangle && obj.getObjectType() != tson::ObjectType::Object) {
 		throw std::runtime_error("We allow only rectangle objects");
