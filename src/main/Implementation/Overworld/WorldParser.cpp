@@ -306,6 +306,7 @@ void WorldParser::update()
 	worldComp.heightPixel = map->getSize().y * map->getTileSize().y;
 	worldComp.currentLevel = LEVEL_NAME::LEVEL1;
 	worldComp.currentLayer = LAYERTYPE::OVERWORLD;
+
 	undfoldLayers(map->getLayers(), objectLayers, tileLayers);
 
 	std::map<int, std::tuple<tson::Object, LEVEL_NAME>> objects;

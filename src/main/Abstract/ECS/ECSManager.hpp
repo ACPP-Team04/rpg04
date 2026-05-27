@@ -27,13 +27,15 @@
 
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/HealthBarSystem.hpp>
+#include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
 struct ECSManager {
 
 	sf::RenderWindow &window;
-	tgui::Gui gui;
+	tgui::Gui &gui;
 	ArchetypeManager manager = ArchetypeManager();
 	AudioManager &audioManager;
 	AudioSystem audioSystem;
@@ -61,8 +63,8 @@ struct ECSManager {
 	CleanUpSystem clean_up_system;
 	HudSystem hudSystem;
 
-	ECSManager(sf::RenderWindow &window, AudioManager &audioManager)
-	    : window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
+	ECSManager(sf::RenderWindow &window, AudioManager &audioManager, tgui::Gui &gui)
+	    : window(window), gui(gui), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
 	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window, gui), interactionSystem(manager), boundingBoxSystem(manager),
@@ -77,14 +79,7 @@ struct ECSManager {
 	}
 
 	~ECSManager() = default;
-	void processEvents()
-	{
-		while (const std::optional event = window.pollEvent()) {
-			gui.handleEvent(*event);
-			if (event->is<sf::Event::Closed>())
-				window.close();
-		}
-	}
+
 	bool checkMenu()
 	{
 		bool menuOpened = false;
@@ -104,10 +99,12 @@ struct ECSManager {
 		std::cout << name << ": " << clock.getElapsedTime().asMicroseconds() << " us\n";
 	}
 
+	void setTargetAspect(float targetAspect) { cameraSystem.setTargetAspect(targetAspect); }
+
+	void setViewport(const sf::FloatRect &viewport) { cameraSystem.setViewport(viewport); }
+
 	void update()
 	{
-		processEvents();
-		window.clear(sf::Color::Transparent);
 		measureTime("HudSystem", [this] { hudSystem.update(); });
 		measureTime("BoundingBox (1)", [this] { boundingBoxSystem.update(); });
 		measureTime("Input", [this] { inputSystem.update(); });
@@ -133,6 +130,5 @@ struct ECSManager {
 		measureTime("Item", [this] { item_system.update(); });
 		measureTime("Audio", [this] { audioSystem.update(); });
 		// measureTime("CleanUp", [this] { clean_up_system.update(); });
-		gui.draw();
 	}
 };
