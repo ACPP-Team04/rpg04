@@ -18,7 +18,7 @@
 #include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 #include <sstream>
-enum class MENU_TAB { WEAPONS, COLLECTABLES, STATS };
+enum class MENU_TAB { WEAPONS, COLLECTABLES, COMPANIONS, STATS };
 
 MenuSystem::MenuSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), gui(gui) {};
 
@@ -79,12 +79,15 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 
 	tabs->add("Weapons");
 	tabs->add("Collectables");
+	tabs->add("Companions");
 	tabs->add("Stats");
 
 	if (activeTab == MENU_TAB::WEAPONS)
 		tabs->select("Weapons");
 	else if (activeTab == MENU_TAB::COLLECTABLES)
 		tabs->select("Collectables");
+	else if (activeTab == MENU_TAB::COMPANIONS)
+		tabs->select("Companions");
 	else if (activeTab == MENU_TAB::STATS)
 		tabs->select("Stats");
 
@@ -94,6 +97,8 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 			newTab = MENU_TAB::STATS;
 		else if (activeTab == "Collectables")
 			newTab = MENU_TAB::COLLECTABLES;
+		else if (activeTab == "Companions")
+			newTab = MENU_TAB::COMPANIONS;
 
 		gui.remove(gui.get("inventoryMenu"));
 		buildInventoryMenu(manager, world, gui, newTab);
@@ -171,6 +176,8 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 			ITEM_TYPE activeTabItemType = ITEM_TYPE::WEAPON;
 			if (activeTab == MENU_TAB::COLLECTABLES) {
 				activeTabItemType = ITEM_TYPE::COLLECTABLE;
+			} else if (activeTab == MENU_TAB::COMPANIONS) {
+				activeTabItemType = ITEM_TYPE::COLLECTABLE_COMPANION;
 			}
 			for (const auto &[itemType, entitySet] : inventory->items) {
 				for (EntityID itemEntity : entitySet) {
@@ -181,9 +188,11 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 					if (inventory->hasEquippedItem(itemType) && inventory->getEquippedItem(itemType) == itemEntity) {
 						isEquipped = true;
 					}
+					std::string itemName = "";
+					if (manager.hasComponent<ItemComponent>(itemEntity)) {
 
-					std::string itemName = manager.getComponent<ItemComponent>(itemEntity).name;
-
+						itemName = manager.getComponent<ItemComponent>(itemEntity).name;
+					}
 					std::string btnText = "Item: " + itemName;
 					if (isEquipped) {
 						btnText += " [EQUIPPED]";
@@ -201,7 +210,7 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 					              isEquipped]() {
 						inspectorPanel->removeAllWidgets();
 
-						auto title = tgui::Label::create("Inspecting Item " + itemName);
+						auto title = tgui::Label::create("Inspecting " + itemName);
 						title->setTextSize(24);
 						title->setPosition({20, 20});
 						title->getRenderer()->setTextColor(tgui::Color::White);

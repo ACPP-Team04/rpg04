@@ -32,10 +32,10 @@
 
 struct ECSManager {
 
-	sf::RenderWindow& window;
+	sf::RenderWindow &window;
 	tgui::Gui gui;
 	ArchetypeManager manager = ArchetypeManager();
-	AudioManager& audioManager;
+	AudioManager &audioManager;
 	AudioSystem audioSystem;
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
@@ -61,16 +61,16 @@ struct ECSManager {
 	CleanUpSystem clean_up_system;
 	HudSystem hudSystem;
 
-	ECSManager(sf::RenderWindow& window, AudioManager& audioManager)
-		: window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
-		renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-		cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
-		dialogSystem(manager, window, gui), interactionSystem(manager), boundingBoxSystem(manager),
-		item_system(manager), menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window),
-		aiSystem(manager), combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
-		switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
-		animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
-		hudSystem(manager, window, gui)
+	ECSManager(sf::RenderWindow &window, AudioManager &audioManager)
+	    : window(window), gui(window), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
+	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
+	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
+	      dialogSystem(manager, window, gui), interactionSystem(manager), boundingBoxSystem(manager),
+	      item_system(manager), menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window),
+	      aiSystem(manager), combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
+	      switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
+	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
+	      hudSystem(manager, window, gui)
 
 	{
 		gui.setWindow(window);
@@ -89,14 +89,14 @@ struct ECSManager {
 	{
 		bool menuOpened = false;
 		this->manager.view<WorldComponent>().each(
-			[&](auto entityId, WorldComponent& worldComponent) { menuOpened = worldComponent.menuOpened; });
+		    [&](auto entityId, WorldComponent &worldComponent) { menuOpened = worldComponent.menuOpened; });
 		return menuOpened;
 	}
 
 	void init() { battleInputSystem.init(); }
 
 	template <typename Function>
-	void measureTime(const std::string& name, Function function)
+	void measureTime(const std::string &name, Function function)
 	{
 		sf::Clock clock;
 		clock.start();
@@ -116,7 +116,9 @@ struct ECSManager {
 			gui.draw();
 			return;
 		}
+		hudSystem.update();
 		movementSystem.update();
+		animation_movement_system.update();
 		boundingBoxSystem.update();
 		collisionSystem.update();
 		boundingBoxSystem.update();
@@ -126,6 +128,7 @@ struct ECSManager {
 		switchLayerSystem.update();
 		boundingBoxSystem.update();
 		cameraSystem.update();
+		animation_setter_system.update();
 		renderSystem.update();
 		switch_battle_mode_system.update();
 		battleInputSystem.update();
