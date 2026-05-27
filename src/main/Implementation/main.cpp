@@ -1,6 +1,7 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
+#include "Abstract/UI/MainMenu.hpp"
 
 #include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
@@ -24,6 +25,41 @@
 
 #include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <SFML/Graphics.hpp>
+
+namespace {
+constexpr sf::Vector2f LogicalSize{800.f, 600.f};
+constexpr float TargetRatio = LogicalSize.x / LogicalSize.y;
+
+sf::FloatRect getLetterboxViewport(sf::Vector2u windowSize)
+{
+	float windowRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
+	float viewportWidth = 1.f;
+	float viewportHeight = 1.f;
+	float viewportLeft = 0.f;
+	float viewportTop = 0.f;
+
+	if (windowRatio > TargetRatio) {
+		viewportWidth = TargetRatio / windowRatio;
+		viewportLeft = (1.f - viewportWidth) / 2.f;
+	} else if (windowRatio < TargetRatio) {
+		viewportHeight = windowRatio / TargetRatio;
+		viewportTop = (1.f - viewportHeight) / 2.f;
+	}
+
+	return sf::FloatRect({viewportLeft, viewportTop}, {viewportWidth, viewportHeight});
+}
+
+void applyResize(sf::RenderWindow &window, tgui::Gui &gui, ECSManager &ecsManager)
+{
+	const sf::FloatRect viewport = getLetterboxViewport(window.getSize());
+	ecsManager.setTargetAspect(TargetRatio);
+	ecsManager.setViewport(viewport);
+
+	gui.setRelativeViewport(
+	    tgui::FloatRect(viewport.position.x, viewport.position.y, viewport.size.x, viewport.size.y));
+	gui.setAbsoluteView(tgui::FloatRect(0.f, 0.f, LogicalSize.x, LogicalSize.y));
+}
+}
 
 void registerComponents()
 {
@@ -51,18 +87,43 @@ void registerComponents()
 
 int main()
 {
+	sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(LogicalSize.x), static_cast<unsigned>(LogicalSize.y)}),
+	                        "Zombie Knight");
+	tgui::Gui gui(window);
 
-	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
+	window.setFramerateLimit(60);
+
 	registerComponents();
-	ECSManager ecsManager = ECSManager(window);
+	ECSManager ecsManager = ECSManager(window, gui);
 	WorldParser parser = WorldParser(ecsManager.manager, window);
-	window.clear(sf::Color::Transparent);
 	parser.update();
 	ecsManager.init();
-	window.setFramerateLimit(60);
-	while (window.isOpen()) {
-		ecsManager.update();
+	applyResize(window, gui, ecsManager);
 
+	auto gameState = GameState::MainMenu;
+	setUpMainMenu(gui, gameState);
+	while (window.isOpen()) {
+		window.clear(sf::Color::Black);
+
+		while (const std::optional event = window.pollEvent()) {
+			gui.handleEvent(*event);
+			if (event->is<sf::Event::Closed>()) {
+				window.close();
+			}
+			if (event->is<sf::Event::Resized>()) {
+				applyResize(window, gui, ecsManager);
+			}
+		}
+
+		if (gameState == GameState::Game) {
+			ecsManager.update();
+		}
+
+		if (gameState == GameState::Quit) {
+			window.close();
+		}
+
+		gui.draw();
 		window.display();
 	}
 }
