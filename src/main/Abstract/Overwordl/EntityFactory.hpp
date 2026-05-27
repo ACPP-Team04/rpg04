@@ -1,7 +1,6 @@
 #pragma once
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Components/AnimationComponent.hpp"
-#include "Components/BoundingBoxComponent.hpp"
 #include "Components/PartOfLayerComponent.hpp"
 #include "Components/RenderComponent.hpp"
 #include "Components/SpriteComponent.hpp"
@@ -51,7 +50,6 @@ public:
 		ComponentRegistry::getInstance().addDefaultComponent<TransformComponent>(mgr,id,object,context);
 		ComponentRegistry::getInstance().addDefaultComponent<RenderComponent>(mgr,id,object,context);
 		ComponentRegistry::getInstance().addDefaultComponent<SpriteComponent>(mgr,id,object,context);
-		ComponentRegistry::getInstance().addDefaultComponent<BoundIngBoxComponent>(mgr,id,object,context);
 		ComponentRegistry::getInstance().addDefaultComponent<PartOfLayerComponent>(mgr,id,object,context);
 		ComponentRegistry::getInstance().addDefaultComponent<StateComponent>(mgr,id,object,context);
 

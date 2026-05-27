@@ -1,7 +1,6 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
-#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"

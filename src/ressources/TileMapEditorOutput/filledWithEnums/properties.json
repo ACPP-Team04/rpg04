@@ -576,11 +576,6 @@
                 "value": "START_DIALOG"
             },
             {
-                "name": "focusRadius",
-                "type": "float",
-                "value": 64
-            },
-            {
                 "name": "interactionKey",
                 "propertyType": "Keys",
                 "type": "string",
@@ -1278,7 +1273,7 @@
         "members": [
             {
                 "name": "destination",
-                "type": "int",
+                "type": "object",
                 "value": 0
             }
         ],

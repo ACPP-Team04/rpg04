@@ -4,7 +4,6 @@
 
 #include "Abstract/Overwordl/Components/AnimationComponent.hpp"
 #include "Abstract/Overwordl/Components/AnimationPartComponent.hpp"
-#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
 #include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/CollisionComponent.hpp"
@@ -44,7 +43,6 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<BoundIngBoxComponent>("BOUNDING_BOX_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ItemComponent>("ITEM_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");

@@ -24,6 +24,7 @@ struct World {
 	std::string name;
 	int id;
 	std::vector<TileLayer> tileLayers;
+	std::vector<TileLayer> collidingTileLayers;
 };
 struct WorldComponent : public Component<WorldComponent> {
 	unsigned width = 0;
@@ -70,7 +71,18 @@ struct WorldComponent : public Component<WorldComponent> {
 			} else if (layer["type"] == "tilelayer") {
 				TileLayer tileLayer;
 				tileLayer.init(width, height);
+				bool collides = false;
 				auto &data = layer["data"];
+				bool hasProperties = layer.contains("properties") && layer["properties"].is_array() && !layer["properties"].empty();
+				if (hasProperties) {
+					for (auto &prop : layer["properties"]) {
+						if (prop["name"] == "collision" && prop["value"] == true) {
+							collides = true;
+							break;
+						}
+					}
+				}
+
 				for (int i = 0; i < (int)data.size(); i++) {
 					int gid = data[i].get<int>();
 					if (gid == 0)
@@ -98,7 +110,12 @@ struct WorldComponent : public Component<WorldComponent> {
 						break;
 					}
 				}
-				worlds[groupId].tileLayers.push_back(tileLayer);
+				if (!collides) {
+					worlds[groupId].tileLayers.push_back(tileLayer);
+					continue;
+				}
+				worlds[groupId].collidingTileLayers.push_back(tileLayer);
+
 			}
 		}
 	}

@@ -7,6 +7,7 @@ struct TransformComponent : public Component<TransformComponent>,DefaultComponen
 	sf::Vector2f scale{1.0f, 1.0f};
 	sf::Angle rotation = sf::Angle::Zero;
 	sf::Vector2f previousPosition;
+	sf::Vector2f size;
 
 	void readFromJson(tson::TiledClass &j)
 	{
@@ -22,12 +23,28 @@ struct TransformComponent : public Component<TransformComponent>,DefaultComponen
 	{
 		position.x = (float)object.getPosition().x;
 		position.y = (float)object.getPosition().y;
+		size.x = (float)object.getSize().x;
+		size.y = (float)object.getSize().y;
+		if (object.getGid() > 0)
+		{
+			position.y -= size.y;
+		}
 		setRotation(object.getRotation());
-		scale.x = (float)object.getSize().x;
-		float sx = (float)object.getSize().x / (float)context.tileSize.x;
-		float sy = (float)object.getSize().y / (float)context.tileSize.y;
+		float sx = size.x / context.tileSize.x;
+		float sy = size.y / context.tileSize.y;
 		scale.x = (sx > 0.f) ? sx : 1.f;
 		scale.y = (sy > 0.f) ? sy : 1.f;
 
 	}
+
+	sf::FloatRect getBoundingBox() const
+	{
+		return {position, size};
+	}
+	sf::FloatRect getBoundingBox(float offsetX, float offsetY) const
+	{
+		return {{position.x - offsetX, position.y - offsetY},
+				{size.x + offsetX * 2, size.y + offsetY * 2}};
+	}
+
 };
