@@ -127,11 +127,9 @@ TEST(ArchetypeManagerTest, ProvenDataCorruption)
 	auto world = manager.createEntity<WorldComponent>();
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
-	worldLayer.currentLayer = LAYERTYPE::OVERWORLD;
-	worldLayer.currentLevel = LEVEL_NAME::LEVEL1;
+	worldLayer.currentGroup = 93;
 
-	playerLayer.layer = LAYERTYPE::OVERWORLD;
-	playerLayer.level = LEVEL_NAME::LEVEL1;
+	playerLayer.groupId = 93;
 
 	EXPECT_EQ(true, WorldUtils::getPlayer(manager).has_value());
 	auto player = WorldUtils::getPlayer(manager);
