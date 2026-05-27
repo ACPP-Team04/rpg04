@@ -2,8 +2,11 @@
 
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
-#include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
+
+namespace {
+constexpr sf::Vector2f BaseCameraSize{800.f, 600.f};
+}
 
 CameraSystem::CameraSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
@@ -17,10 +20,9 @@ void CameraSystem::setViewport(const sf::FloatRect &newViewport)
 	viewport = newViewport;
 }
 
-sf::Vector2f getCameraSize(WorldComponent &world, CameraComponent &camera, float targetAspect)
+sf::Vector2f getCameraSize(CameraComponent &camera, float targetAspect)
 {
-	sf::Vector2f cameraSize{(float)world.widthPixel * camera.scaleSize.x,
-	                        (float)world.heightPixel * camera.scaleSize.y};
+	sf::Vector2f cameraSize{BaseCameraSize.x * camera.scaleSize.x, BaseCameraSize.y * camera.scaleSize.y};
 	const float cameraAspect = cameraSize.x / cameraSize.y;
 
 	if (cameraAspect > targetAspect) {
@@ -40,8 +42,7 @@ void CameraSystem::update()
 		    sf::View cameraView;
 		    cameraView.setCenter(camera.center);
 		    cameraView.setViewport(viewport);
-		    cameraView.setSize(
-		        {(float)window.getSize().x * camera.scaleSize.x, (float)window.getSize().y * camera.scaleSize.y});
+		    cameraView.setSize(getCameraSize(camera, targetAspect));
 		    window.setView(cameraView);
 	    });
 }
