@@ -36,7 +36,7 @@ struct ECSManager {
 	sf::RenderWindow &window;
 	tgui::Gui &gui;
 	ArchetypeManager manager = ArchetypeManager();
-	AudioManager& audioManager;
+	AudioManager &audioManager;
 	AudioSystem audioSystem;
 	RenderSystem renderSystem;
 	InputSystem inputSystem;
@@ -83,7 +83,7 @@ struct ECSManager {
 	{
 		bool menuOpened = false;
 		this->manager.view<WorldComponent>().each(
-			[&](auto entityId, WorldComponent& worldComponent) { menuOpened = worldComponent.menuOpened; });
+		    [&](auto entityId, WorldComponent &worldComponent) { menuOpened = worldComponent.menuOpened; });
 		return menuOpened;
 	}
 
@@ -94,7 +94,7 @@ struct ECSManager {
 	}
 
 	template <typename Function>
-	void measureTime(const std::string& name, Function function)
+	void measureTime(const std::string &name, Function function)
 	{
 		sf::Clock clock;
 		clock.start();
@@ -120,6 +120,7 @@ struct ECSManager {
 			gui.draw();
 			return;
 		}
+		hudSystem.update();
 		movementSystem.update();
 		animation_movement_system.update();
 		collisionSystem.update();
