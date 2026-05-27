@@ -27,8 +27,8 @@
 #include <SFML/Graphics.hpp>
 
 namespace {
-constexpr sf::Vector2f LogicalSize{800.f, 600.f};
-constexpr float TargetRatio = LogicalSize.x / LogicalSize.y;
+constexpr sf::Vector2f logicalSize{800.f, 600.f};
+constexpr float TargetRatio = logicalSize.x / logicalSize.y;
 
 sf::FloatRect getLetterboxViewport(sf::Vector2u windowSize)
 {
@@ -57,7 +57,7 @@ void applyResize(sf::RenderWindow &window, tgui::Gui &gui, ECSManager &ecsManage
 
 	gui.setRelativeViewport(
 	    tgui::FloatRect(viewport.position.x, viewport.position.y, viewport.size.x, viewport.size.y));
-	gui.setAbsoluteView(tgui::FloatRect(0.f, 0.f, LogicalSize.x, LogicalSize.y));
+	gui.setAbsoluteView(tgui::FloatRect(0.f, 0.f, logicalSize.x, logicalSize.y));
 }
 }
 
@@ -87,7 +87,7 @@ void registerComponents()
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(LogicalSize.x), static_cast<unsigned>(LogicalSize.y)}),
+	sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
 	                        "Zombie Knight");
 	tgui::Gui gui(window);
 
