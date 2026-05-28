@@ -3,11 +3,11 @@
 
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
-#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 
 #include "Abstract/AssetManager/AssetManager.hpp"
+#include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <Abstract/Overwordl/Components/SpriteComponent.hpp>
 #include <Implementation/Components/WeaponComponent.hpp>
@@ -75,7 +75,7 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 
 	auto tabs = tgui::Tabs::create();
 	tabs->setPosition({"0%", "0%"});
-	tabs->setSize({"40%", 40});
+	tabs->setSize({"100%", 40});
 
 	tabs->add("Weapons");
 	tabs->add("Collectables");
@@ -110,8 +110,8 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 	itemList->getRenderer()->setBackgroundColor(tgui::Color(20, 20, 20));
 	mainPanel->add(itemList);
 
-	auto inspectorPanel = tgui::Panel::create({"60%", "100%"});
-	inspectorPanel->setPosition({"40%", "0%"});
+	auto inspectorPanel = tgui::Panel::create({"60%", "100%- 40"});
+	inspectorPanel->setPosition({"40%", 40});
 	inspectorPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
 	mainPanel->add(inspectorPanel);
 
@@ -121,14 +121,14 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 		statsPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
 		mainPanel->add(statsPanel);
 
-		manager.view<PlayerComponent, StatsComponent>().each([&](auto &entity, auto &player, auto &stats) {
+		manager.view<PlayerComponent, CharacterComponent>().each([&](auto &entity, auto &player, auto &characterComp) {
 			auto numFightsLabel =
-			    tgui::Label::create("Number of Fights Won: " + std::to_string(stats.numberOfFightsWon));
+			    tgui::Label::create("Number of Fights Won: " + std::to_string(characterComp.stats.numberOfFightsWon));
 			numFightsLabel->setTextSize(30);
 			numFightsLabel->setPosition({"10%", "10%"});
 			statsPanel->add(numFightsLabel);
 
-			std::array<std::string, 4> statNames = {"Strength", "Defense", "Agility", "Intelligence"};
+			std::array<std::string, 4> statNames = {"Strength", " Dexterity", "Faith", "Max_health"};
 
 			float startY = 130.f;
 			float rowHeight = 40.f;
@@ -139,7 +139,7 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 
 				std::string statName = std::string(statNameStrView);
 
-				int statValue = stats.stats[static_cast<size_t>(statEnum)];
+				int statValue = characterComp.stats.stats[static_cast<size_t>(statEnum)];
 
 				auto statRow = tgui::Panel::create({"40%", rowHeight});
 				statRow->setPosition({"10%", startY + (rowIndex * (rowHeight + spacing))});
@@ -168,136 +168,180 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 	} else {
 
 		InventoryComponent *inventory = nullptr;
-		manager.view<PlayerComponent, InventoryComponent>().each(
-		    [&](auto &entity, auto &comp, auto &invComp) { inventory = &invComp; });
+		auto playerOpt = WorldUtils::getPlayer(manager);
+		if (!playerOpt.has_value()) {
+			throw std::runtime_error("No player found in the current layer to show inventory menu");
+		}
+		CharacterComponent &characterComp = manager.getComponent<CharacterComponent>(playerOpt.value());
+		ITEM_TYPE activeTabItemType = ITEM_TYPE::WEAPON;
+		if (activeTab == MENU_TAB::COLLECTABLES) {
+			activeTabItemType = ITEM_TYPE::COLLECTABLE;
+		} else if (activeTab == MENU_TAB::COMPANIONS) {
+			activeTabItemType = ITEM_TYPE::COLLECTABLE_COMPANION;
+		}
+		std::vector<EntityID> itemsInInventory;
 
-		if (inventory) {
+		WorldUtils::viewInSpecificLayer<ItemComponent>(manager, characterComp.inventory.inventoryWorldId,
+		                                               [&](EntityID entity, ItemComponent &itemComp) {
+			                                               if (itemComp.itemType == activeTabItemType) {
+				                                               itemsInInventory.push_back(entity);
+			                                               }
+		                                               });
+
+		if (!itemsInInventory.empty()) {
 			float yOffset = 10.f;
-			ITEM_TYPE activeTabItemType = ITEM_TYPE::WEAPON;
-			if (activeTab == MENU_TAB::COLLECTABLES) {
-				activeTabItemType = ITEM_TYPE::COLLECTABLE;
-			} else if (activeTab == MENU_TAB::COMPANIONS) {
-				activeTabItemType = ITEM_TYPE::COLLECTABLE_COMPANION;
-			}
-			for (const auto &[itemType, entitySet] : inventory->items) {
-				for (EntityID itemEntity : entitySet) {
-					if (itemType != activeTabItemType) {
-						continue;
-					}
-					bool isEquipped = false;
-					if (inventory->hasEquippedItem(itemType) && inventory->getEquippedItem(itemType) == itemEntity) {
-						isEquipped = true;
-					}
-					std::string itemName = "";
-					if (manager.hasComponent<ItemComponent>(itemEntity)) {
 
-						itemName = manager.getComponent<ItemComponent>(itemEntity).name;
-					}
-					std::string btnText = "Item: " + itemName;
-					if (isEquipped) {
-						btnText += " [EQUIPPED]";
-					}
+			EntityID playerId = playerOpt.value();
 
-					auto btn = tgui::Button::create(btnText);
-					btn->setSize({"90%", 40});
-					btn->setPosition({"5%", yOffset});
+			for (EntityID itemEntity : itemsInInventory) {
 
-					if (isEquipped) {
-						btn->getRenderer()->setTextColor(tgui::Color::Green);
-					}
-
-					btn->onClick([&manager, world, &gui, itemEntity, inspectorPanel, inventory, itemType, itemName,
-					              isEquipped]() {
-						inspectorPanel->removeAllWidgets();
-
-						auto title = tgui::Label::create("Inspecting " + itemName);
-						title->setTextSize(24);
-						title->setPosition({20, 20});
-						title->getRenderer()->setTextColor(tgui::Color::White);
-						inspectorPanel->add(title);
-						auto imageBox = tgui::Panel::create({"100", "100"});
-						imageBox->setPosition({280, 20});
-						imageBox->getRenderer()->setBackgroundColor(tgui::Color(15, 15, 15));
-						imageBox->getRenderer()->setBorders({2});
-						imageBox->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
-						inspectorPanel->add(imageBox);
-
-						if (manager.hasComponent<SpriteComponent>(itemEntity)) {
-							auto &spriteComp = manager.getComponent<SpriteComponent>(itemEntity);
-
-							try {
-								sf::Sprite itemSprite = AssetManager::getInstance().getSpriteAt(spriteComp);
-
-								auto canvas = tgui::CanvasSFML::create({"100%", "100%"});
-
-								imageBox->add(canvas);
-
-								canvas->clear(tgui::Color::Transparent);
-
-								sf::FloatRect bounds = itemSprite.getLocalBounds();
-								if (bounds.size.x > 0 && bounds.size.y > 0) {
-									itemSprite.setScale({100.f / bounds.size.x, 100.f / bounds.size.y});
-								}
-								canvas->draw(itemSprite);
-								canvas->display();
-
-							} catch (const std::exception &e) {
-								spdlog::warn("Could not load sprite for item {}: {}", itemName, e.what());
-							}
-						} else {
-							auto noSpriteLabel = tgui::Label::create("?");
-							noSpriteLabel->setTextSize(50);
-							noSpriteLabel->setPosition({"35%", "15%"});
-							noSpriteLabel->getRenderer()->setTextColor(tgui::Color(80, 80, 80));
-							imageBox->add(noSpriteLabel);
-						}
-						if (manager.hasComponent<WeaponComponent>(itemEntity)) {
-							auto &weapon = manager.getComponent<WeaponComponent>(itemEntity);
-							std::stringstream stream;
-							stream << std::fixed << std::setprecision(2) << weapon.getScalingFactor();
-							std::string formattedScaling = stream.str();
-							std::string enumNameScalingFactor =
-							    std::string(magic_enum::enum_name(weapon.scalingFactor));
-							std::string enumNameWeaponType = std::string(magic_enum::enum_name(weapon.weaponType));
-							std::string enumNameScalingStat = std::string(magic_enum::enum_name(weapon.scalingStat));
-							auto statsLabel = tgui::Label::create(
-							    "Light Attack: " + std::to_string(weapon.lightAttackBaseDmg) + "\n"
-							    + "Heavy Attack: " + std::to_string(weapon.heavyAttackBaseDmg) + "\n"
-							    + "Scaling Factor: " + enumNameScalingFactor + "(" + formattedScaling + ")" + "\n"
-							    + "Scaling Stat: " + enumNameScalingStat + "\n" + "Weapon Type: " + enumNameWeaponType);
-							statsLabel->setPosition({20, 70});
-							statsLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
-							inspectorPanel->add(statsLabel);
-						}
-
-						auto equipBtn = tgui::Button::create();
-						equipBtn->setSize({150, 50});
-						equipBtn->setPosition({20, 200});
-
-						if (isEquipped) {
-							equipBtn->setText("EQUIPPED");
-							equipBtn->setEnabled(false);
-						} else {
-							equipBtn->setText("EQUIP");
-							equipBtn->onClick([&manager, world, &gui, inventory, itemEntity, itemType]() {
-								inventory->equip(itemEntity, itemType);
-								spdlog::info("Item Equipped!");
-
-								gui.remove(gui.get("inventoryMenu"));
-								buildInventoryMenu(manager, world, gui);
-							});
-						}
-
-						inspectorPanel->add(equipBtn);
-					});
-
-					itemList->add(btn);
-					yOffset += 50.f;
+				if (!manager.hasComponent<ItemComponent>(itemEntity)) {
+					spdlog::error("Entity {} in inventory does not have an ItemComponent", itemEntity.getId());
+					continue;
 				}
+
+				auto &itemComp = manager.getComponent<ItemComponent>(itemEntity);
+				std::string itemName = itemComp.name;
+
+				bool isEquipped = (itemEntity.getId() == characterComp.equipedWeapon
+				                   || itemEntity.getId() == characterComp.equipedCompanion);
+
+				std::string btnText = "Item: " + itemName;
+				if (isEquipped) {
+					btnText += " [EQUIPPED]";
+				}
+
+				auto btn = tgui::Button::create(btnText);
+				btn->setSize({"90%", 40});
+				btn->setPosition({"5%", yOffset});
+
+				if (isEquipped) {
+					btn->getRenderer()->setTextColor(tgui::Color::Green);
+				}
+
+				btn->onClick([&manager, world, &gui, itemEntity, inspectorPanel, activeTabItemType, itemName,
+				              isEquipped, playerId]() {
+					inspectorPanel->removeAllWidgets();
+
+					auto title = tgui::Label::create("Inspecting " + itemName);
+					title->setTextSize(24);
+					title->setPosition({20, 20});
+					title->getRenderer()->setTextColor(tgui::Color::White);
+					inspectorPanel->add(title);
+
+					auto imageBox = tgui::Panel::create({"100", "100"});
+					imageBox->setPosition({280, 20});
+					imageBox->getRenderer()->setBackgroundColor(tgui::Color(15, 15, 15));
+					imageBox->getRenderer()->setBorders({2});
+					imageBox->getRenderer()->setBorderColor(tgui::Color(100, 100, 100));
+					inspectorPanel->add(imageBox);
+
+					if (manager.hasComponent<SpriteComponent>(itemEntity)) {
+						auto &spriteComp = manager.getComponent<SpriteComponent>(itemEntity);
+
+						try {
+							sf::Sprite itemSprite = AssetManager::getInstance().getSpriteAt(spriteComp);
+							auto canvas = tgui::CanvasSFML::create({"100%", "100%"});
+							imageBox->add(canvas);
+							canvas->clear(tgui::Color::Transparent);
+
+							sf::FloatRect bounds = itemSprite.getLocalBounds();
+							if (bounds.size.x > 0 && bounds.size.y > 0) {
+								itemSprite.setScale({100.f / bounds.size.x, 100.f / bounds.size.y});
+							}
+							canvas->draw(itemSprite);
+							canvas->display();
+
+						} catch (const std::exception &e) {
+							spdlog::warn("Could not load sprite for item {}: {}", itemName, e.what());
+						}
+					} else {
+						auto noSpriteLabel = tgui::Label::create("?");
+						noSpriteLabel->setTextSize(50);
+						noSpriteLabel->setPosition({"35%", "15%"});
+						noSpriteLabel->getRenderer()->setTextColor(tgui::Color(80, 80, 80));
+						imageBox->add(noSpriteLabel);
+					}
+
+					if (activeTabItemType == ITEM_TYPE::WEAPON) {
+						auto &weapon = manager.getComponent<ItemComponent>(itemEntity).weaponStats;
+						std::stringstream stream;
+						stream << std::fixed << std::setprecision(2) << weapon.getScalingFactor();
+						std::string formattedScaling = stream.str();
+						std::string enumNameScalingFactor = std::string(magic_enum::enum_name(weapon.scalingFactor));
+						std::string enumNameWeaponType = std::string(magic_enum::enum_name(weapon.weaponType));
+						std::string enumNameScalingStat = std::string(magic_enum::enum_name(weapon.scalingStat));
+
+						auto statsLabel = tgui::Label::create(
+						    "Light Attack: " + std::to_string(weapon.lightAttackBaseDmg) + "\n"
+						    + "Heavy Attack: " + std::to_string(weapon.heavyAttackBaseDmg) + "\n"
+						    + "Scaling Factor: " + enumNameScalingFactor + " (" + formattedScaling + ")\n"
+						    + "Scaling Stat: " + enumNameScalingStat + "\n" + "Weapon Type: " + enumNameWeaponType);
+
+						statsLabel->setPosition({20, 70});
+						statsLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
+						inspectorPanel->add(statsLabel);
+					}
+					if (activeTabItemType == ITEM_TYPE::COLLECTABLE_COMPANION) {
+						if (!manager.hasComponent<CharacterComponent>(itemEntity)) {
+							spdlog::error("Companion item {} does not have a CharacterComponent for its stats",
+							              itemName);
+							return;
+						}
+
+						auto &compStats = manager.getComponent<CharacterComponent>(itemEntity).stats;
+
+						std::string statsText = "HP: " + std::to_string((int)compStats.health) + " / "
+						                        + std::to_string(compStats.getStat(STATS::MAX_HEALTH)) + "\n\n"
+						                        + "Strength: " + std::to_string(compStats.getStat(STATS::STRENGTH))
+						                        + "\n"
+						                        + "Dexterity: " + std::to_string(compStats.getStat(STATS::DEXTERITY))
+						                        + "\n" + "Faith: " + std::to_string(compStats.getStat(STATS::FAITH));
+
+						auto statsLabel = tgui::Label::create(statsText);
+						statsLabel->setPosition({20, 70});
+						statsLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
+
+						inspectorPanel->add(statsLabel);
+					}
+
+					auto equipBtn = tgui::Button::create();
+					equipBtn->setSize({150, 50});
+					equipBtn->setPosition({20, 200});
+
+					if (isEquipped) {
+						equipBtn->setText("EQUIPPED");
+						equipBtn->setEnabled(false);
+					} else {
+						equipBtn->setText("EQUIP");
+
+						equipBtn->onClick([&manager, world, &gui, itemEntity, activeTabItemType, playerId]() {
+							CharacterComponent &dynamicCharComp = manager.getComponent<CharacterComponent>(playerId);
+
+							if (activeTabItemType == ITEM_TYPE::WEAPON) {
+								dynamicCharComp.equipedWeapon = itemEntity.getId();
+								spdlog::info("Weapon Equipped!");
+							} else if (activeTabItemType == ITEM_TYPE::COLLECTABLE_COMPANION) {
+								dynamicCharComp.equipedCompanion = itemEntity.getId();
+								spdlog::info("Companion Equipped!");
+							}
+
+							auto oldMenu = gui.get("inventoryMenu");
+							if (oldMenu) {
+								gui.remove(oldMenu);
+							}
+							buildInventoryMenu(manager, world, gui);
+						});
+					}
+
+					inspectorPanel->add(equipBtn);
+				});
+
+				itemList->add(btn);
+				yOffset += 50.f;
 			}
 		}
 	}
-
 	gui.add(mainPanel);
 }
 
