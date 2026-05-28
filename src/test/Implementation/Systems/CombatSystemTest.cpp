@@ -798,7 +798,7 @@ TEST(CombatSystemTest, checkDeathConditionPlayerWon)
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity<CharacterComponent>();
-	EntityID enemy2 = manager.createEntity<CharacterComponent>();
+	EntityID enemy2 = manager.createEntity<CharacterComponent, StateComponent>();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, TransformComponent>(player);
@@ -816,6 +816,8 @@ TEST(CombatSystemTest, checkDeathConditionPlayerWon)
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 	battleComponentE2.battleManagerId = battle;
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy, enemy2};
