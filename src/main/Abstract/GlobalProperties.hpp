@@ -5,7 +5,7 @@
 #define MAP ROOT_DIR "/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj"
 #define FONT ROOT_DIR "/src/ressources/COMICATE.ttf"
 #define PRO ROOT_DIR "/src/ressources/TileMapEditorOutput/filledWithEnums/filledWithEnunm.tiled-project"
-#define DIALOG_WIDGETS_PATH "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/res.txt"
-#define HUD_WIGDETS_PATH "/home/marcocotrotzo/CLionProjects/rpg04/src/ressources/hud.txt"
+#define DIALOG_WIDGETS_PATH ROOT_DIR "/src/ressources/res.txt"
+#define HUD_WIGDETS_PATH ROOT_DIR "/src/ressources/hud.txt"
 #define TOAST_FRAME_DURATION 180
-#define PEROMANCE_TEST_MODE true
+#define PEROMANCE_TEST_MODE false

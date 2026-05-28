@@ -28,6 +28,9 @@ TEST(AISystemTest, executeAILogicHeavyAttack)
 	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	battleComponentE.AP = 2;
 	statsComponentE.health = 90;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
 	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_A;
@@ -57,6 +60,9 @@ TEST(AISystemTest, executeAILogicLightAttack)
 	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	battleComponentE.AP = 1;
 	statsComponentE.health = 90;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
 	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
@@ -85,6 +91,10 @@ TEST(AISystemTest, executeAILogicHeal)
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	InventoryComponent &inventoryComponetE = manager.getComponent<InventoryComponent>(enemy);
+
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	auto healingPack = manager.createEntity<ITEM_HEALSTATS_COMPONENT>();
 	inventoryComponetE.addItem(healingPack, ITEM_TYPE::HEALING);
@@ -120,6 +130,9 @@ TEST(AISystemTest, executeAILogicRest)
 	battleComponentE.AP = 0;
 	statsComponentE.health = 90;
 	battleComponentE.numberOfUltimateAttacksUsed = 1;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
 	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
 	enemyWeapon.weaponType = WeaponType::RANGE;
@@ -149,6 +162,9 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
 	battleComponentE.AP = 0;
 	statsComponentE.health = 90;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
 	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
@@ -166,10 +182,14 @@ TEST(AISystemTest, selectTargetWithMultipleEnemies)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent>();
-	EntityID enemy = manager.createEntity();
-	EntityID enemy2 = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent, BattleComponent>();
+	EntityID enemy = manager.createEntity<BattleComponent>();
+	EntityID enemy2 = manager.createEntity<BattleComponent>();
+	EntityID battle = manager.createEntity<BattleManagerComponent>();
+
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	auto target = aiSystem.selectTarget(enemy, {player, enemy, enemy2});
 	EXPECT_EQ(target.has_value(), true);

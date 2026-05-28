@@ -16,12 +16,14 @@ class BattleInputSystem : public System {
 	bool leftKeyWasPressed = false;
 	bool enterKeyWasPressed = false;
 	int lastDrawnAP = -1;
+	EntityID lastActiveId = -1;
 
   public:
 	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window);
 
 	void update() override;
 	void init();
+	std::optional<EntityID> getActiveLocalController();
 	static std::vector<EntityID> getTargetsInBattle(const EntityID playerId, const EntityID managerId,
 	                                                ArchetypeManager &manager);
 };

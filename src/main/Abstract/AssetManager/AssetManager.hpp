@@ -43,6 +43,7 @@ struct AssetManager {
 	sf::Texture getTextureAt(SpriteComponent &tile) { return getSpriteAt(tile).getTexture(); }
 
 	std::unordered_map<std::string, sf::SoundBuffer> soundBuffers = {};
+	std::unordered_map<std::string, std::string> soundPaths = {};
 	std::unordered_map<std::string, std::string> musicPaths = {};
 
 	void registerMusic(const std::string &name, const std::string &filepath)
@@ -61,22 +62,28 @@ struct AssetManager {
 	}
 	void registerSound(const std::string &name, const std::string &filepath)
 	{
-		sf::SoundBuffer buffer;
-		if (!buffer.loadFromFile(filepath)) {
-			spdlog::error("Failed to load sound file at: {}", filepath);
-			return;
-		}
-
-		soundBuffers[name] = std::move(buffer);
+		soundPaths[name] = filepath;
 		spdlog::info("Registered Sound Effect: {}", name);
 	}
 
 	sf::SoundBuffer &getSoundBuffer(const std::string &name)
 	{
-		if (!soundBuffers.contains(name)) {
+		if (soundBuffers.contains(name)) {
+			return soundBuffers[name];
+		}
+
+		if (!soundPaths.contains(name)) {
 			spdlog::error("Sound buffer '{}' not found in AssetManager!", name);
 			throw std::runtime_error("Sound buffer not found");
 		}
+
+		sf::SoundBuffer buffer;
+		if (!buffer.loadFromFile(soundPaths[name])) {
+			spdlog::error("Failed to load sound file at: {}", soundPaths[name]);
+			throw std::runtime_error("Failed to load sound buffer");
+		}
+
+		soundBuffers[name] = std::move(buffer);
 		return soundBuffers[name];
 	}
 

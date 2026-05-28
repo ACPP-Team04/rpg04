@@ -15,6 +15,9 @@ enum class BattleState {
 	DEFEAT,
 	STATS_DISTRIBUTION
 };
+enum class BATTLE_FACTION { PLAYER_PARTY, ENEMY };
+enum class BATTLE_CONTROLLER { LOCAL_PLAYER, AI };
+
 struct BattleComponent : Component<BattleComponent> {
   public:
 	BattleComponent() = default;
@@ -32,5 +35,7 @@ struct BattleComponent : Component<BattleComponent> {
 	float actionDelay = 0.0f;
 	EntityID battleManagerId;
 	std::optional<EntityID> hoveringTarget = std::nullopt;
+	BATTLE_FACTION faction = BATTLE_FACTION::ENEMY;
+	BATTLE_CONTROLLER controller = BATTLE_CONTROLLER::AI;
 	void readFromJson(tson::TiledClass &j) override {}
 };
