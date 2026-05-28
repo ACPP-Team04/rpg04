@@ -6,7 +6,7 @@ std::vector<EntityID> fillNEntities(int n)
 {
 	std::vector<EntityID> entities;
 	for (int i = 0; i < n; i++) {
-		entities.emplace_back();
+		entities.push_back(EntityID::create());
 	}
 	return entities;
 }
@@ -27,7 +27,7 @@ TEST(EntityID, Unique)
 TEST(EntityID, Copy)
 {
 	int currentCounter = EntityID::IdCounter;
-	EntityID origin = EntityID();
+	EntityID origin = EntityID::create();
 	EntityID copy = origin;
 
 	EXPECT_EQ(copy.getId(), origin.getId());

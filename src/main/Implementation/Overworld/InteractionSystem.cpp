@@ -17,23 +17,23 @@ InteractionSystem::InteractionSystem(ArchetypeManager &manager) : System(manager
 void InteractionSystem::update()
 {
 	EntityID player = WorldUtils::getPlayer(manager).value();
-	EntityID nearestInteractionEntity;
+	auto playerBB = manager.getComponent<TransformComponent>(player).getBoundingBox();
 	float smallestDistance = FLT_MAX;
+	EntityID nearestInteractionEntity;
 	bool candidateFound = false;
-	WorldUtils::viewInCurrentLayer<InteractionComponent, BoundIngBoxComponent>(
-	    manager, [&](auto &interactableEntity, InteractionComponent &component, BoundIngBoxComponent &bb) {
+	WorldUtils::viewInCurrentLayer<InteractionComponent, TransformComponent>(
+	    manager, [&](auto &interactableEntity, InteractionComponent &component, TransformComponent &bb) {
 		    component.inRange = false;
-
-		    auto &playerBB = manager.getComponent<BoundIngBoxComponent>(player);
-		    if (!isinRadius(playerBB, bb, component.focusRadius)) {
+		    auto interActableBB = bb.getBoundingBox(4.0,4.0);
+		    if (!collides(playerBB, interActableBB)) {
 			    component.isActive = false;
 			    component.mustLeaveRadius = false;
 			    return;
 		    }
 		    if (component.mustLeaveRadius)
 			    return;
-		    float newCandidateDistance = distance(playerBB.bounds, bb.bounds);
-		    if (distance(playerBB.bounds, bb.bounds) < smallestDistance) {
+		    float newCandidateDistance = distance(playerBB, interActableBB);
+		    if (distance(playerBB, interActableBB) < smallestDistance) {
 			    smallestDistance = newCandidateDistance;
 			    nearestInteractionEntity = interactableEntity;
 			    candidateFound = true;

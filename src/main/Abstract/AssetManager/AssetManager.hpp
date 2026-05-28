@@ -25,7 +25,7 @@ struct AssetManager {
 
 	std::unordered_map<std::string, std::shared_ptr<sf::Texture>> chacheImage = {};
 
-	sf::Sprite getSpriteAt(SpriteComponent &tile)
+	sf::Sprite getSpriteAt(TileInfo &tile)
 	{
 		if (!chacheImage.contains(tile.tilesetPath)) {
 			if (!textureSet->loadFromFile(tile.tilesetPath)) {
@@ -34,7 +34,11 @@ struct AssetManager {
 			chacheImage[tile.tilesetPath] = textureSet;
 		}
 		return {*chacheImage[tile.tilesetPath],
-		        sf::IntRect({tile.tileInfo.pixelX, tile.tileInfo.pixelY}, {tile.tileInfo.width, tile.tileInfo.height})};
+				sf::IntRect({tile.pixelX, tile.pixelY}, {tile.width, tile.height})};
+	}
+	sf::Sprite getSpriteAt(SpriteComponent &tile)
+	{
+		return getSpriteAt(tile.tileInfo);
 	}
 	sf::Texture getTextureAt(SpriteComponent &tile) { return getSpriteAt(tile).getTexture(); }
 

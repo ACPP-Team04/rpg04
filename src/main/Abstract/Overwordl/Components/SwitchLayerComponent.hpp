@@ -4,5 +4,8 @@
 
 struct SwitchLayerComponent : public Component<SwitchLayerComponent> {
 	int destination;
-	void readFromJson(tson::TiledClass &j) override { destination = j.get<int>("destination"); }
+	void readFromJson(tson::TiledClass &j) override
+	{
+		destination = j.get<unsigned int>("destination");
+	}
 };

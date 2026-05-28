@@ -16,7 +16,7 @@ class BattleInputSystem : public System {
 	bool leftKeyWasPressed = false;
 	bool enterKeyWasPressed = false;
 	int lastDrawnAP = -1;
-	EntityID lastActiveId = -1;
+	EntityID lastActiveId;
 
   public:
 	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window);

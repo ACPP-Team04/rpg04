@@ -3,16 +3,15 @@
 #include "Abstract/Combat/Components/CombatGodMode.hpp"
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
-#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
-#include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
 #include "Abstract/Utils/GraveConfig.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/StatsComponent.hpp"
-#include "Implementation/Components/WeaponComponent.hpp"
+
 #include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <Abstract/Combat/Systems/BattleInputSystem.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
+#include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
 #include <Abstract/Overwordl/Components/RenderComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
@@ -40,27 +39,16 @@ void CombatSystem::update()
 			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
 			if (bmc.isBattleOver) {
 				cleanUpBattle(battleId, battle.faction, battle.battleState);
-				spdlog::get("combat")->info("Cleanup is done");
-				auto playerOpt = WorldUtils::getPlayer(manager);
-				if (playerOpt.has_value()) {
-					spdlog::get("combat")->info("Player is here!");
-				} else {
-					spdlog::error("Player was accidentally DESTROYED!");
-				}
 				return;
 			}
 			battle.isActiveTurn = true;
 			switch (battle.battleState) {
-			case BattleState::TURN_START: {
-
+			case BattleState::TURN_START:
 				battle.battleState = BattleState::WAITING_FOR_INPUT;
-				auto &attackerBattleComp = manager.getComponent<BattleComponent>(currentAttacker);
-				if (attackerBattleComp.controller == BATTLE_CONTROLLER::AI) {
+				if (currentAttacker != playerId) {
 					aiSystem.executeAILogic(currentAttacker, bmc.participants);
 				}
-
 				break;
-			}
 			case BattleState::SELECTED_ACTION:
 				this->executeBattleAction(currentAttacker, battle.target, battle.selectedAction);
 				battle.battleState = BattleState::EXECUTING_ACTION;
@@ -71,12 +59,10 @@ void CombatSystem::update()
 				}
 				break;
 			case BattleState::CHECK_DEATH: {
-
 				auto result = this->checkDeathCondition(battle.target, currentAttacker);
 				if (result == BattleState::VICTORY) {
 					audioSystem.enqueueSound("victory_sound");
-					bmc.currentTurnIndex = 0;
-					manager.getComponent<BattleComponent>(playerId).battleState = BattleState::STATS_DISTRIBUTION;
+					battle.battleState = BattleState::STATS_DISTRIBUTION;
 				} else {
 					battle.battleState = result;
 				}
@@ -86,11 +72,9 @@ void CombatSystem::update()
 				this->passTurn(currentAttacker, bmc);
 				break;
 			case BattleState::VICTORY:
-				spdlog::get("combat")->info("Victory for player");
 				bmc.isBattleOver = true;
 				break;
 			case BattleState::DEFEAT:
-				spdlog::get("combat")->info("Defeat! for player");
 				bmc.isBattleOver = true;
 				break;
 			case BattleState::STATS_DISTRIBUTION:
@@ -98,6 +82,35 @@ void CombatSystem::update()
 			}
 		});
 	}
+}
+
+int CombatSystem::getActionCost(BattleAction action)
+{
+	switch (action) {
+	case BattleAction::LIGHT_ATTACK:
+		return 1;
+	case BattleAction::HEAVY_ATTACK:
+		return 2;
+	case BattleAction::HEAL:
+		return 2;
+	default:
+		return 0;
+	}
+}
+
+bool CombatSystem::validateAction(BattleAction action, const BattleComponent &battle)
+{
+	int cost = getActionCost(action);
+	if (battle.AP < cost) {
+		return false;
+	}
+	if (action == BattleAction::ULTIMATE_ATTACK && battle.numberOfUltimateAttacksUsed >= battle.maxUltimateAttacks) {
+		return false;
+	}
+	if (action == BattleAction::HEAL && battle.numberOfHealsUsed >= battle.maxHeals) {
+		return false;
+	}
+	return true;
 }
 
 void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, BattleAction typeOfAction)
@@ -125,55 +138,48 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	}
 
 	switch (typeOfAction) {
-
 	case BattleAction::LIGHT_ATTACK: {
-		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto &inventory = this->manager.getComponent<InventoryComponent>(attacker);
-		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
-		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
-		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
+		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
+		auto weaponId = attackerCharacter.equipedWeapon;
+		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
+		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
 		audioSystem.enqueueSound(attackerWeapon.hitSoundLight);
 		spdlog::get("combat")->info("Light Damage: {}", damage);
-		auto health = manager.getComponent<StatsComponent>(defender).health;
-		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
+		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<StateComponent>(defender).setState(LIGHT_HIT);
 		break;
 	}
 	case BattleAction::HEAVY_ATTACK: {
-
-		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto &inventory = this->manager.getComponent<InventoryComponent>(attacker);
-		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
-		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
-		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
+		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
+		auto weaponId = attackerCharacter.equipedWeapon;
+		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
+		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
 		audioSystem.enqueueSound(attackerWeapon.hitSoundHeavy);
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
-		auto health = manager.getComponent<StatsComponent>(defender).health;
-		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
+		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<StateComponent>(defender).setState(HEAVY_HIT);
 		break;
 	}
-
 	case BattleAction::ULTIMATE_ATTACK: {
-
-		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
-		auto &inventory = this->manager.getComponent<InventoryComponent>(attacker);
-		auto weaponId = inventory.getEquippedItem(ITEM_TYPE::WEAPON);
-		auto attackerWeapon = manager.getComponent<WeaponComponent>(weaponId);
-		float damage = getDamageWithScaling(attackerStats, attackerWeapon, typeOfAction);
+		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
+		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
+		auto weaponId = attackerCharacter.equipedWeapon;
+		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
+		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
 		audioSystem.enqueueSound(attackerWeapon.hitSoundUltimate);
 		spdlog::get("combat")->info("Ultimate Damage: {}", damage);
-		auto health = manager.getComponent<StatsComponent>(defender).health;
-		manager.getComponent<StatsComponent>(defender).health = std::max(0.0f, health - damage);
+		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<BattleComponent>(attacker).numberOfUltimateAttacksUsed += 1;
 		manager.getComponent<StateComponent>(defender).setState(ULTIMATE_HIT);
 		break;
 	}
 	case BattleAction::HEAL: {
-
-		auto &attackerStats = manager.getComponent<StatsComponent>(attacker);
+		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
 		audioSystem.enqueueSound("heal_sound");
-		this->takeHealAction(attacker, attackerStats.getStat(STATS::FAITH), attackerStats.getStat(STATS::MAX_HEALTH));
+		this->takeHealAction(attacker, attackerCharacter.stats.getStat(STATS::FAITH),
+		                     attackerCharacter.stats.getStat(STATS::MAX_HEALTH));
 		manager.getComponent<BattleComponent>(attacker).numberOfHealsUsed += 1;
 		break;
 	}
@@ -183,59 +189,42 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		break;
 	}
 	}
-	if (defender == -1) {
+
+	if (defender.getId() == -1) {
 		throw std::runtime_error("Defender is not set for action execution");
 	}
+
 	bool isOffensive = (typeOfAction == BattleAction::LIGHT_ATTACK || typeOfAction == BattleAction::HEAVY_ATTACK
 	                    || typeOfAction == BattleAction::ULTIMATE_ATTACK);
 
 	if (isOffensive) {
+		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
+		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
 		spdlog::get("combat")->info("Entity {} attacks Entity {} with action {}!", attacker.getId(), defender.getId(),
 		                            static_cast<int>(typeOfAction));
-
 		spdlog::get("combat")->info("Defender Entity {} has {} HP and {} AP left!", defender.getId(),
-		                            manager.getComponent<StatsComponent>(defender).health,
-		                            manager.getComponent<BattleComponent>(defender).AP);
+		                            defenderCharacter.stats.health, manager.getComponent<BattleComponent>(defender).AP);
+		spdlog::get("combat")->info("Attacker Entity {} has {} HP and {} AP left!", attacker.getId(),
+		                            attackerCharacter.stats.health, manager.getComponent<BattleComponent>(attacker).AP);
 	} else {
 		std::string actionName = (typeOfAction == BattleAction::HEAL) ? "heals" : "rests";
 		spdlog::get("combat")->info("Entity {} {}!", attacker.getId(), actionName);
+		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
+		spdlog::get("combat")->info("Attacker Entity {} has {} HP and {} AP left!", attacker.getId(),
+		                            attackerCharacter.stats.health, manager.getComponent<BattleComponent>(attacker).AP);
 	}
-
-	spdlog::get("combat")->info("Attacker Entity {} has {} HP and {} AP left!", attacker.getId(),
-	                            manager.getComponent<StatsComponent>(attacker).health,
-	                            manager.getComponent<BattleComponent>(attacker).AP);
 }
 
 void CombatSystem::takeHealAction(EntityID healer, int faith, int maxHealth)
 {
-	StatsComponent &statsComponent = manager.getComponent<StatsComponent>(healer);
-
+	CharacterComponent &character = manager.getComponent<CharacterComponent>(healer);
 	float healAmount = maxHealth * faith * 10.0 / 100.0f;
-	statsComponent.health = std::min((float)maxHealth, statsComponent.health + healAmount);
+	character.stats.health = std::min((float)maxHealth, character.stats.health + healAmount);
 }
 
-void CombatSystem::restoreAP(EntityID restorator)
-{
-	BattleComponent &battleComponent = manager.getComponent<BattleComponent>(restorator);
-	battleComponent.AP += 2;
-}
-
-bool CombatSystem::handleActionDelay(BattleComponent &battle)
-{
-	float dt = clock.restart().asSeconds();
-
-	battle.actionTimer += dt;
-
-	if (battle.actionTimer >= battle.actionDelay) {
-		battle.actionTimer = 0.0f;
-		return true;
-	}
-
-	return false;
-}
 BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attacker)
 {
-	float healthDefender = manager.getComponent<StatsComponent>(defender).health;
+	float healthDefender = manager.getComponent<CharacterComponent>(defender).stats.health;
 	if (healthDefender > 0.0) {
 		return BattleState::NEXT_ROUND;
 	}
@@ -246,23 +235,17 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 	} else {
 		throw std::runtime_error("No player found in checkDeathCondition");
 	}
-	auto &defenderBattleComp = manager.getComponent<BattleComponent>(defender);
+	bool playerIsAttacking = attacker == playerId;
+	bool playerIsDefending = defender == playerId;
 
-	if (defenderBattleComp.faction == BATTLE_FACTION::PLAYER_PARTY) {
-		if (defender == playerId && manager.hasComponent<CombatGodMode>(playerId)) {
-			manager.getComponent<StatsComponent>(defender).health = 100;
+	if (healthDefender <= 0 && playerIsDefending) {
+		if (manager.hasComponent<CombatGodMode>(playerId)) {
+			manager.getComponent<CharacterComponent>(defender).stats.health = 100;
 			spdlog::get("combat")->info("Healing player back to 100, because of god mode");
 			return BattleState::NEXT_ROUND;
 		}
-		manager.addComponentToEntity<DeathComponent>(defender);
-		auto &dc = manager.getComponent<DeathComponent>(defender);
-		dc.graveTile = GraveConfig::defaultTile;
-		dc.graveTilesetPath = GraveConfig::tilesetPath;
-
-		if (defender == playerId) {
-			return BattleState::DEFEAT;
-		}
-	} else {
+		return BattleState::DEFEAT;
+	} else if (healthDefender <= 0 && playerIsAttacking) {
 		manager.addComponentToEntity<DeathComponent>(defender);
 		auto &dc = manager.getComponent<DeathComponent>(defender);
 		dc.graveTile = GraveConfig::defaultTile;
@@ -270,7 +253,6 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 		audioSystem.enqueueSound("enemy_death_sound");
 	}
 	auto &attackerBattleComp = manager.getComponent<BattleComponent>(attacker);
-
 	std::vector<EntityID> aliveEnemies =
 	    BattleInputSystem::getTargetsInBattle(playerId, attackerBattleComp.battleManagerId, this->manager);
 
@@ -279,37 +261,7 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 	}
 	return BattleState::NEXT_ROUND;
 }
-void CombatSystem::passTurn(EntityID &currentEntity, BattleManagerComponent &bmc)
-{
 
-	manager.getComponent<BattleComponent>(currentEntity).isActiveTurn = false;
-	bmc.currentTurnIndex++;
-	EntityID nextId = this->getAttacker(bmc);
-	auto &nextBattleComponent = manager.getComponent<BattleComponent>(nextId);
-	nextBattleComponent.battleState = BattleState::TURN_START;
-	nextBattleComponent.isActiveTurn = true;
-}
-EntityID CombatSystem::getAttacker(BattleManagerComponent &bmc)
-{
-	if (bmc.participants.size() == 0) {
-		throw std::runtime_error("No participants in battle");
-	}
-	int numberOfParticipants = bmc.participants.size();
-	EntityID attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
-	if (!manager.hasComponent<DeathComponent>(attacker)) {
-		return attacker;
-	}
-	int loopSafeguard = 0;
-	while (manager.hasComponent<DeathComponent>(attacker)) {
-		bmc.currentTurnIndex++;
-		loopSafeguard++;
-		if (loopSafeguard > numberOfParticipants) {
-			throw std::runtime_error("All participants are dead, but battle is not over");
-		}
-		attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
-	}
-	return attacker;
-}
 void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winningBattleFaction, BattleState battleState)
 {
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battleManagerId);
@@ -323,7 +275,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		BATTLE_FACTION battleFaction = manager.getComponent<BattleComponent>(entity).faction;
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		if (battleFaction == winningBattleFaction) {
-			auto &stats = manager.getComponent<StatsComponent>(entity);
+			auto &stats = manager.getComponent<CharacterComponent>(entity).stats;
 			if (stats.health > stats.getStat(STATS::MAX_HEALTH)) {
 				spdlog::get("combat")->warn(
 				    "HP of Entity {} have been set to max_health {}, which is lower than current health {}",
@@ -338,7 +290,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 				manager.removeComponentFromEntity<DeathComponent>(entity);
 			}
 			// Hide companions again
-			if (entity != playerIdOpt.value()) {
+			if (entity.getId() == manager.getComponent<CharacterComponent>(playerIdOpt.value()).equipedCompanion) {
 				if (manager.hasComponent<PartOfLayerComponent>(entity)) {
 					manager.removeComponentFromEntity<PartOfLayerComponent>(entity);
 				}
@@ -348,9 +300,9 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		}
 	}
 	manager.destroyEntity(battleManagerId);
-
+	manager.addComponentToEntity<InputComponent>(playerIdOpt.value());
 	if (battleState == BattleState::VICTORY) {
-		manager.addComponentToEntity<InputComponent>(playerIdOpt.value());
+
 		for (EntityID defeatedEnemy : defeatedEnemies) {
 			manager.destroyEntity(defeatedEnemy);
 		}
@@ -366,6 +318,55 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		spdlog::get("combat")->info("You lost the battle! Game over");
 	}
 	audioSystem.switchMusic("overworld", true);
+}
+
+void CombatSystem::restoreAP(EntityID restorator)
+{
+	BattleComponent &battleComponent = manager.getComponent<BattleComponent>(restorator);
+	battleComponent.AP += 2;
+}
+
+bool CombatSystem::handleActionDelay(BattleComponent &battle)
+{
+	float dt = clock.restart().asSeconds();
+	battle.actionTimer += dt;
+	if (battle.actionTimer >= battle.actionDelay) {
+		battle.actionTimer = 0.0f;
+		return true;
+	}
+	return false;
+}
+
+void CombatSystem::passTurn(EntityID &currentEntity, BattleManagerComponent &bmc)
+{
+	manager.getComponent<BattleComponent>(currentEntity).isActiveTurn = false;
+	bmc.currentTurnIndex++;
+	EntityID nextId = this->getAttacker(bmc);
+	auto &nextBattleComponent = manager.getComponent<BattleComponent>(nextId);
+	nextBattleComponent.battleState = BattleState::TURN_START;
+	nextBattleComponent.isActiveTurn = true;
+}
+
+EntityID CombatSystem::getAttacker(BattleManagerComponent &bmc)
+{
+	if (bmc.participants.size() == 0) {
+		throw std::runtime_error("No participants in battle");
+	}
+	int numberOfParticipants = bmc.participants.size();
+	auto attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
+	if (!manager.hasComponent<DeathComponent>(attacker)) {
+		return attacker;
+	}
+	int loopSafeguard = 0;
+	while (manager.hasComponent<DeathComponent>(attacker)) {
+		bmc.currentTurnIndex++;
+		loopSafeguard++;
+		if (loopSafeguard > numberOfParticipants) {
+			throw std::runtime_error("All participants are dead, but battle is not over");
+		}
+		attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
+	}
+	return attacker;
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
@@ -387,35 +388,4 @@ float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, c
 float CombatSystem::getMultiplicatorFromScalingFactor(StatsComponent stats, const WeaponComponent &weaponComponent)
 {
 	return stats.getStat(weaponComponent.scalingStat) * weaponComponent.getScalingFactor();
-}
-
-int CombatSystem::getActionCost(BattleAction action)
-{
-	switch (action) {
-	case BattleAction::LIGHT_ATTACK:
-		return 1;
-	case BattleAction::HEAVY_ATTACK:
-		return 2;
-	case BattleAction::HEAL:
-		return 2;
-	default:
-		return 0;
-	}
-}
-
-bool CombatSystem::validateAction(BattleAction action, const BattleComponent &battle)
-
-{
-	int cost = getActionCost(action);
-	if (battle.AP < cost) {
-		return false;
-	}
-	if (action == BattleAction::ULTIMATE_ATTACK && battle.numberOfUltimateAttacksUsed >= battle.maxUltimateAttacks) {
-		return false;
-	}
-
-	if (action == BattleAction::HEAL && battle.numberOfHealsUsed >= battle.maxHeals) {
-		return false;
-	}
-	return true;
 }

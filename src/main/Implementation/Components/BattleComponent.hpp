@@ -27,7 +27,7 @@ struct BattleComponent : Component<BattleComponent> {
 	int maxUltimateAttacks{1};
 	int maxHeals{2};
 	BattleAction selectedAction;
-	EntityID target{-1};
+	EntityID target = EntityID();
 	bool isPlayerTeam;
 	bool isActiveTurn = false;
 	BattleState battleState = BattleState::TURN_START;

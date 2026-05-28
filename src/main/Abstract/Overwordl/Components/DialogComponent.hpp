@@ -1,45 +1,27 @@
 #pragma once
 #include "Abstract/ECS/Component/Component.hpp"
 #include "Abstract/TILE_ENUMS.hpp"
-#include "Abstract/Utils/Color.hpp"
 #include <memory>
-#include <nlohmann/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
 struct DialogChoice;
-template <typename T>
-T getValueFromJson(const nlohmann::json &j, std::string key, T defaultValue, bool throwErrorWhenNotPresent = true)
-{
-	nlohmann::json target = j;
-	if (j.is_object() && j.contains("value")) {
-		target = j["value"];
-	}
 
-	if (!target.is_object() || !target.contains(key)) {
-		if (throwErrorWhenNotPresent) {
-			throw std::runtime_error("Key is not present in JSON: " + key);
-		}
-		return defaultValue;
-	}
-
-	return target.value(key, defaultValue);
-}
 
 struct DialogAction {
 	DIALOG_ACTIONS action = DIALOG_ACTIONS::NO_ACTION;
 	virtual ~DialogAction() = default;
-	virtual void readFromNlohmannJson(const nlohmann::json &j) {}
+	virtual void readFromJson(tson::TiledClass &j) {}
 };
 
 struct SwitchLayerAction : public DialogAction {
 	int destinationId = 0;
 	SwitchLayerAction() { this->action = DIALOG_ACTIONS::SWITCH_LAYER_DIALOG_ACTION; }
 
-	void readFromNlohmannJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j) override
 	{
-		destinationId = getValueFromJson(j, "switch_layer_id_destination_id", 0, true);
+		destinationId = j.get<int>("switch_layer_id_destination_id");
 	}
 };
 
@@ -47,15 +29,15 @@ struct GET_ITEM_ACTION : public DialogAction {
 	int itemId = 0;
 	GET_ITEM_ACTION() { this->action = DIALOG_ACTIONS::GET_ITEM; }
 
-	void readFromNlohmannJson(const nlohmann::json &j) override
+	void readFromJson(tson::TiledClass &j)  override
 	{
-		itemId = getValueFromJson(j, "get_item_id", 0, true);
+		itemId = j.get<int>("get_item_id");
 	}
 };
 
 struct COMPANION_ACTION : public DialogAction {
 	COMPANION_ACTION() { this->action = DIALOG_ACTIONS::COMPANION; }
-	void readFromNlohmannJson(const nlohmann::json &j) override {
+	void readFromJson(tson::TiledClass &j) override {
 
 	};
 };
@@ -65,12 +47,12 @@ struct DialogChoice {
 	int nextNodeIndex = -1;
 	std::shared_ptr<DialogAction> action;
 
-	void readFromNlohmannJson(const nlohmann::json &j)
+	void readFromJson(tson::TiledClass &j)
 	{
-		text = getValueFromJson(j, "text", text);
-		auto isChoiceData = getValueFromJson(j, "isChoiceData", nlohmann::json());
-		DIALOG_ACTIONS actionType = getValueFromJson(isChoiceData, "action", DIALOG_ACTIONS::NO_ACTION);
-		nextNodeIndex = getValueFromJson(isChoiceData, "nextnodeId", -1, false);
+		text = j.get<std::string>("text");
+		auto isChoiceData = j.get<tson::TiledClass>("isChoiceData");
+		DIALOG_ACTIONS actionType = DIALOG_ACTIONS(isChoiceData.get<int>("action"));
+		nextNodeIndex = isChoiceData.get<int>("nextnodeId");
 		switch (actionType) {
 		case DIALOG_ACTIONS::GET_ITEM:
 			this->action = std::make_shared<GET_ITEM_ACTION>();
@@ -85,7 +67,7 @@ struct DialogChoice {
 			this->action = std::make_shared<DialogAction>();
 			break;
 		}
-		this->action->readFromNlohmannJson(isChoiceData);
+		this->action->readFromJson(isChoiceData);
 	}
 };
 
@@ -95,11 +77,11 @@ struct DialogNode {
 	int nextNodeIndex = -1;
 	std::vector<DialogChoice> choices;
 
-	void readFromNlohmannJson(const nlohmann::json &j)
+	void readFromJson(tson::TiledClass &j)
 	{
-		text = getValueFromJson(j, "text", text);
-		auto isNodeData = getValueFromJson(j, "isNodeData", nlohmann::json());
-		speakerId = getValueFromJson(isNodeData, "speaker", 0, true);
+		text = j.get<std::string>("text");
+		auto isNodeData = j.get<tson::TiledClass>("isNodeData");
+		speakerId = isNodeData.get<int>("speaker");
 	}
 };
 
@@ -108,8 +90,6 @@ struct DialogComponent : public Component<DialogComponent> {
 	bool currentNodeSent = false;
 	std::vector<DialogNode> nodes;
 	int currentNodeIndex = 0;
-
-	void readFromJson(tson::TiledClass &j) override {}
 
 	DialogNode &current()
 	{
@@ -138,50 +118,51 @@ struct DialogComponent : public Component<DialogComponent> {
 		currentNodeSent = false;
 	}
 
-	void readFromNlohmannJson(const nlohmann::json &j)
+	void readFromJson(tson::TiledClass &j) override
 	{
-		auto &dialogSequence = j["dialog_node"];
-		if (!dialogSequence.is_array() || dialogSequence.empty()) {
-			throw std::invalid_argument("dialog_node must be a non-empty array");
-		}
-
-		if (getTypeFromJson(dialogSequence.front()) == DIALOG_TYPE::CHOICE) {
+		tson::TiledClass dialogSequence = j.get<tson::TiledClass>("dialog_node");
+		tson::TiledClass first = dialogSequence.get<tson::TiledClass>("0");
+		DIALOG_TYPE firstType = DIALOG_TYPE(first.get<int>("dialogType"));
+		if (firstType == DIALOG_TYPE::CHOICE) {
 			DialogNode fakeStart;
 			fakeStart.text = "Select";
 			fakeStart.nextNodeIndex = -1;
 			nodes.push_back(fakeStart);
 		}
 
-		std::vector<std::pair<int, nlohmann::json>> pendingChoices;
+		std::vector<std::pair<int, tson::TiledClass>> pendingChoices;
 		std::unordered_map<int, int> jsonIndexToNodeIndex;
 
-		for (size_t i = 0; i < dialogSequence.size(); ++i) {
-			auto &nodeJson = dialogSequence[i];
-			DIALOG_TYPE type = getTypeFromJson(nodeJson);
+		int i = 0;
+		while (dialogSequence.getMember(std::to_string(i)) != nullptr) {
+			tson::TiledClass nodeClass = dialogSequence.get<tson::TiledClass>(std::to_string(i));
+			DIALOG_TYPE type = DIALOG_TYPE(nodeClass.get<int>("dialogType"));
+
 			if (type == DIALOG_TYPE::NODE) {
 				jsonIndexToNodeIndex[i] = (int)nodes.size();
 				DialogNode node;
-				node.readFromNlohmannJson(nodeJson);
+				node.readFromJson(nodeClass);
 				nodes.push_back(node);
 			} else if (type == DIALOG_TYPE::CHOICE) {
-				pendingChoices.emplace_back((int)nodes.size() - 1, nodeJson);
+				pendingChoices.emplace_back((int)nodes.size() - 1, nodeClass);
 			}
+			i++;
 		}
-		for (auto &[nodeIdx, choiceJson] : pendingChoices) {
-			if (nodeIdx >= 0 && nodeIdx < (int)nodes.size()) {
-				DialogChoice choice;
-				choice.readFromNlohmannJson(choiceJson);
-				if (jsonIndexToNodeIndex.contains(choice.nextNodeIndex)) {
-					choice.nextNodeIndex = jsonIndexToNodeIndex[choice.nextNodeIndex];
-				} else {
-					choice.nextNodeIndex = -1;
-				}
-				nodes[nodeIdx].choices.push_back(choice);
+		for (auto &[nodeIdx, choiceClass] : pendingChoices) {
+			if (nodeIdx < 0 || nodeIdx >= (int)nodes.size()) continue;
+			DialogChoice choice;
+			choice.readFromJson(choiceClass);
+			if (jsonIndexToNodeIndex.contains(choice.nextNodeIndex)) {
+				choice.nextNodeIndex = jsonIndexToNodeIndex[choice.nextNodeIndex];
+			} else {
+				choice.nextNodeIndex = -1;
 			}
+			nodes[nodeIdx].choices.push_back(choice);
 		}
-		for (size_t i = 0; i < nodes.size(); ++i) {
-			if (nodes[i].choices.empty() && nodes[i].nextNodeIndex < 0) {
-				nodes[i].nextNodeIndex = (i + 1 < nodes.size()) ? (int)(i + 1) : -1;
+
+		for (size_t k = 0; k < nodes.size(); ++k) {
+			if (nodes[k].choices.empty() && nodes[k].nextNodeIndex < 0) {
+				nodes[k].nextNodeIndex = (k + 1 < nodes.size()) ? (int)(k + 1) : -1;
 			}
 		}
 	}
@@ -204,6 +185,4 @@ struct DialogComponent : public Component<DialogComponent> {
 		reset();
 		this->isActive = true;
 	}
-
-	DIALOG_TYPE getTypeFromJson(const nlohmann::json &j) { return getValueFromJson(j, "dialogType", DIALOG_TYPE()); }
 };

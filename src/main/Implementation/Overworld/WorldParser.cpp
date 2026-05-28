@@ -1,7 +1,6 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
-#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemComponent.hpp"
 #include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
@@ -27,50 +26,13 @@
 #include <utility>
 
 WorldParser::WorldParser(ArchetypeManager &manager, sf::RenderWindow &window)
-    : System(manager), window(window), project(PRO)
+    : System(manager), window(window), project(PRO),t(&project)
 {
-	tson::Tileson t{&project};
 	map = t.parse(fs::path(MAP));
-	if (!map) {
-		throw std::runtime_error(std::string("Failed to parse map: ") + MAP);
-	}
-
 	std::ifstream f(MAP);
-	if (!f.is_open()) {
-		throw std::runtime_error(std::string("Failed to open map json: ") + MAP);
-	}
 	rawJson = nlohmann::json::parse(f);
 }
-
-void WorldParser::undfoldLayers(std::vector<tson::Layer> &layers, std::vector<tson::Layer> &objectLayers,
-                                std::vector<tson::Layer> &tileLayers)
-{
-	for (auto &layer : layers) {
-		if (layer.getType() == tson::LayerType::TileLayer) {
-			tileLayers.push_back(layer);
-		}
-		if (layer.getType() == tson::LayerType::ObjectGroup) {
-			objectLayers.push_back(layer);
-		}
-		this->undfoldLayers(layer.getLayers(), objectLayers, tileLayers);
-	}
-}
-
-tson::Property getPropertyByPropertyType(tson::PropertyCollection props, std::string type)
-{
-	for (auto &prop : props.getProperties()) {
-		if (prop.second.getPropertyType() == type) {
-			return prop.second;
-		}
-	}
-	throw std::logic_error(fmt::format("Unknown property type: {}", type));
-};
-
-tson::TiledClass getCustomPropertyAsClass(tson::Property prop)
-{
-	return prop.getValue<tson::TiledClass>();
-}
-
+/*
 void equibFists(ArchetypeManager &manager, const WorldComponent &component)
 {
 	manager.view<InventoryComponent>().each([&](auto &entity, InventoryComponent &icomp) {
@@ -81,8 +43,8 @@ void equibFists(ArchetypeManager &manager, const WorldComponent &component)
 		}
 		if (!manager.hasComponent<StatsComponent>(entity)) {
 			manager.addComponentToEntity<StatsComponent>(entity);
-			spdlog::info("Added stats component to entity: {}", entity.getId());
-			spdlog::info("Entity health: {}", manager.getComponent<StatsComponent>(entity).health);
+			std::cout << "Added stats component to entity: " << entity.getId() << std::endl;
+			std::cout << manager.getComponent<StatsComponent>(entity).health << std::endl;
 		}
 	});
 }
@@ -108,243 +70,95 @@ void parseRawEquipmentComponent(ArchetypeManager &manager, const WorldComponent 
 	}
 }
 
-void WorldParser::addTransformcomponent(ArchetypeManager &manager, EntityID id, tson::Object obj, LEVEL_NAME level)
+*/
+
+
+tson::TiledClass jsonToTiledClass(const nlohmann::json &json)
 {
-	manager.addComponentToEntity<PartOfLayerComponent>(id);
-	manager.getComponent<PartOfLayerComponent>(id).level = level;
-	manager.addComponentToEntity<BoundIngBoxComponent>(id);
-
-	manager.addComponentToEntity<TransformComponent>(id);
-	manager.getComponent<TransformComponent>(id).position.x = (float)obj.getPosition().x;
-	manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;
-	manager.getComponent<TransformComponent>(id).setRotation((float)obj.getRotation());
-	float sx = (float)obj.getSize().x / (float)map->getTileSize().x;
-	float sy = (float)obj.getSize().y / (float)map->getTileSize().y;
-	manager.getComponent<TransformComponent>(id).scale.x = (sx > 0.f) ? sx : 1.f;
-	manager.getComponent<TransformComponent>(id).scale.y = (sy > 0.f) ? sy : 1.f;
-}
-
-void flipIfNeeded(ArchetypeManager &manager, EntityID id, tson::Object obj)
-{
-	SpriteComponent &sprite = manager.getComponent<SpriteComponent>(id);
-	switch (obj.getFlipFlags()) {
-
-	case tson::TileFlipFlags::None:
-		break;
-	case tson::TileFlipFlags::Diagonally:
-		break;
-	case tson::TileFlipFlags::Vertically:
-		sprite.tileInfo.pixelY += sprite.tileInfo.height;
-		sprite.tileInfo.height *= -1;
-	case tson::TileFlipFlags::Horizontally:
-		sprite.tileInfo.pixelX += sprite.tileInfo.width;
-		sprite.tileInfo.width *= -1;
-	}
-}
-
-void WorldParser::addRenderComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
-{
-	if (obj.isVisible()) {
-		manager.addComponentToEntity<RenderComponent>(id);
-		manager.getComponent<RenderComponent>(id).z_layer = 1;
-	}
-}
-
-void WorldParser::addSpriteComponent(ArchetypeManager &manager, EntityID id, tson::Object obj)
-{
-	manager.addComponentToEntity<SpriteComponent>(id);
-	auto &sprite = manager.getComponent<SpriteComponent>(id);
-
-	if (obj.getObjectType() == tson::ObjectType::Object) {
-		tson::Tileset *tileset = map->getTilesetByGid(obj.getGid());
-		int localId = obj.getGid() - tileset->getFirstgid();
-		int cols = tileset->getColumns();
-		int tw = tileset->getTileSize().x;
-		int th = tileset->getTileSize().y;
-
-		sprite.tileInfo = {(localId % cols) * tw, (localId / cols) * th, tw, th};
-		sprite.tilesetPath = (fs::path(MAP).parent_path() / tileset->getImagePath()).string();
-	}
-	if (obj.getObjectType() == tson::ObjectType::Rectangle) {
-		if (map->getTilesets().empty()) {
-			throw std::runtime_error("You need to embedd a tileset!");
-		}
-
-		auto firsTileset = map->getTilesets()[0];
-
-		int tilewidth = firsTileset.getTileSize().x;
-		int tileheight = firsTileset.getTileSize().y;
-		sprite.tileInfo = {0, 0, tilewidth, tileheight};
-		sprite.tilesetPath = (fs::path(MAP).parent_path() / firsTileset.getImagePath()).string();
-	}
-}
-
-void WorldParser::addTilesonComponents(ArchetypeManager &manager, EntityID id, tson::Object obj)
-{
-	for (auto &prop : obj.getProperties().getProperties()) {
-		std::string propType = prop.second.getPropertyType();
-		spdlog::info("Adding: {}", propType);
-		ComponentRegistry &componentRegistry = ComponentRegistry::getInstance();
-		auto func = componentRegistry.getCreationFunctions(propType);
-		auto propClass = getCustomPropertyAsClass(prop.second);
-		if (func) {
-
-			func(manager, id, propClass);
-		}
-		spdlog::info("Added: {}", propType);
-	}
-}
-
-void WorldParser::addPartOfLayerComponents(ArchetypeManager &manager, EntityID id, tson::Object obj, LEVEL_NAME level)
-{
-	manager.addComponentToEntity<PartOfLayerComponent>(id);
-	manager.getComponent<PartOfLayerComponent>(id).level = level;
-}
-
-void WorldParser::addBoundingBoxComponents(ArchetypeManager &manager, EntityID id, tson::Object obj)
-{
-	manager.addComponentToEntity<BoundIngBoxComponent>(id);
-}
-
-void WorldParser::
-createTileObject(std::tuple<tson::TileObject, LEVEL_NAME> &tuple)
-{
-	auto obj = std::get<0>(tuple);
-	auto level = std::get<1>(tuple);
-	EntityID id = manager.createEntity();
-	manager.addComponentToEntity<TransformComponent>(id);
-	manager.getComponent<TransformComponent>(id).position.x = (float)obj.getPosition().x;
-	manager.getComponent<TransformComponent>(id).position.y = (float)obj.getPosition().y;
-	manager.addComponentToEntity<RenderComponent>(id);
-	manager.getComponent<RenderComponent>(id).z_layer = 0;
-	manager.addComponentToEntity<SpriteComponent>(id);
-
-	auto &sprite = manager.getComponent<SpriteComponent>(id);
-
-	sprite.tileInfo = {obj.getDrawingRect().x, obj.getDrawingRect().y, obj.getDrawingRect().width,
-	                   obj.getDrawingRect().height};
-	sprite.tilesetPath = (fs::path(MAP).parent_path() / obj.getTile()->getTileset()->getImagePath()).string();
-
-	manager.addComponentToEntity<PartOfLayerComponent>(id);
-	manager.getComponent<PartOfLayerComponent>(id).level = level;
-	manager.addComponentToEntity<StateComponent>(id);
-}
-
-void getAllObjectsWithAnimationComponent(nlohmann::json &rawMapJson,
-                                         std::unordered_map<int, nlohmann::json> &objectsWithComponent,
-                                         const std::string &componentName = "ANIMATION_COMPONENT")
-{
-
-	for (auto &layer : rawMapJson["layers"]) {
-		if (!layer.contains("objects"))
-			continue;
-		for (auto &obj : layer["objects"]) {
-			if (!obj.contains("properties"))
-				continue;
-			for (auto &prop : obj["properties"]) {
-				if (prop["propertytype"].get<std::string>() == componentName) {
-					objectsWithComponent[obj["id"].get<int>()] = prop["value"];
+	tson::TiledClass cls;
+	for (auto &[key, value] : json.items()) {
+		if (value.is_array()) {
+			tson::TiledClass arrayClass;
+			for (int i = 0; i < (int)value.size(); i++) {
+				nlohmann::json element = value[i];
+				if (element.is_object() && element.contains("type") && element["type"] == "class" && element.contains("value")) {
+					element = element["value"];
 				}
+				arrayClass.getMembers().add(std::to_string(i), jsonToTiledClass(element), tson::Type::Class);
+				int id = 1;
+			}
+			cls.getMembers().add(key, arrayClass, tson::Type::Class);
+		} else if (value.is_object()) {
+			cls.getMembers().add(key, jsonToTiledClass(value), tson::Type::Class);
+		} else if (value.is_string()) {
+			cls.getMembers().add(key, value.get<std::string>(), tson::Type::String);
+		} else if (value.is_number_integer()) {
+			cls.getMembers().add(key, value.get<int>(), tson::Type::Int);
+		} else if (value.is_number_float()) {
+			cls.getMembers().add(key, value.get<float>(), tson::Type::Float);
+		} else if (value.is_boolean()) {
+			cls.getMembers().add(key, value.get<bool>(), tson::Type::Boolean);
+		}
+	}
+	return cls;
+}
+void patchLayerRecursive(nlohmann::json &layer, tson::Layer *tsonLayer)
+{
+	if (!tsonLayer) return;
+
+	if (layer.contains("objects")) {
+		for (auto &rawObj : layer["objects"]) {
+			if (!rawObj.contains("properties")) continue;
+			tson::Object *obj = tsonLayer->getObj(rawObj["id"].get<int>());
+			if (!obj) continue;
+			for (auto &prop : rawObj["properties"]) {
+				if (prop["type"] != "class") continue;
+				bool hasArray = false;
+				for (auto &[k, v] : prop["value"].items()) {
+					if (v.is_array()) { hasArray = true; break; }
+				}
+				if (!hasArray) continue;
+				std::string propType = prop["propertytype"].get<std::string>();
+				std::string propName = prop["name"].get<std::string>(); // "animation"
+				tson::TiledClass cls = jsonToTiledClass(prop["value"]);
+				obj->getProperties().getProperty(propName)->setValue(cls);
+				int g = 0;
 			}
 		}
 	}
-}
-void WorldParser::addAnimationComponent(ArchetypeManager &manager, EntityID id, nlohmann::json &data)
-{
-	manager.addComponentToEntity<AnimationComponent>(id);
-	auto &anim = manager.getComponent<AnimationComponent>(id);
-
-	for (auto &sequences : data["sequences"]) {
-		ENTITY_ANIMATIONS_STATE state = sequences["value"].value("state", ENTITY_ANIMATIONS_STATE());
-		AnimationSequence animSeq;
-		for (auto &seq : sequences["value"].value("sequence", nlohmann::json::array())) {
-			Animation animation = {seq["value"].value("entitySpriteId", 0), seq["value"].value("numFrames", 0)};
-			animSeq.push_back(animation);
+	if (layer.contains("layers")) {
+		auto& subLayers = tsonLayer->getLayers();
+		for (int i = 0; i < (int)layer["layers"].size(); i++) {
+			patchLayerRecursive(layer["layers"][i], &subLayers[i]);
 		}
-		anim.addAnimation(state, animSeq);
+	}
+
+}
+
+void patchArrayProperties(nlohmann::json &rawMapJson, const std::unique_ptr<tson::Map>& map)
+{
+	auto& tsonLayers = map->getLayers();
+	for (int i = 0; i < (int)rawMapJson["layers"].size(); i++) {
+		patchLayerRecursive(rawMapJson["layers"][i], &tsonLayers[i]);
 	}
 }
 
-void WorldParser::parseDialogComponent(ArchetypeManager &manager, nlohmann::json &data,
-                                       std::unordered_map<int, nlohmann::json> &objectsWithComponent)
-{
-	for (auto [id, compData] : objectsWithComponent) {
-		manager.addComponentToEntity<DialogComponent>(id);
-		manager.getComponent<DialogComponent>(id).readFromNlohmannJson(compData);
-	}
-}
-void WorldParser::createEntity(std::tuple<tson::Object, LEVEL_NAME> &tuple,
-                               std::unordered_map<int, nlohmann::json> &animationDataByObjectId)
-{
-	auto obj = std::get<0>(tuple);
-	if (obj.getObjectType() != tson::ObjectType::Rectangle && obj.getObjectType() != tson::ObjectType::Object) {
-		throw std::runtime_error("We allow only rectangle objects");
-	}
-	auto level = std::get<1>(tuple);
-	EntityID id = manager.createEntityWithId(obj.getId());
-	addTransformcomponent(manager, id, obj, level);
-	addRenderComponent(manager, id, obj);
-	addSpriteComponent(manager, id, obj);
-	addBoundingBoxComponents(manager, id, obj);
-	addPartOfLayerComponents(manager, id, obj, level);
-	if (animationDataByObjectId.contains(obj.getId())) {
-		addAnimationComponent(manager, id, animationDataByObjectId[obj.getId()]);
-	}
-	addTilesonComponents(manager, id, obj);
-	manager.addComponentToEntity<StateComponent>(id);
-	flipIfNeeded(manager, id, obj);
-}
 void WorldParser::update()
 {
-	tson::Tileson t;
 
+
+	patchArrayProperties(rawJson, map);
 	EntityID world = manager.createEntity<WorldComponent>();
+
 	WorldComponent &worldComp = manager.getComponent<WorldComponent>(world);
-	std::unordered_map<int, nlohmann::json> animationDataByObjectId;
-	std::unordered_map<int, nlohmann::json> objectsWithDialogComponent;
-	getAllObjectsWithAnimationComponent(rawJson, animationDataByObjectId);
-	getAllObjectsWithAnimationComponent(rawJson, objectsWithDialogComponent, "DIALOG_COMPONENT");
+	worldComp.readFromJson(map,rawJson);
 
-	std::vector<tson::Layer> objectLayers;
-	std::vector<tson::Layer> tileLayers;
-	worldComp.widthPixel = map->getSize().x * map->getTileSize().x;
-	worldComp.heightPixel = map->getSize().y * map->getTileSize().y;
-	worldComp.currentLevel = LEVEL_NAME::LEVEL1;
-	worldComp.currentLayer = LAYERTYPE::OVERWORLD;
+	EntityFactory factory = EntityFactory(manager);
+	factory.readFromJson(map);
+	EntityID player = WorldUtils::getPlayer(manager).value();
+	worldComp.currentGroup = manager.getComponent<PartOfLayerComponent>(player).groupId;
 
-	undfoldLayers(map->getLayers(), objectLayers, tileLayers);
-
-	std::map<int, std::tuple<tson::Object, LEVEL_NAME>> objects;
-
-	for (auto &objlayer : objectLayers) {
-
-		tson::Property config = getPropertyByPropertyType(objlayer.getProperties(), "LayerConfig");
-
-		auto configObject = getCustomPropertyAsClass(config);
-		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject, "levelName");
-		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject, "layerType");
-		for (auto &obj : objlayer.getObjects()) {
-			objects[obj.getId()] = {obj, level_name};
-		}
-	}
-
-	for (auto &tr : objects) {
-		createEntity(tr.second, animationDataByObjectId);
-	}
-
-	for (auto &tileLayer : tileLayers) {
-		tson::Property config = getPropertyByPropertyType(tileLayer.getProperties(), "LayerConfig");
-		auto configObject = getCustomPropertyAsClass(config);
-		LEVEL_NAME level_name = WorldUtils::getEnumValue<LEVEL_NAME>(configObject, "levelName");
-		LAYERTYPE layertype = WorldUtils::getEnumValue<LAYERTYPE>(configObject, "layerType");
-
-		for (auto &[pos, tileObject] : tileLayer.getTileObjects()) {
-			std::tuple<tson::TileObject, LEVEL_NAME> obj = std::make_tuple(tileObject, level_name);
-			createTileObject(obj);
-		}
-	}
-
-	parseDialogComponent(manager, rawJson, objectsWithDialogComponent);
+	/*
 	parseRawEquipmentComponent(manager, worldComp);
-	equibFists(manager, worldComp);
+	equibFists(manager, worldComp);*/
 }

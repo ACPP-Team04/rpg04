@@ -1,10 +1,10 @@
 #include "Abstract/Combat/Systems/HealthBarSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/StatsComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <spdlog/spdlog.h>
 
@@ -52,7 +52,7 @@ void HealthBarSystem::update()
 
 			activeEntities.push_back(id);
 
-			auto &stats = manager.getComponent<StatsComponent>(id);
+			auto &stats = manager.getComponent<CharacterComponent>(id).stats;
 			auto &transform = manager.getComponent<TransformComponent>(id);
 
 			sf::Vector2i pixelPos = window.mapCoordsToPixel(transform.position);

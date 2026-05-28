@@ -13,7 +13,7 @@ struct DialogSystem : System {
 	sf::RenderWindow &window;
 	tgui::Gui &gui;
 	DialogSystem(ArchetypeManager &manager, sf::RenderWindow &window, tgui::Gui &gui);
-	EntityID activeDialogEntity;
+	EntityID activeDialogEntity=EntityID::create();
 	bool hasActiveDialog = false;
 
 	void update() override;

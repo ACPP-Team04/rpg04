@@ -5,8 +5,8 @@
 
 #include "Abstract/Overwordl/Components/AnimationComponent.hpp"
 #include "Abstract/Overwordl/Components/AnimationPartComponent.hpp"
-#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/CollisionComponent.hpp"
 #include "Abstract/Overwordl/Components/DialogComponent.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
@@ -80,18 +80,17 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<BoundIngBoxComponent>("BOUNDING_BOX_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ItemComponent>("ITEM_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<InventoryComponent>("INVENTORY_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleComponent>("BATTLE_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
-	ComponentRegistry::getInstance().registerComponent<WeaponComponent>("ITEM_WEAPON_STATS_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AudioComponent>("AUDIO_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AnimationPartComponent>("ANIMATION_SPRITE_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<AnimationComponent>("ANIMATION_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<CharacterComponent>("CharacterComponent");
 }
 
 void registerAudio()
