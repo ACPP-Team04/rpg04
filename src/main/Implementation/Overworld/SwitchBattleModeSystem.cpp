@@ -10,6 +10,7 @@
 #include "Implementation/Components/WeaponComponent.hpp"
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
+#include <Abstract/Overwordl/Components/StateComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <spdlog/spdlog.h>
 
@@ -132,7 +133,13 @@ void SwitchBattleModeSystem::preparePlayerPartyForBattle(const std::vector<Entit
 		if (participant == playerId) {
 			this->manager.removeComponentFromEntity<InputComponent>(participant);
 		}
-		this->manager.addComponentToEntity<BattleComponent>(participant);
+		if (!manager.hasComponent<CharacterComponent>(participant)) {
+			throw std::runtime_error("Player party entity does not have a CharacterComponent, cannot start battle");
+		}
+		if (!manager.hasComponent<StateComponent>(participant)) {
+			throw std::runtime_error("Player party entity does not have a CharacterComponent, cannot start battle");
+		}
+		manager.addComponentToEntity<BattleComponent>(participant);
 		auto &battleComp = this->manager.getComponent<BattleComponent>(participant);
 		battleComp.faction = BATTLE_FACTION::PLAYER_PARTY;
 		battleComp.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
