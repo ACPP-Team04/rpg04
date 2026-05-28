@@ -1,5 +1,6 @@
 Panel.HudPanel {
-    Size = (100%, 10%);
+    Position = (0, 10);
+    Size = (100%, 70);
 
     Renderer {
         BackgroundColor = transparent;
@@ -12,10 +13,9 @@ Panel.HudPanel {
         LinesStartFromTop = true;
         NewLinesBelowOthers = false;
         ScrollbarPolicy = Never;
-        Size = (50%, 100%);
+        Size = (40%, 100%);
         TextColor = white;
         TextSize = 13;
-        TextStyle = Italic;
 
         Renderer {
             BackgroundColor = transparent;
@@ -47,10 +47,11 @@ Panel.HudPanel {
     ChatBox.PersistanMessageBox {
         LineLimit = 5;
         LinesStartFromTop = true;
+        MouseCursor = Help;
         NewLinesBelowOthers = true;
-        Position = (340, 0);
-        ScrollbarPolicy = Automatic;
-        Size = (440, 100%);
+        Position = (60%, 0);
+        ScrollbarPolicy = Never;
+        Size = (50%, 100%);
         TextColor = white;
         TextSize = 13;
 
@@ -59,6 +60,41 @@ Panel.HudPanel {
             BorderColor = black;
             Borders = (0, 0, 0, 0);
             Padding = (0, 0, 0, 0);
+            TextureBackground = None;
+
+            Scrollbar {
+                ArrowBackgroundColor = #F5F5F5;
+                ArrowBackgroundColorHover = white;
+                ArrowColor = #3C3C3C;
+                ArrowColorHover = black;
+                TextureArrowDown = None;
+                TextureArrowDownHover = None;
+                TextureArrowUp = None;
+                TextureArrowUpHover = None;
+                TextureThumb = None;
+                TextureThumbHover = None;
+                TextureTrack = None;
+                TextureTrackHover = None;
+                ThumbColor = #DCDCDC;
+                ThumbColorHover = #E6E6E6;
+                TrackColor = #F5F5F5;
+            }
+        }
+    }
+
+    Label.WorldName {
+        HorizontalAlignment = Center;
+        Position = (40%, 30);
+        ScrollbarPolicy = Never;
+        Size = (20%, 17);
+        Text = "::";
+        TextSize = 18;
+
+        Renderer {
+            BackgroundColor = transparent;
+            BorderColor = transparent;
+            Borders = (0, 0, 0, 0);
+            TextColor = #3C3C3C;
             TextureBackground = None;
 
             Scrollbar {

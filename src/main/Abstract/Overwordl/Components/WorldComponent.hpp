@@ -21,7 +21,7 @@ struct TileLayer {
 };
 
 struct World {
-	std::string name;
+	std::string name = "WORLD_WITH_NO_NAME";
 	int id;
 	std::vector<TileLayer> tileLayers;
 	std::vector<TileLayer> collidingTileLayers;
@@ -58,7 +58,6 @@ struct WorldComponent : public Component<WorldComponent> {
 		heightPixel = height * tileHeight;
 
 		readLayersFromJson(rawJson["layers"], rawJson["tilesets"], -1, "");
-		int g = 2;
 	}
 
 	void readLayersFromJson(nlohmann::json &layers, nlohmann::json &tilesets, int groupId, std::string groupName)

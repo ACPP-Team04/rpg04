@@ -48,7 +48,9 @@ public:
 	{
 		EntityID id = mgr.createEntityWithId(object.getId());
 		ComponentRegistry::getInstance().addDefaultComponent<TransformComponent>(mgr,id,object,context);
-		ComponentRegistry::getInstance().addDefaultComponent<RenderComponent>(mgr,id,object,context);
+		if (object.isVisible()) {
+			ComponentRegistry::getInstance().addDefaultComponent<RenderComponent>(mgr,id,object,context);
+		}
 		ComponentRegistry::getInstance().addDefaultComponent<SpriteComponent>(mgr,id,object,context);
 		ComponentRegistry::getInstance().addDefaultComponent<PartOfLayerComponent>(mgr,id,object,context);
 		ComponentRegistry::getInstance().addDefaultComponent<StateComponent>(mgr,id,object,context);
