@@ -61,15 +61,15 @@ void InteractionSystem::update()
 		}
 		auto &inputComponent = manager.getComponent<InputComponent>(player);
 		component.inRange = true;
-		if (inputComponent.interact.justPressed) {
+		if (sf::Keyboard::isKeyPressed(component.interactionKey)) {
 			component.isActive = true;
 		}
 		WorldComponent *worldComponent = WorldUtils::getWorld(manager);
 		if (component.inRange && !component.isActive) {
 
-			worldComponent->addPersistentMessage("Press F to interact");
+			worldComponent->addPersistentMessage(component.alert);
 			return;
 		}
-		worldComponent->removePersistentMessage("Press F to interact");
+		worldComponent->removePersistentMessage(component.alert);
 	}
 }

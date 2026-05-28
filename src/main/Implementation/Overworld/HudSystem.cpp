@@ -41,10 +41,12 @@ void HudSystem::update()
 	if (!isHudPanelOpened(gui, "HudPanel")) {
 		openHudPanel(gui);
 	}
-
+	std::shared_ptr<tgui::Label> wordlName = gui.get<tgui::Label>("WorldName");
+	wordlName.get()->setText(component->worlds[component->currentGroup].name);
 	std::shared_ptr<tgui::ChatBox> toastBox = gui.get<tgui::ChatBox>("ToastChatBox");
 	std::shared_ptr<tgui::ChatBox> persistantMessageBox = gui.get<tgui::ChatBox>("PersistanMessageBox");
-
+	wordlName->getRenderer()->setTextColor(toastBox.get()->getTextColor());
+	
 	if (elpasedFramesSinceLastMessage > TOAST_FRAME_DURATION) {
 		size_t size = toastBox.get()->getLineAmount();
 		if (size > 0) {
@@ -58,6 +60,7 @@ void HudSystem::update()
 
 	persistantMessageBox.get()->removeAllLines();
 	for (auto message : component->persistentMessages) {
-		persistantMessageBox.get()->addLine(message);
+		tgui::TextStyle style = tgui::TextStyle();
+		persistantMessageBox->addLine(message);
 	}
 }

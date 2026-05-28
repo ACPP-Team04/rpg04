@@ -1,6 +1,7 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
+#include "Abstract/RegisterService.hpp"
 #include "Abstract/UI/MainMenu.hpp"
 
 #include "Abstract/Overwordl/Components/AnimationComponent.hpp"
@@ -24,17 +25,13 @@
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
-
-#include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
 #include <Abstract/GameConfig/GameConfig.hpp>
-#include <Abstract/Overwordl/Components/AudioComponent.hpp>
-#include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <SFML/Graphics.hpp>
 #include <exception>
 
 namespace {
-constexpr sf::Vector2f logicalSize{800.f, 600.f};
+constexpr sf::Vector2f logicalSize{WORLD_SIZE_X,WORLD_SIZE_Y};
 constexpr float TargetRatio = logicalSize.x / logicalSize.y;
 
 sf::FloatRect getLetterboxViewport(sf::Vector2u windowSize)
@@ -68,57 +65,6 @@ void applyResize(sf::RenderWindow &window, tgui::Gui &gui, ECSManager &ecsManage
 }
 }
 
-void registerComponents()
-{
-	ComponentRegistry::getInstance().registerComponent<MovementComponent>("MOVEMENT_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<CameraComponent>("CAMERA_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<WorldComponent>("WORLD_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<InputComponent>("INPUT_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<SwitchLayerComponent>("SWITCH_LAYER_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<CollisionComponent>("COLLISION_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<NPC_Component>("NPC_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<ItemComponent>("ITEM_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<BattleComponent>("BATTLE_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
-	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<AudioComponent>("AUDIO_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<AnimationPartComponent>("ANIMATION_SPRITE_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<AnimationComponent>("ANIMATION_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<CharacterComponent>("CharacterComponent");
-}
-
-void registerAudio()
-{
-	AssetManager::getInstance().registerMusic("overworld", std::string(ROOT_DIR)
-	                                                           + "/src/ressources/audio/music/the_field_of_dreams.ogg");
-	AssetManager::getInstance().registerMusic("combat",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/music/battleThemeA.ogg");
-	AssetManager::getInstance().registerSound("victory_sound",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/combat_victory.wav");
-	AssetManager::getInstance().registerSound("defeat_sound",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/death.wav");
-	AssetManager::getInstance().registerSound("light_fist_hit",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/punch_1b.wav");
-	AssetManager::getInstance().registerSound("heavy_fist_hit",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/punch_alt-2a.wav");
-	AssetManager::getInstance().registerSound("ultimate_fist_hit",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/foom_0.wav");
-	AssetManager::getInstance().registerSound("heal_sound",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/healspell3.wav");
-	AssetManager::getInstance().registerSound("rest_sound",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/short_wind.wav");
-	AssetManager::getInstance().registerSound("enemy_death_sound",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
-	AssetManager::getInstance().registerSound("test",
-	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
-}
-
 void applyGameConfig(ECSManager &ecsManager, EntityID player)
 {
 	std::string configPath = std::string(ROOT_DIR) + "/src/ressources/config.json";
@@ -135,34 +81,27 @@ int main()
 		sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
 		                        "Zombie Knight");
 		tgui::Gui gui(window);
-
+		gui.setFont(FONT);
 		window.setFramerateLimit(60);
 
-		spdlog::info("Registering components...");
-		registerComponents();
-		AudioManager audioManager;
+
 		spdlog::info("Creating ECS manager...");
-		ECSManager ecsManager = ECSManager(window, audioManager, gui);
-		spdlog::info("Parsing world...");
-		WorldParser parser = WorldParser(ecsManager.manager, window);
-		parser.update();
-		spdlog::info("Initializing UI systems...");
+		ECSManager ecsManager = ECSManager(window,gui);
+		spdlog::info("Initializing Systems...");
 		ecsManager.init();
-		spdlog::info("Registering audio...");
-		registerAudio();
-		audioManager.playMusic("overworld", true);
+
 		auto player = WorldUtils::getPlayer(ecsManager.manager);
 		if (!player.has_value()) {
 			throw std::runtime_error("Startup failed: no player entity was created by WorldParser.");
 		}
-		// ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
 		applyGameConfig(ecsManager, player.value());
-		window.setFramerateLimit(60);
+		window.setFramerateLimit(FRAME_LIMIT);
 
 		applyResize(window, gui, ecsManager);
 
 		auto gameState = GameState::MainMenu;
 		setUpMainMenu(gui, gameState);
+		sf::Clock fpsClock;
 		while (window.isOpen()) {
 			window.clear(sf::Color::Black);
 
@@ -186,6 +125,11 @@ int main()
 
 			gui.draw();
 			window.display();
+			if (PEROMANCE_TEST_MODE) {
+				float fps = 1.f / fpsClock.restart().asSeconds();
+				WorldComponent *world = WorldUtils::getWorld(ecsManager.manager);
+				world->addPersistentMessage("FPS: "+std::to_string(fps));
+			}
 		}
 	} catch (const std::exception &e) {
 		spdlog::critical("Fatal startup/runtime error: {}", e.what());

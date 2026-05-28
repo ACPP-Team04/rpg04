@@ -17,17 +17,19 @@
         },
         "map.tmj": {
             "expandedGroupLayers": [
-                6,
                 8,
-                7,
                 13,
-                16
+                24,
+                7,
+                6,
+                16,
+                20
             ],
-            "scale": 3.5069,
-            "selectedLayer": 10,
+            "scale": 0.3284,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 215.86016139610481,
-                "y": -43.057971427756705
+                "x": 121.80267965895248,
+                "y": 3389.159561510353
             }
         },
         "map.tmj#Tilesheet_edited": {
@@ -45,7 +47,7 @@
         "Tilesheet_WithEnums.tsj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "COLLISION_COMPONENT",
+    "property.type": "SWITCH_LAYER_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",

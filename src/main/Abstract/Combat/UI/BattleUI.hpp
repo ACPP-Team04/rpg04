@@ -38,7 +38,7 @@ class BattleUI {
 
 		auto turnLabel = tgui::Label::create("Hero's Turn");
 		turnLabel->setTextSize(16);
-		turnLabel->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+		turnLabel->setHorizontalAlignment(tgui::HorizontalAlignment::Center);
 		layout->add(turnLabel, "TurnLabel");
 
 		layout->add(tgui::Button::create("Light Attack"), "BtnLight");
