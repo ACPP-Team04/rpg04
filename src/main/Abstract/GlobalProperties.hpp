@@ -9,3 +9,6 @@
 #define HUD_WIGDETS_PATH ROOT_DIR "/src/ressources/hud.txt"
 #define TOAST_FRAME_DURATION 180
 #define PEROMANCE_TEST_MODE false
+#define WORLD_SIZE_X 800.f
+#define WORLD_SIZE_Y 600.f
+#define FRAME_LIMIT 60

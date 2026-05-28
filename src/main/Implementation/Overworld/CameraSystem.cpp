@@ -3,9 +3,10 @@
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
+#include "Abstract/GlobalProperties.hpp"
 
 namespace {
-constexpr sf::Vector2f BaseCameraSize{800.f, 600.f};
+constexpr sf::Vector2f BaseCameraSize{WORLD_SIZE_X, WORLD_SIZE_Y};
 }
 
 CameraSystem::CameraSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};

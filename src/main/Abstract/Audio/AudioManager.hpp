@@ -11,9 +11,8 @@ class AudioManager {
 	float masterMusicVolume;
 	float masterSfxVolume;
 	bool isHeadless;
-
-  public:
 	AudioManager(size_t poolSize = 16, bool headless = false);
+  public:
 	void switchMusic(const std::string &musicName, bool loop = true);
 	void playMusic(const std::string &musicName, bool loop = true);
 	void stopMusic();
@@ -23,4 +22,10 @@ class AudioManager {
 	sf::Sound *playLoopingSound(const std::string &soundId, float startVolume = 100.0f);
 	void pauseAll();
 	void resumeAll();
+	static AudioManager &getInstance()
+	{
+	  static AudioManager instance = AudioManager();
+		return instance;
+	}
+
 };
