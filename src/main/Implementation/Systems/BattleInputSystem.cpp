@@ -1,11 +1,9 @@
 #include "Abstract/Combat/Systems/BattleInputSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
-#include "Abstract/ECS/System/System.hpp"
-#include "Abstract/Overwordl/Components/InventoryComponent.hpp"
-#include "Abstract/Overwordl/Components/ItemHealstatsComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
@@ -132,8 +130,7 @@ void BattleInputSystem::update()
 
 	EntityID activeId = activeIdOpt.value();
 	auto &battle = manager.getComponent<BattleComponent>(activeId);
-	auto &stats = manager.getComponent<StatsComponent>(activeId);
-
+	auto &stats = manager.getComponent<CharacterComponent>(activeId).stats;
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 	ui.setActionPanelVisible(showMenu);
 

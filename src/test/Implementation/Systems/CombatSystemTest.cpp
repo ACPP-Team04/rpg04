@@ -541,7 +541,10 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
 	statsComponentP.stats.health = 50;
-	combatSystem.cleanUpBattle(battle, player, BattleState::VICTORY);
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
+	combatSystem.cleanUpBattle(battle, manager.getComponent<BattleComponent>(player).faction, BattleState::VICTORY);
 
 	EXPECT_EQ(110, manager.getComponent<CharacterComponent>(player).stats.health);
 	EXPECT_EQ(2, manager.getComponent<CharacterComponent>(player).stats.experienceLevel);
@@ -578,11 +581,14 @@ TEST(CombatSystemTest, cleanUpBattleEnemyWon)
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
 	statsComponentP.stats.health = 50;
-	combatSystem.cleanUpBattle(battle, enemy, BattleState::DEFEAT);
+	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
+	combatSystem.cleanUpBattle(battle, manager.getComponent<BattleComponent>(enemy).faction, BattleState::DEFEAT);
 
 	EXPECT_EQ(120, manager.getComponent<CharacterComponent>(enemy).stats.health);
-	EXPECT_EQ(1, manager.getComponent<CharacterComponent>(enemy).stats.experienceLevel);
-	EXPECT_EQ(0, manager.getComponent<CharacterComponent>(enemy).stats.numberOfFightsWon);
+	EXPECT_EQ(2, manager.getComponent<CharacterComponent>(enemy).stats.experienceLevel);
+	EXPECT_EQ(1, manager.getComponent<CharacterComponent>(enemy).stats.numberOfFightsWon);
 
 	EXPECT_EQ(1, manager.getComponent<CharacterComponent>(player).stats.experienceLevel);
 	EXPECT_EQ(0, manager.getComponent<CharacterComponent>(player).stats.numberOfFightsWon);
@@ -681,6 +687,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	statsComponentE.stats.addScalableStats(MAX_HEALTH, 120);
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 
@@ -718,7 +725,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 
 	EXPECT_EQ(120, manager.getComponent<CharacterComponent>(enemy).stats.health);
 	EXPECT_EQ(1, manager.getComponent<CharacterComponent>(player).stats.experienceLevel);
-	EXPECT_EQ(0, manager.getComponent<CharacterComponent>(enemy).stats.numberOfFightsWon);
+	EXPECT_EQ(1, manager.getComponent<CharacterComponent>(enemy).stats.numberOfFightsWon);
 
 	EXPECT_EQ(0, manager.getComponent<CharacterComponent>(player).stats.numberOfFightsWon);
 }

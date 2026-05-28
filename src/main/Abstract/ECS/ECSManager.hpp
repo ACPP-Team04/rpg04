@@ -66,13 +66,12 @@ struct ECSManager {
 	    : window(window), gui(gui), manager(), audioManager(audioManager), audioSystem(manager, audioManager),
 	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
 	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
-	      dialogSystem(manager, window, gui), interactionSystem(manager),
-	      item_system(manager), menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window),
-	      aiSystem(manager), combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
+	      dialogSystem(manager, window, gui), interactionSystem(manager), item_system(manager),
+	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
+	      combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
 	      switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
 	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
-	      hudSystem(manager, window, gui),
-		character_preprocess_system(manager)
+	      hudSystem(manager, window, gui), character_preprocess_system(manager)
 
 	{
 		gui.setWindow(window);
@@ -92,7 +91,6 @@ struct ECSManager {
 	{
 		battleInputSystem.init();
 		character_preprocess_system.update();
-
 	}
 
 	template <typename Function>
@@ -110,7 +108,7 @@ struct ECSManager {
 
 	void update()
 	{
-		if(false){
+		if (false) {
 			updateMeasureCalc();
 			return;
 		}
@@ -133,6 +131,7 @@ struct ECSManager {
 		dialogSystem.update();
 		item_system.update();
 		audioSystem.update();
+		gui.draw();
 	}
 
 	void updateMeasureCalc()

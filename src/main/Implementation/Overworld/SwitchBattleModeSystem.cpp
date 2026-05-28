@@ -9,10 +9,7 @@
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
-#include <Abstract/Overwordl/Components/InventoryComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
-#include <Abstract/Overwordl/Components/NPC_COMPONENT.hpp>
-#include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <spdlog/spdlog.h>
 
@@ -50,14 +47,20 @@ void SwitchBattleModeSystem::update()
 
 	if (manager.hasComponent<BattleComponent>(player))
 		return;
+
 	std::vector<EntityID> participantsList;
 	participantsList.push_back(player);
-	auto &invP = manager.getComponent<InventoryComponent>(player);
+	if (!manager.hasComponent<CharacterComponent>(player)) {
+		spdlog::error("Player entity does not have a CharacterComponent, cannot start battle");
+		throw std::runtime_error("Player entity does not have a CharacterComponent, cannot start battle");
+	}
+	auto &characterP = manager.getComponent<CharacterComponent>(player);
 
-	if (invP.hasEquippedItem(ITEM_TYPE::COLLECTABLE_COMPANION)) {
-		auto companionId = invP.getEquippedItem(ITEM_TYPE::COLLECTABLE_COMPANION);
-		if (!manager.hasComponent<PartOfLayerComponent>(companionId)) {
-			manager.addComponentToEntity<PartOfLayerComponent>(companionId);
+	if (characterP.equipedCompanion != 0) {
+		auto companionId = characterP.equipedCompanion;
+		EntityID companionIdEntity = EntityID::fromExistingId(companionId);
+		if (!manager.hasComponent<PartOfLayerComponent>(companionIdEntity)) {
+			manager.addComponentToEntity<PartOfLayerComponent>(companionIdEntity);
 		}
 		auto world = WorldUtils::getWorld(manager);
 		auto &compLayer = manager.getComponent<PartOfLayerComponent>(companionId);
@@ -67,8 +70,8 @@ void SwitchBattleModeSystem::update()
 		auto &compTransform = manager.getComponent<TransformComponent>(companionId);
 
 		compTransform.position = playerTransform.position + sf::Vector2f(-50.0f, 0.0f);
-		participantsList.push_back(companionId);
-		spdlog::info("Added companion with id {} to battle", companionId.getId());
+		participantsList.push_back(companionIdEntity);
+		spdlog::info("Added companion with id {} to battle", companionIdEntity.getId());
 	}
 	preparePlayerPartyForBattle(participantsList, player);
 	auto enemyList =
@@ -84,12 +87,14 @@ void SwitchBattleModeSystem::update()
 	std::cout << "Battlemanager created" << bManager.getId() << std::endl;
 	this->manager.getComponent<PartOfLayerComponent>(bManager).groupId = world->currentGroup;
 
-
 	this->manager.getComponent<BattleManagerComponent>(bManager).participants = participantsList;
 
 	for (const auto &participant : participantsList) {
 		if (!this->manager.hasComponent<BattleComponent>(participant)) {
 			throw std::runtime_error("Batteling entity does not have a battle component");
+		}
+		if (manager.getComponent<CharacterComponent>(participant).equipedWeapon == 0) {
+			throw std::runtime_error("Batteling entity should not have an equiped weapon");
 		}
 		manager.getComponent<BattleComponent>(participant).battleManagerId = bManager;
 	}
@@ -101,11 +106,18 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector
                                                                 const std::vector<EntityID> &playerParty)
 {
 	std::vector<EntityID> enemiesIdList;
-	WorldUtils::viewInCurrentLayer<CharacterComponent, TransformComponent>(this->manager,
-	    [&](auto entityId, CharacterComponent &eqComponent, auto &transformComponent) {
-	    	if (!eqComponent.fightable) {
-	    		return;
-	    	}
+	WorldUtils::viewInCurrentLayer<CharacterComponent, TransformComponent>(
+	    this->manager, [&](auto entityId, CharacterComponent &characterComponent, auto &transformComponent) {
+		    if (std::find(playerParty.begin(), playerParty.end(), entityId) != playerParty.end()) {
+			    return;
+		    }
+		    if (!characterComponent.fightable) {
+			    return;
+		    }
+
+		    if (std::find(playerParty.begin(), playerParty.end(), entityId) != playerParty.end()) {
+			    return;
+		    }
 		    if (SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position) <= radius * radius) {
 			    enemiesIdList.push_back(entityId);
 		    }
