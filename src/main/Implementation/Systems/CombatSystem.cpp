@@ -45,7 +45,7 @@ void CombatSystem::update()
 			switch (battle.battleState) {
 			case BattleState::TURN_START:
 				battle.battleState = BattleState::WAITING_FOR_INPUT;
-				if (currentAttacker != playerId) {
+				if (battle.controller == BATTLE_CONTROLLER::AI) {
 					aiSystem.executeAILogic(currentAttacker, bmc.participants);
 				}
 				break;
@@ -62,7 +62,8 @@ void CombatSystem::update()
 				auto result = this->checkDeathCondition(battle.target, currentAttacker);
 				if (result == BattleState::VICTORY) {
 					audioSystem.enqueueSound("victory_sound");
-					battle.battleState = BattleState::STATS_DISTRIBUTION;
+					bmc.currentTurnIndex = 0;
+					manager.getComponent<BattleComponent>(playerId).battleState = BattleState::STATS_DISTRIBUTION;
 				} else {
 					battle.battleState = result;
 				}
@@ -235,21 +236,28 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 	} else {
 		throw std::runtime_error("No player found in checkDeathCondition");
 	}
-	bool playerIsAttacking = attacker == playerId;
-	bool playerIsDefending = defender == playerId;
+	auto &defenderBattleComp = manager.getComponent<BattleComponent>(defender);
 
-	if (healthDefender <= 0 && playerIsDefending) {
-		if (manager.hasComponent<CombatGodMode>(playerId)) {
+	if (defenderBattleComp.faction == BATTLE_FACTION::PLAYER_PARTY) {
+		if (defender == playerId && manager.hasComponent<CombatGodMode>(playerId)) {
 			manager.getComponent<CharacterComponent>(defender).stats.health = 100;
 			spdlog::get("combat")->info("Healing player back to 100, because of god mode");
 			return BattleState::NEXT_ROUND;
 		}
-		return BattleState::DEFEAT;
-	} else if (healthDefender <= 0 && playerIsAttacking) {
 		manager.addComponentToEntity<DeathComponent>(defender);
 		auto &dc = manager.getComponent<DeathComponent>(defender);
 		dc.graveTile = GraveConfig::defaultTile;
 		dc.graveTilesetPath = GraveConfig::tilesetPath;
+		manager.getComponent<StateComponent>(defender).setState(DIE);
+		if (defender == playerId) {
+			return BattleState::DEFEAT;
+		}
+	} else {
+		manager.addComponentToEntity<DeathComponent>(defender);
+		auto &dc = manager.getComponent<DeathComponent>(defender);
+		dc.graveTile = GraveConfig::defaultTile;
+		dc.graveTilesetPath = GraveConfig::tilesetPath;
+		manager.getComponent<StateComponent>(defender).setState(DIE);
 		audioSystem.enqueueSound("enemy_death_sound");
 	}
 	auto &attackerBattleComp = manager.getComponent<BattleComponent>(attacker);
