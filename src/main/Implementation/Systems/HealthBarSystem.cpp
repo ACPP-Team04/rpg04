@@ -1,19 +1,19 @@
-#include "Abstract/Combat/Systems/EnemyHealthBarSystem.hpp"
+#include "Abstract/Combat/Systems/HealthBarSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/StatsComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <spdlog/spdlog.h>
 
-EnemyHealthBarSystem::EnemyHealthBarSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window)
+HealthBarSystem::HealthBarSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window)
     : System(manager), gui(gui), window(window)
 {
 }
 
-void EnemyHealthBarSystem::update()
+void HealthBarSystem::update()
 {
 	bool battleIsActive = false;
 	manager.view<BattleManagerComponent>().each([&](EntityID id, auto &bmc) { battleIsActive = true; });
@@ -22,75 +22,88 @@ void EnemyHealthBarSystem::update()
 		clearAllBars();
 		return;
 	}
-
-	auto playerId = WorldUtils::getPlayer(manager);
-	if (!playerId.has_value()) {
-		throw std::runtime_error("Player entity not found in EnemyHealthBarSystem");
-	}
-	std::vector<EntityID> activeEnemies;
-	if (!manager.hasComponent<BattleComponent>(playerId.value())) {
+	std::optional<EntityID> hoveringTargetOpt = std::nullopt;
+	manager.view<BattleComponent>().each([&](EntityID id, BattleComponent &battleComp) {
+		if (battleComp.isActiveTurn && battleComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
+			hoveringTargetOpt = battleComp.hoveringTarget;
+		}
+	});
+	auto playerIdOpt = WorldUtils::getPlayer(manager);
+	if (!playerIdOpt.has_value()) {
 		clearAllBars();
 		return;
 	}
-	std::optional<EntityID> hoveringTargetOpt = manager.getComponent<BattleComponent>(playerId.value()).hoveringTarget;
+	EntityID mainPlayerId = playerIdOpt.value();
+
+	std::vector<EntityID> activeEntities;
+	if (!manager.hasComponent<BattleComponent>(playerIdOpt.value())) {
+		clearAllBars();
+		return;
+	}
 	manager.view<BattleManagerComponent>().each([&](EntityID bmcId, BattleManagerComponent &bmc) {
 		for (EntityID id : bmc.participants) {
-			if (id == playerId.value()) {
+			if (id == playerIdOpt.value()) {
 				continue;
 			}
 
 			if (manager.hasComponent<DeathComponent>(id)) {
 				continue;
 			}
-			activeEnemies.push_back(id);
 
-			auto &stats = manager.getComponent<StatsComponent>(id);
+			activeEntities.push_back(id);
+
+			auto &stats = manager.getComponent<CharacterComponent>(id).stats;
 			auto &transform = manager.getComponent<TransformComponent>(id);
 
 			sf::Vector2i pixelPos = window.mapCoordsToPixel(transform.position);
-			sf::Vector2f screenPos = sf::Vector2f(pixelPos);
+			const tgui::Vector2f guiPos = gui.mapPixelToCoords(tgui::Vector2i(pixelPos));
+			sf::Vector2f screenPos{guiPos.x, guiPos.y};
 
-			if (!enemyBars.contains(id)) {
-				createEnemyBar(id);
+			if (!bars.contains(id)) {
+				createBar(id, manager.getComponent<BattleComponent>(id).faction);
 			}
 			bool isHoveringTarget = hoveringTargetOpt.has_value() && (hoveringTargetOpt.value() == id);
-			updateEnemyBar(id, stats.health, stats.getStat(STATS::MAX_HEALTH), screenPos, isHoveringTarget);
+			updateBar(id, stats.health, stats.getStat(STATS::MAX_HEALTH), screenPos, isHoveringTarget);
 		}
 	});
 
-	for (auto it = enemyBars.begin(); it != enemyBars.end();) {
-		if (std::find(activeEnemies.begin(), activeEnemies.end(), it->first) == activeEnemies.end()) {
+	for (auto it = bars.begin(); it != bars.end();) {
+		if (std::find(activeEntities.begin(), activeEntities.end(), it->first) == activeEntities.end()) {
 			gui.remove(it->second);
-			it = enemyBars.erase(it);
-			spdlog::get("combat")->info("Remove bar for enemy");
+			it = bars.erase(it);
+			spdlog::get("combat")->info("Remove bar");
 		} else {
 			++it;
 		}
 	}
 }
 
-void EnemyHealthBarSystem::createEnemyBar(EntityID id)
+void HealthBarSystem::createBar(EntityID id, BATTLE_FACTION faction)
 {
 	auto bar = tgui::ProgressBar::create();
 	bar->setSize(60, 10);
-	bar->getRenderer()->setFillColor(sf::Color::Red);
+	if (faction == BATTLE_FACTION::ENEMY) {
+		bar->getRenderer()->setFillColor(sf::Color::Red);
+	} else {
+		bar->getRenderer()->setFillColor(sf::Color::Green);
+	}
+
 	bar->getRenderer()->setBackgroundColor(sf::Color::White);
 	bar->setText("");
 	bar->getRenderer()->setBorders({1, 1, 1, 1});
 	bar->getRenderer()->setBorderColor(sf::Color::Black);
 
 	gui.add(bar);
-	enemyBars[id] = bar;
+	bars[id] = bar;
 }
 
-void EnemyHealthBarSystem::updateEnemyBar(EntityID id, float hp, float maxHp, sf::Vector2f screenPos,
-                                          bool isHoveringTarget)
+void HealthBarSystem::updateBar(EntityID id, float hp, float maxHp, sf::Vector2f screenPos, bool isHoveringTarget)
 {
 	if (hp > maxHp) {
 		spdlog::get("combat")->debug("In healthbar-system health {} is bigger than maxHp {} for entity {}", hp, maxHp,
 		                             id.getId());
 	}
-	auto &bar = enemyBars[id];
+	auto &bar = bars[id];
 	bar->setMaximum(maxHp);
 	bar->setValue(hp);
 	bar->setPosition(screenPos.x - (bar->getSize().x / 2.0f), screenPos.y - 40.0f);
@@ -104,10 +117,10 @@ void EnemyHealthBarSystem::updateEnemyBar(EntityID id, float hp, float maxHp, sf
 	}
 }
 
-void EnemyHealthBarSystem::clearAllBars()
+void HealthBarSystem::clearAllBars()
 {
-	for (auto &[id, bar] : enemyBars) {
+	for (auto &[id, bar] : bars) {
 		gui.remove(bar);
 	}
-	enemyBars.clear();
+	bars.clear();
 }

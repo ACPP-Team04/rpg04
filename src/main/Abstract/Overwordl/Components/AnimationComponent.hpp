@@ -36,7 +36,31 @@ class AnimationComponent : public Component<AnimationComponent> {
 	int framesElapsed{};
 
   public:
-	void readFromJson(tson::TiledClass &j) override {}
+	void readFromJson(tson::TiledClass &j) override
+	{
+		tson::TiledClass sequences = j.get<tson::TiledClass>("sequences");
+		int i = 0;
+		while (sequences.getMember(std::to_string(i)) != nullptr) {
+			tson::TiledClass seq = sequences.get<tson::TiledClass>(std::to_string(i));
+			ENTITY_ANIMATIONS_STATE state = ENTITY_ANIMATIONS_STATE(seq.get<int>("state"));
+
+			AnimationSequence animSeq;
+			tson::TiledClass anims = seq.get<tson::TiledClass>("sequence");
+			int k = 0;
+			while (anims.getMember(std::to_string(k)) != nullptr) {
+				tson::TiledClass anim = anims.get<tson::TiledClass>(std::to_string(k));
+				Animation animation = {
+					anim.get<int>("entitySpriteId"),
+					anim.get<int>("numFrames")
+				};
+				animSeq.push_back(animation);
+				k++;
+			}
+			addAnimation(state, animSeq);
+			i++;
+		}
+		int id = 0;
+	}
 	void setCurrentAnimation(ENTITY_ANIMATIONS_STATE state)
 	{
 		if (!this->animations.contains(state)) {
@@ -54,7 +78,7 @@ class AnimationComponent : public Component<AnimationComponent> {
 		currentAnimationEntityId = anim.entityAnimationSpriteId;
 	}
 
-	std::optional<int> getCurrentAnimation() const { return currentAnimationEntityId; }
+	std::optional<int>  getCurrentAnimation() const { return currentAnimationEntityId; }
 	void addAnimation(ENTITY_ANIMATIONS_STATE state, const AnimationSequence &animation_sequence)
 	{
 		this->animations[state] = animation_sequence;

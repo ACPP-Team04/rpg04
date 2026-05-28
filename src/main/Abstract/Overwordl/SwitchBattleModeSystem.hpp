@@ -9,8 +9,10 @@ struct SwitchBattleModeSystem : System {
 
 	SwitchBattleModeSystem(ArchetypeManager &manager, AudioSystem &audioSystem);
 	void update() override;
-	[[nodiscard]] std::vector<EntityID> getEnemiesInRatio(const sf::Vector2f center, float radius, EntityID playerId);
-	void prepareForBattle(const std::vector<EntityID> &participants, EntityID playerId);
+	[[nodiscard]] std::vector<EntityID> getEnemiesInRatio(const sf::Vector2f center, float radius,
+	                                                      const std::vector<EntityID> &playerParty);
+	void preparePlayerPartyForBattle(const std::vector<EntityID> &participants, EntityID playerId);
+	void prepareEnemiesForBattle(const std::vector<EntityID> &enemies);
 	static float getSquaredDistance(const sf::Vector2f &a, const sf::Vector2f &b)
 	{
 		float dx = a.x - b.x;

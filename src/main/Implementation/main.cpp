@@ -1,11 +1,12 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
+#include "Abstract/UI/MainMenu.hpp"
 
 #include "Abstract/Overwordl/Components/AnimationComponent.hpp"
 #include "Abstract/Overwordl/Components/AnimationPartComponent.hpp"
-#include "Abstract/Overwordl/Components/BoundingBoxComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/CollisionComponent.hpp"
 #include "Abstract/Overwordl/Components/DialogComponent.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
@@ -26,9 +27,46 @@
 
 #include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
+#include <Abstract/GameConfig/GameConfig.hpp>
 #include <Abstract/Overwordl/Components/AudioComponent.hpp>
 #include <Abstract/Overwordl/Components/START_EQUIPMENT_COMPONENT.hpp>
 #include <SFML/Graphics.hpp>
+#include <exception>
+
+namespace {
+constexpr sf::Vector2f logicalSize{800.f, 600.f};
+constexpr float TargetRatio = logicalSize.x / logicalSize.y;
+
+sf::FloatRect getLetterboxViewport(sf::Vector2u windowSize)
+{
+	float windowRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
+	float viewportWidth = 1.f;
+	float viewportHeight = 1.f;
+	float viewportLeft = 0.f;
+	float viewportTop = 0.f;
+
+	if (windowRatio > TargetRatio) {
+		viewportWidth = TargetRatio / windowRatio;
+		viewportLeft = (1.f - viewportWidth) / 2.f;
+	} else if (windowRatio < TargetRatio) {
+		viewportHeight = windowRatio / TargetRatio;
+		viewportTop = (1.f - viewportHeight) / 2.f;
+	}
+
+	return sf::FloatRect({viewportLeft, viewportTop}, {viewportWidth, viewportHeight});
+}
+
+void applyResize(sf::RenderWindow &window, tgui::Gui &gui, ECSManager &ecsManager)
+{
+	const sf::FloatRect viewport = getLetterboxViewport(window.getSize());
+	ecsManager.setTargetAspect(TargetRatio);
+	ecsManager.setViewport(viewport);
+
+	gui.setRelativeViewport(
+	    tgui::FloatRect(viewport.position.x, viewport.position.y, viewport.size.x, viewport.size.y));
+	gui.setAbsoluteView(tgui::FloatRect(0.f, 0.f, logicalSize.x, logicalSize.y));
+}
+}
 
 void registerComponents()
 {
@@ -42,18 +80,17 @@ void registerComponents()
 	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<InteractionComponent>("INTERACTION_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<PlayerComponent>("PLAYER_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<BoundIngBoxComponent>("BOUNDING_BOX_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ItemComponent>("ITEM_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<InventoryComponent>("INVENTORY_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<IsLockedComponent>("LOCKED_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<ITEM_HEALSTATS_COMPONENT>("ITEM_HEALSTATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleComponent>("BATTLE_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<BattleManagerComponent>("BattleManagerComponent");
-	ComponentRegistry::getInstance().registerComponent<WeaponComponent>("ITEM_WEAPON_STATS_COMPONENT");
-	ComponentRegistry::getInstance().registerComponent<StatsComponent>("STATS_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<START_EQUIPMENT_COMPONENT>("EQUIPMENT_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AudioComponent>("AUDIO_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<AnimationPartComponent>("ANIMATION_SPRITE_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<AnimationComponent>("ANIMATION_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<DialogComponent>("DIALOG_COMPONENT");
+	ComponentRegistry::getInstance().registerComponent<CharacterComponent>("CharacterComponent");
 }
 
 void registerAudio()
@@ -82,25 +119,81 @@ void registerAudio()
 	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
 }
 
+void applyGameConfig(ECSManager &ecsManager, EntityID player)
+{
+	std::string configPath = std::string(ROOT_DIR) + "/src/ressources/config.json";
+	GameConfig::getInstance().loadConfig(configPath);
+	if (GameConfig::getInstance().isGodModeEnabled()) {
+		ecsManager.manager.addComponentToEntity<CombatGodMode>(player);
+		spdlog::info("God Mode applied to player!");
+	}
+}
+
 int main()
 {
+	try {
+		sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
+		                        "Zombie Knight");
+		tgui::Gui gui(window);
 
-	sf::RenderWindow window(sf::VideoMode({800, 800}), "My window");
-	registerComponents();
-	AudioManager audioManager;
-	ECSManager ecsManager = ECSManager(window, audioManager);
-	WorldParser parser = WorldParser(ecsManager.manager, window);
-	window.clear(sf::Color::Transparent);
-	parser.update();
-	ecsManager.init();
-	registerAudio();
-	audioManager.playMusic("overworld", true);
-	auto player = WorldUtils::getPlayer(ecsManager.manager);
-	// ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
-	window.setFramerateLimit(60);
-	while (window.isOpen()) {
-		ecsManager.update();
+		window.setFramerateLimit(60);
 
-		window.display();
+		spdlog::info("Registering components...");
+		registerComponents();
+		AudioManager audioManager;
+		spdlog::info("Creating ECS manager...");
+		ECSManager ecsManager = ECSManager(window, audioManager, gui);
+		spdlog::info("Parsing world...");
+		WorldParser parser = WorldParser(ecsManager.manager, window);
+		parser.update();
+		spdlog::info("Initializing UI systems...");
+		ecsManager.init();
+		spdlog::info("Registering audio...");
+		registerAudio();
+		audioManager.playMusic("overworld", true);
+		auto player = WorldUtils::getPlayer(ecsManager.manager);
+		if (!player.has_value()) {
+			throw std::runtime_error("Startup failed: no player entity was created by WorldParser.");
+		}
+		// ecsManager.manager.addComponentToEntity<CombatGodMode>(player.value());
+		applyGameConfig(ecsManager, player.value());
+		window.setFramerateLimit(60);
+
+		applyResize(window, gui, ecsManager);
+
+		auto gameState = GameState::MainMenu;
+		setUpMainMenu(gui, gameState);
+		while (window.isOpen()) {
+			window.clear(sf::Color::Black);
+
+			while (const std::optional event = window.pollEvent()) {
+				gui.handleEvent(*event);
+				if (event->is<sf::Event::Closed>()) {
+					window.close();
+				}
+				if (event->is<sf::Event::Resized>()) {
+					applyResize(window, gui, ecsManager);
+				}
+			}
+
+			if (gameState == GameState::Game) {
+				ecsManager.update();
+			}
+
+			if (gameState == GameState::Quit) {
+				window.close();
+			}
+
+			gui.draw();
+			window.display();
+		}
+	} catch (const std::exception &e) {
+		spdlog::critical("Fatal startup/runtime error: {}", e.what());
+		return 1;
+	} catch (...) {
+		spdlog::critical("Fatal startup/runtime error: unknown exception");
+		return 1;
 	}
+
+	return 0;
 }

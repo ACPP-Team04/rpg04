@@ -17,7 +17,7 @@ class BattleUI {
 		hudPanel = tgui::Panel::create({"250", "80"});
 
 		gui.add(hudPanel, "BattleHUD");
-		hudPanel->setPosition("5%", "55%");
+		hudPanel->setPosition("5%", "100% - 330");
 		auto hpBar = tgui::ProgressBar::create();
 		hpBar->setSize("90%", "30px");
 		hpBar->setPosition("5%", "10%");
@@ -27,14 +27,19 @@ class BattleUI {
 		apLabel->setPosition("5%", "60%");
 		hudPanel->add(apLabel, "APLabel");
 
-		actionPanel = tgui::Panel::create({"250", "200"});
-		actionPanel->setPosition("5%", "68%");
+		actionPanel = tgui::Panel::create({"250", "230"});
+		actionPanel->setPosition("5%", "100% - 240");
 		gui.add(actionPanel, "BattleMenu");
 
 		auto layout = tgui::VerticalLayout::create();
 		layout->setSize("90%", "90%");
 		layout->setPosition("5%", "5%");
 		actionPanel->add(layout);
+
+		auto turnLabel = tgui::Label::create("Hero's Turn");
+		turnLabel->setTextSize(16);
+		turnLabel->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+		layout->add(turnLabel, "TurnLabel");
 
 		layout->add(tgui::Button::create("Light Attack"), "BtnLight");
 		layout->add(tgui::Button::create("Heavy Attack"), "BtnHeavy");
@@ -47,6 +52,8 @@ class BattleUI {
 	}
 
 	tgui::Button::Ptr getButton(std::string name) { return actionPanel->get<tgui::Button>(name); }
+
+	tgui::Label::Ptr getLabel(std::string name) { return actionPanel->get<tgui::Label>(name); }
 
 	void setActionPanelVisible(bool visible) { actionPanel->setVisible(visible); }
 	void setHUDVisible(bool visible) { hudPanel->setVisible(visible); }

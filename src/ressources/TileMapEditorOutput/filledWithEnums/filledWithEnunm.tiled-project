@@ -161,6 +161,55 @@
             ]
         },
         {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 56,
+            "members": [
+                {
+                    "name": "equippedCompanion",
+                    "type": "object",
+                    "value": 0
+                },
+                {
+                    "name": "equippedWeaponId",
+                    "type": "object",
+                    "value": 0
+                },
+                {
+                    "name": "fightable",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "inventory",
+                    "propertyType": "INVENTORY_COMPONENT",
+                    "type": "class",
+                    "value": {
+                    }
+                },
+                {
+                    "name": "stats",
+                    "propertyType": "STATS_COMPONENT",
+                    "type": "class",
+                    "value": {
+                    }
+                }
+            ],
+            "name": "CharacterComponent",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
             "id": 11,
             "name": "COLLISION_ACTION",
             "storageType": "string",
@@ -538,11 +587,6 @@
                     "value": "START_DIALOG"
                 },
                 {
-                    "name": "focusRadius",
-                    "type": "float",
-                    "value": 64
-                },
-                {
                     "name": "interactionKey",
                     "propertyType": "Keys",
                     "type": "string",
@@ -585,6 +629,11 @@
             "drawFill": true,
             "id": 29,
             "members": [
+                {
+                    "name": "inventoryWorldId",
+                    "type": "int",
+                    "value": 0
+                }
             ],
             "name": "INVENTORY_COMPONENT",
             "type": "class",
@@ -615,6 +664,13 @@
                     "name": "name",
                     "type": "string",
                     "value": "gun35"
+                },
+                {
+                    "name": "weaponStats",
+                    "propertyType": "ITEM_WEAPON_STATS_COMPONENT",
+                    "type": "class",
+                    "value": {
+                    }
                 }
             ],
             "name": "ITEM_COMPONENT",
@@ -1228,7 +1284,7 @@
             "members": [
                 {
                     "name": "destination",
-                    "type": "int",
+                    "type": "object",
                     "value": 0
                 }
             ],

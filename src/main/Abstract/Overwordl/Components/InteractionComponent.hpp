@@ -20,7 +20,6 @@ struct InteractionComponent : public Component<InteractionComponent> {
 		isActive = false;
 		trigger = WorldUtils::getEnumValue<INTERACTION_TRIGGER>(j, "trigger");
 		action = WorldUtils::getEnumValue<INTERACTION_ACTION>(j, "action");
-		focusRadius = j.get<float>("focusRadius");
 		interactionKey = WorldUtils::getEnumValue<sf::Keyboard::Key>(j, "interactionKey");
 
 		int n = 10;

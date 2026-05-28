@@ -5,8 +5,9 @@
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
 
+#include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/InventoryComponent.hpp>
-#include <Abstract/Overwordl/Components/ItemHealstatsComponent.hpp>
+#include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <gtest/gtest.h>
 TEST(AISystemTest, executeAILogicHeavyAttack)
 {
@@ -15,23 +16,22 @@ TEST(AISystemTest, executeAILogicHeavyAttack)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent>();
-	EntityID enemy = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent, CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent>();
 	EntityID battle = manager.createEntity();
 
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent, AIComponent>(
-	    enemy);
+	manager.addComponentToEntity<BattleComponent>(player);
+	manager.addComponentToEntity<BattleComponent, AIComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
-	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	CharacterComponent &characterComponentE = manager.getComponent<CharacterComponent>(enemy);
 	battleComponentE.AP = 2;
-	statsComponentE.health = 90;
+	characterComponentE.stats.health = 90;
 
-	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_A;
-	enemyWeapon.weaponType = WeaponType::RANGE;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
 	EXPECT_EQ(BattleState::SELECTED_ACTION, manager.getComponent<BattleComponent>(enemy).battleState);
@@ -44,23 +44,22 @@ TEST(AISystemTest, executeAILogicLightAttack)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent>();
-	EntityID enemy = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent, CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent>();
 	EntityID battle = manager.createEntity();
 
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent, AIComponent>(
-	    enemy);
+	manager.addComponentToEntity<BattleComponent>(player);
+	manager.addComponentToEntity<BattleComponent, AIComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
-	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
-	battleComponentE.AP = 1;
-	statsComponentE.health = 90;
+	CharacterComponent &characterComponentE = manager.getComponent<CharacterComponent>(enemy);
 
-	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
-	enemyWeapon.weaponType = WeaponType::RANGE;
+	battleComponentE.AP = 1;
+	characterComponentE.stats.health = 90;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
 	EXPECT_EQ(BattleState::SELECTED_ACTION, manager.getComponent<BattleComponent>(enemy).battleState);
@@ -70,30 +69,25 @@ TEST(AISystemTest, executeAILogicHeal)
 {
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
-	AudioManager audioManager = AudioManager();
+	AudioManager audioManager = AudioManager(16, true);
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent>();
-	EntityID enemy = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent, CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent>();
 	EntityID battle = manager.createEntity();
 
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent, AIComponent>(
-	    enemy);
+	manager.addComponentToEntity<BattleComponent>(player);
+	manager.addComponentToEntity<BattleComponent, AIComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
-	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
-	InventoryComponent &inventoryComponetE = manager.getComponent<InventoryComponent>(enemy);
+	CharacterComponent &characterComponentE = manager.getComponent<CharacterComponent>(enemy);
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
-	auto healingPack = manager.createEntity<ITEM_HEALSTATS_COMPONENT>();
-	inventoryComponetE.addItem(healingPack, ITEM_TYPE::HEALING);
 	battleComponentE.AP = 2;
-	statsComponentE.health = 19;
-
-	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
-	enemyWeapon.weaponType = WeaponType::RANGE;
+	characterComponentE.stats.health = 19;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
 	EXPECT_EQ(BattleState::SELECTED_ACTION, manager.getComponent<BattleComponent>(enemy).battleState);
@@ -106,23 +100,23 @@ TEST(AISystemTest, executeAILogicRest)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent>();
-	EntityID enemy = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent, CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent>();
 	EntityID battle = manager.createEntity();
 
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent, AIComponent>(
-	    enemy);
+	manager.addComponentToEntity<BattleComponent>(player);
+	manager.addComponentToEntity<BattleComponent, AIComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
-	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	CharacterComponent &characterE = manager.getComponent<CharacterComponent>(enemy);
+
 	battleComponentE.AP = 0;
-	statsComponentE.health = 90;
+	characterE.stats.health = 90;
 	battleComponentE.numberOfUltimateAttacksUsed = 1;
-	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
-	enemyWeapon.weaponType = WeaponType::RANGE;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
 	EXPECT_EQ(BattleState::SELECTED_ACTION, manager.getComponent<BattleComponent>(enemy).battleState);
@@ -136,23 +130,21 @@ TEST(AISystemTest, executeAILogicUltimateAttack)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent>();
-	EntityID enemy = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent, CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent>();
 	EntityID battle = manager.createEntity();
 
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent>(player);
-	manager.addComponentToEntity<BattleComponent, StatsComponent, WeaponComponent, InventoryComponent, AIComponent>(
-	    enemy);
+	manager.addComponentToEntity<BattleComponent>(player);
+	manager.addComponentToEntity<BattleComponent, AIComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 
 	BattleComponent &battleComponentE = manager.getComponent<BattleComponent>(enemy);
-	StatsComponent &statsComponentE = manager.getComponent<StatsComponent>(enemy);
+	CharacterComponent &characterComponentE = manager.getComponent<CharacterComponent>(enemy);
 	battleComponentE.AP = 0;
-	statsComponentE.health = 90;
-
-	WeaponComponent &enemyWeapon = manager.getComponent<WeaponComponent>(enemy);
-	enemyWeapon.scalingFactor = WEAPON_SCALING_FACTOR::SCALE_B;
-	enemyWeapon.weaponType = WeaponType::RANGE;
+	characterComponentE.stats.health = 90;
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	aiSystem.executeAILogic(enemy, {player, enemy});
 	EXPECT_EQ(BattleState::SELECTED_ACTION, manager.getComponent<BattleComponent>(enemy).battleState);
@@ -166,10 +158,13 @@ TEST(AISystemTest, selectTargetWithMultipleEnemies)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent>();
-	EntityID enemy = manager.createEntity();
-	EntityID enemy2 = manager.createEntity();
-	EntityID battle = manager.createEntity();
+	EntityID player = manager.createEntity<PlayerComponent, BattleComponent>();
+	EntityID enemy = manager.createEntity<BattleComponent>();
+	EntityID enemy2 = manager.createEntity<BattleComponent>();
+	EntityID battle = manager.createEntity<BattleManagerComponent>();
+	BattleComponent &battleComponentP = manager.getComponent<BattleComponent>(player);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	auto target = aiSystem.selectTarget(enemy, {player, enemy, enemy2});
 	EXPECT_EQ(target.has_value(), true);

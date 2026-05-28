@@ -1,5 +1,7 @@
 #include "Abstract/Combat/Systems/StatsDistributorSystem.hpp"
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
+
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
 StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), gui(gui) {}
@@ -30,7 +32,7 @@ void StatsDistributorSystem::update()
 
 void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent &battle)
 {
-	auto &stats = manager.getComponent<StatsComponent>(playerId);
+	auto &stats = manager.getComponent<CharacterComponent>(playerId).stats;
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle.battleManagerId);
 	struct LevelUpData {
 		int points;
@@ -103,7 +105,7 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 			return;
 		}
 
-		auto &stats = manager.getComponent<StatsComponent>(playerId);
+		auto &stats = manager.getComponent<CharacterComponent>(playerId).stats;
 		auto &battle = manager.getComponent<BattleComponent>(playerId);
 
 		for (const auto &[statEnum, extraPoints] : data->extraStats) {

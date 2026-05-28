@@ -4,6 +4,7 @@
 #include "Abstract/AssetManager/AssetManager.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
+#include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/DialogComponent.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
@@ -77,7 +78,7 @@ void closeDialogPanelIfOpened(tgui::Gui &gui)
 
 void setPicture(ArchetypeManager &manager, int speakerId, std::shared_ptr<tgui::Picture> speakerPicture)
 {
-	if (!manager.hasComponent<SpriteComponent>(speakerId)) {
+	if (!manager.hasComponent<SpriteComponent>(EntityID::fromExistingId(speakerId))) {
 		return;
 	}
 
@@ -95,29 +96,25 @@ void executeAction(ArchetypeManager &manager, DialogAction &action, EntityID &en
 	switch (action.action) {
 	case DIALOG_ACTIONS::GET_ITEM: {
 		auto &getItem = dynamic_cast<GET_ITEM_ACTION &>(action);
-		if (!manager.hasComponent<ItemComponent>(getItem.itemId)) {
-			throw std::runtime_error("Try to collect a item which has no item component");
-		}
-		auto &item = manager.getComponent<ItemComponent>(getItem.itemId);
-		manager.getComponent<InventoryComponent>(player).addItem(getItem.itemId, item.itemType);
+		CharacterComponent &ch = manager.getComponent<CharacterComponent>(player);
+		manager.getComponent<PartOfLayerComponent>(getItem.itemId).groupId = ch.inventory.inventoryWorldId;
 		world->pushMessageToHud("New item added!");
+		break;
+	}
+	case DIALOG_ACTIONS::COMPANION: {
+		CharacterComponent &ch = manager.getComponent<CharacterComponent>(player);
+		manager.getComponent<PartOfLayerComponent>(entityId).groupId = ch.inventory.inventoryWorldId;
+		world->pushMessageToHud("New Companion added!");
 		break;
 	}
 	case DIALOG_ACTIONS::SWITCH_LAYER_DIALOG_ACTION: {
 		auto &switchLayer = dynamic_cast<SwitchLayerAction &>(action);
 		auto &layerinfo = manager.getComponent<PartOfLayerComponent>(switchLayer.destinationId);
 		auto &transform = manager.getComponent<TransformComponent>(switchLayer.destinationId);
-		manager.getComponent<PartOfLayerComponent>(player).layer = layerinfo.layer;
-		manager.getComponent<PartOfLayerComponent>(player).level = layerinfo.level;
+		manager.getComponent<PartOfLayerComponent>(player).groupId = layerinfo.groupId;
 		manager.getComponent<TransformComponent>(player).position = transform.position;
-		WorldUtils::getWorld(manager)->currentLayer = layerinfo.layer;
-		WorldUtils::getWorld(manager)->currentLevel = layerinfo.level;
+		WorldUtils::getWorld(manager)->currentGroup = layerinfo.groupId;
 		world->pushMessageToHud("...");
-		break;
-	}
-	case DIALOG_ACTIONS::COMPANION: {
-		manager.getComponent<InventoryComponent>(player).addItem(entityId, ITEM_TYPE::COLLECTABLE_COMPANION);
-		world->pushMessageToHud("New Companion added!");
 		break;
 	}
 	default:

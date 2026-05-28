@@ -4,8 +4,8 @@
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+
 #include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Components/BattleManagerComponent.hpp>
@@ -36,8 +36,8 @@ class CombatSystem : public System {
 
 	sf::Clock clock;
 
-	void cleanUpBattle(EntityID battleManagerId, EntityID winningEntity, BattleState battleState);
-	static bool validateAction(BattleAction action, int AP, int numberOfUltimateAttacksUsed, int numberOfHealsUsed);
+	void cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winningBattleFaction, BattleState battleState);
+	static bool validateAction(BattleAction action, const BattleComponent &battle);
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,

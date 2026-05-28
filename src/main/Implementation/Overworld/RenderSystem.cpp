@@ -1,14 +1,13 @@
 #include "Abstract/Overwordl/RenderSystem.hpp"
 
 #include "Abstract/AssetManager/AssetManager.hpp"
-#include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
+
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/Components/SpriteComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
-#include <Abstract/Combat/Components/DeathComponent.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
+
 
 RenderSystem::RenderSystem(ArchetypeManager &manager, sf::RenderWindow &window) : System(manager), window(window) {};
 
@@ -21,40 +20,40 @@ void render(TransformComponent &tcomp, sf::RenderWindow &window, SpriteComponent
 	sp.setRotation(tcomp.rotation);
 	window.draw(sp);
 }
+void RenderSystem::renderTiles(WorldComponent *world)
+{
+	sf::View view = window.getView();
+	sf::Vector2f center = view.getCenter();
+	sf::Vector2f size   = view.getSize();
+
+	int startX = std::max(0, (int)((center.x - size.x / 2) / world->tileWidth));
+	int startY = std::max(0, (int)((center.y - size.y / 2) / world->tileHeight));
+	int endX = std::min((int)world->width,  startX + (int)(size.x / world->tileWidth) + 2);
+	int endY = std::min((int)world->height, startY + (int)(size.y / world->tileHeight) + 2);
+	int i = 0;
+	for (auto& tileLayer : world->worlds[world->currentGroup].tileLayers) {
+		for (int y = startY; y < endY; y++) {
+			for (int x = startX; x < endX; x++) {
+				auto &tile = tileLayer.tiles[y][x];
+				if (tile.tileInfo.tilesetPath.empty()) continue;
+				sf::Sprite sp = AssetManager::getInstance().getSpriteAt(tile.tileInfo);
+				sp.setPosition(tile.position);
+				i++;
+				window.draw(sp);
+			}
+		}
+	}
+	std::cout <<"Rendered ---------------------" << i << std::endl;
+}
 void RenderSystem::update()
 {
-	auto renderLogic = [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp,
-	                       SpriteComponent &scomp) {
-		if (manager.hasComponent<DeathComponent>(id)) {
-			/*
-			// DEBUG
-			sf::RectangleShape debugBox;
-			debugBox.setSize({(float)scomp.tileInfo.width, (float)scomp.tileInfo.height});
-			debugBox.setPosition(tcomp.position);
-			debugBox.setFillColor(sf::Color::Red);
-			window.draw(debugBox);
-			*/
-			auto &deathC = manager.getComponent<DeathComponent>(id);
-			SpriteComponent graveVisuals;
-			graveVisuals.tileInfo = deathC.graveTile;
-			graveVisuals.tilesetPath = deathC.graveTilesetPath;
-			render(tcomp, window, graveVisuals);
-		} else {
-			render(tcomp, window, scomp);
-		}
-	};
+
+	WorldComponent *world = WorldUtils::getWorld(manager);
+
+	renderTiles(world);
 
 	WorldUtils::viewInCurrentLayer<RenderComponent, TransformComponent, SpriteComponent>(
 	    manager, [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp, SpriteComponent &scomp) {
-		    if (comp.z_layer == 0) {
-			    renderLogic(id, comp, tcomp, scomp);
-		    }
-	    });
-
-	WorldUtils::viewInCurrentLayer<RenderComponent, TransformComponent, SpriteComponent>(
-	    manager, [&](const EntityID &id, RenderComponent &comp, TransformComponent &tcomp, SpriteComponent &scomp) {
-		    if (comp.z_layer) {
-			    renderLogic(id, comp, tcomp, scomp);
-		    }
+	    	render(tcomp, window, scomp);
 	    });
 }
