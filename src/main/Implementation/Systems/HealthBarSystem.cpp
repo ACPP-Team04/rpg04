@@ -5,7 +5,6 @@
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
-#include "Implementation/Components/StatsComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <spdlog/spdlog.h>
 

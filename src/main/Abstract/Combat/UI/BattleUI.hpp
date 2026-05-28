@@ -17,7 +17,7 @@ class BattleUI {
 		hudPanel = tgui::Panel::create({"250", "80"});
 
 		gui.add(hudPanel, "BattleHUD");
-		hudPanel->setPosition("5%", "55%");
+		hudPanel->setPosition("5%", "100% - 330");
 		auto hpBar = tgui::ProgressBar::create();
 		hpBar->setSize("90%", "30px");
 		hpBar->setPosition("5%", "10%");
@@ -28,7 +28,7 @@ class BattleUI {
 		hudPanel->add(apLabel, "APLabel");
 
 		actionPanel = tgui::Panel::create({"250", "230"});
-		actionPanel->setPosition("5%", "68%");
+		actionPanel->setPosition("5%", "100% - 240");
 		gui.add(actionPanel, "BattleMenu");
 
 		auto layout = tgui::VerticalLayout::create();

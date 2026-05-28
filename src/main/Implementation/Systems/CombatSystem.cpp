@@ -4,7 +4,6 @@
 #include "Abstract/ECS/Entity/EntityID.hpp"
 #include "Abstract/ECS/System/System.hpp"
 #include "Abstract/Overwordl/Components/CharacterComponent.hpp"
-#include "Abstract/Overwordl/Components/ItemComponent.hpp"
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
 #include "Abstract/Utils/GraveConfig.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
@@ -12,6 +11,7 @@
 #include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <Abstract/Combat/Systems/BattleInputSystem.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
+#include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
 #include <Abstract/Overwordl/Components/RenderComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
@@ -203,18 +203,15 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		spdlog::get("combat")->info("Entity {} attacks Entity {} with action {}!", attacker.getId(), defender.getId(),
 		                            static_cast<int>(typeOfAction));
 		spdlog::get("combat")->info("Defender Entity {} has {} HP and {} AP left!", defender.getId(),
-		                            defenderCharacter.stats.health,
-		                            manager.getComponent<BattleComponent>(defender).AP);
+		                            defenderCharacter.stats.health, manager.getComponent<BattleComponent>(defender).AP);
 		spdlog::get("combat")->info("Attacker Entity {} has {} HP and {} AP left!", attacker.getId(),
-		                            attackerCharacter.stats.health,
-		                            manager.getComponent<BattleComponent>(attacker).AP);
+		                            attackerCharacter.stats.health, manager.getComponent<BattleComponent>(attacker).AP);
 	} else {
 		std::string actionName = (typeOfAction == BattleAction::HEAL) ? "heals" : "rests";
 		spdlog::get("combat")->info("Entity {} {}!", attacker.getId(), actionName);
 		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
 		spdlog::get("combat")->info("Attacker Entity {} has {} HP and {} AP left!", attacker.getId(),
-		                            attackerCharacter.stats.health,
-		                            manager.getComponent<BattleComponent>(attacker).AP);
+		                            attackerCharacter.stats.health, manager.getComponent<BattleComponent>(attacker).AP);
 	}
 }
 
@@ -278,7 +275,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		BATTLE_FACTION battleFaction = manager.getComponent<BattleComponent>(entity).faction;
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		if (battleFaction == winningBattleFaction) {
-			auto &stats = manager.getComponent<StatsComponent>(entity);
+			auto &stats = manager.getComponent<CharacterComponent>(entity).stats;
 			if (stats.health > stats.getStat(STATS::MAX_HEALTH)) {
 				spdlog::get("combat")->warn(
 				    "HP of Entity {} have been set to max_health {}, which is lower than current health {}",
@@ -293,7 +290,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 				manager.removeComponentFromEntity<DeathComponent>(entity);
 			}
 			// Hide companions again
-			if (entity != playerIdOpt.value()) {
+			if (entity.getId() == manager.getComponent<CharacterComponent>(playerIdOpt.value()).equipedCompanion) {
 				if (manager.hasComponent<PartOfLayerComponent>(entity)) {
 					manager.removeComponentFromEntity<PartOfLayerComponent>(entity);
 				}
@@ -303,9 +300,9 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		}
 	}
 	manager.destroyEntity(battleManagerId);
-
+	manager.addComponentToEntity<InputComponent>(playerIdOpt.value());
 	if (battleState == BattleState::VICTORY) {
-		manager.addComponentToEntity<InputComponent>(playerIdOpt.value());
+
 		for (EntityID defeatedEnemy : defeatedEnemies) {
 			manager.destroyEntity(defeatedEnemy);
 		}
