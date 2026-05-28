@@ -18,15 +18,16 @@
         "map.tmj": {
             "expandedGroupLayers": [
                 6,
-                7,
                 8,
-                13
+                7,
+                13,
+                16
             ],
-            "scale": 1.4433,
-            "selectedLayer": 3,
+            "scale": 3.5069,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": -26.32855262246241,
-                "y": -9.007136423473987
+                "x": 215.86016139610481,
+                "y": -43.057971427756705
             }
         },
         "map.tmj#Tilesheet_edited": {

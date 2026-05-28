@@ -24,7 +24,7 @@ void InteractionSystem::update()
 	WorldUtils::viewInCurrentLayer<InteractionComponent, TransformComponent>(
 	    manager, [&](auto &interactableEntity, InteractionComponent &component, TransformComponent &bb) {
 		    component.inRange = false;
-		    auto interActableBB = bb.getBoundingBox();
+		    auto interActableBB = bb.getBoundingBox(4.0,4.0);
 		    if (!collides(playerBB, interActableBB)) {
 			    component.isActive = false;
 			    component.mustLeaveRadius = false;

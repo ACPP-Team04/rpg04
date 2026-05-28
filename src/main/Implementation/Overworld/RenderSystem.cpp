@@ -30,6 +30,7 @@ void RenderSystem::renderTiles(WorldComponent *world)
 	int startY = std::max(0, (int)((center.y - size.y / 2) / world->tileHeight));
 	int endX = std::min((int)world->width,  startX + (int)(size.x / world->tileWidth) + 2);
 	int endY = std::min((int)world->height, startY + (int)(size.y / world->tileHeight) + 2);
+	int i = 0;
 	for (auto& tileLayer : world->worlds[world->currentGroup].tileLayers) {
 		for (int y = startY; y < endY; y++) {
 			for (int x = startX; x < endX; x++) {
@@ -37,10 +38,12 @@ void RenderSystem::renderTiles(WorldComponent *world)
 				if (tile.tileInfo.tilesetPath.empty()) continue;
 				sf::Sprite sp = AssetManager::getInstance().getSpriteAt(tile.tileInfo);
 				sp.setPosition(tile.position);
+				i++;
 				window.draw(sp);
 			}
 		}
 	}
+	std::cout <<"Rendered ---------------------" << i << std::endl;
 }
 void RenderSystem::update()
 {
