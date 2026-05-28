@@ -81,7 +81,7 @@ int main()
 		sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
 		                        "Zombie Knight");
 		tgui::Gui gui(window);
-		window.setFramerateLimit(FRAME_LIMIT);
+		window.setFramerateLimit(60);
 
 
 		spdlog::info("Creating ECS manager...");
@@ -100,6 +100,7 @@ int main()
 
 		auto gameState = GameState::MainMenu;
 		setUpMainMenu(gui, gameState);
+		sf::Clock fpsClock;
 		while (window.isOpen()) {
 			window.clear(sf::Color::Black);
 
@@ -123,6 +124,11 @@ int main()
 
 			gui.draw();
 			window.display();
+			if (PEROMANCE_TEST_MODE) {
+				float fps = 1.f / fpsClock.restart().asSeconds();
+				WorldComponent *world = WorldUtils::getWorld(ecsManager.manager);
+				world->addPersistentMessage("FPS: "+std::to_string(fps));
+			}
 		}
 	} catch (const std::exception &e) {
 		spdlog::critical("Fatal startup/runtime error: {}", e.what());

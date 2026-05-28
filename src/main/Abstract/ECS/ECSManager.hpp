@@ -144,6 +144,7 @@ struct ECSManager {
 
 	void updateMeasureCalc()
 	{
+
 		measureTime("HudSystem", [this] { hudSystem.update(); });
 		measureTime("Input", [this] { inputSystem.update(); });
 		measureTime("Movement", [this] { movementSystem.update(); });
