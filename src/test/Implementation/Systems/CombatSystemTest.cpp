@@ -43,6 +43,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	bmc.participants = {player, enemy};
 	bmc.currentTurnIndex = 0;
 	bmc.isBattleOver = false;
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 	combatSystem.update();
@@ -123,6 +125,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	bmc.isBattleOver = false;
 	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	battleComponentE.battleManagerId = battle;
 	battleComponentP.battleManagerId = battle;
 
@@ -210,7 +214,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	battleComponentE.battleManagerId = battle;
 	battleComponentP.battleManagerId = battle;
-
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	combatSystem.update();
 
 	auto playerWeaponId = manager.createEntity<ItemComponent>();
@@ -291,6 +296,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithFullLife)
 	bmc.isBattleOver = false;
 	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 	combatSystem.update();
@@ -376,6 +383,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithNonFullLife)
 	bmc.isBattleOver = false;
 	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 	combatSystem.update();
@@ -462,6 +471,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestoreAP)
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	combatSystem.update();
 
 	auto playerWeaponId = manager.createEntity<ItemComponent>();
@@ -764,6 +775,7 @@ TEST(CombatSystemTest, checkDeathConditionPlayerLost)
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 	battleComponentE2.battleManagerId = battle;
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
 
 	auto returnState = combatSystem.checkDeathCondition(player, enemy);
 	EXPECT_EQ(BattleState::DEFEAT, returnState);
@@ -786,7 +798,7 @@ TEST(CombatSystemTest, checkDeathConditionPlayerWon)
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
 	EntityID enemy = manager.createEntity<CharacterComponent>();
-	EntityID enemy2 = manager.createEntity<CharacterComponent>();
+	EntityID enemy2 = manager.createEntity<CharacterComponent, StateComponent>();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 
 	manager.addComponentToEntity<BattleComponent, TransformComponent>(player);
@@ -804,6 +816,8 @@ TEST(CombatSystemTest, checkDeathConditionPlayerWon)
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 	battleComponentE2.battleManagerId = battle;
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 
 	auto &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy, enemy2};
@@ -1121,6 +1135,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHealWithoutSettingTarget)
 	bmc.isBattleOver = false;
 	auto &battleComponentP = manager.getComponent<BattleComponent>(player);
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
 	combatSystem.update();
@@ -1192,6 +1208,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestWithoutSettingTarget)
 	auto &battleComponentE = manager.getComponent<BattleComponent>(enemy);
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	combatSystem.update();
 
 	auto playerWeaponId = manager.createEntity<ItemComponent>();
@@ -1217,6 +1235,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestWithoutSettingTarget)
 	characterComE.stats.health = 80;
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
+	battleComponentP.faction = BATTLE_FACTION::PLAYER_PARTY;
+	battleComponentP.controller = BATTLE_CONTROLLER::LOCAL_PLAYER;
 	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
 	EXPECT_EQ(true, battleComponentP.isActiveTurn);
 	EXPECT_EQ(false, battleComponentE.isActiveTurn);

@@ -104,6 +104,9 @@ void executeAction(ArchetypeManager &manager, DialogAction &action, EntityID &en
 	case DIALOG_ACTIONS::COMPANION: {
 		CharacterComponent &ch = manager.getComponent<CharacterComponent>(player);
 		manager.getComponent<PartOfLayerComponent>(entityId).groupId = ch.inventory.inventoryWorldId;
+		if (ch.equipedCompanion == 0) {
+			ch.equipedCompanion = entityId.getId();
+		}
 		world->pushMessageToHud("New Companion added!");
 		break;
 	}

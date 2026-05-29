@@ -9,6 +9,8 @@
 #include <queue>
 #include <unordered_map>
 
+enum class ACTIVE_MENU { NONE, PAUSE_MENU, INVENTORY_MENU };
+
 struct Tile {
 	TileInfo tileInfo;
 	sf::Vector2f position;
@@ -45,6 +47,7 @@ struct WorldComponent : public Component<WorldComponent> {
 	std::unordered_set<std::string> persistentMessages;
 
 	bool menuOpened = false;
+	ACTIVE_MENU currentMenu = ACTIVE_MENU::NONE;
 
 	void readFromJson(tson::TiledClass &j) override {};
 

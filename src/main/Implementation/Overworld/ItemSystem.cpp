@@ -1,4 +1,3 @@
-
 #include "Abstract/Overwordl/ItemSystem.hpp"
 
 #include "Abstract/Overwordl/Components/CharacterComponent.hpp"
@@ -11,8 +10,10 @@
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
+#include <Abstract/Overwordl/Components/CollisionComponent.hpp>
+#include <spdlog/spdlog.h>
 
-ItemSystem::ItemSystem(ArchetypeManager &manager) : System(manager) {}
+ItemSystem::ItemSystem(ArchetypeManager& manager) : System(manager) {}
 
 void ItemSystem::update()
 {
@@ -36,8 +37,9 @@ void ItemSystem::update()
 				    return;
 			    }
 
-		    	world->pushMessageToHud("New Item Added");
-			    manager.getComponent<PartOfLayerComponent>(entity).groupId = character_component.inventory.inventoryWorldId;
+			    world->pushMessageToHud("New Item Added");
+			    manager.getComponent<PartOfLayerComponent>(entity).groupId =
+			        character_component.inventory.inventoryWorldId;
 		    }
 	    });
 }

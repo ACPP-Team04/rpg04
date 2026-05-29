@@ -9,7 +9,6 @@
 #include <magic_enum/magic_enum.hpp>
 class WorldUtils {
   public:
-
 	static WorldComponent *getWorld(ArchetypeManager &manager)
 	{
 		WorldComponent *world = nullptr;
@@ -22,7 +21,6 @@ class WorldUtils {
 		return world;
 	}
 
-
 	template <typename... T, typename Function>
 	static void viewInCurrentLayer(ArchetypeManager &manager, Function &&function)
 	{
@@ -31,6 +29,18 @@ class WorldUtils {
 		manager.view<T..., PartOfLayerComponent>().each(
 		    [&](auto &entity, T &...components, PartOfLayerComponent &layer) {
 			    if (world->currentGroup != layer.groupId) {
+				    return;
+			    }
+			    function(entity, components...);
+		    });
+	}
+
+	template <typename... T, typename Function>
+	static void viewInSpecificLayer(ArchetypeManager &manager, int groupId, Function &&function)
+	{
+		manager.view<T..., PartOfLayerComponent>().each(
+		    [&](auto &entity, T &...components, PartOfLayerComponent &layer) {
+			    if (groupId != layer.groupId) {
 				    return;
 			    }
 			    function(entity, components...);

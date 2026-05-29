@@ -122,6 +122,13 @@ struct ECSManager {
 		}
 		hudSystem.update();
 		inputSystem.update();
+		menuSystem.update();
+		bool isPaused = checkMenu();
+		if (isPaused) {
+			gui.draw();
+			return;
+		}
+		hudSystem.update();
 		movementSystem.update();
 		animation_movement_system.update();
 		collisionSystem.update();
