@@ -132,13 +132,13 @@ void SwitchBattleModeSystem::preparePlayerPartyForBattle(const std::vector<Entit
 	for (const auto &participant : participants) {
 		if (participant == playerId) {
 			this->manager.removeComponentFromEntity<InputComponent>(participant);
-			this->manager.getComponentFromEntity<StateComponent>(participant).setState(ENTITY_ANIMATIONS_STATE::IDLE);
+			this->manager.getComponent<StateComponent>(participant).setState(ENTITY_ANIMATIONS_STATE::IDLE);
 		}
 		if (!manager.hasComponent<CharacterComponent>(participant)) {
 			throw std::runtime_error("Player party entity does not have a CharacterComponent, cannot start battle");
 		}
 		if (!manager.hasComponent<StateComponent>(participant)) {
-			throw std::runtime_error("Player party entity does not have a CharacterComponent, cannot start battle");
+			throw std::runtime_error("Player party entity does not have a StateComponent, cannot start battle");
 		}
 		manager.addComponentToEntity<BattleComponent>(participant);
 		auto &battleComp = this->manager.getComponent<BattleComponent>(participant);
