@@ -21,6 +21,7 @@ void AudioManager::switchMusic(const std::string &musicName, bool loop)
 void AudioManager::stopMusic()
 {
 	backgroundMusic.stop();
+	currentMusicName = std::nullopt;
 }
 void AudioManager::setMasterMusicVolume(float volume)
 {
@@ -47,7 +48,7 @@ void AudioManager::playMusic(const std::string &musicName, bool loop)
 	backgroundMusic.setLooping(loop);
 	backgroundMusic.setVolume(masterMusicVolume);
 	backgroundMusic.play();
-
+	currentMusicName = musicName;
 	spdlog::info("Now playing: {}", musicName);
 }
 void AudioManager::playSound(const std::string &soundName, float volumeModifier)
