@@ -9,6 +9,11 @@
 #include "Implementation/Components/WeaponComponent.hpp"
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 
+#include "Abstract/Audio/AudioSystem.hpp"
+#include <Abstract/Overwordl/Components/CharacterComponent.hpp>
+#include <Abstract/Overwordl/Components/DialogComponent.hpp>
+#include <Abstract/Overwordl/Components/IsLockedComponent.hpp>
+#include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <chrono>
 #include <ctime>
 #include <fstream>
@@ -59,75 +64,73 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 		saveData["player"]["position"]["y"] = trans.position.y;
 
 		// Save Stats
-		auto &stats = manager.getComponent<StatsComponent>(player);
-		saveData["player"]["stats"]["experience"] = stats.experience;
-		saveData["player"]["stats"]["experienceLevel"] = stats.experienceLevel;
-		saveData["player"]["stats"]["numberOfFightsWon"] = stats.numberOfFightsWon;
-		saveData["player"]["stats"]["health"] = stats.health;
-		saveData["player"]["stats"]["STRENGTH"] = stats.getStat(STRENGTH);
-		saveData["player"]["stats"]["DEXTERITY"] = stats.getStat(DEXTERITY);
-		saveData["player"]["stats"]["FAITH"] = stats.getStat(FAITH);
-		saveData["player"]["stats"]["MAX_HEALTH"] = stats.getStat(MAX_HEALTH);
+		CharacterComponent &characterComp = manager.getComponent<CharacterComponent>(player);
+		saveData["player"]["stats"]["experience"] = characterComp.stats.experience;
+		saveData["player"]["stats"]["experienceLevel"] = characterComp.stats.experienceLevel;
+		saveData["player"]["stats"]["numberOfFightsWon"] = characterComp.stats.numberOfFightsWon;
+		saveData["player"]["stats"]["health"] = characterComp.stats.health;
+		saveData["player"]["stats"]["STRENGTH"] = characterComp.stats.getStat(STRENGTH);
+		saveData["player"]["stats"]["DEXTERITY"] = characterComp.stats.getStat(DEXTERITY);
+		saveData["player"]["stats"]["FAITH"] = characterComp.stats.getStat(FAITH);
+		saveData["player"]["stats"]["MAX_HEALTH"] = characterComp.stats.getStat(MAX_HEALTH);
 
 		// Save your Inventory component
-		auto &inventory = manager.getComponent<InventoryComponent>(player);
 		nlohmann::json inventoryJson = nlohmann::json::array();
+		int inventoryGroupId = characterComp.inventory.inventoryWorldId;
 
-		for (const auto &[itemType, entitySet] : inventory.items) {
+		WorldUtils::viewInSpecificLayer<ItemComponent>(
+		    manager, inventoryGroupId, [&](EntityID itemEntity, ItemComponent &itemComp) {
+			    nlohmann::json itemJson;
+			    if (manager.hasComponent<PersistanceComponent>(itemEntity)) {
+				    itemJson["uuid"] = manager.getComponent<PersistanceComponent>(itemEntity).uuid;
+			    } else {
+				    spdlog::error("Item {} has no PersistanceComponent! Cannot save.", itemComp.name);
+				    return 1;
+			    }
+			    itemJson["itemType"] = static_cast<int>(itemComp.itemType);
 
-			for (EntityID itemEntity : entitySet) {
-				nlohmann::json itemJson;
-
-				itemJson["itemType"] = static_cast<int>(itemType);
-
-				bool isEquipped = false;
-				if (inventory.hasEquippedItem(itemType) && inventory.getEquippedItem(itemType) == itemEntity) {
-					isEquipped = true;
-				}
-				itemJson["isEquipped"] = isEquipped;
-
-				// Extract stats
-				if (manager.hasComponent<WeaponComponent>(itemEntity)) {
-					auto &weapon = manager.getComponent<WeaponComponent>(itemEntity);
-
-					itemJson["weaponData"]["weaponType"] = static_cast<int>(weapon.weaponType);
-					itemJson["weaponData"]["scalingFactor"] = static_cast<int>(weapon.scalingFactor);
-					itemJson["weaponData"]["scalingStat"] = static_cast<int>(weapon.scalingStat);
-
-					itemJson["weaponData"]["lightAttackBaseDmg"] = weapon.lightAttackBaseDmg;
-					itemJson["weaponData"]["heavyAttackBaseDmg"] = weapon.heavyAttackBaseDmg;
-					itemJson["weaponData"]["ultimateAttackBaseDmg"] = weapon.ultimateAttackBaseDmg;
-
-					itemJson["weaponData"]["hitSoundLight"] = weapon.hitSoundLight;
-					itemJson["weaponData"]["hitSoundHeavy"] = weapon.hitSoundHeavy;
-					itemJson["weaponData"]["hitSoundUltimate"] = weapon.hitSoundUltimate;
-				}
-				inventoryJson.push_back(itemJson);
-			}
-		}
-
+			    bool isEquipped = (itemEntity.getId() == characterComp.equipedWeapon
+			                       || itemEntity.getId() == characterComp.equipedCompanion);
+			    itemJson["isEquipped"] = isEquipped;
+			    itemJson["currentLayer"] = inventoryGroupId;
+			    inventoryJson.push_back(itemJson);
+		    });
 		saveData["player"]["inventory"] = inventoryJson;
 
 		if (manager.hasComponent<PartOfLayerComponent>(player)) {
 			auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
-
-			saveData["player"]["layerData"]["level"] = static_cast<int>(layerComp.level);
-			saveData["player"]["layerData"]["layer"] = static_cast<int>(layerComp.layer);
+			saveData["player"]["layerData"]["groupId"] = static_cast<int>(layerComp.groupId);
 		}
-
 	} else {
 		spdlog::warn("SaveManager: No player found in ECS to save!");
 	}
+	// Save doors
+	manager.view<PersistanceComponent, IsLockedComponent>().each(
+	    [&](EntityID id, PersistanceComponent &persist, IsLockedComponent &lockComp) {
+		    saveData["worldState"]["doorStates"][persist.uuid] = lockComp.isLocked;
+	    });
+
+	// Save dialogs
+	manager.view<PersistanceComponent, DialogComponent>().each(
+	    [&](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp) {
+		    saveData["worldState"]["dialogStates"][persist.uuid] = dialogComp.currentNodeIndex;
+	    });
+
+	auto currentMusicOpt = AudioManager::getInstance().getCurrentMusicName();
+	if (currentMusicOpt.has_value()) {
+		saveData["worldState"]["currentMusic"] = currentMusicOpt.value();
+	} else {
+		saveData["worldState"]["currentMusic"] = "";
+	}
 
 	saveData["worldState"]["deadUniqueEntities"] = PersistenceManager::getInstance().deadUniqueEntities;
-	saveData["worldState"]["entityStates"] = PersistenceManager::getInstance().entityStates;
-
 	manager.view<WorldComponent>().each([&](EntityID entity, WorldComponent &worldComp) {
 		saveData["worldState"]["worldComponent"]["widthPixel"] = worldComp.widthPixel;
 		saveData["worldState"]["worldComponent"]["heightPixel"] = worldComp.heightPixel;
 
 		saveData["worldState"]["worldComponent"]["currentLevel"] = static_cast<int>(worldComp.currentLevel);
 		saveData["worldState"]["worldComponent"]["currentLayer"] = static_cast<int>(worldComp.currentLayer);
+		saveData["worldState"]["worldComponent"]["currentGroup"] = worldComp.currentGroup;
 
 		saveData["worldState"]["worldComponent"]["menuOpened"] = worldComp.menuOpened;
 	});
@@ -163,11 +166,6 @@ nlohmann::json SaveManager::loadSaveFile(int slotIndex)
 			PersistenceManager::getInstance().deadUniqueEntities =
 			    worldState["deadUniqueEntities"].get<std::set<std::string>>();
 		}
-
-		if (worldState.contains("entityStates")) {
-			PersistenceManager::getInstance().entityStates =
-			    worldState["entityStates"].get<std::map<std::string, int>>();
-		}
 	}
 
 	spdlog::info("Save data loaded into GameState from Slot {}", slotIndex);
@@ -177,7 +175,6 @@ nlohmann::json SaveManager::loadSaveFile(int slotIndex)
 void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 {
 	const auto &deadEntities = PersistenceManager::getInstance().deadUniqueEntities;
-	const auto &savedStates = PersistenceManager::getInstance().entityStates;
 	std::vector<EntityID> toDelete;
 
 	manager.view<PersistanceComponent>().each([&](EntityID id, PersistanceComponent &persistent) {
@@ -185,15 +182,6 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 			toDelete.push_back(id);
 			return;
 		}
-
-		// Did its state change?
-		/*
-		if (savedStates.find(persistent.uuid) != savedStates.end()) {
-		    if (manager.hasComponent<InteractionComponent>(id)) {
-		        manager.getComponent<InteractionComponent>(id).isActive = savedStates.at(persistent.uuid);
-		    }
-		}
-		*/
 	});
 
 	for (EntityID id : toDelete) {
@@ -211,65 +199,59 @@ void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &
 		trans.position.x = playerJson["position"]["x"];
 		trans.position.y = playerJson["position"]["y"];
 	}
-	if (manager.hasComponent<TransformComponent>(player)) {
-		auto &stats = manager.getComponent<StatsComponent>(player);
-		stats.experience = playerJson["stats"].value("experience", 1.0f);
-		stats.experienceLevel = playerJson["stats"].value("experienceLevel", 1);
-		stats.numberOfFightsWon = playerJson["stats"].value("numberOfFightsWon", 0);
-		stats.health = playerJson["stats"].value("health", 100);
+	if (manager.hasComponent<CharacterComponent>(player)) {
+		CharacterComponent &charComp = manager.getComponent<CharacterComponent>(player);
+		charComp.stats.experience = playerJson["stats"].value("experience", 1.0f);
+		charComp.stats.experienceLevel = playerJson["stats"].value("experienceLevel", 1);
+		charComp.stats.numberOfFightsWon = playerJson["stats"].value("numberOfFightsWon", 0);
+		charComp.stats.health = playerJson["stats"].value("health", 100);
 
-		stats.addScalableStats(STRENGTH, playerJson["stats"].value("STRENGTH", 1));
-		stats.addScalableStats(DEXTERITY, playerJson["stats"].value("DEXTERITY", 1));
-		stats.addScalableStats(FAITH, playerJson["stats"].value("FAITH", 1));
-		stats.addScalableStats(MAX_HEALTH, playerJson["stats"].value("MAX_HEALTH", 100));
-	}
-	if (manager.hasComponent<InventoryComponent>(player)) {
-		auto &oldInv = manager.getComponent<InventoryComponent>(player);
-		for (const auto &[type, entitySet] : oldInv.items) {
-			for (EntityID id : entitySet) {
-				manager.destroyEntity(id);
-			}
-		}
-		manager.removeComponentFromEntity<InventoryComponent>(player);
-	}
-	manager.addComponentToEntity<InventoryComponent>(player);
-	auto &inventory = manager.getComponent<InventoryComponent>(player);
+		charComp.stats.addScalableStats(STRENGTH, playerJson["stats"].value("STRENGTH", 1));
+		charComp.stats.addScalableStats(DEXTERITY, playerJson["stats"].value("DEXTERITY", 1));
+		charComp.stats.addScalableStats(FAITH, playerJson["stats"].value("FAITH", 1));
+		charComp.stats.addScalableStats(MAX_HEALTH, playerJson["stats"].value("MAX_HEALTH", 100));
 
-	if (playerJson.contains("inventory")) {
-		for (const auto &itemJson : playerJson["inventory"]) {
-			EntityID newItem = manager.createEntity();
-			ITEM_TYPE type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
+		if (playerJson.contains("inventory")) {
+			charComp.equipedWeapon = 0;
+			charComp.equipedCompanion = 0;
 
-			if (itemJson.contains("weaponData")) {
-				manager.addComponentToEntity<WeaponComponent>(newItem);
-				auto &weapon = manager.getComponent<WeaponComponent>(newItem);
-				const auto &wData = itemJson["weaponData"];
+			for (const auto &itemJson : playerJson["inventory"]) {
+				if (!itemJson.contains("uuid"))
+					continue;
 
-				weapon.weaponType = static_cast<WeaponType>(wData["weaponType"].get<int>());
-				weapon.scalingFactor = static_cast<WEAPON_SCALING_FACTOR>(wData["scalingFactor"].get<int>());
-				weapon.scalingStat = static_cast<STATS>(wData["scalingStat"].get<int>());
+				std::string savedUuid = itemJson["uuid"];
+				ITEM_TYPE type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
+				bool isEquipped = itemJson.value("isEquipped", false);
 
-				weapon.lightAttackBaseDmg = wData["lightAttackBaseDmg"];
-				weapon.heavyAttackBaseDmg = wData["heavyAttackBaseDmg"];
-				weapon.ultimateAttackBaseDmg = wData["ultimateAttackBaseDmg"];
+				EntityID foundItem = EntityID();
 
-				weapon.hitSoundLight = wData["hitSoundLight"];
-				weapon.hitSoundHeavy = wData["hitSoundHeavy"];
-				weapon.hitSoundUltimate = wData["hitSoundUltimate"];
-			}
+				manager.view<PersistanceComponent, PartOfLayerComponent>().each(
+				    [&](EntityID id, PersistanceComponent &persist, PartOfLayerComponent &layerComp) {
+					    if (persist.uuid == savedUuid) {
+						    foundItem = id;
+						    layerComp.groupId = charComp.inventory.inventoryWorldId;
+					    }
+				    });
 
-			inventory.addItem(newItem, type);
-
-			if (itemJson.value("isEquipped", false)) {
-				inventory.equip(newItem, type);
+				if (foundItem.getId() == 0) {
+					spdlog::warn("Could not find mapped item with UUID {}!", savedUuid);
+					continue;
+				}
+				if (isEquipped) {
+					if (type == ITEM_TYPE::WEAPON) {
+						charComp.equipedWeapon = foundItem.getId();
+						spdlog::info("Equipped loaded weapon (New ID: {})", foundItem.getId());
+					} else if (type == ITEM_TYPE::COLLECTABLE_COMPANION) {
+						charComp.equipedCompanion = foundItem.getId();
+						spdlog::info("Equipped loaded companion (New ID: {})", foundItem.getId());
+					}
+				}
 			}
 		}
 	}
 	if (playerJson.contains("layerData")) {
 		auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
-
-		layerComp.level = static_cast<LEVEL_NAME>(playerJson["layerData"].value("level", 0));
-		layerComp.layer = static_cast<LAYERTYPE>(playerJson["layerData"].value("layer", 0));
+		layerComp.groupId = playerJson["layerData"].value("groupId", -1);
 	}
 	spdlog::info("Player successfully injected into the world.");
 }
@@ -288,6 +270,7 @@ void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann
 
 		worldComp.currentLevel = static_cast<LEVEL_NAME>(wcJson.value("currentLevel", 0));
 		worldComp.currentLayer = static_cast<LAYERTYPE>(wcJson.value("currentLayer", 0));
+		worldComp.currentGroup = wcJson.value("currentGroup", -1);
 
 		worldComp.menuOpened = wcJson.value("menuOpened", false);
 	});
