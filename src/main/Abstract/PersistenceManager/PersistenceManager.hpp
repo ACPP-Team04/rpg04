@@ -3,11 +3,11 @@
 #include <set>
 #include <string>
 
-class GameState {
+class PersistenceManager {
   public:
-	static GameState &getInstance()
+	static PersistenceManager &getInstance()
 	{
-		static GameState instance;
+		static PersistenceManager instance;
 		return instance;
 	}
 
@@ -22,9 +22,9 @@ class GameState {
 		entityStates.clear();
 	}
 
-	GameState(const GameState &) = delete;
-	GameState &operator=(const GameState &) = delete;
+	PersistenceManager(const PersistenceManager &) = delete;
+	PersistenceManager &operator=(const PersistenceManager &) = delete;
 
   private:
-	GameState() = default;
+	PersistenceManager() = default;
 };
