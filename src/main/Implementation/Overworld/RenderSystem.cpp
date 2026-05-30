@@ -15,10 +15,11 @@ RenderSystem::RenderSystem(ArchetypeManager &manager, sf::RenderWindow &window) 
 void render(TransformComponent &tcomp, sf::RenderWindow &window, SpriteComponent &scomp)
 {
 	sf::Sprite sp = AssetManager::getInstance().getSpriteAt(scomp);
-
 	sp.setScale(tcomp.scale);
-	sp.setPosition(tcomp.position);
 	sp.setRotation(tcomp.rotation);
+	auto bounds = sp.getLocalBounds();
+	sp.setOrigin(sf::Vector2f(bounds.size.x / 2.f, bounds.size.y / 2.f));
+	sp.setPosition(tcomp.position + sf::Vector2f(bounds.size.x / 2.f, bounds.size.y / 2.f));
 	window.draw(sp);
 }
 
