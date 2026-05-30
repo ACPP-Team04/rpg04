@@ -81,7 +81,7 @@ void initializeEngine(ArchetypeManager &manager)
 	manager.subscribeToDestruction([&manager](EntityID id) {
 		if (manager.hasComponent<PersistanceComponent>(id)) {
 			std::string uuid = manager.getComponent<PersistanceComponent>(id).uuid;
-			GameState::getInstance().deadUniqueEntities.insert(uuid);
+			PersistenceManager::getInstance().deadUniqueEntities.insert(uuid);
 			spdlog::info("Observer: Recorded {} as dead.", uuid);
 		}
 	});
