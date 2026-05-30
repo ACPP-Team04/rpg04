@@ -27,13 +27,13 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
 #include <Abstract/GameConfig/GameConfig.hpp>
-#include <Abstract/Persistance/SaveManager.hpp>
+#include <Abstract/Overwordl/Components/PersistanceComponent.hpp>
 #include <Abstract/Persistance/SaveManager.hpp>
 #include <SFML/Graphics.hpp>
 #include <exception>
 
 namespace {
-constexpr sf::Vector2f logicalSize{WORLD_SIZE_X,WORLD_SIZE_Y};
+constexpr sf::Vector2f logicalSize{WORLD_SIZE_X, WORLD_SIZE_Y};
 constexpr float TargetRatio = logicalSize.x / logicalSize.y;
 
 sf::FloatRect getLetterboxViewport(sf::Vector2u windowSize)
@@ -65,7 +65,7 @@ void applyResize(sf::RenderWindow &window, tgui::Gui &gui, ECSManager &ecsManage
 	    tgui::FloatRect(viewport.position.x, viewport.position.y, viewport.size.x, viewport.size.y));
 	gui.setAbsoluteView(tgui::FloatRect(0.f, 0.f, logicalSize.x, logicalSize.y));
 }
-}
+} // namespace
 
 void applyGameConfig(ECSManager &ecsManager, EntityID player)
 {
@@ -116,60 +116,23 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slo
 	spdlog::info("Load sequence completely finished!");
 }
 
-void initializeEngine(ArchetypeManager &manager)
-{
-	manager.subscribeToDestruction([&manager](EntityID id) {
-		if (manager.hasComponent<PersistanceComponent>(id)) {
-			std::string uuid = manager.getComponent<PersistanceComponent>(id).uuid;
-			PersistenceManager::getInstance().deadUniqueEntities.insert(uuid);
-			spdlog::info("Observer: Recorded {} as dead.", uuid);
-		}
-	});
-}
-
-void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slotIndex)
-{
-	spdlog::info("Executing load sequence for Slot {}...", slotIndex);
-
-	nlohmann::json saveData;
-	try {
-		saveData = SaveManager::loadSaveFile(slotIndex);
-	} catch (const std::exception &e) {
-		spdlog::error("Aborting load: Save file error: {}", e.what());
-		return;
-	}
-
-	manager.clear();
-
-	parser.update();
-	SaveManager::applyWorldStateOverrides(manager);
-	auto playerOpt = WorldUtils::getPlayer(manager);
-	if (!playerOpt.has_value()) {
-		spdlog::critical("WorldParser failed to spawn a default player!");
-		throw std::runtime_error("WorldParser failed to spawn a default player!");
-	}
-	SaveManager::injectWorldComponent(manager, saveData["worldState"]);
-
-	SaveManager::injectPlayer(manager, saveData["player"], playerOpt.value());
-
-	spdlog::info("Load sequence completely finished!");
-}
-
 int main()
 {
+#ifndef _DEBUG
 	try {
-		sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
-		                        "Zombie Knight");
+#endif
+		sf::RenderWindow window(
+		    sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
+		    "Zombie Knight");
 		tgui::Gui gui(window);
 		gui.setFont(FONT);
 		window.setFramerateLimit(60);
 
-
 		spdlog::info("Creating ECS manager...");
-		ECSManager ecsManager = ECSManager(window,gui);
+		ECSManager ecsManager = ECSManager(window, gui);
 		spdlog::info("Initializing Systems...");
 		ecsManager.init();
-
+		initializeEngine(ecsManager.manager);
 		auto player = WorldUtils::getPlayer(ecsManager.manager);
 		if (!player.has_value()) {
 			throw std::runtime_error("Startup failed: no player entity was created by WorldParser.");
@@ -194,7 +157,22 @@ int main()
 					applyResize(window, gui, ecsManager);
 				}
 			}
+			auto &persistence = PersistenceManager::getInstance();
 
+			if (persistence.requestSave) {
+				SaveManager::saveGame(ecsManager.manager, 1);
+				persistence.requestSave = false;
+			}
+
+			if (persistence.requestLoad) {
+				executeLoadSequence(ecsManager.manager, ecsManager.worldParser, 1);
+				persistence.requestLoad = false;
+			}
+
+			if (persistence.requestQuit) {
+				gameState = GameState::Quit;
+				persistence.requestQuit = false;
+			}
 			if (gameState == GameState::Game) {
 				ecsManager.update();
 			}
@@ -208,9 +186,10 @@ int main()
 			if (PEROMANCE_TEST_MODE) {
 				float fps = 1.f / fpsClock.restart().asSeconds();
 				WorldComponent *world = WorldUtils::getWorld(ecsManager.manager);
-				world->addPersistentMessage("FPS: "+std::to_string(fps));
+				world->addPersistentMessage("FPS: " + std::to_string(fps));
 			}
 		}
+#ifndef _DEBUG
 	} catch (const std::exception &e) {
 		spdlog::critical("Fatal startup/runtime error: {}", e.what());
 		return 1;
@@ -218,6 +197,6 @@ int main()
 		spdlog::critical("Fatal startup/runtime error: unknown exception");
 		return 1;
 	}
-
+#endif
 	return 0;
 }
