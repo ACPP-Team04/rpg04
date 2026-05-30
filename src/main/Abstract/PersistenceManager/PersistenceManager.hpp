@@ -14,7 +14,6 @@ class PersistenceManager {
 	std::set<std::string> deadUniqueEntities;
 
 	std::map<std::string, int> entityStates;
-	bool requestLoad = false;
 
 	void clearAll()
 	{
@@ -24,6 +23,9 @@ class PersistenceManager {
 
 	PersistenceManager(const PersistenceManager &) = delete;
 	PersistenceManager &operator=(const PersistenceManager &) = delete;
+	bool requestLoad = false;
+	bool requestSave = false;
+	bool requestQuit = false;
 
   private:
 	PersistenceManager() = default;
