@@ -1,6 +1,7 @@
 #include "Abstract/Overwordl/BonfireSystem.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Persistance/SaveManager.hpp"
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include <spdlog/spdlog.h>
 
@@ -17,10 +18,11 @@ void BonfireSystem::update()
 
 			spdlog::info("Bonfire interaction detected! Executing save...");
 
-			// FIX: Hardcoded for now slot 1
-			SaveManager::saveGame(manager, 1);
-
+			PersistenceManager::getInstance().requestSave = true;
+			WorldComponent *world = WorldUtils::getWorld(manager);
+			world->pushMessageToHud("Game saved!");
 			component.isActive = false;
+			component.deactivated = true;
 		}
 	});
 }
