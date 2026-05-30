@@ -1,12 +1,12 @@
 
 #include "Abstract/Overwordl/MenuSystem.hpp"
 
+#include "Abstract/AssetManager/AssetManager.hpp"
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
-
-#include "Abstract/AssetManager/AssetManager.hpp"
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <Abstract/Overwordl/Components/SpriteComponent.hpp>
@@ -27,31 +27,55 @@ void overworldMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &
 	if (gui.get("overworldMenu"))
 		return;
 
-	auto panel = tgui::Panel::create({"300", "400"});
+	auto panel = tgui::Panel::create({"300", "250"});
 	panel->setWidgetName("overworldMenu");
 	panel->setPosition({"50%", "50%"});
 	panel->setOrigin(0.5f, 0.5f);
-	panel->getRenderer()->setBackgroundColor(tgui::Color::Red);
+	panel->getRenderer()->setBackgroundColor(tgui::Color(30, 30, 30, 240));
+	panel->getRenderer()->setBorders({2});
+	panel->getRenderer()->setBorderColor(tgui::Color::White);
 
-	InventoryComponent *inventory = nullptr;
-	manager.view<PlayerComponent, InventoryComponent>().each(
-	    [&](auto &entity, auto &comp, auto &invComp) { inventory = &invComp; });
+	float yPos = 30.f;
 
-	float yOffset = 10.f;
-	if (inventory) {
-		for (auto &itemId : inventory->inventory) {
+	auto resumeBtn = tgui::Button::create("Resume Game");
+	resumeBtn->setSize({"80%", 40});
+	resumeBtn->setPosition({"10%", yPos});
+	resumeBtn->onClick([world, &gui]() {
+		world->menuOpened = false;
+		gui.remove(gui.get("overworldMenu"));
+	});
+	panel->add(resumeBtn);
 
-			auto label = tgui::Label::create(std::to_string(itemId.getId()));
-			label->setPosition({10.f, yOffset});
-			label->setTextSize(70);
-			panel->add(label);
-			yOffset += 30.f;
-		}
-	}
+	yPos += 60.f;
+
+	auto loadBtn = tgui::Button::create("Load Game (Slot 1)");
+	loadBtn->setSize({"80%", 40});
+	loadBtn->setPosition({"10%", yPos});
+	loadBtn->onClick([world, &gui]() {
+		spdlog::info("Overworld Menu: Load Game requested for Slot 1");
+		PersistenceManager::getInstance().requestLoad = true;
+		world->menuOpened = false;
+		gui.remove(gui.get("overworldMenu"));
+	});
+	panel->add(loadBtn);
+
+	yPos += 60.f;
+
+	auto exitBtn = tgui::Button::create("Exit Game");
+	exitBtn->setSize({"80%", 40});
+	exitBtn->setPosition({"10%", yPos});
+	exitBtn->onClick([world, &gui]() {
+		spdlog::info("Overworld Menu: Safe Shutdown Requested...");
+		// TODO: Do we want auto save on exit?
+		// PersistenceManager::getInstance().requestSave = true;
+		PersistenceManager::getInstance().requestQuit = true;
+		world->menuOpened = false;
+		gui.remove(gui.get("overworldMenu"));
+	});
+	panel->add(exitBtn);
 
 	gui.add(panel);
 }
-
 void openMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &gui)
 {
 	LAYERTYPE layertype = world->currentLayer;
