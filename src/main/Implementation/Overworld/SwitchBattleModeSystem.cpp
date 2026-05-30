@@ -76,7 +76,7 @@ void SwitchBattleModeSystem::update()
 	}
 	preparePlayerPartyForBattle(participantsList, player);
 	auto enemyList =
-	    getEnemiesInRatio(manager.getComponent<TransformComponent>(initialEnemyId).position, 50.0f, participantsList);
+	    getEnemiesInRatio(manager.getComponent<TransformComponent>(initialEnemyId).position, 65.0f, participantsList);
 	prepareEnemiesForBattle(enemyList);
 	participantsList.insert(participantsList.end(), enemyList.begin(), enemyList.end());
 
@@ -119,8 +119,12 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector
 		    if (std::find(playerParty.begin(), playerParty.end(), entityId) != playerParty.end()) {
 			    return;
 		    }
-		    if (SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position) <= radius * radius) {
+		    auto squaredDistance = SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position);
+		    if (squaredDistance <= radius * radius) {
 			    enemiesIdList.push_back(entityId);
+		    } else {
+			    spdlog::info("Entity with id {} is not within the battle radius, has {}", entityId.getId(),
+			                 squaredDistance);
 		    }
 	    });
 	spdlog::get("combat")->info("Found {} enemies in the action radius", enemiesIdList.size());
