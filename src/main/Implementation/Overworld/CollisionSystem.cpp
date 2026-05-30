@@ -18,17 +18,12 @@ void resolveCollision(CollisionComponent &collision, TransformComponent &transfo
 	float dy = transform.position.y - transform.previousPosition.y;
 	switch (collision.action) {
 	case COLLISION_ACTION::PREV_POSITION: {
-		if (dx > 0.f) {
-			transform.position.x -= bounds.size.x;
-		}
-		else if (dx < 0.f) {
-			transform.position.x += bounds.size.x;
-		}
-		if (dy > 0.f) {
-			transform.position.y -= bounds.size.y;
-		}
-		else if (dy < 0.f) {
-			transform.position.y += bounds.size.y;
+		if (bounds.size.x < bounds.size.y) {
+			if (dx > 0.f)      transform.position.x -= bounds.size.x;
+			else if (dx < 0.f) transform.position.x += bounds.size.x;
+		} else {
+			if (dy > 0.f)      transform.position.y -= bounds.size.y;
+			else if (dy < 0.f) transform.position.y += bounds.size.y;
 		}
 		break;
 	}
@@ -36,6 +31,7 @@ void resolveCollision(CollisionComponent &collision, TransformComponent &transfo
 		return;
 	}
 }
+
 void checkCollisionWithTiles(ArchetypeManager &manager, WorldComponent &comp, CollisionComponent &collision,
                              TransformComponent &transform_component)
 {
@@ -64,8 +60,12 @@ void checkCollisionWithTiles(ArchetypeManager &manager, WorldComponent &comp, Co
 
 					if (intersection.has_value()) {
 						resolveCollision(collision, transform_component, intersection.value());
+						auto newBB = transform_component.getBoundingBox();
+						tileX1 = (int)(newBB.position.x / tileWidth);
+						tileY1 = (int)(newBB.position.y / tileHeight);
+						tileX2 = (int)((newBB.position.x + newBB.size.x) / tileWidth);
+						tileY2 = (int)((newBB.position.y + newBB.size.y) / tileHeight);
 					}
-					break;
 				}
 			}
 		}

@@ -28,10 +28,11 @@ struct AssetManager {
 	sf::Sprite getSpriteAt(TileInfo &tile)
 	{
 		if (!chacheImage.contains(tile.tilesetPath)) {
-			if (!textureSet->loadFromFile(tile.tilesetPath)) {
-				throw std::runtime_error("Failed to load texture");
+			auto newTexture = std::make_shared<sf::Texture>();
+			if (!newTexture->loadFromFile(tile.tilesetPath)) {
+				throw std::runtime_error("Failed to load texture: " + tile.tilesetPath);
 			}
-			chacheImage[tile.tilesetPath] = textureSet;
+			chacheImage[tile.tilesetPath] = newTexture;
 		}
 		return {*chacheImage[tile.tilesetPath],
 				sf::IntRect({tile.pixelX, tile.pixelY}, {tile.width, tile.height})};

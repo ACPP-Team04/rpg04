@@ -1,0 +1,14 @@
+{ "columns":24,
+ "image":"..\/..\/..\/..\/..\/..\/Downloads\/PostApocalypse_AssetPack_v1.1.2(2)\/Tiles\/Background_Dark-Green_TileSet.png",
+ "imageheight":272,
+ "imagewidth":384,
+ "margin":0,
+ "name":"Background_Dark-Green_TileSet",
+ "spacing":0,
+ "tilecount":408,
+ "tiledversion":"1.12.1",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

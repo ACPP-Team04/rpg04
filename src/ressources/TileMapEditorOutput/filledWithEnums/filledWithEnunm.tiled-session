@@ -17,20 +17,21 @@
         },
         "map.tmj": {
             "expandedGroupLayers": [
+                7,
                 8,
                 13,
-                24,
-                7,
                 6,
-                16,
-                20
+                16
             ],
-            "scale": 0.3284,
-            "selectedLayer": 0,
+            "scale": 3.5069,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 121.80267965895248,
-                "y": 3389.159561510353
+                "x": 216.00273746043513,
+                "y": 73.14152100145427
             }
+        },
+        "map.tmj#Tileset_without_background": {
+            "scaleInDock": 1
         },
         "map.tmj#Tilesheet_edited": {
             "scaleInDock": 1
@@ -47,7 +48,7 @@
         "Tilesheet_WithEnums.tsj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "SWITCH_LAYER_COMPONENT",
+    "property.type": "ANIMATION_COMPONENT",
     "recentFiles": [
         "Tilesheet_WithEnums.tsj",
         "map.tmj",
