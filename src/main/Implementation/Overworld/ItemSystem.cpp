@@ -1,7 +1,6 @@
 #pragma once
 #include "Abstract/Overwordl/ItemSystem.hpp"
 
-#include "Abstract/GameState/GameState.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
@@ -10,6 +9,7 @@
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Overwordl/Components/RenderComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 
 ItemSystem::ItemSystem(ArchetypeManager &manager) : System(manager) {}
@@ -33,7 +33,7 @@ void ItemSystem::update()
 			    }
 			    if (manager.hasComponent<PersistanceComponent>(entity)) {
 				    std::string uuid = manager.getComponent<PersistanceComponent>(entity).uuid;
-				    GameState::getInstance().deadUniqueEntities.insert(uuid);
+				    PersistenceManager::getInstance().deadUniqueEntities.insert(uuid);
 				    spdlog::info("Item picked up! UUID {} added to dead entities.", uuid);
 			    }
 			    inventoryComponent.addItem(entity, item.itemType);

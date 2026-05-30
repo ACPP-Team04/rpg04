@@ -20,7 +20,7 @@
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 
-#include "Abstract/GameState/GameState.hpp"
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/EnemyHealthBarSystem.hpp>
 #include <Abstract/Overwordl/BonfireSystem.hpp>
@@ -81,7 +81,7 @@ struct ECSManager {
 			if (const auto *keyPress = event->getIf<sf::Event::KeyPressed>()) {
 				if (keyPress->code == sf::Keyboard::Key::L) {
 					if (SaveManager::doesSaveExist(1)) {
-						GameState::getInstance().requestLoad = true;
+						PersistenceManager::getInstance().requestLoad = true;
 					} else {
 						spdlog::warn("Cannot load: No save file exists yet in Slot 1!");
 					}

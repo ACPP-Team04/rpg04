@@ -1,9 +1,9 @@
 #include "Abstract/Persistance/SaveManager.hpp"
-#include "Abstract/GameState/GameState.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/PersistanceComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/StatsComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
@@ -119,8 +119,8 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 		spdlog::warn("SaveManager: No player found in ECS to save!");
 	}
 
-	saveData["worldState"]["deadUniqueEntities"] = GameState::getInstance().deadUniqueEntities;
-	saveData["worldState"]["entityStates"] = GameState::getInstance().entityStates;
+	saveData["worldState"]["deadUniqueEntities"] = PersistenceManager::getInstance().deadUniqueEntities;
+	saveData["worldState"]["entityStates"] = PersistenceManager::getInstance().entityStates;
 
 	manager.view<WorldComponent>().each([&](EntityID entity, WorldComponent &worldComp) {
 		saveData["worldState"]["worldComponent"]["widthPixel"] = worldComp.widthPixel;
@@ -154,17 +154,19 @@ nlohmann::json SaveManager::loadSaveFile(int slotIndex)
 	nlohmann::json saveData;
 	file >> saveData;
 
-	GameState::getInstance().clearAll();
+	PersistenceManager::getInstance().clearAll();
 
 	if (saveData.contains("worldState")) {
 		auto &worldState = saveData["worldState"];
 
 		if (worldState.contains("deadUniqueEntities")) {
-			GameState::getInstance().deadUniqueEntities = worldState["deadUniqueEntities"].get<std::set<std::string>>();
+			PersistenceManager::getInstance().deadUniqueEntities =
+			    worldState["deadUniqueEntities"].get<std::set<std::string>>();
 		}
 
 		if (worldState.contains("entityStates")) {
-			GameState::getInstance().entityStates = worldState["entityStates"].get<std::map<std::string, int>>();
+			PersistenceManager::getInstance().entityStates =
+			    worldState["entityStates"].get<std::map<std::string, int>>();
 		}
 	}
 
@@ -174,8 +176,8 @@ nlohmann::json SaveManager::loadSaveFile(int slotIndex)
 
 void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 {
-	const auto &deadEntities = GameState::getInstance().deadUniqueEntities;
-	const auto &savedStates = GameState::getInstance().entityStates;
+	const auto &deadEntities = PersistenceManager::getInstance().deadUniqueEntities;
+	const auto &savedStates = PersistenceManager::getInstance().entityStates;
 	std::vector<EntityID> toDelete;
 
 	manager.view<PersistanceComponent>().each([&](EntityID id, PersistanceComponent &persistent) {

@@ -22,7 +22,7 @@
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 
-#include "Abstract/GameState/GameState.hpp"
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include <Abstract/Audio/AudioManager.hpp>
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
 #include <Abstract/Overwordl/Components/AudioComponent.hpp>
@@ -88,7 +88,7 @@ void initializeEngine(ArchetypeManager &manager)
 	manager.subscribeToDestruction([&manager](EntityID id) {
 		if (manager.hasComponent<PersistanceComponent>(id)) {
 			std::string uuid = manager.getComponent<PersistanceComponent>(id).uuid;
-			GameState::getInstance().deadUniqueEntities.insert(uuid);
+			PersistenceManager::getInstance().deadUniqueEntities.insert(uuid);
 			spdlog::info("Observer: Recorded {} as dead.", uuid);
 		}
 	});
@@ -141,10 +141,10 @@ int main()
 	window.setFramerateLimit(60);
 	while (window.isOpen()) {
 		ecsManager.update();
-		if (GameState::getInstance().requestLoad) {
+		if (PersistenceManager::getInstance().requestLoad) {
 			// default slot 1 for now
 			executeLoadSequence(ecsManager.manager, parser, 1);
-			GameState::getInstance().requestLoad = false;
+			PersistenceManager::getInstance().requestLoad = false;
 		}
 		window.display();
 	}
