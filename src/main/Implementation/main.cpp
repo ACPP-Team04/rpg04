@@ -28,6 +28,7 @@
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
 #include <Abstract/GameConfig/GameConfig.hpp>
 #include <Abstract/Persistance/SaveManager.hpp>
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <SFML/Graphics.hpp>
 #include <exception>
 
@@ -74,6 +75,45 @@ void applyGameConfig(ECSManager &ecsManager, EntityID player)
 		ecsManager.manager.addComponentToEntity<CombatGodMode>(player);
 		spdlog::info("God Mode applied to player!");
 	}
+}
+
+void initializeEngine(ArchetypeManager &manager)
+{
+	manager.subscribeToDestruction([&manager](EntityID id) {
+		if (manager.hasComponent<PersistanceComponent>(id)) {
+			std::string uuid = manager.getComponent<PersistanceComponent>(id).uuid;
+			PersistenceManager::getInstance().deadUniqueEntities.insert(uuid);
+			spdlog::info("Observer: Recorded {} as dead.", uuid);
+		}
+	});
+}
+
+void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slotIndex)
+{
+	spdlog::info("Executing load sequence for Slot {}...", slotIndex);
+
+	nlohmann::json saveData;
+	try {
+		saveData = SaveManager::loadSaveFile(slotIndex);
+	} catch (const std::exception &e) {
+		spdlog::error("Aborting load: Save file error: {}", e.what());
+		return;
+	}
+
+	manager.clear();
+
+	parser.update();
+	SaveManager::applyWorldStateOverrides(manager);
+	auto playerOpt = WorldUtils::getPlayer(manager);
+	if (!playerOpt.has_value()) {
+		spdlog::critical("WorldParser failed to spawn a default player!");
+		throw std::runtime_error("WorldParser failed to spawn a default player!");
+	}
+	SaveManager::injectWorldComponent(manager, saveData["worldState"]);
+
+	SaveManager::injectPlayer(manager, saveData["player"], playerOpt.value());
+
+	spdlog::info("Load sequence completely finished!");
 }
 
 void initializeEngine(ArchetypeManager &manager)
