@@ -1,6 +1,7 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
+#include "Abstract/Overwordl/CharacterPreProcessSystem.hpp"
 #include "Abstract/RegisterService.hpp"
 #include "Abstract/UI/MainMenu.hpp"
 
@@ -88,7 +89,9 @@ void initializeEngine(ArchetypeManager &manager)
 	});
 }
 
-void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slotIndex)
+void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
+                         PersistenceRegistrationSystem &registrationSystem, CharacterPreProcessSystem &preprocess,
+                         int slotIndex)
 {
 	spdlog::info("Executing load sequence for Slot {}...", slotIndex);
 
@@ -101,8 +104,10 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slo
 	}
 
 	manager.clear();
-
 	parser.update();
+	registrationSystem.update();
+	preprocess.update();
+
 	SaveManager::applyWorldStateOverrides(manager);
 	auto playerOpt = WorldUtils::getPlayer(manager);
 	if (!playerOpt.has_value()) {
@@ -112,7 +117,18 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, int slo
 	SaveManager::injectWorldComponent(manager, saveData["worldState"]);
 
 	SaveManager::injectPlayer(manager, saveData["player"], playerOpt.value());
+	if (saveData["worldState"].contains("doorStates")) {
+		SaveManager::injectDoors(manager, saveData["worldState"]["doorStates"]);
+	}
 
+	if (saveData["worldState"].contains("dialogStates")) {
+		SaveManager::injectDialogs(manager, saveData["worldState"]["dialogStates"],
+		                           saveData["worldState"]["interactionStates"]);
+	}
+	std::string savedMusic = saveData["worldState"].value("currentMusic", "");
+	if (!savedMusic.empty()) {
+		AudioManager::getInstance().playMusic(savedMusic, true);
+	}
 	spdlog::info("Load sequence completely finished!");
 }
 
@@ -165,7 +181,9 @@ int main()
 			}
 
 			if (persistence.requestLoad) {
-				executeLoadSequence(ecsManager.manager, ecsManager.worldParser, 1);
+				executeLoadSequence(ecsManager.manager, ecsManager.worldParser,
+				                    ecsManager.persistanceRegistrationSystem, ecsManager.character_preprocess_system,
+				                    1);
 				persistence.requestLoad = false;
 			}
 
