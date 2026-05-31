@@ -85,7 +85,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 				    itemJson["uuid"] = manager.getComponent<PersistanceComponent>(itemEntity).uuid;
 			    } else {
 				    spdlog::error("Item {} has no PersistanceComponent! Cannot save.", itemComp.name);
-				    return 1;
+				    return;
 			    }
 			    itemJson["itemType"] = static_cast<int>(itemComp.itemType);
 
@@ -111,9 +111,12 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	    });
 
 	// Save dialogs
-	manager.view<PersistanceComponent, DialogComponent>().each(
-	    [&](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp) {
+	manager.view<PersistanceComponent, DialogComponent, InteractionComponent>().each(
+	    [&](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp,
+	        InteractionComponent &interaction) {
 		    saveData["worldState"]["dialogStates"][persist.uuid] = dialogComp.currentNodeIndex;
+		    saveData["worldState"]["interactionStates"]["isActive"][persist.uuid] = interaction.isActive;
+		    saveData["worldState"]["interactionStates"]["deactivated"][persist.uuid] = interaction.deactivated;
 	    });
 
 	auto currentMusicOpt = AudioManager::getInstance().getCurrentMusicName();
@@ -274,4 +277,40 @@ void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann
 
 		worldComp.menuOpened = wcJson.value("menuOpened", false);
 	});
+}
+
+void SaveManager::injectDoors(ArchetypeManager &manager, const nlohmann::json &doorStates)
+{
+	manager.view<PersistanceComponent, IsLockedComponent, InteractionComponent>().each(
+	    [&](EntityID id, PersistanceComponent &persist, IsLockedComponent &lockComp,
+	        InteractionComponent &interactComp) {
+		    if (doorStates.contains(persist.uuid)) {
+			    bool isStillLocked = doorStates[persist.uuid];
+			    lockComp.isLocked = isStillLocked;
+
+			    if (!isStillLocked) {
+				    interactComp.action = INTERACTION_ACTION::SWITCH_LAYER;
+			    }
+		    }
+	    });
+}
+
+void SaveManager::injectDialogs(ArchetypeManager &manager, const nlohmann::json &dialogStates,
+                                const nlohmann::json &interactionStates)
+{
+	manager.view<PersistanceComponent, DialogComponent, InteractionComponent>().each(
+	    [&](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp,
+	        InteractionComponent &interactionComp) {
+		    if (dialogStates.contains(persist.uuid)) {
+			    dialogComp.currentNodeIndex = dialogStates[persist.uuid];
+			    if (interactionStates.contains(persist.uuid)) {
+				    interactionComp.isActive = interactionStates[persist.uuid].value("isActive", false);
+				    interactionComp.deactivated = interactionStates[persist.uuid].value("deactivated", false);
+			    }
+			    if (dialogComp.isPassedOnce()) {
+				    interactionComp.deactivated = true;
+				    interactionComp.isActive = false;
+			    }
+		    }
+	    });
 }
