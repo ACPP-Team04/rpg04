@@ -27,6 +27,8 @@ void PersistenceRegistrationSystem::update()
 	}
 	EntityID playerId = playerOpt.value();
 
+	std::vector<std::pair<EntityID, std::string>> commandBuffer;
+
 	// REGISTER ITEMS
 	manager.view<ItemComponent, TransformComponent, PartOfLayerComponent>().each(
 	    [&](EntityID id, ItemComponent &item, TransformComponent &trans, PartOfLayerComponent &layer) {
@@ -38,10 +40,14 @@ void PersistenceRegistrationSystem::update()
 		    std::string name = item.name.empty() ? "UNKNOWN_ITEM" : item.name;
 		    std::string uuid = "ITEM_" + std::to_string(layer.groupId) + "_" + std::to_string(x) + "_"
 		                       + std::to_string(y) + "_" + name;
-
-		    manager.addComponentToEntity<PersistanceComponent>(id);
-		    manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+		    commandBuffer.push_back({id, uuid});
 	    });
+
+	for (const auto &[id, uuid] : commandBuffer) {
+		manager.addComponentToEntity<PersistanceComponent>(id);
+		manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+	}
+	commandBuffer.clear();
 
 	// REGISTER ENEMIES
 	manager.view<CharacterComponent, TransformComponent, PartOfLayerComponent>().each(
@@ -54,10 +60,16 @@ void PersistenceRegistrationSystem::update()
 
 		    std::string uuid =
 		        "ENEMY_" + std::to_string(layer.groupId) + "_" + std::to_string(x) + "_" + std::to_string(y);
-
-		    manager.addComponentToEntity<PersistanceComponent>(id);
-		    manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+		    commandBuffer.push_back({id, uuid});
+		    // manager.addComponentToEntity<PersistanceComponent>(id);
+		    // manager.getComponent<PersistanceComponent>(id).uuid = uuid;
 	    });
+
+	for (const auto &[id, uuid] : commandBuffer) {
+		manager.addComponentToEntity<PersistanceComponent>(id);
+		manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+	}
+	commandBuffer.clear();
 
 	manager.view<DialogComponent, InteractionComponent, TransformComponent, PartOfLayerComponent>().each(
 	    [&](EntityID id, DialogComponent &dialog, InteractionComponent &interactComp, TransformComponent &trans,
@@ -70,9 +82,13 @@ void PersistenceRegistrationSystem::update()
 		    std::string uuid =
 		        "Dialog_" + std::to_string(layer.groupId) + "_" + std::to_string(x) + "_" + std::to_string(y);
 
-		    manager.addComponentToEntity<PersistanceComponent>(id);
-		    manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+		    commandBuffer.push_back({id, uuid});
 	    });
+	for (const auto &[id, uuid] : commandBuffer) {
+		manager.addComponentToEntity<PersistanceComponent>(id);
+		manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+	}
+	commandBuffer.clear();
 
 	manager.view<IsLockedComponent, TransformComponent>().each(
 	    [&](EntityID id, IsLockedComponent &lockComp, TransformComponent &trans) {
@@ -83,10 +99,14 @@ void PersistenceRegistrationSystem::update()
 		    int y = static_cast<int>(std::round(trans.position.y));
 		    int keyId = lockComp.keyId;
 		    std::string uuid = "LOCK_" + std::to_string(keyId) + "_" + std::to_string(x) + "_" + std::to_string(y);
-		    manager.addComponentToEntity<PersistanceComponent>(id);
-		    manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+		    commandBuffer.push_back({id, uuid});
 	    });
 
+	for (const auto &[id, uuid] : commandBuffer) {
+		manager.addComponentToEntity<PersistanceComponent>(id);
+		manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+	}
+	commandBuffer.clear();
 	manager.view<PersistanceComponent>().each([&](EntityID id, PersistanceComponent &persistance) {
 		spdlog::info("Entity {} registered with UUID: {}", id.getId(), persistance.uuid);
 	});
