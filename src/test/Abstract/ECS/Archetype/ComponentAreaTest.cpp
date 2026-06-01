@@ -50,6 +50,7 @@ class MockPool : public IPool {
 		lastCopyNewIndex = newIndex;
 		lastCopyTargetPool = otherPool;
 	}
+	void clear() override {}
 };
 
 class Test3 : public Component<Test3> {
