@@ -304,37 +304,40 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 
 						inspectorPanel->add(statsLabel);
 					}
+					if (activeTabItemType == ITEM_TYPE::WEAPON
+					    || activeTabItemType == ITEM_TYPE::COLLECTABLE_COMPANION) {
+						auto equipBtn = tgui::Button::create();
+						equipBtn->setSize({150, 50});
+						equipBtn->setPosition({20, 200});
 
-					auto equipBtn = tgui::Button::create();
-					equipBtn->setSize({150, 50});
-					equipBtn->setPosition({20, 200});
+						if (isEquipped) {
+							equipBtn->setText("EQUIPPED");
+							equipBtn->setEnabled(false);
+						} else {
+							equipBtn->setText("EQUIP");
 
-					if (isEquipped) {
-						equipBtn->setText("EQUIPPED");
-						equipBtn->setEnabled(false);
-					} else {
-						equipBtn->setText("EQUIP");
+							equipBtn->onClick([&manager, world, &gui, itemEntity, activeTabItemType, playerId]() {
+								CharacterComponent &dynamicCharComp =
+								    manager.getComponent<CharacterComponent>(playerId);
 
-						equipBtn->onClick([&manager, world, &gui, itemEntity, activeTabItemType, playerId]() {
-							CharacterComponent &dynamicCharComp = manager.getComponent<CharacterComponent>(playerId);
+								if (activeTabItemType == ITEM_TYPE::WEAPON) {
+									dynamicCharComp.equipedWeapon = itemEntity.getId();
+									spdlog::info("Weapon Equipped!");
+								} else if (activeTabItemType == ITEM_TYPE::COLLECTABLE_COMPANION) {
+									dynamicCharComp.equipedCompanion = itemEntity.getId();
+									spdlog::info("Companion Equipped!");
+								}
 
-							if (activeTabItemType == ITEM_TYPE::WEAPON) {
-								dynamicCharComp.equipedWeapon = itemEntity.getId();
-								spdlog::info("Weapon Equipped!");
-							} else if (activeTabItemType == ITEM_TYPE::COLLECTABLE_COMPANION) {
-								dynamicCharComp.equipedCompanion = itemEntity.getId();
-								spdlog::info("Companion Equipped!");
-							}
+								auto oldMenu = gui.get("inventoryMenu");
+								if (oldMenu) {
+									gui.remove(oldMenu);
+								}
+								buildInventoryMenu(manager, world, gui);
+							});
+						}
 
-							auto oldMenu = gui.get("inventoryMenu");
-							if (oldMenu) {
-								gui.remove(oldMenu);
-							}
-							buildInventoryMenu(manager, world, gui);
-						});
+						inspectorPanel->add(equipBtn);
 					}
-
-					inspectorPanel->add(equipBtn);
 				});
 
 				itemList->add(btn);
