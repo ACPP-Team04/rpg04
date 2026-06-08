@@ -86,4 +86,13 @@ struct ComponentArea {
 		}
 		return static_cast<ComponentPool<T> *>(componentPools[signature].get())->getComponentArrayAsReference();
 	}
+	void clear()
+	{
+		this->entityIds.clear();
+		for (auto &[signature, poolPtr] : this->componentPools) {
+			if (poolPtr) {
+				poolPtr->clear();
+			}
+		}
+	}
 };

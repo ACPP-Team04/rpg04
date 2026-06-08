@@ -1,5 +1,4 @@
 #include "Abstract/Overwordl/ItemSystem.hpp"
-
 #include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
@@ -13,7 +12,7 @@
 #include <Abstract/Overwordl/Components/CollisionComponent.hpp>
 #include <spdlog/spdlog.h>
 
-ItemSystem::ItemSystem(ArchetypeManager& manager) : System(manager) {}
+ItemSystem::ItemSystem(ArchetypeManager &manager) : System(manager) {}
 
 void ItemSystem::update()
 {

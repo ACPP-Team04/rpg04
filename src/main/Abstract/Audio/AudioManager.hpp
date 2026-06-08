@@ -11,6 +11,8 @@ class AudioManager {
 	float masterMusicVolume;
 	float masterSfxVolume;
 	bool isHeadless;
+	std::optional<std::string> currentMusicName = std::nullopt;
+
   public:
 	AudioManager(size_t poolSize = 16, bool headless = false);
 	void switchMusic(const std::string &musicName, bool loop = true);
@@ -24,8 +26,8 @@ class AudioManager {
 	void resumeAll();
 	static AudioManager &getInstance()
 	{
-	  static AudioManager instance = AudioManager();
+		static AudioManager instance = AudioManager();
 		return instance;
 	}
-
+	std::optional<std::string> getCurrentMusicName() const { return currentMusicName; }
 };

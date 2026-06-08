@@ -27,8 +27,12 @@
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include "Archetype/ArchetypeManager.hpp"
 
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <Abstract/Combat/Systems/HealthBarSystem.hpp>
+#include <Abstract/Overwordl/BonfireSystem.hpp>
+#include <Abstract/Persistance/PersistenceRegistrationSystem.hpp>
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
@@ -64,17 +68,20 @@ struct ECSManager {
 	HudSystem hudSystem;
 	CharacterPreProcessSystem character_preprocess_system;
 	WorldParser worldParser;
+	BonfireSystem bonfireSystem;
+	PersistenceRegistrationSystem persistanceRegistrationSystem;
 
 	ECSManager(sf::RenderWindow &window, tgui::Gui &gui)
-	    : window(window), gui(gui), manager(), audioManager(AudioManager::getInstance()), audioSystem(manager, audioManager),
-	      renderSystem(manager, window), inputSystem(manager, window), movementSystem(manager),
-	      cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
+	    : window(window), gui(gui), manager(), audioManager(AudioManager::getInstance()),
+	      audioSystem(manager, audioManager), renderSystem(manager, window), inputSystem(manager, window),
+	      movementSystem(manager), cameraSystem(manager, window), switchLayerSystem(manager), collisionSystem(manager),
 	      dialogSystem(manager, window, gui), interactionSystem(manager), item_system(manager),
 	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
 	      combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
 	      switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
 	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),
-	      hudSystem(manager, window, gui), character_preprocess_system(manager),worldParser(manager,window)
+	      hudSystem(manager, window, gui), character_preprocess_system(manager), worldParser(manager, window),
+	      bonfireSystem(manager), persistanceRegistrationSystem(manager)
 
 	{
 		gui.setWindow(window);
@@ -98,6 +105,7 @@ struct ECSManager {
 		worldParser.update();
 		battleInputSystem.init();
 		character_preprocess_system.update();
+		persistanceRegistrationSystem.update();
 		audioManager.playMusic("overworld", true);
 	}
 
@@ -146,6 +154,7 @@ struct ECSManager {
 		dialogSystem.update();
 		item_system.update();
 		audioSystem.update();
+		bonfireSystem.update();
 		gui.draw();
 	}
 
