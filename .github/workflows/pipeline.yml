@@ -51,9 +51,9 @@ jobs:
       - name: Make scripts executable
         run: chmod +x ./scripts/*.sh
 
-      - name: Add msbuild to PATH
+      - name: Setup MSVC Developer Command Prompt
         if: ${{ matrix.os == 'windows-latest' }}
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: ilammy/msvc-dev-cmd@v1.13.0
 
       - name: Compile a Build for game
         run: ./scripts/compile.sh ${{ matrix.compiler }} ${{ matrix.target }}
