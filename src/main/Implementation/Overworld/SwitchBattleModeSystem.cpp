@@ -75,8 +75,8 @@ void SwitchBattleModeSystem::update()
 		spdlog::info("Added companion with id {} to battle", companionIdEntity.getId());
 	}
 	preparePlayerPartyForBattle(participantsList, player);
-	auto enemyList =
-	    getEnemiesInRatio(manager.getComponent<TransformComponent>(initialEnemyId).position, 65.0f, participantsList);
+	auto enemyList = getEnemiesInRatio(
+	    initialEnemyId, manager.getComponent<TransformComponent>(initialEnemyId).position, 65.0f, participantsList);
 	prepareEnemiesForBattle(enemyList);
 	participantsList.insert(participantsList.end(), enemyList.begin(), enemyList.end());
 
@@ -100,13 +100,15 @@ void SwitchBattleModeSystem::update()
 		manager.getComponent<BattleComponent>(participant).battleManagerId = bManager;
 	}
 	audioSystem.switchMusic("combat", true);
+	spdlog::get("combat")->info("Turn Start! Participant count: {}", participantsList.size());
 	spdlog::get("combat")->info("Switched to battle mode");
 }
 
-std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector2f center, float radius,
-                                                                const std::vector<EntityID> &playerParty)
+std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const EntityID &initialEnemy, const sf::Vector2f center,
+                                                                float radius, const std::vector<EntityID> &playerParty)
 {
 	std::vector<EntityID> enemiesIdList;
+	enemiesIdList.push_back(initialEnemy);
 	WorldUtils::viewInCurrentLayer<CharacterComponent, TransformComponent>(
 	    this->manager, [&](auto entityId, CharacterComponent &characterComponent, auto &transformComponent) {
 		    if (std::find(playerParty.begin(), playerParty.end(), entityId) != playerParty.end()) {
@@ -115,11 +117,13 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const sf::Vector
 		    if (!characterComponent.fightable) {
 			    return;
 		    }
-
-		    if (std::find(playerParty.begin(), playerParty.end(), entityId) != playerParty.end()) {
+		    if (entityId == initialEnemy) {
 			    return;
 		    }
 		    auto squaredDistance = SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position);
+		    if (squaredDistance <= 0) {
+			    return;
+		    }
 		    if (squaredDistance <= radius * radius) {
 			    enemiesIdList.push_back(entityId);
 		    } else {
