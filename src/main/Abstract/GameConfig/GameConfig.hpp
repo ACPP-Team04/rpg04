@@ -1,4 +1,5 @@
 #pragma once
+#include <nlohmann/json.hpp>
 #include <string>
 
 class GameConfig {
@@ -11,8 +12,19 @@ class GameConfig {
 
 	bool isGodModeEnabled() const { return godMode; }
 
+	std::unordered_map<int, std::string> getMusicMappings()
+	{
+		std::unordered_map<int, std::string> map;
+		auto &json = m_data["music_mappings"];
+		for (auto it = json.begin(); it != json.end(); ++it) {
+			map[std::stoi(it.key())] = it.value().get<std::string>();
+		}
+		return map;
+	}
+
   private:
 	GameConfig() = default;
 
 	bool godMode = false;
+	nlohmann::json m_data;
 };
