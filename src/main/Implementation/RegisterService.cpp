@@ -30,27 +30,30 @@
 void RegisterService::registerAudio()
 {
 	AssetManager::getInstance().registerMusic("overworld", std::string(ROOT_DIR)
-															   + "/src/ressources/audio/music/the_field_of_dreams.ogg");
+	                                                           + "/src/ressources/audio/music/the_field_of_dreams.ogg");
 	AssetManager::getInstance().registerMusic("combat",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/music/battleThemeA.ogg");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/music/battleThemeA.ogg");
+	AssetManager::getInstance().registerMusic("lake_land",
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/music/path_lake_land.ogg");
+
 	AssetManager::getInstance().registerSound("victory_sound",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/combat_victory.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/combat_victory.wav");
 	AssetManager::getInstance().registerSound("defeat_sound",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/death.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/death.wav");
 	AssetManager::getInstance().registerSound("light_fist_hit",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/punch_1b.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/punch_1b.wav");
 	AssetManager::getInstance().registerSound("heavy_fist_hit",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/punch_alt-2a.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/punch_alt-2a.wav");
 	AssetManager::getInstance().registerSound("ultimate_fist_hit",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/foom_0.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/foom_0.wav");
 	AssetManager::getInstance().registerSound("heal_sound",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/healspell3.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/healspell3.wav");
 	AssetManager::getInstance().registerSound("rest_sound",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/short_wind.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/short_wind.wav");
 	AssetManager::getInstance().registerSound("enemy_death_sound",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
 	AssetManager::getInstance().registerSound("test",
-											  std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
+	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
 }
 
 void RegisterService::registerComponents()

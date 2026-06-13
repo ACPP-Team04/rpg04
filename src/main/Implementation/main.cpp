@@ -76,6 +76,11 @@ void applyGameConfig(ECSManager &ecsManager, EntityID player)
 		ecsManager.manager.addComponentToEntity<CombatGodMode>(player);
 		spdlog::info("God Mode applied to player!");
 	}
+	auto mappings = GameConfig::getInstance().getMusicMappings();
+	WorldComponent *world = WorldUtils::getWorld(ecsManager.manager);
+	if (world) {
+		world->groupMusicMap = mappings;
+	}
 }
 
 void initializeEngine(ArchetypeManager &manager)
@@ -142,7 +147,6 @@ int main()
 		    "Zombie Knight");
 		tgui::Gui gui(window);
 		gui.setFont(FONT);
-		window.setFramerateLimit(60);
 
 		spdlog::info("Creating ECS manager...");
 		ECSManager ecsManager = ECSManager(window, gui);
@@ -154,6 +158,7 @@ int main()
 			throw std::runtime_error("Startup failed: no player entity was created by WorldParser.");
 		}
 		applyGameConfig(ecsManager, player.value());
+		WorldUtils::playMusicForCurrentGroup(ecsManager.manager);
 		window.setFramerateLimit(FRAME_LIMIT);
 
 		applyResize(window, gui, ecsManager);

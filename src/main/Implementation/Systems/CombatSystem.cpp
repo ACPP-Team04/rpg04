@@ -6,6 +6,7 @@
 #include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
 #include "Abstract/Utils/GraveConfig.hpp"
+#include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 
 #include <Abstract/Combat/Components/DeathComponent.hpp>
@@ -325,7 +326,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		manager.getComponent<StateComponent>(playerIdOpt.value()).setState(DIE, true);
 		spdlog::get("combat")->info("You lost the battle! Game over");
 	}
-	audioSystem.switchMusic("overworld", true);
+	WorldUtils::playMusicForCurrentGroup(manager);
 }
 
 void CombatSystem::restoreAP(EntityID restorator)

@@ -48,6 +48,7 @@ struct WorldComponent : public Component<WorldComponent> {
 
 	bool menuOpened = false;
 	ACTIVE_MENU currentMenu = ACTIVE_MENU::NONE;
+	std::unordered_map<int, std::string> groupMusicMap;
 
 	void readFromJson(tson::TiledClass &j) override {};
 
@@ -75,7 +76,8 @@ struct WorldComponent : public Component<WorldComponent> {
 				tileLayer.init(width, height);
 				bool collides = false;
 				auto &data = layer["data"];
-				bool hasProperties = layer.contains("properties") && layer["properties"].is_array() && !layer["properties"].empty();
+				bool hasProperties =
+				    layer.contains("properties") && layer["properties"].is_array() && !layer["properties"].empty();
 				if (hasProperties) {
 					for (auto &prop : layer["properties"]) {
 						if (prop["name"] == "collision" && prop["value"] == true) {
@@ -117,7 +119,6 @@ struct WorldComponent : public Component<WorldComponent> {
 					continue;
 				}
 				worlds[groupId].collidingTileLayers.push_back(tileLayer);
-
 			}
 		}
 	}

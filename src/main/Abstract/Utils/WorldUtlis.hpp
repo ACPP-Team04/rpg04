@@ -1,4 +1,5 @@
 #pragma once
+#include "Abstract/Audio/AudioManager.hpp"
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
 #include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
@@ -82,5 +83,27 @@ class WorldUtils {
 		std::string enumString = prop->getValue<std::string>();
 
 		return magic_enum::enum_cast<T>(enumString).value_or(T{});
+	}
+
+	static void playMusicForCurrentGroup(ArchetypeManager &manager)
+	{
+		WorldComponent *world = getWorld(manager);
+		if (!world)
+			return;
+
+		auto &audio = AudioManager::getInstance();
+		int currentGroup = world->currentGroup;
+
+		if (world->groupMusicMap.contains(currentGroup)) {
+			std::string targetTrack = world->groupMusicMap[currentGroup];
+			auto currentTrackOpt = audio.getCurrentMusicName();
+			if (!currentTrackOpt.has_value() || currentTrackOpt.value() != targetTrack) {
+				spdlog::info("Switching music to: {}", targetTrack);
+				audio.playMusic(targetTrack, true);
+			}
+		} else {
+			spdlog::info("No music mapping found for group {}", currentGroup);
+			audio.stopMusic();
+		}
 	}
 };
