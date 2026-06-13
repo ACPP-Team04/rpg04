@@ -12,8 +12,9 @@ case "${OS_TARGET}" in
     CMAKE_EXTRA_FLAGS="-DCMAKE_CXX_COMPILER=${CPP_COMPILER} -DCMAKE_C_COMPILER=${C_COMPILER}"
     ;;
   Windows)
-    CMAKE_GENERATOR="Visual Studio 17 2022"
-    CMAKE_EXTRA_FLAGS=""          
+    CMAKE_GENERATOR="Ninja"
+    CMAKE_EXTRA_FLAGS="-DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -DCMAKE_BUILD_TYPE=Release"
+    BUILD_EXTRA_FLAGS=""        
     ;;
   *)
     echo "ERROR: Unsupported OS target '${OS_TARGET}'"
