@@ -46,5 +46,6 @@ void SwitchLayerSystem::update()
 		if (manager.hasComponent<SwitchLayerComponent>(EntityID::fromExistingId(destination))) {
 			manager.getComponent<InteractionComponent>(destination).mustLeaveRadius = true;
 		}
+		WorldUtils::playMusicForCurrentGroup(manager);
 	}
 }
