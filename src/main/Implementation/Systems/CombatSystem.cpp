@@ -11,6 +11,7 @@
 #include "Implementation/Components/BattleComponent.hpp"
 
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Combat/Components/HitFeedbackComponent.hpp>
 #include <Abstract/Combat/Systems/BattleInputSystem.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
@@ -55,11 +56,19 @@ void CombatSystem::update()
 				this->executeBattleAction(currentAttacker, battle.target, battle.selectedAction);
 				battle.battleState = BattleState::EXECUTING_ACTION;
 				break;
-			case BattleState::EXECUTING_ACTION:
+			case BattleState::EXECUTING_ACTION: {
+
+				bool defenderIsHurt = manager.hasComponent<HitFeedbackComponent>(battle.target);
+				// TODO
+				bool attackerIsAnimating = false;
+				if (attackerIsAnimating || defenderIsHurt) {
+					break;
+				}
 				if (this->handleActionDelay(battle)) {
 					battle.battleState = BattleState::CHECK_DEATH;
 				}
 				break;
+			}
 			case BattleState::CHECK_DEATH: {
 				auto result = this->checkDeathCondition(battle.target, currentAttacker);
 				if (result == BattleState::VICTORY) {
@@ -151,6 +160,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<StateComponent>(defender).setState(LIGHT_HIT);
+		manager.addComponentToEntity<HitFeedbackComponent>(defender);
 		break;
 	}
 	case BattleAction::HEAVY_ATTACK: {
@@ -163,6 +173,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<StateComponent>(defender).setState(HEAVY_HIT);
+		manager.addComponentToEntity<HitFeedbackComponent>(defender);
 		break;
 	}
 	case BattleAction::ULTIMATE_ATTACK: {
@@ -176,6 +187,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<BattleComponent>(attacker).numberOfUltimateAttacksUsed += 1;
 		manager.getComponent<StateComponent>(defender).setState(ULTIMATE_HIT);
+		manager.addComponentToEntity<HitFeedbackComponent>(defender);
 		break;
 	}
 	case BattleAction::HEAL: {
