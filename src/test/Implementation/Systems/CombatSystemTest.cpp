@@ -7,6 +7,7 @@
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
 
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Combat/Components/HitFeedbackComponent.hpp>
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemHealstatsComponent.hpp>
@@ -84,6 +85,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	EXPECT_EQ(1, battleComponentP.AP);
 	// 92-(8+1*0.5*1)=83.5 -> (int) 83
 	EXPECT_EQ(83, characterComE.stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
@@ -171,6 +173,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	EXPECT_EQ(0, battleComponentP.AP);
 	// 100-(12+1*2*0.5*2)=86
 	EXPECT_EQ(86, characterComE.stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
@@ -255,6 +258,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	// 100-(20+1*0.25*3)=79.25 -> (int) 79
 	EXPECT_EQ(79, characterComE.stats.health);
 	EXPECT_EQ(1, battleComponentP.numberOfUltimateAttacksUsed);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
@@ -657,6 +661,7 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	EXPECT_EQ(0, battleComponentP.AP);
 	EXPECT_EQ(0, characterComponentE.stats.health);
 	EXPECT_EQ(100, characterComponentP.stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
 	combatSystem.update();
@@ -727,6 +732,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	EXPECT_EQ(0, battleComponentE.AP);
 	EXPECT_EQ(0, statsComponentP.stats.health);
 	EXPECT_EQ(100, statsComponentE.stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(player);
 	combatSystem.update();
 	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentE.battleState);
 	combatSystem.update();
