@@ -26,6 +26,7 @@ class PersistenceManager {
 	bool requestLoad = false;
 	bool requestSave = false;
 	bool requestQuit = false;
+	bool requestGameOver = false;
 
   private:
 	PersistenceManager() = default;

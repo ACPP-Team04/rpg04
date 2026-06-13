@@ -5,6 +5,7 @@
 #include "Abstract/ECS/System/System.hpp"
 #include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
+#include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include "Abstract/Utils/GraveConfig.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
@@ -309,21 +310,22 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		}
 	}
 	manager.destroyEntity(battleManagerId);
-	manager.addComponentToEntity<InputComponent>(playerIdOpt.value());
+
 	if (battleState == BattleState::VICTORY) {
 
 		for (EntityID defeatedEnemy : defeatedEnemies) {
 			manager.destroyEntity(defeatedEnemy);
 		}
+		manager.addComponentToEntity<InputComponent>(playerIdOpt.value());
 		spdlog::get("combat")->info("You won the battle!");
 
 	} else if (battleState == BattleState::DEFEAT) {
-		// port away from enemy Fix for now
 		audioSystem.enqueueSound("defeat_sound");
 
-		auto &trans = manager.getComponent<TransformComponent>(playerIdOpt.value());
-		trans.position = {0, 1};
+		// auto &trans = manager.getComponent<TransformComponent>(playerIdOpt.value());
+		// trans.position = {0, 1};
 		manager.getComponent<StateComponent>(playerIdOpt.value()).setState(DIE, true);
+		PersistenceManager::getInstance().requestGameOver = true;
 		spdlog::get("combat")->info("You lost the battle! Game over");
 	}
 	WorldUtils::playMusicForCurrentGroup(manager);
