@@ -106,7 +106,6 @@ struct ECSManager {
 		battleInputSystem.init();
 		character_preprocess_system.update();
 		persistanceRegistrationSystem.update();
-		audioManager.playMusic("overworld", true);
 	}
 
 	template <typename Function>
