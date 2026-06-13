@@ -3,11 +3,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
-enum class GameState {
-	MainMenu,
-	Game,
-	Quit
-};
+enum class GameState { MainMenu, Game, Quit, GameOver };
 
 void setLayout(tgui::Gui &gui, GameState &state);
 void setUpMainMenu(tgui::Gui &gui, GameState &state);
