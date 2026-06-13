@@ -2,9 +2,6 @@
 #include "Abstract/ECS/Component/ComponentRegistry.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
 #include "Abstract/Overwordl/CharacterPreProcessSystem.hpp"
-#include "Abstract/RegisterService.hpp"
-#include "Abstract/UI/MainMenu.hpp"
-
 #include "Abstract/Overwordl/Components/AnimationComponent.hpp"
 #include "Abstract/Overwordl/Components/AnimationPartComponent.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
@@ -26,6 +23,9 @@
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
+#include "Abstract/RegisterService.hpp"
+#include "Abstract/UI/GameOverMenu.hpp"
+#include "Abstract/UI/MainMenu.hpp"
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
 #include <Abstract/GameConfig/GameConfig.hpp>
 #include <Abstract/Overwordl/Components/PersistanceComponent.hpp>
@@ -196,6 +196,12 @@ int main()
 				gameState = GameState::Quit;
 				persistence.requestQuit = false;
 			}
+			if (persistence.requestGameOver) {
+				gameState = GameState::GameOver;
+				GameOverMenu::setUpGameOverMenu(gui, gameState);
+				persistence.requestGameOver = false;
+			}
+
 			if (gameState == GameState::Game) {
 				ecsManager.update();
 			}
