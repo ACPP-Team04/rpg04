@@ -22,9 +22,12 @@ class GameConfig {
 		return map;
 	}
 
+	std::string getLogLevel() const { return logLevel; }
+
   private:
 	GameConfig() = default;
 
 	bool godMode = false;
+	std::string logLevel = "info";
 	nlohmann::json m_data;
 };

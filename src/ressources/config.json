@@ -6,5 +6,6 @@
 		"7": "overworld",
 		"16": "lake_land"
 
-	}
+	},
+	"log_level": "debug"
 }
