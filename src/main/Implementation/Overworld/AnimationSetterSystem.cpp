@@ -7,12 +7,12 @@
 #include <Abstract/Combat/Components/HitFeedbackComponent.hpp>
 #include <Abstract/Combat/Components/LungeComponent.hpp>
 #include <Abstract/Overwordl/Components/StateComponent.hpp>
+#include <spdlog/spdlog.h>
 AnimationSetterSystem::AnimationSetterSystem(ArchetypeManager &manager) : System(manager) {};
 
 void AnimationSetterSystem::update()
 {
-
-	std::cout << "AnimationSetterSystem::update" << std::endl;
+	spdlog::debug("AnimationSetterSystem::update");
 	std::vector<EntityID> entitiesToCleanHit;
 	std::vector<EntityID> entitiesToCleanLunge;
 
