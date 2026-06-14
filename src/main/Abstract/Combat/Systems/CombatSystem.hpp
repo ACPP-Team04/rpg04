@@ -43,6 +43,7 @@ class CombatSystem : public System {
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
 	                           BattleAction action);
 	float getMultiplicatorFromScalingFactor(const StatsComponent stats, const WeaponComponent &weaponComponent);
+	void setupKineticLunge(const EntityID &attacker, const EntityID &defender);
 	AISystem &aiSystem;
 	AudioSystem &audioSystem;
 };
