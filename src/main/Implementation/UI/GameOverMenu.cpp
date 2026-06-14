@@ -1,5 +1,6 @@
 #include "Abstract/UI/GameOverMenu.hpp"
 #include "Abstract/PersistenceManager/PersistenceManager.hpp"
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/Label.hpp>
@@ -22,11 +23,16 @@ void GameOverMenu::setUpGameOverMenu(tgui::Gui &gui, GameState &state)
 	auto loadButton = tgui::Button::create("Load Last Save");
 	loadButton->setSize(250, 60);
 	loadButton->setPosition("50% - width / 2", "50%");
-	loadButton->onPress([&gui, &state] {
-		PersistenceManager::getInstance().requestLoad = true;
-		state = GameState::Game;
-		gui.removeAllWidgets();
-	});
+	if (SaveManager::doesSaveExist(1)) {
+		loadButton->onPress([&gui, &state] {
+			PersistenceManager::getInstance().requestLoad = true;
+			state = GameState::Game;
+			gui.removeAllWidgets();
+		});
+	} else {
+		loadButton->setEnabled(false);
+		loadButton->setText("No Save Found");
+	}
 	panel->add(loadButton);
 
 	auto quitButton = tgui::Button::create("Quit to Desktop");
