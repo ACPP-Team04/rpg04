@@ -26,6 +26,7 @@
 #include "Abstract/Overwordl/SwitchLayerSystem.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include "Archetype/ArchetypeManager.hpp"
+#include <spdlog/spdlog.h>
 
 #include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include <Abstract/Audio/AudioSystem.hpp>
@@ -114,7 +115,7 @@ struct ECSManager {
 		sf::Clock clock;
 		clock.start();
 		function();
-		std::cout << name << ": " << clock.getElapsedTime().asMicroseconds() << " us\n";
+		spdlog::info("{}: {} us", name, clock.getElapsedTime().asMicroseconds());
 	}
 
 	void setTargetAspect(float targetAspect) { cameraSystem.setTargetAspect(targetAspect); }

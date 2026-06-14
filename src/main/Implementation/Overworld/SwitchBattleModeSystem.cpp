@@ -98,7 +98,7 @@ void SwitchBattleModeSystem::update()
 	if (world == nullptr) {
 		return;
 	}
-	std::cout << "Battlemanager created" << bManager.getId() << std::endl;
+	spdlog::info("Battlemanager created with id: {}", bManager.getId());
 	this->manager.getComponent<PartOfLayerComponent>(bManager).groupId = world->currentGroup;
 
 	this->manager.getComponent<BattleManagerComponent>(bManager).participants = participantsList;

@@ -23,9 +23,9 @@ void ItemSystem::update()
 		return;
 	}
 	CharacterComponent &character_component = manager.getComponent<CharacterComponent>(player);
-	std::cout << "CharacterCatch" << std::endl;
+	spdlog::debug("CharacterCatch");
 	InputComponent &inputComponent = manager.getComponent<InputComponent>(player);
-	std::cout << character_component.inventory.items.size() << std::endl;
+	spdlog::debug("Item size: {}", character_component.inventory.items.size());
 	WorldUtils::viewInCurrentLayer<InteractionComponent, ItemComponent>(
 	    manager, [&](auto &entity, InteractionComponent &interaction, ItemComponent &item) {
 		    if (!interaction.isActive) {

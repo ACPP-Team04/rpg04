@@ -8,6 +8,7 @@
 #include "Abstract/Utils/WorldUtlis.hpp"
 
 #include <mutex>
+#include <spdlog/spdlog.h>
 
 DoorSystem::DoorSystem(ArchetypeManager &manager) : System(manager) {}
 
@@ -29,11 +30,11 @@ void DoorSystem::update()
 					    lcomp.isLocked = false;
 					    icomp.action = INTERACTION_ACTION::SWITCH_LAYER;
 				    } else {
-					    std::cout << "Door is closed!!!" << std::endl;
+					    spdlog::debug("Door is closed!!");
 				    }
 			    } else {
 				    icomp.action = SWITCH_LAYER;
-				    std::cout << "Door open!!!" << std::endl;
+				    spdlog::debug("Door open!!");
 			    }
 		    }
 	    });
