@@ -68,10 +68,14 @@ void applyResize(sf::RenderWindow &window, tgui::Gui &gui, ECSManager &ecsManage
 }
 } // namespace
 
-void applyGameConfig(ECSManager &ecsManager, EntityID player)
+void readGameConfig()
 {
 	std::string configPath = std::string(ROOT_DIR) + "/src/ressources/config.json";
 	GameConfig::getInstance().loadConfig(configPath);
+}
+
+void applyGameConfig(ECSManager &ecsManager, EntityID player)
+{
 	if (GameConfig::getInstance().isGodModeEnabled()) {
 		ecsManager.manager.addComponentToEntity<CombatGodMode>(player);
 		spdlog::info("God Mode applied to player!");
@@ -147,6 +151,7 @@ int main()
 		    "Zombie Knight");
 		tgui::Gui gui(window);
 		gui.setFont(FONT);
+		readGameConfig();
 
 		spdlog::info("Creating ECS manager...");
 		ECSManager ecsManager = ECSManager(window, gui);
