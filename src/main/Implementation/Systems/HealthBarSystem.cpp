@@ -55,7 +55,7 @@ void HealthBarSystem::update()
 
 			sf::RectangleShape bg(sf::Vector2f(barWidth, barHeight));
 			bg.setPosition(barPos);
-			bg.setFillColor(sf::Color::Black);
+			bg.setFillColor(sf::Color::White);
 
 			if (isHoveringTarget) {
 				bg.setOutlineThickness(2.f);

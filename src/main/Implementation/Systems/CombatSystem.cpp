@@ -11,6 +11,8 @@
 #include "Implementation/Components/BattleComponent.hpp"
 
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Combat/Components/HitFeedbackComponent.hpp>
+#include <Abstract/Combat/Components/LungeComponent.hpp>
 #include <Abstract/Combat/Systems/BattleInputSystem.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
@@ -51,15 +53,27 @@ void CombatSystem::update()
 					aiSystem.executeAILogic(currentAttacker, bmc.participants);
 				}
 				break;
-			case BattleState::SELECTED_ACTION:
-				this->executeBattleAction(currentAttacker, battle.target, battle.selectedAction);
-				battle.battleState = BattleState::EXECUTING_ACTION;
+			case BattleState::SELECTED_ACTION: {
+				if (battle.selectedAction != BattleAction::REST && battle.selectedAction != BattleAction::HEAL) {
+					this->setupKineticLunge(currentAttacker, battle.target);
+				}
+				BattleComponent &updatedBattle = manager.getComponent<BattleComponent>(currentAttacker);
+				this->executeBattleAction(currentAttacker, updatedBattle.target, updatedBattle.selectedAction);
+				updatedBattle.battleState = BattleState::EXECUTING_ACTION;
 				break;
-			case BattleState::EXECUTING_ACTION:
+			}
+			case BattleState::EXECUTING_ACTION: {
+
+				bool defenderIsHurt = manager.hasComponent<HitFeedbackComponent>(battle.target);
+				bool attackerIsAnimating = manager.hasComponent<LungeComponent>(currentAttacker);
+				if (attackerIsAnimating || defenderIsHurt) {
+					break;
+				}
 				if (this->handleActionDelay(battle)) {
 					battle.battleState = BattleState::CHECK_DEATH;
 				}
 				break;
+			}
 			case BattleState::CHECK_DEATH: {
 				auto result = this->checkDeathCondition(battle.target, currentAttacker);
 				if (result == BattleState::VICTORY) {
@@ -126,7 +140,6 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
 		return;
 	}
-	attackerBattle.AP -= cost;
 
 	if (typeOfAction == BattleAction::ULTIMATE_ATTACK and attackerBattle.numberOfUltimateAttacksUsed >= 1) {
 		spdlog::get("combat")->warn("No ultimate attacks left!");
@@ -140,6 +153,14 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		return;
 	}
 
+	bool isOffensive = (typeOfAction == BattleAction::LIGHT_ATTACK || typeOfAction == BattleAction::HEAVY_ATTACK
+	                    || typeOfAction == BattleAction::ULTIMATE_ATTACK);
+
+	if (defender.getId() == -1) {
+		throw std::runtime_error("Defender is not set for action execution");
+	}
+	attackerBattle.AP -= cost;
+
 	switch (typeOfAction) {
 	case BattleAction::LIGHT_ATTACK: {
 		CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
@@ -151,6 +172,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<StateComponent>(defender).setState(LIGHT_HIT);
+		manager.addComponentToEntity<HitFeedbackComponent>(defender);
 		break;
 	}
 	case BattleAction::HEAVY_ATTACK: {
@@ -163,6 +185,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<StateComponent>(defender).setState(HEAVY_HIT);
+		manager.addComponentToEntity<HitFeedbackComponent>(defender);
 		break;
 	}
 	case BattleAction::ULTIMATE_ATTACK: {
@@ -176,6 +199,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
 		manager.getComponent<BattleComponent>(attacker).numberOfUltimateAttacksUsed += 1;
 		manager.getComponent<StateComponent>(defender).setState(ULTIMATE_HIT);
+		manager.addComponentToEntity<HitFeedbackComponent>(defender);
 		break;
 	}
 	case BattleAction::HEAL: {
@@ -192,13 +216,6 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		break;
 	}
 	}
-
-	if (defender.getId() == -1) {
-		throw std::runtime_error("Defender is not set for action execution");
-	}
-
-	bool isOffensive = (typeOfAction == BattleAction::LIGHT_ATTACK || typeOfAction == BattleAction::HEAVY_ATTACK
-	                    || typeOfAction == BattleAction::ULTIMATE_ATTACK);
 
 	if (isOffensive) {
 		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
@@ -295,7 +312,6 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 			stats.experienceLevel += 1;
 			stats.numberOfFightsWon += 1;
 
-			// TODO: Do we want companions to be permantly death?
 			if (manager.hasComponent<DeathComponent>(entity)) {
 				manager.removeComponentFromEntity<DeathComponent>(entity);
 			}
@@ -322,8 +338,6 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 	} else if (battleState == BattleState::DEFEAT) {
 		audioSystem.enqueueSound("defeat_sound");
 
-		// auto &trans = manager.getComponent<TransformComponent>(playerIdOpt.value());
-		// trans.position = {0, 1};
 		manager.getComponent<StateComponent>(playerIdOpt.value()).setState(DIE, true);
 		PersistenceManager::getInstance().requestGameOver = true;
 		spdlog::get("combat")->info("You lost the battle! Game over");
@@ -399,4 +413,37 @@ float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, c
 float CombatSystem::getMultiplicatorFromScalingFactor(StatsComponent stats, const WeaponComponent &weaponComponent)
 {
 	return stats.getStat(weaponComponent.scalingStat) * weaponComponent.getScalingFactor();
+}
+
+void CombatSystem::setupKineticLunge(const EntityID &attacker, const EntityID &defender)
+{
+	auto &attackerTransform = manager.getComponent<TransformComponent>(attacker);
+	auto &defenderTransform = manager.getComponent<TransformComponent>(defender);
+
+	sf::Vector2f aPos = attackerTransform.position;
+	sf::Vector2f dPos = defenderTransform.position;
+
+	sf::Vector2f difference = dPos - aPos;
+	float distance = std::sqrt((difference.x * difference.x) + (difference.y * difference.y));
+
+	sf::Vector2f direction(0.0f, 0.0f);
+	if (distance > 0.0f) {
+		direction = sf::Vector2f(difference.x / distance, difference.y / distance);
+	}
+
+	auto &attackerState = manager.getComponent<StateComponent>(attacker);
+
+	if (std::abs(difference.x) > std::abs(difference.y)) {
+		attackerState.setState((difference.x > 0) ? WALK_RIGHT : WALK_LEFT);
+	} else {
+		attackerState.setState((difference.y > 0) ? WALK_DOWN : WALK_UP);
+	}
+
+	float stopDistance = 16.0f;
+	manager.addComponentToEntity<LungeComponent>(attacker);
+	LungeComponent &lunge = manager.getComponent<LungeComponent>(attacker);
+
+	lunge.originalPosition = aPos;
+	lunge.targetPosition = dPos - (direction * stopDistance);
+	lunge.targetEntity = defender;
 }

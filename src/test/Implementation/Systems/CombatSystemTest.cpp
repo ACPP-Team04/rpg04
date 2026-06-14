@@ -7,6 +7,8 @@
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
 
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Combat/Components/HitFeedbackComponent.hpp>
+#include <Abstract/Combat/Components/LungeComponent.hpp>
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemHealstatsComponent.hpp>
@@ -20,7 +22,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 
 	ArchetypeManager manager = ArchetypeManager();
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, StateComponent, CharacterComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, TransformComponent, StateComponent,
+	                                       CharacterComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -32,7 +35,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID enemy = manager.createEntity();
+	EntityID enemy = manager.createEntity<TransformComponent>();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StateComponent, CharacterComponent>(enemy);
@@ -80,19 +83,21 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundLightAttack)
 	//
 
 	combatSystem.update();
-	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
-	EXPECT_EQ(1, battleComponentP.AP);
+	EXPECT_EQ(BattleState::EXECUTING_ACTION, manager.getComponent<BattleComponent>(player).battleState);
+	EXPECT_EQ(1, manager.getComponent<BattleComponent>(player).AP);
 	// 92-(8+1*0.5*1)=83.5 -> (int) 83
 	EXPECT_EQ(83, characterComE.stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
+	manager.removeComponentFromEntity<LungeComponent>(player);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::CHECK_DEATH, manager.getComponent<BattleComponent>(player).battleState);
 	combatSystem.update();
 
-	EXPECT_EQ(BattleState::NEXT_ROUND, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::NEXT_ROUND, manager.getComponent<BattleComponent>(player).battleState);
 
 	combatSystem.update();
 	EXPECT_EQ(true, battleComponentE.isActiveTurn);
-	EXPECT_EQ(BattleState::TURN_START, battleComponentE.battleState);
+	EXPECT_EQ(BattleState::TURN_START, manager.getComponent<BattleComponent>(enemy).battleState);
 	EXPECT_EQ(false, battleComponentP.isActiveTurn);
 	EXPECT_EQ(1, bmc.currentTurnIndex);
 	EXPECT_EQ(false, bmc.isBattleOver);
@@ -103,7 +108,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, StateComponent, CharacterComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, TransformComponent, StateComponent,
+	                                       CharacterComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -114,7 +120,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
-	EntityID enemy = manager.createEntity();
+	EntityID enemy = manager.createEntity<TransformComponent>();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StateComponent, CharacterComponent>(enemy);
@@ -156,9 +162,9 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 
 	battleComponentP.battleManagerId = battle;
 	battleComponentE.battleManagerId = battle;
-	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, battleComponentP.battleState);
-	EXPECT_EQ(true, battleComponentP.isActiveTurn);
-	EXPECT_EQ(false, battleComponentE.isActiveTurn);
+	EXPECT_EQ(BattleState::WAITING_FOR_INPUT, manager.getComponent<BattleComponent>(player).battleState);
+	EXPECT_EQ(true, manager.getComponent<BattleComponent>(player).isActiveTurn);
+	EXPECT_EQ(false, manager.getComponent<BattleComponent>(enemy).isActiveTurn);
 
 	// Simulate BattletInputSystem
 	battleComponentP.selectedAction = BattleAction::HEAVY_ATTACK;
@@ -167,19 +173,21 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundHeavyAttack)
 	//
 
 	combatSystem.update();
-	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
-	EXPECT_EQ(0, battleComponentP.AP);
+	EXPECT_EQ(BattleState::EXECUTING_ACTION, manager.getComponent<BattleComponent>(player).battleState);
+	EXPECT_EQ(0, manager.getComponent<BattleComponent>(player).AP);
 	// 100-(12+1*2*0.5*2)=86
 	EXPECT_EQ(86, characterComE.stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
+	manager.removeComponentFromEntity<LungeComponent>(player);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::CHECK_DEATH, manager.getComponent<BattleComponent>(player).battleState);
 	combatSystem.update();
 
-	EXPECT_EQ(BattleState::NEXT_ROUND, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::NEXT_ROUND, manager.getComponent<BattleComponent>(player).battleState);
 	combatSystem.update();
 	EXPECT_EQ(true, battleComponentE.isActiveTurn);
-	EXPECT_EQ(BattleState::TURN_START, battleComponentE.battleState);
-	EXPECT_EQ(false, battleComponentP.isActiveTurn);
+	EXPECT_EQ(BattleState::TURN_START, manager.getComponent<BattleComponent>(enemy).battleState);
+	EXPECT_EQ(false, manager.getComponent<BattleComponent>(player).isActiveTurn);
 	EXPECT_EQ(1, bmc.currentTurnIndex);
 	EXPECT_EQ(false, bmc.isBattleOver);
 }
@@ -193,7 +201,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	AudioManager audioManager = AudioManager();
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, StateComponent, CharacterComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, TransformComponent, StateComponent,
+	                                       CharacterComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -204,7 +213,7 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	EntityID enemy = manager.createEntity();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent>(player);
-	manager.addComponentToEntity<BattleComponent, CharacterComponent, StateComponent>(enemy);
+	manager.addComponentToEntity<BattleComponent, CharacterComponent, TransformComponent, StateComponent>(enemy);
 	manager.addComponentToEntity<BattleManagerComponent>(battle);
 	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle);
 	bmc.participants = {player, enemy};
@@ -250,21 +259,23 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	//
 
 	combatSystem.update();
-	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
-	EXPECT_EQ(2, battleComponentP.AP);
+	EXPECT_EQ(BattleState::EXECUTING_ACTION, manager.getComponent<BattleComponent>(player).battleState);
+	EXPECT_EQ(2, manager.getComponent<BattleComponent>(player).AP);
 	// 100-(20+1*0.25*3)=79.25 -> (int) 79
 	EXPECT_EQ(79, characterComE.stats.health);
-	EXPECT_EQ(1, battleComponentP.numberOfUltimateAttacksUsed);
+	EXPECT_EQ(1, manager.getComponent<BattleComponent>(player).numberOfUltimateAttacksUsed);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
+	manager.removeComponentFromEntity<LungeComponent>(player);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::CHECK_DEATH, manager.getComponent<BattleComponent>(player).battleState);
 	combatSystem.update();
 
-	EXPECT_EQ(BattleState::NEXT_ROUND, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::NEXT_ROUND, manager.getComponent<BattleComponent>(player).battleState);
 
 	combatSystem.update();
-	EXPECT_EQ(true, battleComponentE.isActiveTurn);
-	EXPECT_EQ(BattleState::TURN_START, battleComponentE.battleState);
-	EXPECT_EQ(false, battleComponentP.isActiveTurn);
+	EXPECT_EQ(true, manager.getComponent<BattleComponent>(enemy).isActiveTurn);
+	EXPECT_EQ(BattleState::TURN_START, manager.getComponent<BattleComponent>(enemy).battleState);
+	EXPECT_EQ(false, manager.getComponent<BattleComponent>(player).isActiveTurn);
 	EXPECT_EQ(1, bmc.currentTurnIndex);
 	EXPECT_EQ(false, bmc.isBattleOver);
 }
@@ -528,7 +539,8 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, StateComponent, CharacterComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, TransformComponent, StateComponent,
+	                                       CharacterComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -539,7 +551,7 @@ TEST(CombatSystemTest, cleanUpBattlePlayerWon)
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
-	EntityID enemy = manager.createEntity<CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent, TransformComponent>();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StateComponent>(enemy);
@@ -610,7 +622,8 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, StateComponent, CharacterComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, TransformComponent, StateComponent,
+	                                       CharacterComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -620,7 +633,7 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	AudioManager audioManager = AudioManager(16, true);
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
-	EntityID enemy = manager.createEntity<CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent, TransformComponent>();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StateComponent>(enemy);
@@ -653,14 +666,16 @@ TEST(CombatSystemTest, combatSystemPlayerWon)
 	//
 
 	combatSystem.update();
-	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentP.battleState);
-	EXPECT_EQ(0, battleComponentP.AP);
-	EXPECT_EQ(0, characterComponentE.stats.health);
-	EXPECT_EQ(100, characterComponentP.stats.health);
+	EXPECT_EQ(BattleState::EXECUTING_ACTION, manager.getComponent<BattleComponent>(player).battleState);
+	EXPECT_EQ(0, manager.getComponent<BattleComponent>(player).AP);
+	EXPECT_EQ(0, manager.getComponent<CharacterComponent>(enemy).stats.health);
+	EXPECT_EQ(100, manager.getComponent<CharacterComponent>(player).stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
+	manager.removeComponentFromEntity<LungeComponent>(player);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::CHECK_DEATH, manager.getComponent<BattleComponent>(player).battleState);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::STATS_DISTRIBUTION, battleComponentP.battleState);
+	EXPECT_EQ(BattleState::STATS_DISTRIBUTION, manager.getComponent<BattleComponent>(player).battleState);
 	// Simulating stats distribution imput
 	battleComponentP.battleState = BattleState::VICTORY;
 	//
@@ -676,7 +691,8 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	ArchetypeManager manager = ArchetypeManager();
 	AISystem aiSystem = AISystem(manager);
 	EntityID world = manager.createEntity<WorldComponent>();
-	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, StateComponent, CharacterComponent>();
+	EntityID player = manager.createEntity<PlayerComponent, PartOfLayerComponent, TransformComponent, StateComponent,
+	                                       CharacterComponent>();
 	auto &playerLayer = manager.getComponent<PartOfLayerComponent>(player);
 	auto &worldLayer = manager.getComponent<WorldComponent>(world);
 
@@ -687,7 +703,7 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	AudioSystem audiosystem = AudioSystem(manager, audioManager);
 	CombatSystem combatSystem = CombatSystem(manager, aiSystem, audiosystem);
 
-	EntityID enemy = manager.createEntity<CharacterComponent>();
+	EntityID enemy = manager.createEntity<CharacterComponent, TransformComponent>();
 	EntityID battle = manager.createEntity(EntityTag::BATTLEMANAGER);
 	manager.addComponentToEntity<BattleComponent, TransformComponent>(player);
 	manager.addComponentToEntity<BattleComponent, StateComponent>(enemy);
@@ -723,14 +739,16 @@ TEST(CombatSystemTest, combatSystemEnemyWon)
 	//
 
 	combatSystem.update();
-	EXPECT_EQ(BattleState::EXECUTING_ACTION, battleComponentE.battleState);
-	EXPECT_EQ(0, battleComponentE.AP);
-	EXPECT_EQ(0, statsComponentP.stats.health);
-	EXPECT_EQ(100, statsComponentE.stats.health);
+	EXPECT_EQ(BattleState::EXECUTING_ACTION, manager.getComponent<BattleComponent>(enemy).battleState);
+	EXPECT_EQ(0, manager.getComponent<BattleComponent>(enemy).AP);
+	EXPECT_EQ(0, manager.getComponent<CharacterComponent>(player).stats.health);
+	EXPECT_EQ(100, manager.getComponent<CharacterComponent>(enemy).stats.health);
+	manager.removeComponentFromEntity<HitFeedbackComponent>(player);
+	manager.removeComponentFromEntity<LungeComponent>(enemy);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::CHECK_DEATH, battleComponentE.battleState);
+	EXPECT_EQ(BattleState::CHECK_DEATH, manager.getComponent<BattleComponent>(enemy).battleState);
 	combatSystem.update();
-	EXPECT_EQ(BattleState::DEFEAT, battleComponentE.battleState);
+	EXPECT_EQ(BattleState::DEFEAT, manager.getComponent<BattleComponent>(enemy).battleState);
 	combatSystem.update();
 	combatSystem.update();
 
