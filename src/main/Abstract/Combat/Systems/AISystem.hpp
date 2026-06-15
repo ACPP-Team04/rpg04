@@ -11,4 +11,7 @@ class AISystem : public System {
 	std::optional<EntityID> selectTarget(EntityID aiId, const std::vector<EntityID> &participants);
 	void executeAILogic(EntityID aiId, std::vector<EntityID> participants);
 	void update();
+
+  private:
+	std::vector<EntityID> getValidTargets(EntityID aiId, const std::vector<EntityID> &participants);
 };
