@@ -31,6 +31,7 @@ void GameConfig::loadConfig(const std::string &filepath)
 		godMode = false;
 	}
 	logLevel = m_data.value("log_level", "info");
+	defaultMusic = m_data.value("default_music", "");
 	spdlog::set_level(spdlog::level::from_str(logLevel));
 	if (fileLoadedSuccessfully) {
 		spdlog::info("GameConfig: Successfully loaded config file at {}", filepath);

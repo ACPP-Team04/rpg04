@@ -98,12 +98,16 @@ class WorldUtils {
 			std::string targetTrack = world->groupMusicMap[currentGroup];
 			auto currentTrackOpt = audio.getCurrentMusicName();
 			if (!currentTrackOpt.has_value() || currentTrackOpt.value() != targetTrack) {
-				spdlog::info("Switching music to: {}", targetTrack);
+				spdlog::info("Switching music to: {} for layer {}", targetTrack, currentGroup);
 				audio.playMusic(targetTrack, true);
 			}
 		} else {
-			spdlog::info("No music mapping found for group {}", currentGroup);
-			audio.stopMusic();
+			spdlog::info("No music mapping found for group {}, Playing default music", currentGroup);
+			std::string defaultTrack = world->defaultMusic;
+
+			if (!defaultTrack.empty() && audio.getCurrentMusicName() != defaultTrack) {
+				audio.playMusic(defaultTrack, true);
+			}
 		}
 	}
 };

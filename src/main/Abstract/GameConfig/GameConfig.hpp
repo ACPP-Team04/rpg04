@@ -23,6 +23,7 @@ class GameConfig {
 	}
 
 	std::string getLogLevel() const { return logLevel; }
+	std::string getDefaultMusic() const { return defaultMusic; }
 
   private:
 	GameConfig() = default;
@@ -30,4 +31,5 @@ class GameConfig {
 	bool godMode = false;
 	std::string logLevel = "info";
 	nlohmann::json m_data;
+	std::string defaultMusic = "";
 };
