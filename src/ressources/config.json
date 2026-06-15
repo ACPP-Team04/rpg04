@@ -7,5 +7,6 @@
 		"16": "lake_land"
 
 	},
+	"default_music": "overworld",
 	"log_level": "debug"
 }

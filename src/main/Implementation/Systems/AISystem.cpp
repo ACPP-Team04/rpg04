@@ -18,13 +18,25 @@ std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<
 {
 	auto &aiBattleComp = manager.getComponent<BattleComponent>(aiId);
 
+	std::vector<EntityID> validTargets = this->getValidTargets(aiId, participants);
+
+	if (validTargets.empty()) {
+		return std::nullopt;
+	}
+
+	int randomIndex = rand() % validTargets.size();
+	return validTargets[randomIndex];
+}
+
+std::vector<EntityID> AISystem::getValidTargets(EntityID aiId, const std::vector<EntityID> &participants)
+{
+	auto &aiBattleComp = manager.getComponent<BattleComponent>(aiId);
 	std::vector<EntityID> validTargets;
 
 	for (EntityID p : participants) {
 		if (aiId == p || manager.hasComponent<DeathComponent>(p)) {
 			continue;
 		}
-
 		if (manager.hasComponent<BattleComponent>(p)) {
 			auto &targetBattleComp = manager.getComponent<BattleComponent>(p);
 
@@ -34,13 +46,9 @@ std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<
 		}
 	}
 
-	if (validTargets.empty()) {
-		return std::nullopt;
-	}
-
-	int randomIndex = rand() % validTargets.size();
-	return validTargets[randomIndex];
+	return validTargets;
 }
+
 void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 {
 	BattleComponent &aiBattle = manager.getComponent<BattleComponent>(aiId);

@@ -49,6 +49,7 @@ struct WorldComponent : public Component<WorldComponent> {
 	bool menuOpened = false;
 	ACTIVE_MENU currentMenu = ACTIVE_MENU::NONE;
 	std::unordered_map<int, std::string> groupMusicMap;
+	std::string defaultMusic;
 
 	void readFromJson(tson::TiledClass &j) override {};
 

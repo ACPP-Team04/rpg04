@@ -312,13 +312,17 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 			stats.experienceLevel += 1;
 			stats.numberOfFightsWon += 1;
 
+			// No perma-death for companions
 			if (manager.hasComponent<DeathComponent>(entity)) {
 				manager.removeComponentFromEntity<DeathComponent>(entity);
 			}
 			// Hide companions again
 			if (entity.getId() == manager.getComponent<CharacterComponent>(playerIdOpt.value()).equipedCompanion) {
 				if (manager.hasComponent<PartOfLayerComponent>(entity)) {
-					manager.removeComponentFromEntity<PartOfLayerComponent>(entity);
+					auto &partOfLayer = manager.getComponent<PartOfLayerComponent>(entity);
+					auto inventoryWorldId =
+					    manager.getComponent<CharacterComponent>(playerIdOpt.value()).inventory.inventoryWorldId;
+					partOfLayer.groupId = inventoryWorldId;
 				}
 			}
 		} else {

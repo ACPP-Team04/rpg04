@@ -5,6 +5,7 @@
 #include "Abstract/Combat/Systems/CombatSystem.hpp"
 #include "Abstract/ECS/ECSManager.hpp"
 
+#include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/InventoryComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
@@ -169,4 +170,30 @@ TEST(AISystemTest, selectTargetWithMultipleEnemies)
 	auto target = aiSystem.selectTarget(enemy, {player, enemy, enemy2});
 	EXPECT_EQ(target.has_value(), true);
 	EXPECT_EQ(player, target.value());
+}
+
+TEST(AISystemTest, selectTargetFiltersOutInvalidEntities)
+{
+	ArchetypeManager manager = ArchetypeManager();
+	AISystem aiSystem = AISystem(manager);
+	EntityID aiEntity = manager.createEntity<BattleComponent>();
+	auto &aiBattle = manager.getComponent<BattleComponent>(aiEntity);
+	aiBattle.faction = BATTLE_FACTION::ENEMY;
+
+	EntityID ally = manager.createEntity<BattleComponent>();
+	manager.getComponent<BattleComponent>(ally).faction = BATTLE_FACTION::ENEMY;
+
+	EntityID deadPlayer = manager.createEntity<BattleComponent, DeathComponent>();
+	manager.getComponent<BattleComponent>(deadPlayer).faction = BATTLE_FACTION::PLAYER_PARTY;
+
+	EntityID tree = manager.createEntity<TransformComponent>();
+
+	EntityID livingPlayer = manager.createEntity<BattleComponent>();
+	manager.getComponent<BattleComponent>(livingPlayer).faction = BATTLE_FACTION::PLAYER_PARTY;
+
+	std::vector<EntityID> participants = {aiEntity, ally, deadPlayer, tree, livingPlayer};
+	auto target = aiSystem.selectTarget(aiEntity, participants);
+
+	EXPECT_TRUE(target.has_value());
+	EXPECT_EQ(livingPlayer, target.value());
 }

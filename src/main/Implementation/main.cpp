@@ -84,6 +84,7 @@ void applyGameConfig(ECSManager &ecsManager, EntityID player)
 	WorldComponent *world = WorldUtils::getWorld(ecsManager.manager);
 	if (world) {
 		world->groupMusicMap = mappings;
+		world->defaultMusic = GameConfig::getInstance().getDefaultMusic();
 	}
 }
 

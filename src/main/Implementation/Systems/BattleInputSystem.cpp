@@ -121,7 +121,6 @@ void BattleInputSystem::update()
 		ui.setActionPanelVisible(false);
 		return;
 	}
-	ui.setHUDVisible(true);
 
 	auto activeIdOpt = getActiveLocalController();
 	if (!activeIdOpt.has_value()) {
@@ -129,13 +128,23 @@ void BattleInputSystem::update()
 	}
 
 	EntityID activeId = activeIdOpt.value();
+	if (manager.getComponent<BattleComponent>(activeId).battleState == BattleState::STATS_DISTRIBUTION) {
+		ui.setHUDVisible(false);
+		ui.setActionPanelVisible(false);
+		return;
+	}
 	auto &battle = manager.getComponent<BattleComponent>(activeId);
 	auto &stats = manager.getComponent<CharacterComponent>(activeId).stats;
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
-	ui.setActionPanelVisible(showMenu);
 
 	bool showTargetMenu = battle.battleState == BattleState::SELECTING_TARGET;
 	if (showMenu) {
+		auto &activeIdTransform = manager.getComponent<TransformComponent>(activeId);
+		float screenMiddleX = WORLD_SIZE_X / 2.0f;
+
+		ui.updateDynamicPosition(activeIdTransform.position.x, screenMiddleX);
+		ui.setHUDVisible(true);
+		ui.setActionPanelVisible(showMenu);
 		auto btnLightAttack = ui.getButton("BtnLight");
 		btnLightAttack->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle));
 		auto btnHeavy = ui.getButton("BtnHeavy");
