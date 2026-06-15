@@ -136,6 +136,11 @@ void BattleInputSystem::update()
 
 	bool showTargetMenu = battle.battleState == BattleState::SELECTING_TARGET;
 	if (showMenu) {
+		auto &activeIdTransform = manager.getComponent<TransformComponent>(activeId);
+		float screenMiddleX = WORLD_SIZE_X / 2.0f;
+
+		ui.updateDynamicPosition(activeIdTransform.position.x, screenMiddleX);
+
 		auto btnLightAttack = ui.getButton("BtnLight");
 		btnLightAttack->setEnabled(CombatSystem::validateAction(BattleAction::LIGHT_ATTACK, battle));
 		auto btnHeavy = ui.getButton("BtnHeavy");

@@ -17,7 +17,7 @@ class BattleUI {
 		hudPanel = tgui::Panel::create({"250", "80"});
 
 		gui.add(hudPanel, "BattleHUD");
-		hudPanel->setPosition("5%", "100% - 330");
+		hudPanel->setPosition("-1000", "-1000");
 		auto hpBar = tgui::ProgressBar::create();
 		hpBar->setSize("90%", "30px");
 		hpBar->setPosition("5%", "10%");
@@ -28,7 +28,7 @@ class BattleUI {
 		hudPanel->add(apLabel, "APLabel");
 
 		actionPanel = tgui::Panel::create({"250", "230"});
-		actionPanel->setPosition("5%", "100% - 240");
+		actionPanel->setPosition("-1000", "-1000");
 		gui.add(actionPanel, "BattleMenu");
 
 		auto layout = tgui::VerticalLayout::create();
@@ -65,5 +65,15 @@ class BattleUI {
 		bar->setText(std::to_string((int)hp) + " / " + std::to_string((int)maxHp));
 
 		hudPanel->get<tgui::Label>("APLabel")->setText("AP: " + std::to_string(ap));
+	}
+	void updateDynamicPosition(float playerX, float screenMiddleX)
+	{
+		if (playerX > screenMiddleX) {
+			hudPanel->setPosition("5%", "100% - 330");
+			actionPanel->setPosition("5%", "100% - 240");
+		} else {
+			hudPanel->setPosition("95% - 250", "100% - 330");
+			actionPanel->setPosition("95% - 250", "100% - 240");
+		}
 	}
 };
