@@ -1,6 +1,6 @@
 #include "Abstract/Overwordl/DialogSystem.hpp"
 
-#include "../../../../vcpkg/buildtrees/tgui/src/v1.8.0-08e9099a90.clean/include/TGUI/Widgets/Picture.hpp"
+#include <TGUI/Widgets/Picture.hpp>
 #include "Abstract/AssetManager/AssetManager.hpp"
 #include "Abstract/Overwordl/CollisionSystem.hpp"
 #include "Abstract/Overwordl/Components/CameraComponent.hpp"
