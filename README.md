@@ -51,4 +51,36 @@ cmake --build build
 
 ## Instructions for Windows
 
+Install via Visual Studio Build tools 2026 or Visual Studio 2026
+
+Desktop development with C++
+CMake tools for Windows
+MSVC v143 C++ x64/x86 build tools
+Windows 11 SDK
+
+Clone repo
+```bash
+git clone https://github.com/ACPP-Team04/rpg04.git
+cd .\rpg04\
+git submodule update --init --recursive
+```
+
+Open Developer Powershell for VS
+```bash
+cmake -S . -B build -G "Visual Studio 18 2026" -A x64 -DCMAKE_TOOLCHAIN_FILE="$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake"
+cmake --build build --config Release
+```
+
+Run game
+```bash
+ .\build\Release\main.exe
+```
+Run tests
+
+
+
+
+
+
+
 
