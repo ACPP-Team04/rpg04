@@ -81,7 +81,7 @@ Panel.DialogPanel {
             BackgroundColor = transparent;
             BorderColor = black;
             Borders = (1, 1, 1, 1);
-            TextColor = #FFD52A;
+            TextColor = black;
             TextStyle = Italic;
             TextureBackground = None;
             TransparentTexture = true;
