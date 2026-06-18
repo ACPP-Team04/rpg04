@@ -560,8 +560,7 @@
             "PICK_ITEM",
             "DOOR_INTERACTION",
             "SWITCH_LAYER",
-            "START_BATTLE",
-            "BONFIRE_REST"
+            "START_BATTLE"
         ],
         "valuesAsFlags": false
     },
