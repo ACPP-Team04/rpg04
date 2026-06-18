@@ -1,0 +1,14 @@
+{ "columns":45,
+ "image":"..\/Tilesheet_edited3.png",
+ "imageheight":240,
+ "imagewidth":720,
+ "margin":0,
+ "name":"Tilesheet_edited3",
+ "spacing":0,
+ "tilecount":675,
+ "tiledversion":"1.12.1",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}
