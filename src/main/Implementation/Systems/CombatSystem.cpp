@@ -315,6 +315,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 			// No perma-death for companions
 			if (manager.hasComponent<DeathComponent>(entity)) {
 				manager.removeComponentFromEntity<DeathComponent>(entity);
+				manager.getComponent<StateComponent>(entity).setState(ENTITY_ANIMATIONS_STATE::IDLE);
 			}
 			// Hide companions again
 			if (entity.getId() == manager.getComponent<CharacterComponent>(playerIdOpt.value()).equipedCompanion) {
