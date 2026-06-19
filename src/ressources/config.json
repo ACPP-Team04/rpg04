@@ -1,9 +1,9 @@
 {
 	"debug": {
-		"godMode": true
+		"godMode": false
 	},
 	"music_mappings": {
-		"7": "overworld",
+		"21": "overworld",
 		"16": "lake_land"
 
 	},
