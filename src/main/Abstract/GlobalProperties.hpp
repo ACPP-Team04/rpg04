@@ -3,7 +3,7 @@
 #define MAX_COMPONENTS 64
 #define SPRITE_SHEET_PATH ROOT_DIR "/src/ressources/TileMapEditorOutput/Tilesheet_edited.png"
 #define MAP ROOT_DIR "/src/ressources/TileMapEditorOutput/filledWithEnums/map.tmj"
-#define FONT ROOT_DIR "/src/ressources/HorrorNightDrip-K7Jap.ttf"
+#define FONT ROOT_DIR "/src/ressources/shlop_rg.otf"
 #define PRO ROOT_DIR "/src/ressources/TileMapEditorOutput/filledWithEnums/filledWithEnunm.tiled-project"
 #define DIALOG_WIDGETS_PATH ROOT_DIR "/src/ressources/res.txt"
 #define HUD_WIGDETS_PATH ROOT_DIR "/src/ressources/hud.txt"
