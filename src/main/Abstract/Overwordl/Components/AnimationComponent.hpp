@@ -32,7 +32,7 @@ class AnimationSequence {
 class AnimationComponent : public Component<AnimationComponent> {
   private:
 	std::unordered_map<ENTITY_ANIMATIONS_STATE, AnimationSequence> animations;
-	std::optional<int> currentAnimationEntityId = 0;
+	std::optional<int> currentAnimationEntityId = std::nullopt;
 	int framesElapsed{};
 
   public:
@@ -49,10 +49,7 @@ class AnimationComponent : public Component<AnimationComponent> {
 			int k = 0;
 			while (anims.getMember(std::to_string(k)) != nullptr) {
 				tson::TiledClass anim = anims.get<tson::TiledClass>(std::to_string(k));
-				Animation animation = {
-					anim.get<int>("entitySpriteId"),
-					anim.get<int>("numFrames")
-				};
+				Animation animation = {anim.get<int>("entitySpriteId"), anim.get<int>("numFrames")};
 				animSeq.push_back(animation);
 				k++;
 			}
@@ -78,7 +75,7 @@ class AnimationComponent : public Component<AnimationComponent> {
 		currentAnimationEntityId = anim.entityAnimationSpriteId;
 	}
 
-	std::optional<int>  getCurrentAnimation() const { return currentAnimationEntityId; }
+	std::optional<int> getCurrentAnimation() const { return currentAnimationEntityId; }
 	void addAnimation(ENTITY_ANIMATIONS_STATE state, const AnimationSequence &animation_sequence)
 	{
 		this->animations[state] = animation_sequence;

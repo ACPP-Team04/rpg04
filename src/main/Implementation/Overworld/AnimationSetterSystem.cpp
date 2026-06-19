@@ -69,9 +69,21 @@ void AnimationSetterSystem::update()
 			    return;
 		    }
 
+		    if (!manager.hasComponent<SpriteComponent>(
+		            EntityID::fromExistingId(component.getCurrentAnimation().value()))) {
+			    spdlog::warn("AnimationSetterSystem: Current animation entity {} does not have a SpriteComponent!",
+			                 component.getCurrentAnimation().value());
+			    return;
+		    }
 		    auto &animSprite = manager.getComponent<SpriteComponent>(component.getCurrentAnimation().value());
 		    sprite.tilesetPath = animSprite.tilesetPath;
 		    sprite.tileInfo = animSprite.tileInfo;
+		    if (!manager.hasComponent<TransformComponent>(
+		            EntityID::fromExistingId(component.getCurrentAnimation().value()))) {
+			    spdlog::warn("AnimationSetterSystem: Current animation entity {} does not have a TransformComponent!",
+			                 component.getCurrentAnimation().value());
+			    return;
+		    }
 		    auto &comp = manager.getComponent<TransformComponent>(component.getCurrentAnimation().value());
 		    tcomp.rotation = comp.rotation;
 		    tcomp.scale = comp.scale;
