@@ -1,6 +1,6 @@
 {
 	"debug": {
-		"godMode": true
+		"godMode": false
 	},
 	"music_mappings": {
 		"7": "overworld",
