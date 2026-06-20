@@ -13,7 +13,7 @@ Before building, ensure your system has the following installed:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y \ git \ cmake \ build-essential \ pkg-config \ curl \ zip \ unzip \ tar \ ca-certificates \ libx11-dev \ libxi-dev \ libxrandr-dev \ libxcursor-dev \ libxinerama-dev \ libudev-dev \ libgl1-mesa-dev \ libglu1-mesa-dev \ libopenal-dev \ libvorbis-dev \ libflac-dev \ libfreetype-dev
+sudo apt-get install -y  git cmake build-essential pkg-config curl zip unzip tar ca-certificates libx11-dev libxi-dev libxrandr-dev libxcursor-dev libxinerama-dev libudev-dev libgl1-mesa-dev libglu1-mesa-dev libopenal-dev libvorbis-dev libflac-dev libfreetype-dev
 ```
 
 ### Step 1: Cloning the Repository
@@ -76,6 +76,9 @@ Run game
  .\build\Release\main.exe
 ```
 Run tests
+```bash
+.\build\Release\tests.exe
+```
 
 
 
