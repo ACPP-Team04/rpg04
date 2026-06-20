@@ -3,7 +3,25 @@ Advanced C++ project from Team 04
 
 This project is a 2D RPG built in C++ utilizing an Entity Component System (ECS). It is cross-platform compatible (Linux/Windows 64-bit), uses CMake for the build system, `vcpkg` (via git submodules) for dependency management and ClangFormat for code styling.
 
-## Instructions for Linux (Ubuntu)
+## How to Play
+
+Explore the overworld, manage your resources and fight your way through turn-based combat.
+
+### Controls
+
+**Exploration**
+* **W, A, S, D**: Move the player character
+* **I**: Open the inventory and resource management menu
+* **Esc**: Open the main menu (Save, Load, Exit)
+* **Interaction Button**: Will be shown in the HUD which button to press to interact
+
+**Combat**
+* **Mouse**: Use the mouse and click on the action you want to execute
+* **Arrow Keys**: Switch between the enemy you want to attack
+* **Enter**: Confirm your target and hit it with your selected action
+
+
+## Setup for Linux (Ubuntu)
 ### Prerequisites
 
 Before building, ensure your system has the following installed:
@@ -49,7 +67,7 @@ cmake --build build
 ./build/tests
 ```
 
-## Instructions for Windows
+## Setup for Windows
 
 Install via Visual Studio Build tools 2026 or Visual Studio 2026
 
