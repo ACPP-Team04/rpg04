@@ -29,6 +29,13 @@ struct World {
 	std::vector<TileLayer> collidingTileLayers;
 };
 struct WorldComponent : public Component<WorldComponent> {
+	WorldComponent() = default;
+	~WorldComponent() = default;
+	WorldComponent(WorldComponent &&) noexcept = default;
+	WorldComponent &operator=(WorldComponent &&) noexcept = default;
+	WorldComponent(const WorldComponent &) = default;
+	WorldComponent &operator=(const WorldComponent &) = default;
+
 	unsigned width = 0;
 	unsigned height = 0;
 	unsigned widthPixel = 0;
