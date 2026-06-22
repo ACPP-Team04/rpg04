@@ -14,7 +14,7 @@ class AudioManager {
 	std::optional<std::string> currentMusicName = std::nullopt;
 
   public:
-	AudioManager(size_t poolSize = 16, bool headless = false);
+	explicit AudioManager(size_t poolSize = 16, bool headless = false);
 	void switchMusic(const std::string &musicName, bool loop = true);
 	void playMusic(const std::string &musicName, bool loop = true);
 	void stopMusic();

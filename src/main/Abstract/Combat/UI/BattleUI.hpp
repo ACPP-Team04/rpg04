@@ -10,7 +10,7 @@ class BattleUI {
 	tgui::Panel::Ptr actionPanel;
 
   public:
-	BattleUI(tgui::Gui &gui) : gui(gui) {};
+	explicit BattleUI(tgui::Gui &gui) : gui(gui) {};
 
 	void setupLayout()
 	{

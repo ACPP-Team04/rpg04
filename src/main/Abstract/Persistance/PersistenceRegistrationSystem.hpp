@@ -3,6 +3,6 @@
 #include "Abstract/ECS/System/System.hpp"
 class PersistenceRegistrationSystem : public System {
   public:
-	PersistenceRegistrationSystem(ArchetypeManager &manager);
+	explicit PersistenceRegistrationSystem(ArchetypeManager &manager);
 	void update() override;
 };

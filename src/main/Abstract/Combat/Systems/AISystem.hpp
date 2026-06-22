@@ -7,7 +7,7 @@
 
 class AISystem : public System {
   public:
-	AISystem(ArchetypeManager &manager);
+	explicit AISystem(ArchetypeManager &manager);
 	std::optional<EntityID> selectTarget(EntityID aiId, const std::vector<EntityID> &participants);
 	void executeAILogic(EntityID aiId, std::vector<EntityID> participants);
 	void update();

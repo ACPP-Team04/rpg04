@@ -1,9 +1,9 @@
 #pragma once
 #include "Abstract/ECS/System/System.hpp"
 
-struct CharacterPreProcessSystem:System {
+struct CharacterPreProcessSystem : System {
 
-	CharacterPreProcessSystem(ArchetypeManager &manager);
+	explicit CharacterPreProcessSystem(ArchetypeManager &manager);
 
 	void update() override;
 };
