@@ -23,9 +23,9 @@ std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<
 	if (validTargets.empty()) {
 		return std::nullopt;
 	}
-
-	int randomIndex = rand() % validTargets.size();
-	return validTargets[randomIndex];
+	static thread_local std::mt19937 generator(std::random_device{}());
+	std::uniform_int_distribution<std::size_t> distribution(0, validTargets.size() - 1);
+	return validTargets[distribution(generator)];
 }
 
 std::vector<EntityID> AISystem::getValidTargets(EntityID aiId, const std::vector<EntityID> &participants)
@@ -74,4 +74,6 @@ void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
 	}
 	aiBattle.battleState = BattleState::SELECTED_ACTION;
 }
-void AISystem::update() {};
+void AISystem::update() {
+	// Intentionally empty, as the AI logic is executed directly from the CombatSystem when it's the AI's turn
+};
