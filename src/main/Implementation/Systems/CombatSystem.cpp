@@ -16,16 +16,12 @@
 #include <Abstract/Combat/Systems/BattleInputSystem.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
-#include <Abstract/Overwordl/Components/MovementComponent.hpp>
-#include <Abstract/Overwordl/Components/RenderComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <Abstract/TILE_ENUMS.hpp>
-#include <Abstract/Utils/WorldUtlis.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
-#include <sys/stat.h>
 
-auto combatLog = spdlog::stdout_color_mt("combat");
+const auto combatLog = spdlog::stdout_color_mt("combat");
 
 void CombatSystem::update()
 {
@@ -33,7 +29,7 @@ void CombatSystem::update()
 	if (view.archetypes.size() == 0) {
 		return;
 	} else {
-		view.each([&](EntityID battleId, BattleManagerComponent &bmc) {
+		view.each([this](EntityID battleId, BattleManagerComponent &bmc) {
 			auto player = WorldUtils::getPlayer(manager);
 			EntityID playerId;
 			if (player.has_value()) {
@@ -317,14 +313,10 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 				manager.removeComponentFromEntity<DeathComponent>(entity);
 				manager.getComponent<StateComponent>(entity).setState(ENTITY_ANIMATIONS_STATE::IDLE);
 			}
+			auto &playerChar = manager.getComponent<CharacterComponent>(playerIdOpt.value());
 			// Hide companions again
-			if (entity.getId() == manager.getComponent<CharacterComponent>(playerIdOpt.value()).equipedCompanion) {
-				if (manager.hasComponent<PartOfLayerComponent>(entity)) {
-					auto &partOfLayer = manager.getComponent<PartOfLayerComponent>(entity);
-					auto inventoryWorldId =
-					    manager.getComponent<CharacterComponent>(playerIdOpt.value()).inventory.inventoryWorldId;
-					partOfLayer.groupId = inventoryWorldId;
-				}
+			if (entity.getId() == playerChar.equipedCompanion) {
+				moveCompanionToInventory(entity, playerChar.inventory.inventoryWorldId);
 			}
 		} else {
 			defeatedEnemies.push_back(entity);
@@ -451,4 +443,12 @@ void CombatSystem::setupKineticLunge(const EntityID &attacker, const EntityID &d
 	lunge.originalPosition = aPos;
 	lunge.targetPosition = dPos - (direction * stopDistance);
 	lunge.targetEntity = defender;
+}
+
+void CombatSystem::moveCompanionToInventory(const EntityID &entity, const int inventoryWorldId)
+{
+	if (manager.hasComponent<PartOfLayerComponent>(entity)) {
+		auto &partOfLayer = manager.getComponent<PartOfLayerComponent>(entity);
+		partOfLayer.groupId = inventoryWorldId;
+	}
 }
