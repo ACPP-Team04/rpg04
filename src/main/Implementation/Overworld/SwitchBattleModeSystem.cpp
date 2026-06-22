@@ -24,15 +24,16 @@ void SwitchBattleModeSystem::update()
 	std::optional<EntityID> interActorId = std::nullopt;
 	InteractionComponent *icomp = nullptr;
 
-	WorldUtils::viewInCurrentLayer<InteractionComponent>(manager, [&](auto entity, InteractionComponent &component) {
-		if (!component.isActive) {
-			return;
-		}
-		if (component.action == INTERACTION_ACTION::START_BATTLE) {
-			interActorId = entity;
-			icomp = &component;
-		}
-	});
+	WorldUtils::viewInCurrentLayer<InteractionComponent>(
+	    manager, [this, &interActorId, &icomp](auto entity, InteractionComponent &component) {
+		    if (!component.isActive) {
+			    return;
+		    }
+		    if (component.action == INTERACTION_ACTION::START_BATTLE) {
+			    interActorId = entity;
+			    icomp = &component;
+		    }
+	    });
 
 	if (!interActorId.has_value() || icomp == nullptr) {
 

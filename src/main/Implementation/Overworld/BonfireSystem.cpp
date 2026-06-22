@@ -9,7 +9,7 @@ BonfireSystem::BonfireSystem(ArchetypeManager &manager) : System(manager) {}
 
 void BonfireSystem::update()
 {
-	WorldUtils::viewInCurrentLayer<InteractionComponent>(manager, [&](auto entity, InteractionComponent &component) {
+	WorldUtils::viewInCurrentLayer<InteractionComponent>(manager, [this](auto entity, InteractionComponent &component) {
 		if (!component.isActive) {
 			return;
 		}

@@ -27,13 +27,13 @@ void HealthBarSystem::update()
 	}
 
 	std::optional<EntityID> hoveringTargetOpt = std::nullopt;
-	manager.view<BattleComponent>().each([&](EntityID id, BattleComponent &battleComp) {
+	manager.view<BattleComponent>().each([&hoveringTargetOpt](EntityID id, BattleComponent &battleComp) {
 		if (battleComp.isActiveTurn && battleComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
 			hoveringTargetOpt = battleComp.hoveringTarget;
 		}
 	});
 
-	bmcView.each([&](EntityID bmcId, BattleManagerComponent &bmc) {
+	bmcView.each([&mainPlayerId, &hoveringTargetOpt, this](EntityID bmcId, BattleManagerComponent &bmc) {
 		for (EntityID id : bmc.participants) {
 			if (id == mainPlayerId || manager.hasComponent<DeathComponent>(id)) {
 				continue;

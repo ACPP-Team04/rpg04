@@ -27,7 +27,7 @@ void AudioSystem::update()
 	soundQueue.clear();
 
 	manager.view<AudioComponent, TransformComponent>().each(
-	    [&](EntityID id, AudioComponent &acomp, TransformComponent &tcomp) {
+	    [this](EntityID id, AudioComponent &acomp, TransformComponent &tcomp) {
 		    auto playerPosOptional = WorldUtils::getPlayersComponent<TransformComponent>(manager);
 
 		    if (!playerPosOptional.has_value()) {
