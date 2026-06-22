@@ -142,6 +142,32 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
 	spdlog::info("Load sequence completely finished!");
 }
 
+void handleSystemRequests(ECSManager &ecsManager, tgui::Gui &gui, GameState &gameState)
+{
+	auto &persistence = PersistenceManager::getInstance();
+
+	if (persistence.requestSave) {
+		SaveManager::saveGame(ecsManager.manager, 1);
+		persistence.requestSave = false;
+	}
+
+	if (persistence.requestLoad) {
+		executeLoadSequence(ecsManager.manager, ecsManager.worldParser, ecsManager.persistanceRegistrationSystem,
+		                    ecsManager.character_preprocess_system, 1);
+		persistence.requestLoad = false;
+	}
+
+	if (persistence.requestQuit) {
+		gameState = GameState::Quit;
+		persistence.requestQuit = false;
+	}
+	if (persistence.requestGameOver) {
+		gameState = GameState::GameOver;
+		GameOverMenu::setUpGameOverMenu(gui, gameState);
+		persistence.requestGameOver = false;
+	}
+}
+
 int main()
 {
 #ifndef _DEBUG
@@ -184,35 +210,10 @@ int main()
 					applyResize(window, gui, ecsManager);
 				}
 			}
-			auto &persistence = PersistenceManager::getInstance();
-
-			if (persistence.requestSave) {
-				SaveManager::saveGame(ecsManager.manager, 1);
-				persistence.requestSave = false;
-			}
-
-			if (persistence.requestLoad) {
-				executeLoadSequence(ecsManager.manager, ecsManager.worldParser,
-				                    ecsManager.persistanceRegistrationSystem, ecsManager.character_preprocess_system,
-				                    1);
-				persistence.requestLoad = false;
-			}
-
-			if (persistence.requestQuit) {
-				gameState = GameState::Quit;
-				persistence.requestQuit = false;
-			}
-			if (persistence.requestGameOver) {
-				gameState = GameState::GameOver;
-				GameOverMenu::setUpGameOverMenu(gui, gameState);
-				persistence.requestGameOver = false;
-			}
-
+			handleSystemRequests(ecsManager, gui, gameState);
 			if (gameState == GameState::Game) {
 				ecsManager.update();
-			}
-
-			if (gameState == GameState::Quit) {
+			} else if (gameState == GameState::Quit) {
 				window.close();
 			}
 
