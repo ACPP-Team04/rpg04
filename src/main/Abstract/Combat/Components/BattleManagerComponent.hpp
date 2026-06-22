@@ -8,5 +8,9 @@ struct BattleManagerComponent : public Component<BattleManagerComponent> {
 	int currentTurnIndex = 0;
 	bool isBattleOver = false;
 	int playerXpReward = 1;
-	void readFromJson(tson::TiledClass &j)  override {}
+	void readFromJson(tson::TiledClass &j) override
+	{
+		// Intentionally empty:
+		// This component is strictly internal and is not parsed directly from Tiled
+	}
 };

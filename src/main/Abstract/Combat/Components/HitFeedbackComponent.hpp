@@ -6,5 +6,8 @@ struct HitFeedbackComponent : public Component<HitFeedbackComponent> {
 	int totalFrames = 36;
 	int blinkInterval = 6;
 
-	virtual void readFromJson(tson::TiledClass &j) override {};
+	virtual void readFromJson(tson::TiledClass &j) override {
+		// Intentionally empty:
+		// This component is strictly internal and is not parsed directly from Tiled
+	};
 };
