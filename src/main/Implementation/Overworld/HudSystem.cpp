@@ -1,6 +1,6 @@
 #include "Abstract/Overwordl/HudSystem.hpp"
 
-#include "../../../../vcpkg/buildtrees/tgui/src/v1.8.0-08e9099a90.clean/include/TGUI/Widgets/ChatBox.hpp"
+#include <TGUI/Widgets/ChatBox.hpp>
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"

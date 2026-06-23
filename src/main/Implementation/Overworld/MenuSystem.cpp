@@ -10,6 +10,7 @@
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <Abstract/Overwordl/Components/SpriteComponent.hpp>
+#include <Abstract/Persistance/SaveManager.hpp>
 #include <Implementation/Components/WeaponComponent.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
@@ -51,12 +52,18 @@ void overworldMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &
 	auto loadBtn = tgui::Button::create("Load Game (Slot 1)");
 	loadBtn->setSize({"80%", 40});
 	loadBtn->setPosition({"10%", yPos});
-	loadBtn->onClick([world, &gui]() {
-		spdlog::info("Overworld Menu: Load Game requested for Slot 1");
-		PersistenceManager::getInstance().requestLoad = true;
-		world->menuOpened = false;
-		gui.remove(gui.get("overworldMenu"));
-	});
+
+	if (!SaveManager::doesSaveExist(1)) {
+		loadBtn->setText("No Save Found");
+		loadBtn->setEnabled(false);
+	} else {
+		loadBtn->onClick([world, &gui]() {
+			spdlog::info("Overworld Menu: Load Game requested for Slot 1");
+			PersistenceManager::getInstance().requestLoad = true;
+			world->menuOpened = false;
+			gui.remove(gui.get("overworldMenu"));
+		});
+	}
 	panel->add(loadBtn);
 
 	yPos += 60.f;
