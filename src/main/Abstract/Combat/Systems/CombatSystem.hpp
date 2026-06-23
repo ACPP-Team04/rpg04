@@ -45,7 +45,8 @@ class CombatSystem : public System {
 	float getMultiplicatorFromScalingFactor(const StatsComponent stats, const WeaponComponent &weaponComponent);
 	void setupKineticLunge(const EntityID &attacker, const EntityID &defender);
 	void moveCompanionToInventory(const EntityID &entityId, const int inventoryWorldId);
-	void processBattleTick(EntityID &battleId, BattleManagerComponent &bmc);
+	void processBattleTick(const EntityID &battleId, BattleManagerComponent &bmc);
+	void handleEntityOfWinningFaction(const EntityID &entity, const EntityID &playerId);
 	AISystem &aiSystem;
 	AudioSystem &audioSystem;
 };

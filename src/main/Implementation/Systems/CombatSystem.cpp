@@ -29,13 +29,11 @@ void CombatSystem::update()
 	if (view.archetypes.size() == 0) {
 		return;
 	} else {
-		view.each([this](EntityID &battleId, BattleManagerComponent &bmc) {
-			processBattleTick(battleId, bmc);
-		});
+		view.each([this](EntityID &battleId, BattleManagerComponent &bmc) { processBattleTick(battleId, bmc); });
 	}
 }
 
-void CombatSystem::processBattleTick(EntityID &battleId, BattleManagerComponent &bmc)
+void CombatSystem::processBattleTick(const EntityID &battleId, BattleManagerComponent &bmc)
 {
 	auto player = WorldUtils::getPlayer(manager);
 	EntityID playerId;
@@ -173,7 +171,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
 		if (oneShotEnemyInGodMode)
-			damage = defenderCharacter.stats.health;
+			damage = static_cast<float>(defenderCharacter.stats.health);
 		audioSystem.enqueueSound(attackerWeapon.hitSoundLight);
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -188,7 +186,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
 		if (oneShotEnemyInGodMode)
-			damage = defenderCharacter.stats.health;
+			damage = static_cast<float>(defenderCharacter.stats.health);
 		audioSystem.enqueueSound(attackerWeapon.hitSoundHeavy);
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -203,7 +201,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
 		if (oneShotEnemyInGodMode)
-			damage = defenderCharacter.stats.health;
+			damage = static_cast<float>(defenderCharacter.stats.health);
 		audioSystem.enqueueSound(attackerWeapon.hitSoundUltimate);
 		spdlog::get("combat")->info("Ultimate Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -312,26 +310,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		BATTLE_FACTION battleFaction = manager.getComponent<BattleComponent>(entity).faction;
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		if (battleFaction == winningBattleFaction) {
-			auto &stats = manager.getComponent<CharacterComponent>(entity).stats;
-			if (stats.health > stats.getStat(STATS::MAX_HEALTH)) {
-				spdlog::get("combat")->warn(
-				    "HP of Entity {} have been set to max_health {}, which is lower than current health {}",
-				    entity.getId(), stats.getStat(STATS::MAX_HEALTH), stats.health);
-			}
-			stats.health = stats.getStat(STATS::MAX_HEALTH);
-			stats.experienceLevel += 1;
-			stats.numberOfFightsWon += 1;
-
-			// No perma-death for companions
-			if (manager.hasComponent<DeathComponent>(entity)) {
-				manager.removeComponentFromEntity<DeathComponent>(entity);
-				manager.getComponent<StateComponent>(entity).setState(ENTITY_ANIMATIONS_STATE::IDLE);
-			}
-			const auto &playerChar = manager.getComponent<CharacterComponent>(playerIdOpt.value());
-			// Hide companions again
-			if (entity.getId() == playerChar.equipedCompanion) {
-				moveCompanionToInventory(entity, playerChar.inventory.inventoryWorldId);
-			}
+			handleEntityOfWinningFaction(entity, playerIdOpt.value());
 		} else {
 			defeatedEnemies.push_back(entity);
 		}
@@ -354,6 +333,30 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		spdlog::get("combat")->info("You lost the battle! Game over");
 	}
 	WorldUtils::playMusicForCurrentGroup(manager);
+}
+
+void CombatSystem::handleEntityOfWinningFaction(const EntityID &entity, const EntityID &playerId)
+{
+	auto &stats = manager.getComponent<CharacterComponent>(entity).stats;
+	if (stats.health > stats.getStat(STATS::MAX_HEALTH)) {
+		spdlog::get("combat")->warn(
+		    "HP of Entity {} have been set to max_health {}, which is lower than current health {}", entity.getId(),
+		    stats.getStat(STATS::MAX_HEALTH), stats.health);
+	}
+	stats.health = stats.getStat(STATS::MAX_HEALTH);
+	stats.experienceLevel += 1;
+	stats.numberOfFightsWon += 1;
+
+	// No perma-death for companions
+	if (manager.hasComponent<DeathComponent>(entity)) {
+		manager.removeComponentFromEntity<DeathComponent>(entity);
+		manager.getComponent<StateComponent>(entity).setState(ENTITY_ANIMATIONS_STATE::IDLE);
+	}
+	const auto &playerChar = manager.getComponent<CharacterComponent>(playerId);
+	// Hide companions again
+	if (entity.getId() == playerChar.equipedCompanion) {
+		moveCompanionToInventory(entity, playerChar.inventory.inventoryWorldId);
+	}
 }
 
 void CombatSystem::restoreAP(EntityID restorator)
