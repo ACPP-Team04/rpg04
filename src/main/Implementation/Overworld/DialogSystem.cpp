@@ -30,6 +30,8 @@
 #include <TGUI/Widgets/Panel.hpp>
 #include <TGUI/Widgets/PanelListBox.hpp>
 
+#include <sstream>
+
 DialogSystem::DialogSystem(ArchetypeManager &manager, sf::RenderWindow &window, tgui::Gui &gui)
     : System(manager), window(window), gui(gui)
 {
@@ -39,6 +41,27 @@ const tgui::Font &getDialogFont()
 {
 	static const tgui::Font font(DIALOG_FONT);
 	return font;
+}
+
+std::string wrapDialogChoiceText(const std::string &text, float maxLineWidth, unsigned int textSize)
+{
+	std::istringstream words(text);
+	std::string word;
+	std::string line;
+	std::string wrapped;
+
+	while (words >> word) {
+		const std::string testLine = line.empty() ? word : line + " " + word;
+		if (!line.empty() && tgui::Text::getLineWidth(testLine, getDialogFont(), textSize) > maxLineWidth) {
+			wrapped += line + "\n";
+			line = word;
+		} else {
+			line = testLine;
+		}
+	}
+
+	wrapped += line;
+	return wrapped;
 }
 
 bool isPanelOpened(tgui::Gui &gui, std::string name)
@@ -138,14 +161,12 @@ void createButton(ArchetypeManager &manager, DialogComponent &comp, DialogChoice
                   std::shared_ptr<tgui::PanelListBox> &box, EntityID &id)
 {
 	auto button = tgui::Button::create();
-	button->setText(choice.text);
-	button->setSize("100%", "100%");
+	button->setSize("96%", "100%");
+	button->setPosition("2%", 0);
 	button->getRenderer()->setFont(getDialogFont());
-	unsigned int textSize = 18;
-	const float availableWidth = box->getInnerSize().x - 24.f;
-	while (textSize > 10 && tgui::Text::getLineWidth(choice.text, getDialogFont(), textSize) > availableWidth) {
-		--textSize;
-	}
+	unsigned int textSize = 15;
+	const float availableWidth = box->getInnerSize().x - 56.f;
+	button->setText(wrapDialogChoiceText(choice.text, availableWidth, textSize));
 	button->setTextSize(textSize);
     button->getRenderer()->setTextColor(tgui::Color(139, 30, 30));
     button->getRenderer()->setTextColorHover(tgui::Color(210, 55, 45));
