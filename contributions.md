@@ -5,6 +5,10 @@
 ## Hannes Röd
 
 ## Jona Müller
+- Combat `src/main/Implementation/Systems/CombatSystem.cpp`
+- BattleInputSystem `src/main/Implementation/Systems/BattleInputSystem.cpp`
+- Persistence & Save Game Management `src/main/Implementation/Persistance/PersistenceRegistrationSystem.cpp`
+- Audio system
 
 # Specification
 
