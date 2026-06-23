@@ -8,9 +8,9 @@ enum class WeaponType { MELEE, RANGE };
 
 struct WeaponComponent : Component<WeaponComponent> {
 	WeaponComponent() = default;
-	WeaponType weaponType;
-	WEAPON_SCALING_FACTOR scalingFactor;
-	STATS scalingStat;
+	WeaponType weaponType{WeaponType::MELEE};
+	WEAPON_SCALING_FACTOR scalingFactor{SCALE_C};
+	STATS scalingStat{STRENGTH};
 	int lightAttackBaseDmg{7};
 	int heavyAttackBaseDmg{18};
 	int ultimateAttackBaseDmg{35};
