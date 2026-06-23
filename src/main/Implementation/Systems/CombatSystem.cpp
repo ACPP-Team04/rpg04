@@ -29,71 +29,76 @@ void CombatSystem::update()
 	if (view.archetypes.size() == 0) {
 		return;
 	} else {
-		view.each([this](EntityID battleId, BattleManagerComponent &bmc) {
-			auto player = WorldUtils::getPlayer(manager);
-			EntityID playerId;
-			if (player.has_value()) {
-				playerId = player.value();
-			}
-			EntityID currentAttacker = this->getAttacker(bmc);
-			BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
-			if (bmc.isBattleOver) {
-				cleanUpBattle(battleId, battle.faction, battle.battleState);
-				return;
-			}
-			battle.isActiveTurn = true;
-			switch (battle.battleState) {
-			case BattleState::TURN_START:
-				battle.battleState = BattleState::WAITING_FOR_INPUT;
-				if (battle.controller == BATTLE_CONTROLLER::AI) {
-					aiSystem.executeAILogic(currentAttacker, bmc.participants);
-				}
-				break;
-			case BattleState::SELECTED_ACTION: {
-				if (battle.selectedAction != BattleAction::REST && battle.selectedAction != BattleAction::HEAL) {
-					this->setupKineticLunge(currentAttacker, battle.target);
-				}
-				BattleComponent &updatedBattle = manager.getComponent<BattleComponent>(currentAttacker);
-				this->executeBattleAction(currentAttacker, updatedBattle.target, updatedBattle.selectedAction);
-				updatedBattle.battleState = BattleState::EXECUTING_ACTION;
-				break;
-			}
-			case BattleState::EXECUTING_ACTION: {
-
-				bool defenderIsHurt = manager.hasComponent<HitFeedbackComponent>(battle.target);
-				bool attackerIsAnimating = manager.hasComponent<LungeComponent>(currentAttacker);
-				if (attackerIsAnimating || defenderIsHurt) {
-					break;
-				}
-				if (this->handleActionDelay(battle)) {
-					battle.battleState = BattleState::CHECK_DEATH;
-				}
-				break;
-			}
-			case BattleState::CHECK_DEATH: {
-				auto result = this->checkDeathCondition(battle.target, currentAttacker);
-				if (result == BattleState::VICTORY) {
-					audioSystem.enqueueSound("victory_sound");
-					bmc.currentTurnIndex = 0;
-					manager.getComponent<BattleComponent>(playerId).battleState = BattleState::STATS_DISTRIBUTION;
-				} else {
-					battle.battleState = result;
-				}
-				break;
-			}
-			case BattleState::NEXT_ROUND:
-				this->passTurn(currentAttacker, bmc);
-				break;
-			case BattleState::VICTORY:
-				bmc.isBattleOver = true;
-				break;
-			case BattleState::DEFEAT:
-				bmc.isBattleOver = true;
-				break;
-			case BattleState::STATS_DISTRIBUTION:
-				break;
-			}
+		view.each([this](EntityID &battleId, BattleManagerComponent &bmc) {
+			processBattleTick(battleId, bmc);
 		});
+	}
+}
+
+void CombatSystem::processBattleTick(EntityID &battleId, BattleManagerComponent &bmc)
+{
+	auto player = WorldUtils::getPlayer(manager);
+	EntityID playerId;
+	if (player.has_value()) {
+		playerId = player.value();
+	}
+	EntityID currentAttacker = this->getAttacker(bmc);
+	BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
+	if (bmc.isBattleOver) {
+		cleanUpBattle(battleId, battle.faction, battle.battleState);
+		return;
+	}
+	battle.isActiveTurn = true;
+	switch (battle.battleState) {
+	case BattleState::TURN_START:
+		battle.battleState = BattleState::WAITING_FOR_INPUT;
+		if (battle.controller == BATTLE_CONTROLLER::AI) {
+			aiSystem.executeAILogic(currentAttacker, bmc.participants);
+		}
+		break;
+	case BattleState::SELECTED_ACTION: {
+		if (battle.selectedAction != BattleAction::REST && battle.selectedAction != BattleAction::HEAL) {
+			this->setupKineticLunge(currentAttacker, battle.target);
+		}
+		BattleComponent &updatedBattle = manager.getComponent<BattleComponent>(currentAttacker);
+		this->executeBattleAction(currentAttacker, updatedBattle.target, updatedBattle.selectedAction);
+		updatedBattle.battleState = BattleState::EXECUTING_ACTION;
+		break;
+	}
+	case BattleState::EXECUTING_ACTION: {
+
+		bool defenderIsHurt = manager.hasComponent<HitFeedbackComponent>(battle.target);
+		bool attackerIsAnimating = manager.hasComponent<LungeComponent>(currentAttacker);
+		if (attackerIsAnimating || defenderIsHurt) {
+			break;
+		}
+		if (this->handleActionDelay(battle)) {
+			battle.battleState = BattleState::CHECK_DEATH;
+		}
+		break;
+	}
+	case BattleState::CHECK_DEATH: {
+		auto result = this->checkDeathCondition(battle.target, currentAttacker);
+		if (result == BattleState::VICTORY) {
+			audioSystem.enqueueSound("victory_sound");
+			bmc.currentTurnIndex = 0;
+			manager.getComponent<BattleComponent>(playerId).battleState = BattleState::STATS_DISTRIBUTION;
+		} else {
+			battle.battleState = result;
+		}
+		break;
+	}
+	case BattleState::NEXT_ROUND:
+		this->passTurn(currentAttacker, bmc);
+		break;
+	case BattleState::VICTORY:
+		bmc.isBattleOver = true;
+		break;
+	case BattleState::DEFEAT:
+		bmc.isBattleOver = true;
+		break;
+	case BattleState::STATS_DISTRIBUTION:
+		break;
 	}
 }
 
@@ -167,7 +172,8 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = attackerCharacter.equipedWeapon;
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
-		if (oneShotEnemyInGodMode) damage = defenderCharacter.stats.health;
+		if (oneShotEnemyInGodMode)
+			damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundLight);
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -181,7 +187,8 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = attackerCharacter.equipedWeapon;
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
-		if (oneShotEnemyInGodMode) damage = defenderCharacter.stats.health;
+		if (oneShotEnemyInGodMode)
+			damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundHeavy);
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -195,7 +202,8 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = attackerCharacter.equipedWeapon;
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
-		if (oneShotEnemyInGodMode) damage = defenderCharacter.stats.health;
+		if (oneShotEnemyInGodMode)
+			damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundUltimate);
 		spdlog::get("combat")->info("Ultimate Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -319,7 +327,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 				manager.removeComponentFromEntity<DeathComponent>(entity);
 				manager.getComponent<StateComponent>(entity).setState(ENTITY_ANIMATIONS_STATE::IDLE);
 			}
-			auto &playerChar = manager.getComponent<CharacterComponent>(playerIdOpt.value());
+			const auto &playerChar = manager.getComponent<CharacterComponent>(playerIdOpt.value());
 			// Hide companions again
 			if (entity.getId() == playerChar.equipedCompanion) {
 				moveCompanionToInventory(entity, playerChar.inventory.inventoryWorldId);
