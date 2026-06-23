@@ -4,6 +4,8 @@
 #include "Abstract/Combat/Components/BattleManagerComponent.hpp"
 #include "Abstract/Overwordl/Components/CharacterComponent.hpp"
 #include "Abstract/Overwordl/Components/InteractionComponent.hpp"
+#include "Abstract/Overwordl/Components/ItemComponent.hpp"
+#include "Abstract/Overwordl/Components/PartOfLayerComponent.hpp"
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
@@ -108,8 +110,15 @@ void SwitchBattleModeSystem::update()
 		if (!this->manager.hasComponent<BattleComponent>(participant)) {
 			throw std::runtime_error("Batteling entity does not have a battle component");
 		}
-		if (manager.getComponent<CharacterComponent>(participant).equipedWeapon == 0) {
-			throw std::runtime_error("Batteling entity should not have an equiped weapon");
+		auto &character = manager.getComponent<CharacterComponent>(participant);
+		if (character.equipedWeapon == 0) {
+			EntityID fist = manager.createEntity<ItemComponent, PartOfLayerComponent>();
+			auto &fistItem = manager.getComponent<ItemComponent>(fist);
+			fistItem.itemType = ITEM_TYPE::WEAPON;
+			fistItem.name = "FIST";
+			manager.getComponent<PartOfLayerComponent>(fist).groupId = character.inventory.inventoryWorldId;
+			character.equipedWeapon = fist.getId();
+			spdlog::info("Equipped fallback fists for battle participant {}", participant.getId());
 		}
 		manager.getComponent<BattleComponent>(participant).battleManagerId = bManager;
 	}

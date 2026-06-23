@@ -84,9 +84,9 @@ Panel.HudPanel {
 
     Label.WorldName {
         HorizontalAlignment = Center;
-        Position = (40%, 30);
+        Position = (40%, 24);
         ScrollbarPolicy = Never;
-        Size = (20%, 17);
+        Size = (20%, 30);
         Text = "::";
         TextSize = 18;
 

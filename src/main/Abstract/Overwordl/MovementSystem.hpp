@@ -3,7 +3,11 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+struct DialogSystem;
+
 struct MovementSystem : System {
-	MovementSystem(ArchetypeManager &manager);
+	DialogSystem &dialogSystem;
+
+	MovementSystem(ArchetypeManager &manager, DialogSystem &dialogSystem);
 	void update() override;
 };

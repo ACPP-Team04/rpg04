@@ -155,6 +155,9 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 	if (defender.getId() == -1) {
 		throw std::runtime_error("Defender is not set for action execution");
 	}
+	const bool oneShotEnemyInGodMode =
+	    isOffensive && manager.hasComponent<CombatGodMode>(attacker)
+	    && manager.getComponent<BattleComponent>(defender).faction == BATTLE_FACTION::ENEMY;
 	attackerBattle.AP -= cost;
 
 	switch (typeOfAction) {
@@ -164,6 +167,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = attackerCharacter.equipedWeapon;
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
+		if (oneShotEnemyInGodMode) damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundLight);
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -177,6 +181,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = attackerCharacter.equipedWeapon;
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
+		if (oneShotEnemyInGodMode) damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundHeavy);
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);
@@ -190,6 +195,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		auto weaponId = attackerCharacter.equipedWeapon;
 		auto attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
 		float damage = getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction);
+		if (oneShotEnemyInGodMode) damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundUltimate);
 		spdlog::get("combat")->info("Ultimate Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0.0f, defenderCharacter.stats.health - damage);

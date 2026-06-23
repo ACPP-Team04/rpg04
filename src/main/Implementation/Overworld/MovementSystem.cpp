@@ -1,16 +1,27 @@
 
 #include "Abstract/Overwordl/MovementSystem.hpp"
 
+#include "Abstract/Overwordl/DialogSystem.hpp"
 #include "Abstract/Overwordl/Components/InputComponent.hpp"
 #include "Abstract/Overwordl/Components/MovementComponent.hpp"
 #include "Abstract/Overwordl/Components/StateComponent.hpp"
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 
-MovementSystem::MovementSystem(ArchetypeManager &manager) : System(manager) {}
+MovementSystem::MovementSystem(ArchetypeManager &manager, DialogSystem &dialogSystem)
+    : System(manager), dialogSystem(dialogSystem)
+{
+}
 static float SPEED = 3.0f;
 void MovementSystem::update()
 {
+	if (dialogSystem.hasActiveDialog) {
+		auto player = WorldUtils::getPlayer(manager);
+		if (player.has_value() && manager.hasComponent<StateComponent>(player.value())) {
+			manager.getComponent<StateComponent>(player.value()).setState(ENTITY_ANIMATIONS_STATE::IDLE);
+		}
+		return;
+	}
 
 	WorldComponent *comp = WorldUtils::getWorld(manager);
 	WorldUtils::viewInCurrentLayer<InputComponent, TransformComponent, MovementComponent, StateComponent>(

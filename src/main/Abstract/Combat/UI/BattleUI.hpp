@@ -47,6 +47,13 @@ class BattleUI {
 		layout->add(tgui::Button::create("Heal"), "BtnHeal");
 		layout->add(tgui::Button::create("Rest"), "BtnRest");
 
+		auto confirmHint = tgui::Label::create("Press <<Enter>> to confirm attack");
+		confirmHint->setTextSize(11);
+		confirmHint->setHorizontalAlignment(tgui::HorizontalAlignment::Center);
+		confirmHint->setVerticalAlignment(tgui::VerticalAlignment::Center);
+		confirmHint->getRenderer()->setTextColor(tgui::Color(70, 70, 70));
+		layout->add(confirmHint, "ConfirmHint");
+
 		hudPanel->setVisible(false);
 		actionPanel->setVisible(false);
 	}

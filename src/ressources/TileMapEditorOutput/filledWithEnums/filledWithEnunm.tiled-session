@@ -22,23 +22,35 @@
         },
         "map.tmj": {
             "expandedGroupLayers": [
-                39,
-                34,
-                16,
-                7,
+                8,
+                28,
+                46,
                 13,
                 27,
+                16,
+                7,
+                55,
                 6,
-                8,
+                34,
+                21
+            ],
+            "expandedObjectLayers": [
                 35,
-                21,
-                28
+                45,
+                28,
+                46,
+                27,
+                26,
+                29,
+                49,
+                25,
+                21
             ],
             "scale": 4,
-            "selectedLayer": 14,
+            "selectedLayer": 26,
             "viewCenter": {
-                "x": 813.125,
-                "y": 1286.375
+                "x": 177.125,
+                "y": 1286.125
             }
         },
         "map.tmj#Tileset_without_background": {
@@ -66,7 +78,7 @@
         "map.tmj"
     ],
     "project": "filledWithEnunm.tiled-project",
-    "property.type": "INTERACTION_COMPONENT",
+    "property.type": "SWITCH_LAYER_COMPONENT",
     "recentFiles": [
         "map.tmj",
         "Tilesheet_edited3.tsj",
