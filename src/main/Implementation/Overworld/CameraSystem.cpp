@@ -21,12 +21,9 @@ void CameraSystem::setViewport(const sf::FloatRect &newViewport)
 	viewport = newViewport;
 }
 
-sf::Vector2f getCameraSize(CameraComponent &camera, sf::RenderWindow &window)
+sf::Vector2f getCameraSize(const CameraComponent &camera)
 {
-	float windowAspect = (float)window.getSize().x / (float)window.getSize().y;
-	float height = BaseCameraSize.y * camera.scaleSize.y;
-	float width = height * windowAspect;
-	return {width, height};
+	return {BaseCameraSize.x * camera.scaleSize.x, BaseCameraSize.y * camera.scaleSize.y};
 }
 
 void CameraSystem::update()
@@ -35,8 +32,9 @@ void CameraSystem::update()
 	WorldUtils::viewInCurrentLayer<CameraComponent, TransformComponent>(
 	    manager, [&](EntityID &e, CameraComponent &camera, TransformComponent &transform) {
 		    camera.center = transform.position;
-		    sf::Vector2f cameraSize = getCameraSize(camera, window);
-	    	sf::Vector2f halfSize = cameraSize / 2.f;float minX = halfSize.x;
+		    sf::Vector2f cameraSize = getCameraSize(camera);
+	    	sf::Vector2f halfSize = cameraSize / 2.f;
+			float minX = halfSize.x;
 			float minY = halfSize.y;
 			float maxX = (float)world->widthPixel - halfSize.x;
 			float maxY = (float)world->heightPixel - halfSize.y;
@@ -45,7 +43,7 @@ void CameraSystem::update()
 		    sf::View cameraView;
 		    cameraView.setSize(cameraSize);
 		    cameraView.setCenter(camera.center);
-	    	cameraView.setViewport(sf::FloatRect({0.f, 0.f}, {1.f, 1.f}));
+	    	cameraView.setViewport(viewport);
 		    window.setView(cameraView);
 	    });
 }
