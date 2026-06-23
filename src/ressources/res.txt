@@ -20,7 +20,8 @@ Panel.DialogPanel {
     }
 
     Picture.SpeakerPicture {
-        Size = (14, 16);
+        Position = (4, 4);
+        Size = (21, 24);
 
         Renderer {
             Texture = "Organized separated sprites/Player Character Walking Animation Frames/Zombie-Tileset---_0476_Capa-477.png" Smooth;
@@ -32,7 +33,6 @@ Panel.DialogPanel {
         ContentSize = (0, 0);
         HorizontalScrollbarPolicy = Never;
         ItemsHeight = 40;
-        ItemsWidth = 398;
         MaximumItems = 0;
         Position = (0%, 60.2%);
         Size = (100%, 60.2%);
@@ -70,19 +70,19 @@ Panel.DialogPanel {
     }
 
     Label.SpeakerText {
-        MaximumTextWidth = 50;
         Position = (0%, 16.72%);
-        ScrollbarPolicy = Never;
-        Size = (100%, 10%);
+        ScrollbarPolicy = Automatic;
+        Size = (100%, 43.48%);
         Text = "Hello how are yossu\n";
-        TextSize = 10;
+        TextSize = 18;
 
         Renderer {
             BackgroundColor = transparent;
             BorderColor = black;
             Borders = (1, 1, 1, 1);
-            TextColor = black;
-            TextStyle = Italic;
+            Padding = (8, 6, 8, 6);
+            TextColor = #222222;
+            TextStyle = Regular;
             TextureBackground = None;
             TransparentTexture = true;
 
