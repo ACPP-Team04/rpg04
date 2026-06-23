@@ -32,7 +32,7 @@ Panel.DialogPanel {
     PanelListBox.ChoicesBox {
         ContentSize = (0, 0);
         HorizontalScrollbarPolicy = Never;
-        ItemsHeight = 40;
+        ItemsHeight = 70;
         MaximumItems = 0;
         Position = (0%, 60.2%);
         Size = (100%, 60.2%);
