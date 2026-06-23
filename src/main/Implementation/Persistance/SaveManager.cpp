@@ -46,9 +46,6 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	nlohmann::json saveData;
 	saveData["slot"] = slotIndex;
 
-	auto now = std::chrono::system_clock::now();
-	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-
 	std::stringstream ss;
 	ss << std::format("{:%Y-%m-%d %H:%M:%S}", std::chrono::current_zone()->to_local(std::chrono::system_clock::now()));
 
@@ -114,7 +111,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 
 	// Save dialogs
 	manager.view<PersistanceComponent, DialogComponent, InteractionComponent>().each(
-	    [&saveData](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp,
+	    [&saveData]([[maybe_unused]] EntityID id, const PersistanceComponent &persist, DialogComponent &dialogComp,
 	                InteractionComponent &interaction) {
 		    saveData["worldState"]["dialogStates"][persist.uuid] = dialogComp.currentNodeIndex;
 		    saveData["worldState"]["interactionStates"]["isActive"][persist.uuid] = interaction.isActive;
@@ -183,7 +180,7 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 	std::vector<EntityID> toDelete;
 
 	manager.view<PersistanceComponent>().each(
-	    [&deadEntities, &toDelete](EntityID id, PersistanceComponent &persistent) {
+	    [&deadEntities, &toDelete](EntityID id, const PersistanceComponent &persistent) {
 		    if (deadEntities.find(persistent.uuid) != deadEntities.end()) {
 			    toDelete.push_back(id);
 			    return;
@@ -271,7 +268,7 @@ void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann
 
 	const auto &wcJson = worldStateJson["worldComponent"];
 
-	manager.view<WorldComponent>().each([&wcJson](EntityID entity, WorldComponent &worldComp) {
+	manager.view<WorldComponent>().each([&wcJson]([[maybe_unused]] EntityID entity, WorldComponent &worldComp) {
 		worldComp.widthPixel = wcJson.value("widthPixel", 0u);
 		worldComp.heightPixel = wcJson.value("heightPixel", 0u);
 
@@ -286,7 +283,7 @@ void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann
 void SaveManager::injectDoors(ArchetypeManager &manager, const nlohmann::json &doorStates)
 {
 	manager.view<PersistanceComponent, IsLockedComponent, InteractionComponent>().each(
-	    [&doorStates](EntityID id, PersistanceComponent &persist, IsLockedComponent &lockComp,
+	    [&doorStates]([[maybe_unused]] EntityID id, const PersistanceComponent &persist, IsLockedComponent &lockComp,
 	                  InteractionComponent &interactComp) {
 		    if (doorStates.contains(persist.uuid)) {
 			    bool isStillLocked = doorStates[persist.uuid];
@@ -303,8 +300,8 @@ void SaveManager::injectDialogs(ArchetypeManager &manager, const nlohmann::json 
                                 const nlohmann::json &interactionStates)
 {
 	manager.view<PersistanceComponent, DialogComponent, InteractionComponent>().each(
-	    [&dialogStates, &interactionStates](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp,
-	                                        InteractionComponent &interactionComp) {
+	    [&dialogStates, &interactionStates]([[maybe_unused]] EntityID id, const PersistanceComponent &persist,
+	                                        DialogComponent &dialogComp, InteractionComponent &interactionComp) {
 		    if (dialogStates.contains(persist.uuid)) {
 			    dialogComp.currentNodeIndex = dialogStates[persist.uuid];
 			    if (interactionStates.contains(persist.uuid)) {

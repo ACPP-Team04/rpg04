@@ -52,7 +52,7 @@ void PersistenceRegistrationSystem::update()
 	// REGISTER ENEMIES
 	manager.view<CharacterComponent, TransformComponent, PartOfLayerComponent>().each(
 	    [this, &commandBuffer, &playerId](EntityID id, [[maybe_unused]] CharacterComponent &character,
-	                                      TransformComponent &trans, PartOfLayerComponent &layer) {
+	                                      const TransformComponent &trans, PartOfLayerComponent &layer) {
 		    if (id == playerId || manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
@@ -70,15 +70,16 @@ void PersistenceRegistrationSystem::update()
 	commandBuffer.clear();
 
 	manager.view<DialogComponent, InteractionComponent, TransformComponent, PartOfLayerComponent>().each(
-	    [&](EntityID id, DialogComponent &dialog, [[maybe_unused]] InteractionComponent &interactComp,
-	        TransformComponent &trans, PartOfLayerComponent &layer) {
+	    [this, &commandBuffer](EntityID id, DialogComponent &dialog,
+	                           [[maybe_unused]] InteractionComponent &interactComp, const TransformComponent &trans,
+	                           PartOfLayerComponent &layer) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
 		    auto x = static_cast<int>(std::round(trans.position.x));
 		    auto y = static_cast<int>(std::round(trans.position.y));
-		    std::string uuid =
-		        std::format("Dialog_{}_{}_{}_{}", layer.groupId, x, y, dialog.currentNodeIndex, dialog.nodes.size());
+		    std::string uuid = std::format("Dialog_{}_{}_{}_{}_{})", layer.groupId, x, y, dialog.currentNodeIndex,
+		                                   dialog.nodes.size());
 		    commandBuffer.emplace_back(id, uuid);
 	    });
 	for (const auto &[id, uuid] : commandBuffer) {
@@ -88,7 +89,7 @@ void PersistenceRegistrationSystem::update()
 	commandBuffer.clear();
 
 	manager.view<IsLockedComponent, TransformComponent>().each(
-	    [this, &commandBuffer](EntityID id, IsLockedComponent &lockComp, TransformComponent &trans) {
+	    [this, &commandBuffer](EntityID id, const IsLockedComponent &lockComp, const TransformComponent &trans) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
