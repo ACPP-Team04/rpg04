@@ -23,7 +23,7 @@ std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<
 	if (validTargets.empty()) {
 		return std::nullopt;
 	}
-	static thread_local std::mt19937 generator(std::random_device{}());
+	static thread_local std::mt19937 generator(std::random_device{}()); // NOSONAR
 	std::uniform_int_distribution<std::size_t> distribution(0, validTargets.size() - 1);
 	return validTargets[distribution(generator)];
 }
