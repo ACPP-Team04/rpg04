@@ -152,7 +152,8 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 		statsPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
 		mainPanel->add(statsPanel);
 
-		manager.view<PlayerComponent, CharacterComponent>().each([&](auto &entity, auto &player, auto &characterComp) {
+		manager.view<PlayerComponent, CharacterComponent>().each([&statsPanel](auto &entity, auto &player,
+		                                                                       auto &characterComp) {
 			auto numFightsLabel =
 			    tgui::Label::create("Number of Fights Won: " + std::to_string(characterComp.stats.numberOfFightsWon));
 			numFightsLabel->setTextSize(30);
@@ -212,12 +213,13 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 		}
 		std::vector<EntityID> itemsInInventory;
 
-		WorldUtils::viewInSpecificLayer<ItemComponent>(manager, characterComp.inventory.inventoryWorldId,
-		                                               [&](EntityID entity, ItemComponent &itemComp) {
-			                                               if (itemComp.itemType == activeTabItemType) {
-				                                               itemsInInventory.push_back(entity);
-			                                               }
-		                                               });
+		WorldUtils::viewInSpecificLayer<ItemComponent>(
+		    manager, characterComp.inventory.inventoryWorldId,
+		    [&activeTabItemType, &itemsInInventory](EntityID entity, ItemComponent &itemComp) {
+			    if (itemComp.itemType == activeTabItemType) {
+				    itemsInInventory.push_back(entity);
+			    }
+		    });
 
 		if (!itemsInInventory.empty()) {
 			float yOffset = 10.f;
@@ -382,9 +384,10 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 void MenuSystem::update()
 {
 	WorldComponent *world = nullptr;
-	this->manager.view<WorldComponent>().each([&](auto &entity, auto &component) { world = &component; });
+	this->manager.view<WorldComponent>().each([&world](auto &entity, auto &component) { world = &component; });
 	InputComponent *input = nullptr;
-	this->manager.view<InputComponent>().each([&](auto &entity, auto &inputComponent) { input = &inputComponent; });
+	this->manager.view<InputComponent>().each(
+	    [&input](auto &entity, auto &inputComponent) { input = &inputComponent; });
 	if (!world || !input) {
 		return;
 	}

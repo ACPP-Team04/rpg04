@@ -105,7 +105,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	}
 	// Save doors
 	manager.view<PersistanceComponent, IsLockedComponent>().each(
-	    [&saveData](EntityID id, PersistanceComponent &persist, IsLockedComponent &lockComp) {
+	    [&saveData]([[maybe_unused]] EntityID id, const PersistanceComponent &persist, IsLockedComponent &lockComp) {
 		    saveData["worldState"]["doorStates"][persist.uuid] = lockComp.isLocked;
 	    });
 
@@ -126,7 +126,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	}
 
 	saveData["worldState"]["deadUniqueEntities"] = PersistenceManager::getInstance().deadUniqueEntities;
-	manager.view<WorldComponent>().each([&](EntityID entity, WorldComponent &worldComp) {
+	manager.view<WorldComponent>().each([&saveData](EntityID entity, WorldComponent &worldComp) {
 		saveData["worldState"]["worldComponent"]["widthPixel"] = worldComp.widthPixel;
 		saveData["worldState"]["worldComponent"]["heightPixel"] = worldComp.heightPixel;
 
