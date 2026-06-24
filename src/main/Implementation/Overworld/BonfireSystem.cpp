@@ -22,7 +22,7 @@ void BonfireSystem::update()
 			WorldComponent *world = WorldUtils::getWorld(manager);
 			world->pushMessageToHud("Game saved!");
 			component.isActive = false;
-			component.deactivated = true;
+			component.mustLeaveRadius = true;
 		}
 	});
 }

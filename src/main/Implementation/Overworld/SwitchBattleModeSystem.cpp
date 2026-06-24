@@ -142,6 +142,9 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const EntityID &
 		    if (entityId == initialEnemy) {
 			    return;
 		    }
+		    if (characterComponent.stats.health <= 0) {
+			    return;
+		    }
 		    auto squaredDistance = SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position);
 		    if (squaredDistance <= 0) {
 			    return;
