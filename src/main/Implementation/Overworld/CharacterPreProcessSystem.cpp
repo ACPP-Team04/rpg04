@@ -31,8 +31,7 @@ void CharacterPreProcessSystem::update()
 			manager.getComponent<ItemComponent>(fist).name = "FIST";
 			manager.getComponent<PartOfLayerComponent>(fist).groupId = worldId;
 			manager.getComponent<CharacterComponent>(charEntity).equipedWeapon = fist.getId();
-			manager.getComponent<PersistanceComponent>(fist).uuid =
-			    "DEFAULT_FIST_" + std::to_string(charEntity.getId());
+			manager.getComponent<PersistanceComponent>(fist).uuid = std::format("DEFAULT_FIST_{}", charEntity.getId());
 			spdlog::info("Added fists to character {}", charEntity.getId());
 		} else {
 			this->manager.view<ItemComponent, PartOfLayerComponent>().each(
