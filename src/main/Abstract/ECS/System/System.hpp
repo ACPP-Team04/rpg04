@@ -5,7 +5,7 @@ struct System {
 
 	ArchetypeManager &manager;
 
-	System(ArchetypeManager &manager) : manager(manager) {};
+	explicit System(ArchetypeManager &manager) : manager(manager) {};
 	virtual ~System() = default;
 
 	virtual void update() = 0;
