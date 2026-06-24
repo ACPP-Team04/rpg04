@@ -8,8 +8,8 @@ class AudioManager {
 	sf::Music backgroundMusic;
 	std::list<sf::Sound> soundPool;
 	size_t maxPoolSize;
-	float masterMusicVolume;
-	float masterSfxVolume;
+	float masterMusicVolume = 25.0f;
+	float masterSfxVolume = 100.0f;
 	bool isHeadless;
 	std::optional<std::string> currentMusicName = std::nullopt;
 

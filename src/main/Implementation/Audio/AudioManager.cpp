@@ -3,8 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <spdlog/spdlog.h>
 
-AudioManager::AudioManager(size_t poolSize, bool headless)
-    : masterMusicVolume(25.0f), masterSfxVolume(100.0f), maxPoolSize(poolSize), isHeadless(headless)
+AudioManager::AudioManager(size_t poolSize, bool headless) : maxPoolSize(poolSize), isHeadless(headless)
 {
 	if (!headless) {
 		spdlog::info("AudioManager initialized with a max of {} sound channels.", poolSize);
@@ -40,8 +39,9 @@ void AudioManager::playMusic(const std::string &musicName, bool loop)
 {
 	if (isHeadless)
 		return;
-	auto musicPath = AssetManager::getInstance().getMusicPath(musicName);
-	if (!backgroundMusic.openFromFile(musicPath)) {
+
+	if (auto musicPath = AssetManager::getInstance().getMusicPath(musicName);
+	    !backgroundMusic.openFromFile(musicPath)) {
 		spdlog::error("Failed to open music file at: {}", musicPath);
 		return;
 	}
@@ -68,7 +68,7 @@ void AudioManager::playSound(const std::string &soundName, float volumeModifier)
 		soundPool.back().play();
 
 	} catch (const std::runtime_error &e) {
-		spdlog::error("AudioManager: Cannot play sound because buffer is missing.");
+		spdlog::error("AudioManager: Cannot play sound because buffer is missing: {}", e.what());
 	}
 }
 sf::Sound *AudioManager::playLoopingSound(const std::string &soundId, float startVolume)
