@@ -13,7 +13,7 @@ class SaveManager {
 
 	static void applyWorldStateOverrides(ArchetypeManager &manager);
 
-	static void injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, EntityID &playerID);
+	static void injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, const EntityID &playerID);
 	static void injectWorldComponent(ArchetypeManager &manager, const nlohmann::json &worldStateJson);
 	static void injectDoors(ArchetypeManager &manager, const nlohmann::json &doorStates);
 	static void injectDialogs(ArchetypeManager &manager, const nlohmann::json &dialogStates,

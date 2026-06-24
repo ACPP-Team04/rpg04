@@ -10,6 +10,7 @@
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 
 #include "Abstract/Audio/AudioSystem.hpp"
+#include <Abstract/Exception/SaveSlotNotFoundException.hpp>
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/DialogComponent.hpp>
 #include <Abstract/Overwordl/Components/IsLockedComponent.hpp>
@@ -51,8 +52,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 
 	saveData["metadata"]["timestamp"] = ss.str();
 
-	auto playerEntityOpt = WorldUtils::getPlayer(manager);
-	if (playerEntityOpt.has_value()) {
+	if (auto playerEntityOpt = WorldUtils::getPlayer(manager); playerEntityOpt.has_value()) {
 		EntityID player = playerEntityOpt.value();
 
 		// Save Position
@@ -97,8 +97,8 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 		saveData["player"]["inventory"] = inventoryJson;
 
 		if (manager.hasComponent<PartOfLayerComponent>(player)) {
-			auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
-			saveData["player"]["layerData"]["groupId"] = static_cast<int>(layerComp.groupId);
+			const auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
+			saveData["player"]["layerData"]["groupId"] = layerComp.groupId;
 		}
 	} else {
 		spdlog::warn("SaveManager: No player found in ECS to save!");
@@ -119,11 +119,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	    });
 
 	auto currentMusicOpt = AudioManager::getInstance().getCurrentMusicName();
-	if (currentMusicOpt.has_value()) {
-		saveData["worldState"]["currentMusic"] = currentMusicOpt.value();
-	} else {
-		saveData["worldState"]["currentMusic"] = "";
-	}
+	saveData["worldState"]["currentMusic"] = currentMusicOpt.value_or("");
 
 	saveData["worldState"]["deadUniqueEntities"] = PersistenceManager::getInstance().deadUniqueEntities;
 	manager.view<WorldComponent>().each([&saveData]([[maybe_unused]] EntityID entity, WorldComponent &worldComp) {
@@ -152,7 +148,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 nlohmann::json SaveManager::loadSaveFile(int slotIndex)
 {
 	if (!doesSaveExist(slotIndex)) {
-		throw std::runtime_error(fmt::format("Save slot {} does not exist!", slotIndex));
+		throw SaveSlotNotFoundException(fmt::format("Save slot {} does not exist!", slotIndex));
 	}
 
 	std::ifstream file(getSaveFilePath(slotIndex));
@@ -181,7 +177,7 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 
 	manager.view<PersistanceComponent>().each(
 	    [&deadEntities, &toDelete](EntityID id, const PersistanceComponent &persistent) {
-		    if (deadEntities.find(persistent.uuid) != deadEntities.end()) {
+		    if (deadEntities.contains(persistent.uuid)) {
 			    toDelete.push_back(id);
 			    return;
 		    }
@@ -194,7 +190,7 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 	spdlog::info("World State Overrides Applied: Pruned {} dead entities.", toDelete.size());
 }
 
-void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, EntityID &player)
+void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, const EntityID &player)
 {
 
 	if (manager.hasComponent<TransformComponent>(player)) {
@@ -223,13 +219,13 @@ void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &
 					continue;
 
 				std::string savedUuid = itemJson["uuid"];
-				ITEM_TYPE type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
+				auto type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
 				bool isEquipped = itemJson.value("isEquipped", false);
 
-				EntityID foundItem = EntityID();
+				auto foundItem = EntityID();
 
 				manager.view<PersistanceComponent, PartOfLayerComponent>().each(
-				    [&foundItem, &savedUuid, &charComp](EntityID id, PersistanceComponent &persist,
+				    [&foundItem, &savedUuid, &charComp](EntityID id, const PersistanceComponent &persist,
 				                                        PartOfLayerComponent &layerComp) {
 					    if (persist.uuid == savedUuid) {
 						    foundItem = id;
