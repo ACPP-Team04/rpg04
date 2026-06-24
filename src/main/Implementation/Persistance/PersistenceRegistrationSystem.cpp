@@ -18,8 +18,6 @@ PersistenceRegistrationSystem::PersistenceRegistrationSystem(ArchetypeManager &m
 
 void PersistenceRegistrationSystem::update()
 {
-	auto &persistence = PersistenceManager::getInstance();
-
 	std::optional<EntityID> playerOpt = WorldUtils::getPlayer(manager);
 	if (!playerOpt.has_value()) {
 		spdlog::error("No player found in the current layer. Persistence registration skipped.");
@@ -31,8 +29,8 @@ void PersistenceRegistrationSystem::update()
 
 	// REGISTER ITEMS
 	manager.view<ItemComponent, TransformComponent, PartOfLayerComponent>().each(
-	    [this, &commandBuffer](EntityID id, ItemComponent &item, TransformComponent &trans,
-	                           PartOfLayerComponent &layer) {
+	    [this, &commandBuffer](EntityID id, const ItemComponent &item, const TransformComponent &trans,
+	                           const PartOfLayerComponent &layer) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
@@ -52,7 +50,7 @@ void PersistenceRegistrationSystem::update()
 	// REGISTER ENEMIES
 	manager.view<CharacterComponent, TransformComponent, PartOfLayerComponent>().each(
 	    [this, &commandBuffer, &playerId](EntityID id, [[maybe_unused]] CharacterComponent &character,
-	                                      const TransformComponent &trans, PartOfLayerComponent &layer) {
+	                                      const TransformComponent &trans, const PartOfLayerComponent &layer) {
 		    if (id == playerId || manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
@@ -70,9 +68,9 @@ void PersistenceRegistrationSystem::update()
 	commandBuffer.clear();
 
 	manager.view<DialogComponent, InteractionComponent, TransformComponent, PartOfLayerComponent>().each(
-	    [this, &commandBuffer](EntityID id, DialogComponent &dialog,
+	    [this, &commandBuffer](EntityID id, [[maybe_unused]] const DialogComponent &dialog,
 	                           [[maybe_unused]] InteractionComponent &interactComp, const TransformComponent &trans,
-	                           PartOfLayerComponent &layer) {
+	                           const PartOfLayerComponent &layer) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
@@ -105,7 +103,7 @@ void PersistenceRegistrationSystem::update()
 		manager.getComponent<PersistanceComponent>(id).uuid = uuid;
 	}
 	commandBuffer.clear();
-	manager.view<PersistanceComponent>().each([&](EntityID id, PersistanceComponent &persistance) {
+	manager.view<PersistanceComponent>().each([](EntityID id, PersistanceComponent &persistance) {
 		spdlog::info("Entity {} registered with UUID: {}", id.getId(), persistance.uuid);
 	});
 }
