@@ -294,9 +294,10 @@ BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attack
 		manager.getComponent<StateComponent>(defender).setState(DIE);
 		audioSystem.enqueueSound("enemy_death_sound");
 	}
-	const auto &attackerBattleComp = manager.getComponent<BattleComponent>(attacker);
 
-	if (BattleInputSystem::getTargetsInBattle(playerId, attackerBattleComp.battleManagerId, this->manager).empty()) {
+	if (const auto &attackerBattleComp = manager.getComponent<BattleComponent>(attacker);
+	    BattleInputSystem::getTargetsInBattle(playerId, attackerBattleComp.battleManagerId, this->manager).empty()) {
+
 		return BattleState::VICTORY;
 	}
 	return BattleState::NEXT_ROUND;
