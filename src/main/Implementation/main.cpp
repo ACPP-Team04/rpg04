@@ -27,6 +27,7 @@
 #include "Abstract/UI/GameOverMenu.hpp"
 #include "Abstract/UI/MainMenu.hpp"
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
+#include <Abstract/Exception/PlayerNotFoundException.hpp>
 #include <Abstract/GameConfig/GameConfig.hpp>
 #include <Abstract/Overwordl/Components/PersistanceComponent.hpp>
 #include <Abstract/Persistance/SaveManager.hpp>
@@ -135,8 +136,8 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
 		SaveManager::injectDialogs(manager, saveData["worldState"]["dialogStates"],
 		                           saveData["worldState"]["interactionStates"]);
 	}
-	std::string savedMusic = saveData["worldState"].value("currentMusic", "");
-	if (!savedMusic.empty()) {
+
+	if (std::string savedMusic = saveData["worldState"].value("currentMusic", ""); !savedMusic.empty()) {
 		AudioManager::getInstance().playMusic(savedMusic, true);
 	}
 	spdlog::info("Load sequence completely finished!");
@@ -187,7 +188,7 @@ int main()
 		initializeEngine(ecsManager.manager);
 		auto player = WorldUtils::getPlayer(ecsManager.manager);
 		if (!player.has_value()) {
-			throw std::runtime_error("Startup failed: no player entity was created by WorldParser.");
+			throw PlayerNotFoundException("Startup failed: no player entity was created by WorldParser.");
 		}
 		applyGameConfig(ecsManager, player.value());
 		WorldUtils::playMusicForCurrentGroup(ecsManager.manager);
