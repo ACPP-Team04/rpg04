@@ -22,7 +22,7 @@ void HealthBarSystem::update()
 	EntityID mainPlayerId = playerIdOpt.value();
 
 	auto bmcView = manager.view<BattleManagerComponent>();
-	if (bmcView.archetypes.size() == 0) {
+	if (bmcView.archetypes.empty()) {
 		return;
 	}
 
@@ -33,18 +33,18 @@ void HealthBarSystem::update()
 		}
 	});
 
-	bmcView.each([&mainPlayerId, &hoveringTargetOpt, this](EntityID bmcId, BattleManagerComponent &bmc) {
+	bmcView.each([&mainPlayerId, &hoveringTargetOpt, this](EntityID bmcId, const BattleManagerComponent &bmc) {
 		for (EntityID id : bmc.participants) {
 			if (id == mainPlayerId || manager.hasComponent<DeathComponent>(id)) {
 				continue;
 			}
 
-			auto &stats = manager.getComponent<CharacterComponent>(id).stats;
-			auto &transform = manager.getComponent<TransformComponent>(id);
-			auto &battle = manager.getComponent<BattleComponent>(id);
+			const auto &stats = manager.getComponent<CharacterComponent>(id).stats;
+			const auto &transform = manager.getComponent<TransformComponent>(id);
+			const auto &battle = manager.getComponent<BattleComponent>(id);
 
-			float maxHp = stats.getStat(STATS::MAX_HEALTH);
-			float hpPercent = std::clamp(stats.health / maxHp, 0.0f, 1.0f);
+			float maxHp = static_cast<float>(stats.getStat(STATS::MAX_HEALTH));
+			float hpPercent = std::clamp(static_cast<float>(stats.health) / maxHp, 0.0f, 1.0f);
 
 			float barWidth = 40.f;
 			float barHeight = 5.f;

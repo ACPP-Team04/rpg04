@@ -23,7 +23,7 @@ enum class MENU_TAB { WEAPONS, COLLECTABLES, COMPANIONS, STATS };
 
 MenuSystem::MenuSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), gui(gui) {};
 
-void overworldMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &gui)
+void overworldMenu(WorldComponent *world, tgui::Gui &gui)
 {
 	if (gui.get("overworldMenu"))
 		return;
@@ -73,8 +73,7 @@ void overworldMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &
 	exitBtn->setPosition({"10%", yPos});
 	exitBtn->onClick([world, &gui]() {
 		spdlog::info("Overworld Menu: Safe Shutdown Requested...");
-		// TODO: Do we want auto save on exit?
-		// PersistenceManager::getInstance().requestSave = true;
+		// No auto-save
 		PersistenceManager::getInstance().requestQuit = true;
 		world->menuOpened = false;
 		gui.remove(gui.get("overworldMenu"));
@@ -89,7 +88,7 @@ void openMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &gui)
 	world->menuOpened = true;
 
 	if (layertype == LAYERTYPE::OVERWORLD) {
-		overworldMenu(manager, world, gui);
+		overworldMenu(world, gui);
 	}
 }
 
@@ -301,9 +300,9 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 						std::stringstream stream;
 						stream << std::fixed << std::setprecision(2) << weapon.getScalingFactor();
 						std::string formattedScaling = stream.str();
-						std::string enumNameScalingFactor = std::string(magic_enum::enum_name(weapon.scalingFactor));
-						std::string enumNameWeaponType = std::string(magic_enum::enum_name(weapon.weaponType));
-						std::string enumNameScalingStat = std::string(magic_enum::enum_name(weapon.scalingStat));
+						auto enumNameScalingFactor = std::string(magic_enum::enum_name(weapon.scalingFactor));
+						auto enumNameWeaponType = std::string(magic_enum::enum_name(weapon.weaponType));
+						auto enumNameScalingStat = std::string(magic_enum::enum_name(weapon.scalingStat));
 
 						auto statsLabel = tgui::Label::create(
 						    "Light Attack: " + std::to_string(weapon.lightAttackBaseDmg) + "\n"
@@ -324,7 +323,7 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 
 						auto &compStats = manager.getComponent<CharacterComponent>(itemEntity).stats;
 
-						std::string statsText = "HP: " + std::to_string((int)compStats.health) + " / "
+						std::string statsText = "HP: " + std::to_string(compStats.health) + " / "
 						                        + std::to_string(compStats.getStat(STATS::MAX_HEALTH)) + "\n\n"
 						                        + "Strength: " + std::to_string(compStats.getStat(STATS::STRENGTH))
 						                        + "\n"

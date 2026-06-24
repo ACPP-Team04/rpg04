@@ -3,7 +3,7 @@
 struct PersistanceComponent : public Component<PersistanceComponent> {
 	std::string uuid;
 
-	void readFromJson(tson::TiledClass &j)
+	void readFromJson(tson::TiledClass &j) override
 	{
 		// Intentionally empty:
 		// This component is strictly internal and is not parsed directly from Tiled

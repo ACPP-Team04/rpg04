@@ -11,11 +11,10 @@ GameConfig &GameConfig::getInstance()
 
 void GameConfig::loadConfig(const std::string &filepath)
 {
-	std::ifstream configFile(filepath);
 	bool fileLoadedSuccessfully = false;
 	std::string parseErrorMessage = "";
 
-	if (configFile.is_open()) {
+	if (std::ifstream configFile(filepath); configFile.is_open()) {
 		try {
 			configFile >> m_data;
 			fileLoadedSuccessfully = true;
@@ -23,6 +22,7 @@ void GameConfig::loadConfig(const std::string &filepath)
 			parseErrorMessage = e.what();
 		}
 	} else {
+		spdlog::warn("GameConfig: Could not open config file at {}. Using default values.", filepath);
 	}
 
 	if (m_data.contains("debug")) {
