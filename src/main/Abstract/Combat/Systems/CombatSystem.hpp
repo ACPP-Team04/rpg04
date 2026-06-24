@@ -39,7 +39,7 @@ class CombatSystem : public System {
 
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
-	                           BattleAction action);
+	                           BattleAction action) const;
 	float getMultiplicatorFromScalingFactor(const StatsComponent &stats, const WeaponComponent &weaponComponent) const;
 	void setupKineticLunge(const EntityID &attacker, const EntityID &defender);
 	void moveCompanionToInventory(const EntityID &entityId, const int inventoryWorldId);

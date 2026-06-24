@@ -142,7 +142,7 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 {
 	auto &attackerBattle = manager.getComponent<BattleComponent>(attacker);
 
-	float cost = static_cast<float>(getActionCost(typeOfAction));
+	auto cost = static_cast<float>(getActionCost(typeOfAction));
 	if (attackerBattle.AP < cost) {
 		spdlog::get("combat")->warn("Not enough AP to do this action");
 		attackerBattle.battleState = BattleState::WAITING_FOR_INPUT;
@@ -177,10 +177,10 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		const CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
 		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
 		auto weaponId = attackerCharacter.equipedWeapon;
-		auto &attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
-		int damage = static_cast<int>(getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction));
+		const auto &attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
+		auto damage = static_cast<int>(getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction));
 		if (oneShotEnemyInGodMode)
-			damage = static_cast<int>(defenderCharacter.stats.health);
+			damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundLight);
 		spdlog::get("combat")->info("Light Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0, defenderCharacter.stats.health - damage);
@@ -192,10 +192,10 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		const CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
 		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
 		auto weaponId = attackerCharacter.equipedWeapon;
-		auto &attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
-		int damage = static_cast<int>(getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction));
+		const auto &attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
+		auto damage = static_cast<int>(getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction));
 		if (oneShotEnemyInGodMode)
-			damage = static_cast<int>(defenderCharacter.stats.health);
+			damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundHeavy);
 		spdlog::get("combat")->info("Heavy Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0, defenderCharacter.stats.health - damage);
@@ -207,10 +207,10 @@ void CombatSystem::executeBattleAction(EntityID attacker, EntityID defender, Bat
 		const CharacterComponent &attackerCharacter = manager.getComponent<CharacterComponent>(attacker);
 		CharacterComponent &defenderCharacter = manager.getComponent<CharacterComponent>(defender);
 		auto weaponId = attackerCharacter.equipedWeapon;
-		auto &attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
-		int damage = static_cast<int>(getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction));
+		const auto &attackerWeapon = manager.getComponent<ItemComponent>(weaponId).weaponStats;
+		auto damage = static_cast<int>(getDamageWithScaling(attackerCharacter.stats, attackerWeapon, typeOfAction));
 		if (oneShotEnemyInGodMode)
-			damage = static_cast<int>(defenderCharacter.stats.health);
+			damage = defenderCharacter.stats.health;
 		audioSystem.enqueueSound(attackerWeapon.hitSoundUltimate);
 		spdlog::get("combat")->info("Ultimate Damage: {}", damage);
 		defenderCharacter.stats.health = std::max(0, defenderCharacter.stats.health - damage);
@@ -256,7 +256,7 @@ void CombatSystem::takeHealAction(EntityID healer, int faith, int maxHealth)
 {
 	CharacterComponent &character = manager.getComponent<CharacterComponent>(healer);
 	float healAmount = static_cast<float>(maxHealth) * static_cast<float>(faith) * 10.0f / 100.0f;
-	character.stats.health = static_cast<int>(std::min((float)maxHealth, character.stats.health + healAmount));
+	character.stats.health = std::min(maxHealth, character.stats.health + static_cast<int>(healAmount));
 }
 
 BattleState CombatSystem::checkDeathCondition(EntityID defender, EntityID attacker)
@@ -414,7 +414,7 @@ EntityID CombatSystem::getAttacker(BattleManagerComponent &bmc)
 }
 
 float CombatSystem::getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
-                                         BattleAction action)
+                                         BattleAction action) const
 {
 	using enum BattleAction;
 	if (action == LIGHT_ATTACK) {
