@@ -34,8 +34,6 @@ class CombatSystem : public System {
 
 	static int getActionCost(BattleAction action);
 
-	sf::Clock clock;
-
 	void cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winningBattleFaction, BattleState battleState);
 	static bool validateAction(BattleAction action, const BattleComponent &battle);
 
@@ -49,4 +47,5 @@ class CombatSystem : public System {
 	void handleEntityOfWinningFaction(const EntityID &entity, const EntityID &playerId);
 	AISystem &aiSystem;
 	AudioSystem &audioSystem;
+	sf::Clock clock;
 };
