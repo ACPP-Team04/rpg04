@@ -62,11 +62,11 @@ void AISystem::executeAILogic(EntityID aiId, const std::vector<EntityID> &partic
 
 	using enum BattleAction;
 	if (aiStats.health < 0.2 * aiStats.getStat(MAX_HEALTH) && aiBattle.numberOfHealsUsed < 2
-	    && aiBattle.AP >= static_cast<int>(CombatSystem::getActionCost(HEAL))) {
+	    && aiBattle.AP >= static_cast<float>(CombatSystem::getActionCost(HEAL))) {
 		aiBattle.selectedAction = HEAL;
-	} else if (aiBattle.AP >= static_cast<int>(CombatSystem::getActionCost(HEAVY_ATTACK))) {
+	} else if (aiBattle.AP >= static_cast<float>(CombatSystem::getActionCost(HEAVY_ATTACK))) {
 		aiBattle.selectedAction = HEAVY_ATTACK;
-	} else if (aiBattle.AP >= static_cast<int>(CombatSystem::getActionCost(LIGHT_ATTACK))) {
+	} else if (aiBattle.AP >= static_cast<float>(CombatSystem::getActionCost(LIGHT_ATTACK))) {
 		aiBattle.selectedAction = LIGHT_ATTACK;
 	} else if (aiBattle.numberOfUltimateAttacksUsed < 1) {
 		aiBattle.selectedAction = ULTIMATE_ATTACK;

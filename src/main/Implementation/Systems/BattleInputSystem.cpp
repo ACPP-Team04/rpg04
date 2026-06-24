@@ -176,7 +176,7 @@ void BattleInputSystem::update()
 
 			int healCost = CombatSystem::getActionCost(BattleAction::HEAL);
 			int healsLeft = battle.maxHeals - battle.numberOfHealsUsed;
-			btnHeal->setText(std::format("Heal (-{} AP) [{} Left]", healCost, (healsLeft)));
+			btnHeal->setText(std::format("Heal (-{} AP) [{} Left]", healCost, healsLeft));
 
 			btnRest->setText("Rest (+2 AP)");
 
@@ -220,7 +220,8 @@ void BattleInputSystem::update()
 
 		bool leftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left);
 		if (leftPressed && !leftKeyWasPressed) {
-			currentTargetIndex = (currentTargetIndex == 0) ? (std::ssize(validTargets) - 1) : (currentTargetIndex - 1);
+			currentTargetIndex =
+			    (currentTargetIndex == 0) ? (static_cast<int>(validTargets.size()) - 1) : (currentTargetIndex - 1);
 			battle.hoveringTarget = validTargets[currentTargetIndex];
 		}
 		leftKeyWasPressed = leftPressed;

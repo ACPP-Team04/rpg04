@@ -19,7 +19,7 @@ void StatsDistributorSystem::update()
 		return;
 	}
 	EntityID playerId = player.value();
-	auto &battle = manager.getComponent<BattleComponent>(playerId);
+	const auto &battle = manager.getComponent<BattleComponent>(playerId);
 
 	if (battle.battleState == BattleState::STATS_DISTRIBUTION && !isMenuOpen) {
 		showLevelUpMenu(playerId, battle);

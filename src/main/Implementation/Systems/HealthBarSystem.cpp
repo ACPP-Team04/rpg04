@@ -43,7 +43,7 @@ void HealthBarSystem::update()
 			const auto &transform = manager.getComponent<TransformComponent>(id);
 			const auto &battle = manager.getComponent<BattleComponent>(id);
 
-			float maxHp = static_cast<float>(stats.getStat(STATS::MAX_HEALTH));
+			auto maxHp = static_cast<float>(stats.getStat(STATS::MAX_HEALTH));
 			float hpPercent = std::clamp(static_cast<float>(stats.health) / maxHp, 0.0f, 1.0f);
 
 			float barWidth = 40.f;
