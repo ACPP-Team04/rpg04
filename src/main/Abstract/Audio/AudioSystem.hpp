@@ -13,7 +13,7 @@ class AudioSystem : public System {
   public:
 	AudioSystem(ArchetypeManager &manager, AudioManager &audioManager);
 	void update() override;
-	void enqueueSound(const std::string &soundId, float volumeModifier = 1.0f);
+	void enqueueSound(std::string_view, float volumeModifier = 1.0f);
 	void switchMusic(const std::string &musicName, bool loop);
 	void stopMusic();
 };
