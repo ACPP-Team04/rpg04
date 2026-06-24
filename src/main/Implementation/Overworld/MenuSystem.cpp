@@ -307,6 +307,7 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 						auto statsLabel = tgui::Label::create(
 						    "Light Attack: " + std::to_string(weapon.lightAttackBaseDmg) + "\n"
 						    + "Heavy Attack: " + std::to_string(weapon.heavyAttackBaseDmg) + "\n"
+						    + "Ultimate Attack: " + std::to_string(weapon.ultimateAttackBaseDmg) + "\n"
 						    + "Scaling Factor: " + enumNameScalingFactor + " (" + formattedScaling + ")\n"
 						    + "Scaling Stat: " + enumNameScalingStat + "\n" + "Weapon Type: " + enumNameWeaponType);
 

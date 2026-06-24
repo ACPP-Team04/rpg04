@@ -8,8 +8,6 @@
 
 void GameOverMenu::setUpGameOverMenu(tgui::Gui &gui, GameState &state)
 {
-	gui.removeAllWidgets();
-
 	auto panel = tgui::Panel::create({"100%", "100%"});
 	panel->getRenderer()->setBackgroundColor(tgui::Color(20, 0, 0, 230));
 	gui.add(panel, "GameOverMenu");
@@ -27,7 +25,7 @@ void GameOverMenu::setUpGameOverMenu(tgui::Gui &gui, GameState &state)
 		loadButton->onPress([&gui, &state] {
 			PersistenceManager::getInstance().requestLoad = true;
 			state = GameState::Game;
-			gui.removeAllWidgets();
+			gui.remove(gui.get("GameOverMenu"));
 		});
 	} else {
 		loadButton->setEnabled(false);

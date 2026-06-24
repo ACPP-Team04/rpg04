@@ -19,11 +19,11 @@ void BonfireSystem::update()
 
 			    spdlog::info("Bonfire interaction detected! Executing save...");
 
-			    PersistenceManager::getInstance().requestSave = true;
-			    WorldComponent *world = WorldUtils::getWorld(manager);
-			    world->pushMessageToHud("Game saved!");
-			    component.isActive = false;
-			    component.deactivated = true;
-		    }
-	    });
+			PersistenceManager::getInstance().requestSave = true;
+			WorldComponent *world = WorldUtils::getWorld(manager);
+			world->pushMessageToHud("Game saved!");
+			component.isActive = false;
+			component.mustLeaveRadius = true;
+		}
+	});
 }

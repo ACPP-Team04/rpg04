@@ -24,14 +24,6 @@ void BattleInputSystem::init()
 
 void BattleInputSystem::connectCallbacks()
 {
-	auto player = WorldUtils::getPlayer(manager);
-	EntityID playerId;
-	if (player.has_value()) {
-		playerId = player.value();
-	} else {
-		return;
-	}
-
 	ui.getButton("BtnLight")->onPress([this]() {
 		auto activeIdOpt = getActiveLocalController();
 		if (!activeIdOpt.has_value()) {
@@ -98,6 +90,8 @@ std::optional<EntityID> BattleInputSystem::getActiveLocalController()
 	manager.view<BattleManagerComponent>().each(
 	    [this, &activeEntity]([[maybe_unused]] EntityID bmcId, const BattleManagerComponent &bmc) {
 		    if (bmc.participants.empty() || bmc.isBattleOver) {
+          spdlog::debug(
+			    "BattleManagerComponent has no participants or battle is over. Cannot find active local controller.");
 			    return;
 		    }
 
