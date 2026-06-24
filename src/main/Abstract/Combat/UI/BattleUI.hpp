@@ -64,7 +64,7 @@ class BattleUI {
 
 	void setActionPanelVisible(bool visible) const { actionPanel->setVisible(visible); }
 	void setHUDVisible(bool visible) const { hudPanel->setVisible(visible); }
-	void updateStats(float hp, float maxHp, int ap) const
+	void updateStats(float hp, float maxHp, float ap) const
 	{
 		auto bar = hudPanel->get<tgui::ProgressBar>("HPBar");
 		bar->setMaximum(static_cast<unsigned int>(maxHp));
