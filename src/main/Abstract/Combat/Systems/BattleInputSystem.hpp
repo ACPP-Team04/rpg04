@@ -10,7 +10,6 @@ class BattleInputSystem : public System {
   private:
 	BattleUI ui;
 	void connectCallbacks();
-	sf::RenderWindow &window;
 	int currentTargetIndex = 0;
 	bool rightKeyWasPressed = false;
 	bool leftKeyWasPressed = false;
@@ -19,7 +18,7 @@ class BattleInputSystem : public System {
 	EntityID lastActiveId;
 
   public:
-	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window);
+	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui);
 
 	void update() override;
 	void init();

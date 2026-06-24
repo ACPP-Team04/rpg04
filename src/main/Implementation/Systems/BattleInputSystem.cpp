@@ -11,8 +11,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
-BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window)
-    : System(manager), ui(gui), window(window) {
+BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui)
+    : System(manager), ui(gui) {
 
       };
 
