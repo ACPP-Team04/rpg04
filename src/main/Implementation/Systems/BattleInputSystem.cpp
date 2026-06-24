@@ -88,7 +88,7 @@ std::optional<EntityID> BattleInputSystem::getActiveLocalController()
 
 	manager.view<BattleManagerComponent>().each([&](EntityID bmcId, BattleManagerComponent &bmc) {
 		if (bmc.participants.empty() || bmc.isBattleOver) {
-			spdlog::warn(
+			spdlog::debug(
 			    "BattleManagerComponent has no participants or battle is over. Cannot find active local controller.");
 			return;
 		}
