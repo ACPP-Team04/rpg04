@@ -10,6 +10,8 @@
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include "Implementation/Components/WeaponComponent.hpp"
+#include <Abstract/Exception/MissingComponentException.hpp>
+#include <Abstract/Exception/PlayerComponentIncompleteException.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
 #include <Abstract/Overwordl/Components/MovementComponent.hpp>
 #include <Abstract/Overwordl/Components/StateComponent.hpp>
@@ -56,11 +58,11 @@ void SwitchBattleModeSystem::update()
 	participantsList.push_back(player);
 	if (!manager.hasComponent<CharacterComponent>(player)) {
 		spdlog::error("Player entity does not have a CharacterComponent, cannot start battle");
-		throw std::runtime_error("Player entity does not have a CharacterComponent, cannot start battle");
+		throw PlayerComponentIncompleteException(
+		    "Player entity does not have a CharacterComponent, cannot start battle");
 	}
-	auto &characterP = manager.getComponent<CharacterComponent>(player);
 
-	if (characterP.equipedCompanion != 0) {
+	if (const auto &characterP = manager.getComponent<CharacterComponent>(player); characterP.equipedCompanion != 0) {
 		auto companionId = characterP.equipedCompanion;
 		EntityID companionIdEntity = EntityID::fromExistingId(companionId);
 		if (!manager.hasComponent<PartOfLayerComponent>(companionIdEntity)) {
@@ -70,10 +72,10 @@ void SwitchBattleModeSystem::update()
 		auto &compLayer = manager.getComponent<PartOfLayerComponent>(companionId);
 		compLayer.groupId = world->currentGroup;
 
-		auto &playerTransform = manager.getComponent<TransformComponent>(player);
+		const auto &playerTransform = manager.getComponent<TransformComponent>(player);
 		auto &compTransform = manager.getComponent<TransformComponent>(companionId);
 
-		auto &enemyTransform = manager.getComponent<TransformComponent>(initialEnemyId);
+		const auto &enemyTransform = manager.getComponent<TransformComponent>(initialEnemyId);
 
 		sf::Vector2f difference = playerTransform.position - enemyTransform.position;
 		float distance = std::sqrt((difference.x * difference.x) + (difference.y * difference.y));
@@ -97,7 +99,7 @@ void SwitchBattleModeSystem::update()
 	participantsList.insert(participantsList.end(), enemyList.begin(), enemyList.end());
 
 	EntityID bManager = this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>();
-	WorldComponent *world = WorldUtils::getWorld(manager);
+	const WorldComponent *world = WorldUtils::getWorld(manager);
 	if (world == nullptr) {
 		return;
 	}
@@ -108,10 +110,10 @@ void SwitchBattleModeSystem::update()
 
 	for (const auto &participant : participantsList) {
 		if (!this->manager.hasComponent<BattleComponent>(participant)) {
-			throw std::runtime_error("Batteling entity does not have a battle component");
+			throw MissingComponentException("Batteling entity does not have a battle component");
 		}
-		auto &character = manager.getComponent<CharacterComponent>(participant);
-		if (character.equipedWeapon == 0) {
+
+		if (auto &character = manager.getComponent<CharacterComponent>(participant); character.equipedWeapon == 0) {
 			EntityID fist = manager.createEntity<ItemComponent, PartOfLayerComponent>();
 			auto &fistItem = manager.getComponent<ItemComponent>(fist);
 			fistItem.itemType = ITEM_TYPE::WEAPON;
@@ -133,8 +135,9 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const EntityID &
 	std::vector<EntityID> enemiesIdList;
 	enemiesIdList.push_back(initialEnemy);
 	WorldUtils::viewInCurrentLayer<CharacterComponent, TransformComponent>(
-	    this->manager, [&](auto entityId, CharacterComponent &characterComponent, auto &transformComponent) {
-		    if (std::find(playerParty.begin(), playerParty.end(), entityId) != playerParty.end()) {
+	    this->manager, [this, &playerParty, &enemiesIdList, &initialEnemy, &center, &radius](
+	                       auto entityId, const CharacterComponent &characterComponent, auto &transformComponent) {
+		    if (std::ranges::find(playerParty, entityId) != playerParty.end()) {
 			    return;
 		    }
 		    if (!characterComponent.fightable) {
@@ -166,10 +169,11 @@ void SwitchBattleModeSystem::preparePlayerPartyForBattle(const std::vector<Entit
 			this->manager.getComponent<StateComponent>(participant).setState(ENTITY_ANIMATIONS_STATE::IDLE);
 		}
 		if (!manager.hasComponent<CharacterComponent>(participant)) {
-			throw std::runtime_error("Player party entity does not have a CharacterComponent, cannot start battle");
+			throw MissingComponentException(
+			    "Player party entity does not have a CharacterComponent, cannot start battle");
 		}
 		if (!manager.hasComponent<StateComponent>(participant)) {
-			throw std::runtime_error("Player party entity does not have a StateComponent, cannot start battle");
+			throw MissingComponentException("Player party entity does not have a StateComponent, cannot start battle");
 		}
 		manager.addComponentToEntity<BattleComponent>(participant);
 		auto &battleComp = this->manager.getComponent<BattleComponent>(participant);
