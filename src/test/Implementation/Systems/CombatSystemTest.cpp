@@ -261,8 +261,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::EXECUTING_ACTION, manager.getComponent<BattleComponent>(player).battleState);
 	EXPECT_EQ(2, manager.getComponent<BattleComponent>(player).AP);
-	// 100-(20+1*0.25*3)=79.25 -> (int) 79
-	EXPECT_EQ(79, characterComE.stats.health);
+	// 100-(20+1*0.25*3)= 100 - (int) 20.75 = 100-20= 80
+	EXPECT_EQ(80, characterComE.stats.health);
 	EXPECT_EQ(1, manager.getComponent<BattleComponent>(player).numberOfUltimateAttacksUsed);
 	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
 	manager.removeComponentFromEntity<LungeComponent>(player);

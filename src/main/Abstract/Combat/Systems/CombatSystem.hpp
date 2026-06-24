@@ -28,7 +28,7 @@ class CombatSystem : public System {
 
 	BattleState checkDeathCondition(EntityID defender, EntityID attacker);
 
-	void passTurn(EntityID &currentEntity, BattleManagerComponent &bmc);
+	void passTurn(const EntityID &currentEntity, BattleManagerComponent &bmc);
 
 	EntityID getAttacker(BattleManagerComponent &bmc);
 
@@ -42,7 +42,7 @@ class CombatSystem : public System {
   private:
 	float getDamageWithScaling(const StatsComponent &statsComponent, const WeaponComponent &weaponComponent,
 	                           BattleAction action);
-	float getMultiplicatorFromScalingFactor(const StatsComponent stats, const WeaponComponent &weaponComponent);
+	float getMultiplicatorFromScalingFactor(const StatsComponent &stats, const WeaponComponent &weaponComponent) const;
 	void setupKineticLunge(const EntityID &attacker, const EntityID &defender);
 	void moveCompanionToInventory(const EntityID &entityId, const int inventoryWorldId);
 	void processBattleTick(const EntityID &battleId, BattleManagerComponent &bmc);
