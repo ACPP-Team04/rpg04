@@ -126,7 +126,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	}
 
 	saveData["worldState"]["deadUniqueEntities"] = PersistenceManager::getInstance().deadUniqueEntities;
-	manager.view<WorldComponent>().each([&saveData](EntityID entity, WorldComponent &worldComp) {
+	manager.view<WorldComponent>().each([&saveData]([[maybe_unused]] EntityID entity, WorldComponent &worldComp) {
 		saveData["worldState"]["worldComponent"]["widthPixel"] = worldComp.widthPixel;
 		saveData["worldState"]["worldComponent"]["heightPixel"] = worldComp.heightPixel;
 
