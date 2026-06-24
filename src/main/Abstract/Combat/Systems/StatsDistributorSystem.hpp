@@ -14,5 +14,5 @@ class StatsDistributorSystem : public System {
 	void update();
 
   private:
-	void showLevelUpMenu(EntityID playerId, BattleComponent &battle);
+	void showLevelUpMenu(EntityID playerId, const BattleComponent &battle);
 };
