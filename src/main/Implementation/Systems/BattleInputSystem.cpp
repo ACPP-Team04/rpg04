@@ -87,23 +87,23 @@ std::optional<EntityID> BattleInputSystem::getActiveLocalController()
 {
 	std::optional<EntityID> activeEntity = std::nullopt;
 
-	manager.view<BattleManagerComponent>().each(
-	    [this, &activeEntity]([[maybe_unused]] EntityID bmcId, const BattleManagerComponent &bmc) {
-		    if (bmc.participants.empty() || bmc.isBattleOver) {
-          spdlog::debug(
+	manager.view<BattleManagerComponent>().each([this, &activeEntity]([[maybe_unused]] EntityID bmcId,
+	                                                                  const BattleManagerComponent &bmc) {
+		if (bmc.participants.empty() || bmc.isBattleOver) {
+			spdlog::debug(
 			    "BattleManagerComponent has no participants or battle is over. Cannot find active local controller.");
-			    return;
-		    }
+			return;
+		}
 
-		    for (EntityID participant : bmc.participants) {
-			    if (manager.hasComponent<BattleComponent>(participant)) {
-				    const auto &bComp = manager.getComponent<BattleComponent>(participant);
-				    if (bComp.isActiveTurn && bComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
-					    activeEntity = participant;
-				    }
-			    }
-		    }
-	    });
+		for (EntityID participant : bmc.participants) {
+			if (manager.hasComponent<BattleComponent>(participant)) {
+				const auto &bComp = manager.getComponent<BattleComponent>(participant);
+				if (bComp.isActiveTurn && bComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
+					activeEntity = participant;
+				}
+			}
+		}
+	});
 
 	return activeEntity;
 }
