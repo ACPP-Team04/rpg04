@@ -15,7 +15,7 @@ class BattleInputSystem : public System {
 	bool rightKeyWasPressed = false;
 	bool leftKeyWasPressed = false;
 	bool enterKeyWasPressed = false;
-	int lastDrawnAP = -1;
+	float lastDrawnAP = -1.0f;
 	EntityID lastActiveId;
 
   public:

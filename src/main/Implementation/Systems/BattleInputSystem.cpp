@@ -3,6 +3,7 @@
 #include "Abstract/Overwordl/Components/Player_Component.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Exception/InvalidCombatTargetException.hpp>
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 #include <Abstract/TILE_ENUMS.hpp>
@@ -94,20 +95,21 @@ std::optional<EntityID> BattleInputSystem::getActiveLocalController()
 {
 	std::optional<EntityID> activeEntity = std::nullopt;
 
-	manager.view<BattleManagerComponent>().each([&](EntityID bmcId, BattleManagerComponent &bmc) {
-		if (bmc.participants.empty() || bmc.isBattleOver) {
-			return;
-		}
+	manager.view<BattleManagerComponent>().each(
+	    [this, &activeEntity]([[maybe_unused]] EntityID bmcId, const BattleManagerComponent &bmc) {
+		    if (bmc.participants.empty() || bmc.isBattleOver) {
+			    return;
+		    }
 
-		for (EntityID participant : bmc.participants) {
-			if (manager.hasComponent<BattleComponent>(participant)) {
-				auto &bComp = manager.getComponent<BattleComponent>(participant);
-				if (bComp.isActiveTurn && bComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
-					activeEntity = participant;
-				}
-			}
-		}
-	});
+		    for (EntityID participant : bmc.participants) {
+			    if (manager.hasComponent<BattleComponent>(participant)) {
+				    const auto &bComp = manager.getComponent<BattleComponent>(participant);
+				    if (bComp.isActiveTurn && bComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
+					    activeEntity = participant;
+				    }
+			    }
+		    }
+	    });
 
 	return activeEntity;
 }
@@ -115,7 +117,8 @@ std::optional<EntityID> BattleInputSystem::getActiveLocalController()
 void BattleInputSystem::update()
 {
 	bool battleIsActive = false;
-	manager.view<BattleManagerComponent>().each([&](EntityID id, auto &bmc) { battleIsActive = true; });
+	manager.view<BattleManagerComponent>().each(
+	    [&battleIsActive]([[maybe_unused]] EntityID id, [[maybe_unused]] auto &bmc) { battleIsActive = true; });
 	if (!battleIsActive) {
 		ui.setHUDVisible(false);
 		ui.setActionPanelVisible(false);
@@ -134,12 +137,12 @@ void BattleInputSystem::update()
 		return;
 	}
 	auto &battle = manager.getComponent<BattleComponent>(activeId);
-	auto &stats = manager.getComponent<CharacterComponent>(activeId).stats;
+	const auto &stats = manager.getComponent<CharacterComponent>(activeId).stats;
 	bool showMenu = battle.battleState == BattleState::WAITING_FOR_INPUT;
 
 	bool showTargetMenu = battle.battleState == BattleState::SELECTING_TARGET;
 	if (showMenu) {
-		auto &activeIdTransform = manager.getComponent<TransformComponent>(activeId);
+		const auto &activeIdTransform = manager.getComponent<TransformComponent>(activeId);
 		float screenMiddleX = WORLD_SIZE_X / 2.0f;
 
 		ui.updateDynamicPosition(activeIdTransform.position.x, screenMiddleX);
@@ -158,29 +161,28 @@ void BattleInputSystem::update()
 
 		if (battle.AP != lastDrawnAP || activeId != lastActiveId) {
 			auto turnLabel = ui.getLabel("TurnLabel");
-			auto playerOpt = WorldUtils::getPlayer(manager);
 
-			if (playerOpt.has_value() && activeId == playerOpt.value()) {
+			if (auto playerOpt = WorldUtils::getPlayer(manager);
+			    playerOpt.has_value() && activeId == playerOpt.value()) {
 				turnLabel->setText("Hero's Turn");
 			} else {
 				turnLabel->setText("Companion's Turn");
 			}
-			ui.updateStats(stats.health, stats.getStat(MAX_HEALTH), battle.AP);
+			ui.updateStats(static_cast<float>(stats.health), static_cast<float>(stats.getStat(MAX_HEALTH)), battle.AP);
 
-			btnLightAttack->setText("Light Attack (-"
-			                        + std::to_string(CombatSystem::getActionCost(BattleAction::LIGHT_ATTACK)) + " AP)");
+			btnLightAttack->setText(
+			    std::format("Light Attack (-{} AP)", CombatSystem::getActionCost(BattleAction::LIGHT_ATTACK)));
 
-			btnHeavy->setText("Heavy Attack (-"
-			                  + std::to_string(CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK)) + " AP)");
+			btnHeavy->setText(
+			    std::format("Heavy Attack (-{} AP)", CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK)));
 
 			int ultimateCost = CombatSystem::getActionCost(BattleAction::ULTIMATE_ATTACK);
 			int ultimateAttacksLeft = battle.maxUltimateAttacks - battle.numberOfUltimateAttacksUsed;
-			btnUltimate->setText("Ultimate Attack (" + std::to_string(ultimateCost) + " AP) ["
-			                     + std::to_string(ultimateAttacksLeft) + " Left]");
+			btnUltimate->setText(std::format("Ultimate Attack (-{} AP) [{} Left]", ultimateCost, ultimateAttacksLeft));
 
 			int healCost = CombatSystem::getActionCost(BattleAction::HEAL);
 			int healsLeft = battle.maxHeals - battle.numberOfHealsUsed;
-			btnHeal->setText("Heal (-" + std::to_string(healCost) + " AP) [" + std::to_string(healsLeft) + " Left]");
+			btnHeal->setText(std::format("Heal (-{} AP) [{} Left]", healCost, (healsLeft)));
 
 			btnRest->setText("Rest (+2 AP)");
 
@@ -192,20 +194,23 @@ void BattleInputSystem::update()
 		auto validTargets = getTargetsInBattle(
 		    activeId, manager.getComponent<BattleComponent>(activeId).battleManagerId, this->manager);
 		if (validTargets.empty()) {
-			throw std::runtime_error("No valid targets in battle for player");
+			throw InvalidCombatTargetException("No valid targets in battle for player");
 		}
-		auto selectedAction = battle.selectedAction;
-		if (selectedAction == BattleAction::HEAL || selectedAction == BattleAction::REST) {
+
+		if (auto selectedAction = battle.selectedAction;
+		    selectedAction == BattleAction::HEAL || selectedAction == BattleAction::REST) {
 			battle.battleState = BattleState::SELECTED_ACTION;
 			battle.hoveringTarget = std::nullopt;
 			ui.setActionPanelVisible(false);
 			return;
 		}
-		std::sort(validTargets.begin(), validTargets.end(), [this](const EntityID a, const EntityID b) {
-			auto transformA = manager.getComponent<TransformComponent>(a);
-			auto transformB = manager.getComponent<TransformComponent>(b);
+		std::ranges::sort(validTargets, [this](const EntityID a, const EntityID b) {
+			const auto &transformA = manager.getComponent<TransformComponent>(a);
+			const auto &transformB = manager.getComponent<TransformComponent>(b);
+
 			return transformA.position.x < transformB.position.x;
 		});
+
 		if (currentTargetIndex >= validTargets.size()) {
 			currentTargetIndex = 0;
 		}
@@ -221,7 +226,7 @@ void BattleInputSystem::update()
 
 		bool leftPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left);
 		if (leftPressed && !leftKeyWasPressed) {
-			currentTargetIndex = (currentTargetIndex == 0) ? (validTargets.size() - 1) : (currentTargetIndex - 1);
+			currentTargetIndex = (currentTargetIndex == 0) ? (std::ssize(validTargets) - 1) : (currentTargetIndex - 1);
 			battle.hoveringTarget = validTargets[currentTargetIndex];
 		}
 		leftKeyWasPressed = leftPressed;
@@ -251,7 +256,7 @@ std::vector<EntityID> BattleInputSystem::getTargetsInBattle(const EntityID playe
 		}
 
 		if (manager.hasComponent<BattleComponent>(p)) {
-			auto &targetBattleComp = manager.getComponent<BattleComponent>(p);
+			const auto &targetBattleComp = manager.getComponent<BattleComponent>(p);
 
 			if (targetBattleComp.faction != battleComp.faction) {
 				validTargets.push_back(p);
