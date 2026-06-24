@@ -10,14 +10,13 @@
 
 #include "Implementation/Components/StatsComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
+#include <Abstract/Exception/InvalidCombatTargetException.hpp>
 #include <random>
 
 AISystem::AISystem(ArchetypeManager &manager) : System(manager) {};
 
 std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<EntityID> &participants)
 {
-	auto &aiBattleComp = manager.getComponent<BattleComponent>(aiId);
-
 	std::vector<EntityID> validTargets = this->getValidTargets(aiId, participants);
 
 	if (validTargets.empty()) {
@@ -38,7 +37,7 @@ std::vector<EntityID> AISystem::getValidTargets(EntityID aiId, const std::vector
 			continue;
 		}
 		if (manager.hasComponent<BattleComponent>(p)) {
-			auto &targetBattleComp = manager.getComponent<BattleComponent>(p);
+			const auto &targetBattleComp = manager.getComponent<BattleComponent>(p);
 
 			if (targetBattleComp.faction != aiBattleComp.faction) {
 				validTargets.push_back(p);
@@ -49,28 +48,30 @@ std::vector<EntityID> AISystem::getValidTargets(EntityID aiId, const std::vector
 	return validTargets;
 }
 
-void AISystem::executeAILogic(EntityID aiId, std::vector<EntityID> participants)
+void AISystem::executeAILogic(EntityID aiId, const std::vector<EntityID> &participants)
 {
 	BattleComponent &aiBattle = manager.getComponent<BattleComponent>(aiId);
-	StatsComponent &aiStats = manager.getComponent<CharacterComponent>(aiId).stats;
+	const StatsComponent &aiStats = manager.getComponent<CharacterComponent>(aiId).stats;
 
 	auto targetOpt = selectTarget(aiId, participants);
 	if (!targetOpt.has_value()) {
-		throw std::runtime_error("No valid target found for AI entity " + std::to_string(aiId.getId()));
+		throw InvalidCombatTargetException(
+		    std::format("No valid target found for AI entity {}", std::to_string(aiId.getId())));
 	}
 	aiBattle.target = targetOpt.value();
 
+	using enum BattleAction;
 	if (aiStats.health < 0.2 * aiStats.getStat(MAX_HEALTH) && aiBattle.numberOfHealsUsed < 2
-	    && aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAL)) {
-		aiBattle.selectedAction = BattleAction::HEAL;
-	} else if (aiBattle.AP >= CombatSystem::getActionCost(BattleAction::HEAVY_ATTACK)) {
-		aiBattle.selectedAction = BattleAction::HEAVY_ATTACK;
-	} else if (aiBattle.AP >= CombatSystem::getActionCost(BattleAction::LIGHT_ATTACK)) {
-		aiBattle.selectedAction = BattleAction::LIGHT_ATTACK;
+	    && aiBattle.AP >= static_cast<int>(CombatSystem::getActionCost(HEAL))) {
+		aiBattle.selectedAction = HEAL;
+	} else if (aiBattle.AP >= static_cast<int>(CombatSystem::getActionCost(HEAVY_ATTACK))) {
+		aiBattle.selectedAction = HEAVY_ATTACK;
+	} else if (aiBattle.AP >= static_cast<int>(CombatSystem::getActionCost(LIGHT_ATTACK))) {
+		aiBattle.selectedAction = LIGHT_ATTACK;
 	} else if (aiBattle.numberOfUltimateAttacksUsed < 1) {
-		aiBattle.selectedAction = BattleAction::ULTIMATE_ATTACK;
+		aiBattle.selectedAction = ULTIMATE_ATTACK;
 	} else {
-		aiBattle.selectedAction = BattleAction::REST;
+		aiBattle.selectedAction = REST;
 	}
 	aiBattle.battleState = BattleState::SELECTED_ACTION;
 }
