@@ -39,6 +39,11 @@ void ItemSystem::update()
 			    world->pushMessageToHud("New Item Added");
 			    manager.getComponent<PartOfLayerComponent>(entity).groupId =
 			        character_component.inventory.inventoryWorldId;
+			    if (manager.getComponent<ItemComponent>(entity).itemType == ITEM_TYPE::COLLECTABLE_COMPANION) {
+				    if (character_component.equipedCompanion == 0) {
+					    character_component.equipedCompanion = entity.getId();
+				    }
+			    }
 		    }
 	    });
 }
