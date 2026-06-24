@@ -215,7 +215,7 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 
 		WorldUtils::viewInSpecificLayer<ItemComponent>(
 		    manager, characterComp.inventory.inventoryWorldId,
-		    [&activeTabItemType, &itemsInInventory](EntityID entity, ItemComponent &itemComp) {
+		    [&activeTabItemType, &itemsInInventory](EntityID entity, const ItemComponent &itemComp) {
 			    if (itemComp.itemType == activeTabItemType) {
 				    itemsInInventory.push_back(entity);
 			    }
@@ -387,7 +387,7 @@ void MenuSystem::update()
 	this->manager.view<WorldComponent>().each([&world](auto &entity, auto &component) { world = &component; });
 	InputComponent *input = nullptr;
 	this->manager.view<InputComponent>().each(
-	    [&input](auto &entity, auto &inputComponent) { input = &inputComponent; });
+	    [&input]([[maybe_unused]] auto &entity, auto &inputComponent) { input = &inputComponent; });
 	if (!world || !input) {
 		return;
 	}

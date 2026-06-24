@@ -29,7 +29,7 @@ void CombatSystem::update()
 	if (view.archetypes.size() == 0) {
 		return;
 	} else {
-		view.each([this](EntityID &battleId, BattleManagerComponent &bmc) { processBattleTick(battleId, bmc); });
+		view.each([this](const EntityID &battleId, BattleManagerComponent &bmc) { processBattleTick(battleId, bmc); });
 	}
 }
 
