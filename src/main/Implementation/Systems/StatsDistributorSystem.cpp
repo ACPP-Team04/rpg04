@@ -76,13 +76,13 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, const BattleComp
 		btnMinus->setPosition(240, yPos);
 		btnMinus->setSize(30, 30);
 
-		btnPlus->onPress([=]() {
+		btnPlus->onPress([data, updateStatUI, label, name, statsEnum, stepSize, currentVal]() {
 			if (data->points > 0) {
 				updateStatUI(label, name, statsEnum, 1, stepSize, currentVal);
 			}
 		});
 
-		btnMinus->onPress([=]() {
+		btnMinus->onPress([data, updateStatUI, label, name, statsEnum, stepSize, currentVal]() {
 			if (data->extraStats[statsEnum] > 0) {
 				updateStatUI(label, name, statsEnum, -1, -stepSize, currentVal);
 			}
