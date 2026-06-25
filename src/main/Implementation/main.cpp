@@ -100,7 +100,7 @@ void initializeEngine(ArchetypeManager &manager)
 	});
 }
 
-void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
+void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, ECSManager &ecsManager,
                          PersistenceRegistrationSystem &registrationSystem, CharacterPreProcessSystem &preprocess,
                          int slotIndex)
 {
@@ -114,6 +114,7 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
 		return;
 	}
 
+	readGameConfig();
 	manager.clear();
 	parser.update();
 	registrationSystem.update();
@@ -125,6 +126,7 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
 		spdlog::critical("WorldParser failed to spawn a default player!");
 		throw std::runtime_error("WorldParser failed to spawn a default player!");
 	}
+	applyGameConfig(ecsManager, playerOpt.value());
 	SaveManager::injectWorldComponent(manager, saveData["worldState"]);
 
 	SaveManager::injectPlayer(manager, saveData["player"], playerOpt.value());
@@ -153,8 +155,8 @@ void handleSystemRequests(ECSManager &ecsManager, tgui::Gui &gui, GameState &gam
 	}
 
 	if (persistence.requestLoad) {
-		executeLoadSequence(ecsManager.manager, ecsManager.worldParser, ecsManager.persistanceRegistrationSystem,
-		                    ecsManager.character_preprocess_system, 1);
+		executeLoadSequence(ecsManager.manager, ecsManager.worldParser, ecsManager,
+		                    ecsManager.persistanceRegistrationSystem, ecsManager.character_preprocess_system, 1);
 		persistence.requestLoad = false;
 	}
 
