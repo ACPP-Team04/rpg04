@@ -70,7 +70,7 @@ class BattleUI {
 		bar->setMaximum(static_cast<unsigned int>(maxHp));
 		bar->setValue(static_cast<unsigned int>(hp));
 		bar->setText(std::format("{} / {}", (int)hp, (int)maxHp));
-		hudPanel->get<tgui::Label>("APLabel")->setText(std::format("AP: {}", std::to_string(ap)));
+		hudPanel->get<tgui::Label>("APLabel")->setText(std::format("AP: {}", static_cast<unsigned int>(ap)));
 	}
 	void updateDynamicPosition(float playerX, float screenMiddleX) const
 	{
