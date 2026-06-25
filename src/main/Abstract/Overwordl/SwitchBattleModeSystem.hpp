@@ -2,6 +2,7 @@
 
 #pragma once
 #include "Abstract/ECS/System/System.hpp"
+#include "Components/CharacterComponent.hpp"
 #include <Abstract/Audio/AudioSystem.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -13,6 +14,8 @@ struct SwitchBattleModeSystem : System {
 	                                                      float radius, const std::vector<EntityID> &playerParty);
 	void preparePlayerPartyForBattle(const std::vector<EntityID> &participants, EntityID playerId);
 	void prepareEnemiesForBattle(const std::vector<EntityID> &enemies);
+	bool isValidAdditionalEnemy(EntityID entityId, const CharacterComponent &charComp,
+	                            const std::vector<EntityID> &playerParty, EntityID initialEnemy) const;
 	static float getSquaredDistance(const sf::Vector2f &a, const sf::Vector2f &b)
 	{
 		float dx = a.x - b.x;

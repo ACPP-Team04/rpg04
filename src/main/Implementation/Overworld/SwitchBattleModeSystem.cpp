@@ -137,16 +137,7 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const EntityID &
 	WorldUtils::viewInCurrentLayer<CharacterComponent, TransformComponent>(
 	    this->manager, [this, &playerParty, &enemiesIdList, &initialEnemy, &center, &radius](
 	                       auto entityId, const CharacterComponent &characterComponent, auto &transformComponent) {
-		    if (std::ranges::find(playerParty, entityId) != playerParty.end()) {
-			    return;
-		    }
-		    if (!characterComponent.fightable) {
-			    return;
-		    }
-		    if (entityId == initialEnemy) {
-			    return;
-		    }
-		    if (characterComponent.stats.health <= 0) {
+		    if (!isValidAdditionalEnemy(entityId, characterComponent, playerParty, initialEnemy)) {
 			    return;
 		    }
 		    auto squaredDistance = SwitchBattleModeSystem::getSquaredDistance(center, transformComponent.position);
@@ -162,6 +153,25 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const EntityID &
 	    });
 	spdlog::get("combat")->info("Found {} enemies in the action radius", enemiesIdList.size());
 	return enemiesIdList;
+}
+
+bool SwitchBattleModeSystem::isValidAdditionalEnemy(EntityID entityId, const CharacterComponent &charComp,
+                                                    const std::vector<EntityID> &playerParty,
+                                                    EntityID initialEnemy) const
+{
+	if (std::ranges::find(playerParty, entityId) != playerParty.end()) {
+		return false;
+	}
+	if (!charComp.fightable) {
+		return false;
+	}
+	if (entityId == initialEnemy) {
+		return false;
+	}
+	if (charComp.stats.health <= 0) {
+		return false;
+	}
+	return true;
 }
 
 void SwitchBattleModeSystem::preparePlayerPartyForBattle(const std::vector<EntityID> &participants, EntityID playerId)
