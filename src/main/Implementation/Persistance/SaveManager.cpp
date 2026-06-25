@@ -211,49 +211,55 @@ void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &
 		charComp.stats.addScalableStats(MAX_HEALTH, playerJson["stats"].value("MAX_HEALTH", 100));
 
 		if (playerJson.contains("inventory")) {
-			charComp.equipedWeapon = 0;
-			charComp.equipedCompanion = 0;
-
-			for (const auto &itemJson : playerJson["inventory"]) {
-				if (!itemJson.contains("uuid"))
-					continue;
-
-				std::string savedUuid = itemJson["uuid"];
-				auto type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
-				bool isEquipped = itemJson.value("isEquipped", false);
-
-				auto foundItem = EntityID();
-
-				manager.view<PersistanceComponent, PartOfLayerComponent>().each(
-				    [&foundItem, &savedUuid, &charComp](EntityID id, const PersistanceComponent &persist,
-				                                        PartOfLayerComponent &layerComp) {
-					    if (persist.uuid == savedUuid) {
-						    foundItem = id;
-						    layerComp.groupId = charComp.inventory.inventoryWorldId;
-					    }
-				    });
-
-				if (foundItem.getId() == 0) {
-					spdlog::warn("Could not find mapped item with UUID {}!", savedUuid);
-					continue;
-				}
-				if (isEquipped) {
-					if (type == ITEM_TYPE::WEAPON) {
-						charComp.equipedWeapon = foundItem.getId();
-						spdlog::info("Equipped loaded weapon (New ID: {})", foundItem.getId());
-					} else if (type == ITEM_TYPE::COLLECTABLE_COMPANION) {
-						charComp.equipedCompanion = foundItem.getId();
-						spdlog::info("Equipped loaded companion (New ID: {})", foundItem.getId());
-					}
-				}
-			}
+			injectInventory(manager, charComp, playerJson["inventory"]);
 		}
 	}
-	if (playerJson.contains("layerData")) {
+	if (playerJson.contains("layerData") && manager.hasComponent<PartOfLayerComponent>(player)) {
 		auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
 		layerComp.groupId = playerJson["layerData"].value("groupId", -1);
 	}
 	spdlog::info("Player successfully injected into the world.");
+}
+
+void SaveManager::injectInventory(ArchetypeManager &manager, CharacterComponent &charComp,
+                                  const nlohmann::json &inventoryJson)
+{
+	charComp.equipedWeapon = 0;
+	charComp.equipedCompanion = 0;
+
+	for (const auto &itemJson : inventoryJson) {
+		if (!itemJson.contains("uuid"))
+			continue;
+
+		std::string savedUuid = itemJson["uuid"];
+		auto type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
+		bool isEquipped = itemJson.value("isEquipped", false);
+
+		auto foundItem = EntityID();
+
+		manager.view<PersistanceComponent, PartOfLayerComponent>().each(
+		    [&foundItem, &savedUuid, &charComp](EntityID id, const PersistanceComponent &persist,
+		                                        PartOfLayerComponent &layerComp) {
+			    if (persist.uuid == savedUuid) {
+				    foundItem = id;
+				    layerComp.groupId = charComp.inventory.inventoryWorldId;
+			    }
+		    });
+
+		if (foundItem.getId() == 0) {
+			spdlog::warn("Could not find mapped item with UUID {}!", savedUuid);
+			continue;
+		}
+		if (isEquipped) {
+			if (type == ITEM_TYPE::WEAPON) {
+				charComp.equipedWeapon = foundItem.getId();
+				spdlog::info("Equipped loaded weapon (New ID: {})", foundItem.getId());
+			} else if (type == ITEM_TYPE::COLLECTABLE_COMPANION) {
+				charComp.equipedCompanion = foundItem.getId();
+				spdlog::info("Equipped loaded companion (New ID: {})", foundItem.getId());
+			}
+		}
+	}
 }
 
 void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann::json &worldStateJson)
@@ -313,7 +319,7 @@ void SaveManager::injectDialogs(ArchetypeManager &manager, const nlohmann::json 
 }
 void SaveManager::deleteSave(int slotIndex)
 {
-	std::string path = getSaveFilePath(slotIndex);
+	std::filesystem::path path = getSaveFilePath(slotIndex);
 	if (std::filesystem::exists(path)) {
 		std::filesystem::remove(path);
 		spdlog::info("Deleted save file at slot {}", slotIndex);

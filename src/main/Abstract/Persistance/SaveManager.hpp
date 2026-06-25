@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Abstract/ECS/Archetype/ArchetypeManager.hpp"
+#include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -18,6 +19,8 @@ class SaveManager {
 	static void injectDoors(ArchetypeManager &manager, const nlohmann::json &doorStates);
 	static void injectDialogs(ArchetypeManager &manager, const nlohmann::json &dialogStates,
 	                          const nlohmann::json &interactionStates);
+	static void injectInventory(ArchetypeManager &manager, CharacterComponent &charComp,
+	                            const nlohmann::json &inventoryJson);
 	static void deleteSave(int slotIndex);
 
   private:
