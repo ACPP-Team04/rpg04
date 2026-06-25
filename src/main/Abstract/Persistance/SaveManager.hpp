@@ -18,6 +18,7 @@ class SaveManager {
 	static void injectDoors(ArchetypeManager &manager, const nlohmann::json &doorStates);
 	static void injectDialogs(ArchetypeManager &manager, const nlohmann::json &dialogStates,
 	                          const nlohmann::json &interactionStates);
+	static void deleteSave(int slotIndex);
 
   private:
 	static std::string getSaveFilePath(int slotIndex);

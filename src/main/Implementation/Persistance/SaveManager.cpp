@@ -311,3 +311,11 @@ void SaveManager::injectDialogs(ArchetypeManager &manager, const nlohmann::json 
 		    }
 	    });
 }
+void SaveManager::deleteSave(int slotIndex)
+{
+	std::string path = getSaveFilePath(slotIndex);
+	if (std::filesystem::exists(path)) {
+		std::filesystem::remove(path);
+		spdlog::info("Deleted save file at slot {}", slotIndex);
+	}
+}
