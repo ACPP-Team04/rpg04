@@ -50,7 +50,19 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, const BattleComp
 	data->mainLabel->setPosition(20, 20);
 	window->add(data->mainLabel);
 
-	auto addStatRow = [&window, data](std::string name, STATS statsEnum, int yPos, int currentVal, int stepSize = 1) {
+	auto updateStatUI = [data](tgui::Label::Ptr label, const std::string &name, STATS statsEnum, int pointCost,
+	                           int statGain, int baseVal) {
+		data->points -= pointCost;
+		data->extraStats[statsEnum] += statGain;
+
+		int currentTotalValue = baseVal + data->extraStats[statsEnum];
+		label->setText(std::format("{} ({}): + {}", name, currentTotalValue, data->extraStats[statsEnum]));
+		data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
+		data->mainLabel->setText(std::format("Points left: {}", data->points));
+	};
+
+	auto addStatRow = [&window, data, &updateStatUI](std::string name, STATS statsEnum, int yPos, int currentVal,
+	                                                 int stepSize = 1) {
 		data->extraStats[statsEnum] = 0;
 		auto label = tgui::Label::create(std::format("{} ({}): +0", name, currentVal));
 		label->setPosition(20, yPos);
@@ -64,23 +76,15 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, const BattleComp
 		btnMinus->setPosition(240, yPos);
 		btnMinus->setSize(30, 30);
 
-		btnPlus->onPress([data, statsEnum, label, name, stepSize]() {
+		btnPlus->onPress([=]() {
 			if (data->points > 0) {
-				data->points--;
-				data->extraStats[statsEnum] += stepSize;
-				label->setText(std::format("{}: + {}", name, data->extraStats[statsEnum]));
-				data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
-				data->mainLabel->setText(std::format("Points left: {}", data->points));
+				updateStatUI(label, name, statsEnum, 1, stepSize, currentVal);
 			}
 		});
 
-		btnMinus->onPress([data, statsEnum, label, name, stepSize]() {
+		btnMinus->onPress([=]() {
 			if (data->extraStats[statsEnum] > 0) {
-				data->points++;
-				data->extraStats[statsEnum] -= stepSize;
-				label->setText(std::format("{}: + {}", name, data->extraStats[statsEnum]));
-				data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
-				data->mainLabel->setText(std::format("Points left: {}", data->points));
+				updateStatUI(label, name, statsEnum, -1, -stepSize, currentVal);
 			}
 		});
 
