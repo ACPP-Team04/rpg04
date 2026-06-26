@@ -99,21 +99,40 @@ jobs:
         run: |
               strings build-coverage/tests | grep "\.gcda" | head -100 || true
 
-      - name: Run tests for coverage directly with GCOV_PREFIX
+      - name: Run tests for coverage and capture gcov errors
         run: |
-              mkdir -p "${{ github.workspace }}/gcov-output"
-              export GCOV_PREFIX="${{ github.workspace }}/gcov-output"
-              export GCOV_PREFIX_STRIP=0
-          
-              ./build-coverage/tests
-          
-              echo ""
-              echo "GCDA files:"
-              find "${{ github.workspace }}" -name "*.gcda" | sort | head -200
-          
-              echo ""
-              echo "GCDA count:"
-              find "${{ github.workspace }}" -name "*.gcda" | wc -l
+          rm -f gcov-error.log
+          find . -name "*.gcda" -delete
+      
+          export GCOV_ERROR_FILE="${{ github.workspace }}/gcov-error.log"
+          export GCOV_EXIT_AT_ERROR=1
+      
+          echo "Running test binary directly..."
+          set +e
+          ./build-coverage/tests
+          status=$?
+          set -e
+      
+          echo ""
+          echo "Test exit status: $status"
+      
+          echo ""
+          echo "GCOV error log:"
+          if [ -f gcov-error.log ]; then
+            cat gcov-error.log
+          else
+            echo "No gcov-error.log was created."
+          fi
+      
+          echo ""
+          echo "Generated .gcda files:"
+          find . -name "*.gcda" | sort | head -200
+      
+          echo ""
+          echo "GCDA count:"
+          find . -name "*.gcda" | wc -l
+      
+          exit $status
 
       - name: Debug coverage files
         run: |
