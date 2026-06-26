@@ -96,7 +96,24 @@ jobs:
         run: ctest --test-dir build-coverage -N
 
       - name: Run tests for coverage
-        run: ctest --test-dir build-coverage --output-on-failure
+        run: |
+                ./build-coverage/tests
+
+      - name: Debug coverage files
+        run: |
+              echo "GCNO:"
+              find . -name "*.gcno" | sort | head -100
+
+              echo ""
+              echo "GCDA:"
+              find . -name "*.gcda" | sort | head -200
+              echo ""
+              echo "GCDA count:"
+              find . -name "*.gcda" | wc -l
+
+      - name: Check test binary gcov symbols
+        run: |
+              nm -C build-coverage/tests | grep -E "__gcov|gcov" | head -50 || true
 
       - name: Debug raw coverage files
         run: |
