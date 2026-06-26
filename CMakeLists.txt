@@ -45,7 +45,7 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
         "src/test/*.hpp"
 )
 add_executable(tests ${TEST_SOURCES})
-set_property(TARGET tests PROPERTY CXX_STANDARD 20)
+set_property(TARGET tests PROPERTY CXX_STANDARD 23)
 target_link_libraries(tests PRIVATE game-lib GTest::gtest_main)
 
 target_link_libraries(tests PRIVATE magic_enum::magic_enum)
