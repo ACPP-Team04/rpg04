@@ -34,6 +34,10 @@ void CombatSystem::update()
 	if (view.archetypes.empty()) {
 		return;
 	} else {
+		if (view.archetypes.size() != 1) {
+			spdlog::get("combat")->warn("Multiple BattleManagerComponents found, this should not happen");
+		}
+
 		view.each([this](const EntityID &battleId, BattleManagerComponent &bmc) { processBattleTick(battleId, bmc); });
 	}
 }
@@ -310,9 +314,15 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 	if (!playerIdOpt.has_value())
 		return;
 	std::vector<EntityID> defeatedEnemies;
-	const auto &participantsCopy = bmc.participants;
-
+	// needs to be a copy, otherwise the reference will be invalidated
+	const auto participantsCopy = bmc.participants;
 	for (EntityID entity : participantsCopy) {
+		spdlog::get("combat")->debug("Cleaning up battle with {} ", entity.getId());
+		if (!manager.hasComponent<BattleComponent>(entity)) {
+			spdlog::get("combat")->error("Entity {} does not have a BattleComponent during battle cleanup",
+			                             entity.getId());
+			throw std::runtime_error("Entity does not have a BattleComponent during battle cleanup");
+		}
 		BATTLE_FACTION battleFaction = manager.getComponent<BattleComponent>(entity).faction;
 		manager.removeComponentFromEntity<BattleComponent>(entity);
 		if (battleFaction == winningBattleFaction) {
@@ -398,7 +408,8 @@ EntityID CombatSystem::getAttacker(BattleManagerComponent &bmc)
 		throw NoParticipantsException("No participants in battle");
 	}
 	auto numberOfParticipants = bmc.participants.size();
-	auto &attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
+	// needs to be a copy, otherwise the reference will be invalidated when we increment currentTurnIndex
+	auto attacker = bmc.participants[bmc.currentTurnIndex % numberOfParticipants];
 	if (!manager.hasComponent<DeathComponent>(attacker)) {
 		return attacker;
 	}
