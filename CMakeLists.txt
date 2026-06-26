@@ -45,7 +45,7 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
         "src/test/*.hpp"
 )
 add_executable(tests ${TEST_SOURCES})
-set_property(TARGET tests PROPERTY CXX_STANDARD 23)
+set_property(TARGET tests PROPERTY CXX_STANDARD 20)
 target_link_libraries(tests PRIVATE game-lib GTest::gtest_main)
 
 target_link_libraries(tests PRIVATE magic_enum::magic_enum)
@@ -53,10 +53,9 @@ target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/external/tileson/in
 if(ENABLE_COVERAGE)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(game-lib PRIVATE -O0 -g --coverage)
-        target_link_options(game-lib PRIVATE --coverage)
         target_compile_options(tests PRIVATE -O0 -g --coverage)
-        target_link_options(tests PRIVATE --coverage)
         target_compile_options(main PRIVATE -O0 -g --coverage)
+        target_link_options(tests PRIVATE --coverage)
         target_link_options(main PRIVATE --coverage)
     else()
         message(WARNING "Coverage is only configured for GCC and Clang.")

@@ -43,7 +43,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential g++-14 cmake ninja-build \
+            build-essential g++-14 gcc-14 cmake ninja-build \
             libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
             libudev-dev libgl-dev libfreetype-dev \
             libogg-dev libvorbis-dev libflac-dev
@@ -75,7 +75,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential g++-14 cmake ninja-build python3-pip
-          pip install gcovr
+          sudo apt-get install -y gcovr
           sudo apt-get install -y \
             libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
             libudev-dev libgl-dev libfreetype-dev \
@@ -86,82 +86,31 @@ jobs:
           cmake -S . -B build-coverage -G Ninja \
             -DCMAKE_BUILD_TYPE=Debug \
             -DENABLE_COVERAGE=ON \
+            -DCMAKE_C_COMPILER=gcc-14 \
             -DCMAKE_CXX_COMPILER=g++-14 \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Build coverage target
         run: cmake --build build-coverage --verbose
 
-      - name: List registered tests
-        run: ctest --test-dir build-coverage -N
-
-      - name: Show embedded gcda paths
+      - name: Run tests for coverage
         run: |
-              strings build-coverage/tests | grep "\.gcda" | head -100 || true
-
-      - name: Run tests for coverage and capture gcov errors
-        run: |
-          rm -f gcov-error.log
-          find . -name "*.gcda" -delete
-      
-          export GCOV_ERROR_FILE="${{ github.workspace }}/gcov-error.log"
-          export GCOV_EXIT_AT_ERROR=1
-      
           echo "Running test binary directly..."
-          set +e
           ./build-coverage/tests
-          status=$?
-          set -e
-      
-          echo ""
-          echo "Test exit status: $status"
-      
-          echo ""
-          echo "GCOV error log:"
-          if [ -f gcov-error.log ]; then
-            cat gcov-error.log
-          else
-            echo "No gcov-error.log was created."
-          fi
-      
-          echo ""
+
+      - name: Check generated coverage data
+        run: |
           echo "Generated .gcda files:"
-          find . -name "*.gcda" | sort | head -200
-      
-          echo ""
-          echo "GCDA count:"
-          find . -name "*.gcda" | wc -l
-      
-          exit $status
-
-      - name: Debug coverage files
-        run: |
-              echo "GCNO:"
-              find . -name "*.gcno" | sort | head -100
-
-              echo ""
-              echo "GCDA:"
-              find . -name "*.gcda" | sort | head -200
-              echo ""
-              echo "GCDA count:"
-              find . -name "*.gcda" | wc -l
-
-      - name: Check test binary gcov symbols
-        run: |
-              nm -C build-coverage/tests | grep -E "__gcov|gcov" | head -50 || true
-
-      - name: Debug raw coverage files
-        run: |
-          echo "Found .gcno files:"
-          find build-coverage -name "*.gcno" | sort | head -100
-
-          echo ""
-          echo "Found .gcda files:"
           find build-coverage -name "*.gcda" | sort | head -100
 
-          echo ""
-          echo "Number of .gcda files:"
-          find build-coverage -name "*.gcda" | wc -l
+          echo "GCDA count:"
+          count=$(find build-coverage -name "*.gcda" | wc -l)
+          echo "$count"
+
+          if [ "$count" -eq 0 ]; then
+            echo "No .gcda files generated. Coverage runtime did not write data."
+            exit 1
+          fi
 
       - name: Generate SonarCloud coverage report
         run: |
@@ -176,17 +125,6 @@ jobs:
             --exclude 'build-coverage/.*' \
             --txt \
             --sonarqube build-coverage/coverage.xml
-
-      - name: Inspect generated coverage report
-        run: |
-          test -s build-coverage/coverage.xml
-
-          echo "First lines of coverage.xml:"
-          head -50 build-coverage/coverage.xml
-
-          echo ""
-          echo "Files listed in coverage.xml:"
-          grep -o 'path="[^"]*"' build-coverage/coverage.xml | head -100
 
       - name: Run SonarCloud scan
         uses: SonarSource/sonarqube-scan-action@v6
