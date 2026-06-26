@@ -11,7 +11,9 @@
 #include "Implementation/Components/StatsComponent.hpp"
 #include <Abstract/Combat/Components/DeathComponent.hpp>
 #include <Abstract/Exception/InvalidCombatTargetException.hpp>
+#include <format>
 #include <random>
+#include <string>
 
 AISystem::AISystem(ArchetypeManager &manager) : System(manager) {};
 

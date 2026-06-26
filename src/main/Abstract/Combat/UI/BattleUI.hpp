@@ -1,6 +1,7 @@
 #pragma once
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include <format>
 #include <string>
 
 class BattleUI {

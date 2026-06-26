@@ -113,7 +113,7 @@ void SwitchBattleModeSystem::update()
 
 	for (const auto &participant : participantsList) {
 		if (!this->manager.hasComponent<BattleComponent>(participant)) {
-			throw MissingComponentException("Batteling entity does not have a battle component");
+			throw MissingComponentException("Battling entity does not have a battle component");
 		}
 
 		if (auto &character = manager.getComponent<CharacterComponent>(participant); character.equipedWeapon == 0) {

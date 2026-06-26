@@ -4,6 +4,9 @@
 
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
+#include <format>
+#include <memory>
+#include <unordered_map>
 StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), gui(gui) {}
 
 void StatsDistributorSystem::update()

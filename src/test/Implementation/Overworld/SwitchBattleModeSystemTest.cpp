@@ -8,7 +8,9 @@
 #include "Abstract/Overwordl/Components/TransformComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Implementation/Components/BattleComponent.hpp"
+#include <algorithm>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(SwitchBattleModeTest, ValidatesEnemiesCorrectly)
 {

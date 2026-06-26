@@ -11,6 +11,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include <algorithm>
+#include <format>
 BattleInputSystem::BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui)
     : System(manager), ui(gui) {
 

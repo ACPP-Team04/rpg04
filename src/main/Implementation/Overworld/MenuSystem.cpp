@@ -15,6 +15,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include <format>
 #include <iomanip>
 #include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
