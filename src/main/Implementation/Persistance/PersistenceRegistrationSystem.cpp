@@ -11,8 +11,10 @@
 #include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include <cmath>
+#include <format>
 #include <spdlog/spdlog.h>
 #include <string>
+#include <vector>
 
 PersistenceRegistrationSystem::PersistenceRegistrationSystem(ArchetypeManager &manager) : System(manager) {}
 
@@ -68,7 +70,7 @@ void PersistenceRegistrationSystem::update()
 	commandBuffer.clear();
 
 	manager.view<DialogComponent, InteractionComponent, TransformComponent, PartOfLayerComponent>().each(
-	    [this, &commandBuffer](EntityID id, [[maybe_unused]] const DialogComponent &dialog,
+	    [this, &commandBuffer](EntityID id, const DialogComponent &dialog,
 	                           [[maybe_unused]] InteractionComponent &interactComp, const TransformComponent &trans,
 	                           const PartOfLayerComponent &layer) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
@@ -76,8 +78,8 @@ void PersistenceRegistrationSystem::update()
 
 		    auto x = static_cast<int>(std::round(trans.position.x));
 		    auto y = static_cast<int>(std::round(trans.position.y));
-		    std::string uuid = std::format("Dialog_{}_{}_{}_{}_{})", layer.groupId, x, y, dialog.currentNodeIndex,
-		                                   dialog.nodes.size());
+		    std::string uuid =
+		        std::format("Dialog_{}_{}_{}_{}_{}", layer.groupId, x, y, dialog.currentNodeIndex, dialog.nodes.size());
 		    commandBuffer.emplace_back(id, uuid);
 	    });
 	for (const auto &[id, uuid] : commandBuffer) {
