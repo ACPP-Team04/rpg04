@@ -17,6 +17,7 @@
 #include <Abstract/Exception/AllParticipantsDeadException.hpp>
 #include <Abstract/Exception/InvalidAttackActionSelectedException.hpp>
 #include <Abstract/Exception/InvalidCombatTargetException.hpp>
+#include <Abstract/Exception/MissingComponentException.hpp>
 #include <Abstract/Exception/NoParticipantsException.hpp>
 #include <Abstract/Exception/PlayerNotFoundException.hpp>
 #include <Abstract/Overwordl/Components/InputComponent.hpp>
@@ -321,7 +322,7 @@ void CombatSystem::cleanUpBattle(EntityID battleManagerId, BATTLE_FACTION winnin
 		if (!manager.hasComponent<BattleComponent>(entity)) {
 			spdlog::get("combat")->error("Entity {} does not have a BattleComponent during battle cleanup",
 			                             entity.getId());
-			throw std::runtime_error("Entity does not have a BattleComponent during battle cleanup");
+			throw MissingComponentException("Entity does not have a BattleComponent during battle cleanup");
 		}
 		BATTLE_FACTION battleFaction = manager.getComponent<BattleComponent>(entity).faction;
 		manager.removeComponentFromEntity<BattleComponent>(entity);
