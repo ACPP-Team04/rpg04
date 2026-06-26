@@ -148,6 +148,8 @@ std::vector<EntityID> SwitchBattleModeSystem::getEnemiesInRatio(const EntityID &
 			    return;
 		    }
 		    if (squaredDistance <= radius * radius) {
+			    spdlog::debug("Entity with id {} is within the battle radius, has {}", entityId.getId(),
+			                  squaredDistance);
 			    enemiesIdList.push_back(entityId);
 		    } else {
 			    spdlog::info("Entity with id {} is not within the battle radius, has {}", entityId.getId(),
