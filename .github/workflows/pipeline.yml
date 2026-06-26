@@ -83,28 +83,61 @@ jobs:
 
       - name: Configure coverage build
         run: |
-          cmake -S . -B build-coverage \
+          cmake -S . -B build-coverage -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
             -DENABLE_COVERAGE=ON \
             -DCMAKE_CXX_COMPILER=g++-14 \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-      - name: Build
+      - name: Build coverage target
         run: cmake --build build-coverage --verbose
 
-      - name: Run tests
+      - name: List registered tests
+        run: ctest --test-dir build-coverage -N
+
+      - name: Run tests for coverage
         run: ctest --test-dir build-coverage --output-on-failure
 
-      - name: Generate coverage report
+      - name: Debug raw coverage files
         run: |
-          gcovr -r . build-coverage \
-            --sonarqube build-coverage/coverage.xml \
-            --gcov-executable gcov-14 \
-            --exclude 'src/test' \
-            --exclude ".*dummy\.cpp" \
-            --exclude 'vcpkg_installed' \
+          echo "Found .gcno files:"
+          find build-coverage -name "*.gcno" | sort | head -100
 
-      - name: Run SonarScanner
-        uses: sonarsource/sonarqube-scan-action@v6
+          echo ""
+          echo "Found .gcda files:"
+          find build-coverage -name "*.gcda" | sort | head -100
+
+          echo ""
+          echo "Number of .gcda files:"
+          find build-coverage -name "*.gcda" | wc -l
+
+      - name: Generate SonarCloud coverage report
+        run: |
+          gcovr \
+            --root . \
+            --object-directory build-coverage \
+            --gcov-executable gcov-14 \
+            --filter 'src/main/.*' \
+            --exclude 'src/test/.*' \
+            --exclude '.*dummy\.cpp' \
+            --exclude 'vcpkg_installed/.*' \
+            --exclude 'build-coverage/.*' \
+            --txt \
+            --sonarqube build-coverage/coverage.xml
+
+      - name: Inspect generated coverage report
+        run: |
+          test -s build-coverage/coverage.xml
+
+          echo "First lines of coverage.xml:"
+          head -50 build-coverage/coverage.xml
+
+          echo ""
+          echo "Files listed in coverage.xml:"
+          grep -o 'path="[^"]*"' build-coverage/coverage.xml | head -100
+
+      - name: Run SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
@@ -115,5 +148,6 @@ jobs:
             -Dsonar.sources=src/main
             -Dsonar.tests=src/test
             -Dsonar.exclusions=vcpkg_installed/**,build-coverage/**
+            -Dsonar.coverage.exclusions=src/main/Implementation/main.cpp
             -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
             -Dsonar.coverageReportPaths=build-coverage/coverage.xml
