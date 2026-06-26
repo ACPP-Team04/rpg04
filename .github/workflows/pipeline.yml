@@ -43,7 +43,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential g++-14 cmake ninja-build \
+            build-essential g++-14 gcc-14 cmake ninja-build \
             libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
             libudev-dev libgl-dev libfreetype-dev \
             libogg-dev libvorbis-dev libflac-dev
@@ -75,7 +75,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential g++-14 cmake ninja-build python3-pip
-          pip install gcovr
+          sudo apt-get install -y gcovr
           sudo apt-get install -y \
             libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
             libudev-dev libgl-dev libfreetype-dev \
@@ -83,40 +83,61 @@ jobs:
 
       - name: Configure coverage build
         run: |
-          cmake -S . -B build-coverage \
+          cmake -S . -B build-coverage -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
             -DENABLE_COVERAGE=ON \
+            -DCMAKE_C_COMPILER=gcc-14 \
             -DCMAKE_CXX_COMPILER=g++-14 \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-      - name: Build
-        run: cmake --build build-coverage
+      - name: Build coverage target
+        run: cmake --build build-coverage --verbose
 
-      - name: Run tests
-        run: ctest --test-dir build-coverage --output-on-failure
-
-      - name: Generate coverage report
+      - name: Run tests for coverage
         run: |
-          gcovr -r . build-coverage --sonarqube build-coverage/coverage.xml \
-            --gcov-executable gcov-14 \
-            --exclude 'src/test' \
-            --exclude ".*dummy\.cpp" \
-            --exclude 'vcpkg_installed' \
-            --xml -o build-coverage/coverage.xml
+          echo "Running test binary directly..."
+          ./build-coverage/tests
 
-      - name: Run SonarScanner
-        uses: sonarsource/sonarqube-scan-action@v6
+      - name: Check generated coverage data
+        run: |
+          echo "Generated .gcda files:"
+          find build-coverage -name "*.gcda" | sort | head -100
+
+          echo "GCDA count:"
+          count=$(find build-coverage -name "*.gcda" | wc -l)
+          echo "$count"
+
+          if [ "$count" -eq 0 ]; then
+            echo "No .gcda files generated. Coverage runtime did not write data."
+            exit 1
+          fi
+
+      - name: Generate SonarCloud coverage report
+        run: |
+          gcovr \
+            --root . \
+            --object-directory build-coverage \
+            --gcov-executable gcov-14 \
+            --filter 'src/main/.*' \
+            --exclude 'src/test/.*' \
+            --exclude '.*dummy\.cpp' \
+            --exclude 'vcpkg_installed/.*' \
+            --exclude 'build-coverage/.*' \
+            --txt \
+            --sonarqube build-coverage/coverage.xml
+
+      - name: Run SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
-            -Dsonar.cfamily.gcov.reportsPath=build-coverage/
             -Dsonar.projectKey=ACPP-Team04_rpg04
             -Dsonar.organization=acpp-team04
             -Dsonar.projectVersion=${{ github.sha }}
             -Dsonar.sources=src/main
             -Dsonar.tests=src/test
             -Dsonar.exclusions=vcpkg_installed/**,build-coverage/**
+            -Dsonar.coverage.exclusions=src/main/Implementation/main.cpp
             -Dsonar.cfamily.compile-commands=build-coverage/compile_commands.json
-            -Dsonar.cpp.gcov.reportPaths=build-coverage/coverage.xml
             -Dsonar.coverageReportPaths=build-coverage/coverage.xml
