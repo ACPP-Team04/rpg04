@@ -16,8 +16,6 @@ AISystem::AISystem(ArchetypeManager &manager) : System(manager) {};
 
 std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<EntityID> &participants)
 {
-	auto test = 42;
-	spdlog::info("Coverage test: {}", test);
 	std::vector<EntityID> validTargets = this->getValidTargets(aiId, participants);
 
 	if (validTargets.empty()) {
