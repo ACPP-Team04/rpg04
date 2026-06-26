@@ -211,9 +211,9 @@ void SwitchBattleModeSystem::prepareEnemiesForBattle(const std::vector<EntityID>
 int SwitchBattleModeSystem::determineXpRewardForPlayer(size_t numberOfEnemies) const
 {
 	const float BASE_XP_PER_ENEMY = 1.0f;
-	float multiplier = 1.0f + (0.5f * (numberOfEnemies - 1));
+	float multiplier = 1.0f + (0.5f * (static_cast<float>(numberOfEnemies) - 1));
 
-	float result = (numberOfEnemies * BASE_XP_PER_ENEMY) * multiplier;
+	float result = (static_cast<float>(numberOfEnemies) * BASE_XP_PER_ENEMY) * multiplier;
 
 	return static_cast<int>(result);
 }
