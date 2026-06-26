@@ -16,7 +16,7 @@ AISystem::AISystem(ArchetypeManager &manager) : System(manager) {};
 
 std::optional<EntityID> AISystem::selectTarget(EntityID aiId, const std::vector<EntityID> &participants)
 {
-	auto &aiBattleComp = manager.getComponent<BattleComponent>(aiId);
+	//auto &aiBattleComp = manager.getComponent<BattleComponent>(aiId);
 
 	std::vector<EntityID> validTargets = this->getValidTargets(aiId, participants);
 
