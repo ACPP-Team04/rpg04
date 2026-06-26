@@ -49,6 +49,8 @@ void CombatSystem::processBattleTick(const EntityID &battleId, BattleManagerComp
 	EntityID playerId;
 	if (player.has_value()) {
 		playerId = player.value();
+	} else {
+		throw PlayerNotFoundException("No player found in CombatSystem::processBattleTick");
 	}
 	EntityID currentAttacker = this->getAttacker(bmc);
 	BattleComponent &battle = manager.getComponent<BattleComponent>(currentAttacker);
