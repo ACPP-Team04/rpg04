@@ -95,9 +95,25 @@ jobs:
       - name: List registered tests
         run: ctest --test-dir build-coverage -N
 
-      - name: Run tests for coverage
+      - name: Show embedded gcda paths
         run: |
-                ./build-coverage/tests
+              strings build-coverage/tests | grep "\.gcda" | head -100 || true
+
+      - name: Run tests for coverage directly with GCOV_PREFIX
+        run: |
+              mkdir -p "${{ github.workspace }}/gcov-output"
+              export GCOV_PREFIX="${{ github.workspace }}/gcov-output"
+              export GCOV_PREFIX_STRIP=0
+          
+              ./build-coverage/tests
+          
+              echo ""
+              echo "GCDA files:"
+              find "${{ github.workspace }}" -name "*.gcda" | sort | head -200
+          
+              echo ""
+              echo "GCDA count:"
+              find "${{ github.workspace }}" -name "*.gcda" | wc -l
 
       - name: Debug coverage files
         run: |
