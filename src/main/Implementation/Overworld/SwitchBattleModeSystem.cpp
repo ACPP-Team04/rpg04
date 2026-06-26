@@ -95,10 +95,13 @@ void SwitchBattleModeSystem::update()
 	preparePlayerPartyForBattle(participantsList, player);
 	auto enemyList = getEnemiesInRatio(
 	    initialEnemyId, manager.getComponent<TransformComponent>(initialEnemyId).position, 65.0f, participantsList);
+
 	prepareEnemiesForBattle(enemyList);
 	participantsList.insert(participantsList.end(), enemyList.begin(), enemyList.end());
 
 	EntityID bManager = this->manager.createEntity<BattleManagerComponent, PartOfLayerComponent>();
+	int reward = determineXpRewardForPlayer(enemyList.size());
+	manager.getComponent<BattleManagerComponent>(bManager).playerXpReward = reward;
 	const WorldComponent *world = WorldUtils::getWorld(manager);
 	if (world == nullptr) {
 		return;
@@ -203,4 +206,14 @@ void SwitchBattleModeSystem::prepareEnemiesForBattle(const std::vector<EntityID>
 		battleComp.faction = BATTLE_FACTION::ENEMY;
 		battleComp.controller = BATTLE_CONTROLLER::AI;
 	}
+}
+
+int SwitchBattleModeSystem::determineXpRewardForPlayer(size_t numberOfEnemies) const
+{
+	const float BASE_XP_PER_ENEMY = 1.0f;
+	float multiplier = 1.0f + (0.5f * (numberOfEnemies - 1));
+
+	float result = (numberOfEnemies * BASE_XP_PER_ENEMY) * multiplier;
+
+	return static_cast<int>(result);
 }

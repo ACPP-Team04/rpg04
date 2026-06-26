@@ -33,6 +33,19 @@ TEST(SwitchBattleModeTest, ValidatesEnemiesCorrectly)
 	enemyStats.stats.health = 0;
 	EXPECT_FALSE(system.isValidAdditionalEnemy(testEnemy, enemyStats, party, initialEnemy));
 }
+
+TEST(SwitchBattleModeTest, DeterminesXpRewardCorrectly)
+{
+	ArchetypeManager archetypeManager = ArchetypeManager();
+	AudioManager audioManager = AudioManager(16, false);
+	AudioSystem audioSystem = AudioSystem(archetypeManager, audioManager);
+	SwitchBattleModeSystem system(archetypeManager, audioSystem);
+
+	EXPECT_EQ(1, system.determineXpRewardForPlayer(1));
+	EXPECT_EQ(3, system.determineXpRewardForPlayer(2));
+	EXPECT_EQ(6, system.determineXpRewardForPlayer(3));
+}
+
 class SwitchBattleModeIntegrationTest : public ::testing::Test {
   protected:
 	ArchetypeManager manager;

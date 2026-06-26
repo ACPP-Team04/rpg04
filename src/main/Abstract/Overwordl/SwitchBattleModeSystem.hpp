@@ -16,6 +16,7 @@ struct SwitchBattleModeSystem : System {
 	void prepareEnemiesForBattle(const std::vector<EntityID> &enemies);
 	bool isValidAdditionalEnemy(EntityID entityId, const CharacterComponent &charComp,
 	                            const std::vector<EntityID> &playerParty, EntityID initialEnemy) const;
+	int determineXpRewardForPlayer(size_t numberOfEnemies) const;
 	static float getSquaredDistance(const sf::Vector2f &a, const sf::Vector2f &b)
 	{
 		float dx = a.x - b.x;
