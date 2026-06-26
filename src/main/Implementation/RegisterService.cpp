@@ -27,7 +27,8 @@
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Overwordl/WorldParser.hpp"
 #include "Components/BattleComponent.hpp"
-void RegisterService::registerAudio()
+
+void RegisterService::registerAudio() const
 {
 	AssetManager::getInstance().registerMusic("overworld", std::string(ROOT_DIR)
 	                                                           + "/src/ressources/audio/music/the_field_of_dreams.ogg");
@@ -56,7 +57,7 @@ void RegisterService::registerAudio()
 	                                          std::string(ROOT_DIR) + "/src/ressources/audio/sfx/zombie_death.wav");
 }
 
-void RegisterService::registerComponents()
+void RegisterService::registerComponents() const
 {
 	ComponentRegistry::getInstance().registerComponent<MovementComponent>("MOVEMENT_COMPONENT");
 	ComponentRegistry::getInstance().registerComponent<CameraComponent>("CAMERA_COMPONENT");

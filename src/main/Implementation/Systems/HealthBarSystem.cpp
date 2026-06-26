@@ -22,29 +22,29 @@ void HealthBarSystem::update()
 	EntityID mainPlayerId = playerIdOpt.value();
 
 	auto bmcView = manager.view<BattleManagerComponent>();
-	if (bmcView.archetypes.size() == 0) {
+	if (bmcView.archetypes.empty()) {
 		return;
 	}
 
 	std::optional<EntityID> hoveringTargetOpt = std::nullopt;
-	manager.view<BattleComponent>().each([&](EntityID id, BattleComponent &battleComp) {
+	manager.view<BattleComponent>().each([&hoveringTargetOpt](EntityID id, BattleComponent &battleComp) {
 		if (battleComp.isActiveTurn && battleComp.controller == BATTLE_CONTROLLER::LOCAL_PLAYER) {
 			hoveringTargetOpt = battleComp.hoveringTarget;
 		}
 	});
 
-	bmcView.each([&](EntityID bmcId, BattleManagerComponent &bmc) {
+	bmcView.each([&mainPlayerId, &hoveringTargetOpt, this](EntityID bmcId, const BattleManagerComponent &bmc) {
 		for (EntityID id : bmc.participants) {
 			if (id == mainPlayerId || manager.hasComponent<DeathComponent>(id)) {
 				continue;
 			}
 
-			auto &stats = manager.getComponent<CharacterComponent>(id).stats;
-			auto &transform = manager.getComponent<TransformComponent>(id);
-			auto &battle = manager.getComponent<BattleComponent>(id);
+			const auto &stats = manager.getComponent<CharacterComponent>(id).stats;
+			const auto &transform = manager.getComponent<TransformComponent>(id);
+			const auto &battle = manager.getComponent<BattleComponent>(id);
 
-			float maxHp = stats.getStat(STATS::MAX_HEALTH);
-			float hpPercent = std::clamp(stats.health / maxHp, 0.0f, 1.0f);
+			auto maxHp = static_cast<float>(stats.getStat(STATS::MAX_HEALTH));
+			float hpPercent = std::clamp(static_cast<float>(stats.health) / maxHp, 0.0f, 1.0f);
 
 			float barWidth = 40.f;
 			float barHeight = 5.f;

@@ -82,7 +82,7 @@ struct ComponentArea {
 	{
 		ArchetypeBitSignature signature = TypeInfo<T>().bitRepr();
 		if (!componentPools.contains(signature)) {
-			throw new std::runtime_error("Component Pool contains unregistered type");
+			throw std::runtime_error("Component Pool contains unregistered type");
 		}
 		return static_cast<ComponentPool<T> *>(componentPools[signature].get())->getComponentArrayAsReference();
 	}

@@ -9,14 +9,15 @@ BonfireSystem::BonfireSystem(ArchetypeManager &manager) : System(manager) {}
 
 void BonfireSystem::update()
 {
-	WorldUtils::viewInCurrentLayer<InteractionComponent>(manager, [&](auto entity, InteractionComponent &component) {
-		if (!component.isActive) {
-			return;
-		}
+	WorldUtils::viewInCurrentLayer<InteractionComponent>(
+	    manager, [this]([[maybe_unused]] EntityID entity, InteractionComponent &component) {
+		    if (!component.isActive) {
+			    return;
+		    }
 
-		if (component.action == INTERACTION_ACTION::BONFIRE_REST) {
+		    if (component.action == INTERACTION_ACTION::BONFIRE_REST) {
 
-			spdlog::info("Bonfire interaction detected! Executing save...");
+			    spdlog::info("Bonfire interaction detected! Executing save...");
 
 			PersistenceManager::getInstance().requestSave = true;
 			WorldComponent *world = WorldUtils::getWorld(manager);

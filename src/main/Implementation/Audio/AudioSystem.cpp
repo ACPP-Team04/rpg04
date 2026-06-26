@@ -10,7 +10,7 @@ AudioSystem::AudioSystem(ArchetypeManager &manager, AudioManager &audioManager)
 {
 }
 
-void AudioSystem::enqueueSound(const std::string &soundId, float volumeModifier)
+void AudioSystem::enqueueSound(std::string_view soundId, float volumeModifier)
 {
 	PlaySoundEvent event;
 	event.soundId = soundId;
@@ -27,7 +27,7 @@ void AudioSystem::update()
 	soundQueue.clear();
 
 	manager.view<AudioComponent, TransformComponent>().each(
-	    [&](EntityID id, AudioComponent &acomp, TransformComponent &tcomp) {
+	    [this]([[maybe_unused]] EntityID id, AudioComponent &acomp, const TransformComponent &tcomp) {
 		    auto playerPosOptional = WorldUtils::getPlayersComponent<TransformComponent>(manager);
 
 		    if (!playerPosOptional.has_value()) {

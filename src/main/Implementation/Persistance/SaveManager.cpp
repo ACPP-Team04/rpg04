@@ -10,12 +10,14 @@
 #include <Abstract/Overwordl/Components/TransformComponent.hpp>
 
 #include "Abstract/Audio/AudioSystem.hpp"
+#include <Abstract/Exception/SaveSlotNotFoundException.hpp>
 #include <Abstract/Overwordl/Components/CharacterComponent.hpp>
 #include <Abstract/Overwordl/Components/DialogComponent.hpp>
 #include <Abstract/Overwordl/Components/IsLockedComponent.hpp>
 #include <Abstract/Overwordl/Components/ItemComponent.hpp>
 #include <chrono>
 #include <ctime>
+#include <format>
 #include <fstream>
 #include <iomanip>
 #include <spdlog/spdlog.h>
@@ -46,16 +48,12 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 	nlohmann::json saveData;
 	saveData["slot"] = slotIndex;
 
-	auto now = std::chrono::system_clock::now();
-	std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-
 	std::stringstream ss;
-	ss << std::put_time(std::localtime(&now_time), "%Y-%m-%d %H:%M:%S");
+	ss << std::format("{:%Y-%m-%d %H:%M:%S}", std::chrono::current_zone()->to_local(std::chrono::system_clock::now()));
 
 	saveData["metadata"]["timestamp"] = ss.str();
 
-	auto playerEntityOpt = WorldUtils::getPlayer(manager);
-	if (playerEntityOpt.has_value()) {
+	if (auto playerEntityOpt = WorldUtils::getPlayer(manager); playerEntityOpt.has_value()) {
 		EntityID player = playerEntityOpt.value();
 
 		// Save Position
@@ -79,7 +77,9 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 		int inventoryGroupId = characterComp.inventory.inventoryWorldId;
 
 		WorldUtils::viewInSpecificLayer<ItemComponent>(
-		    manager, inventoryGroupId, [&](EntityID itemEntity, ItemComponent &itemComp) {
+		    manager, inventoryGroupId,
+		    [&manager, &characterComp, &inventoryGroupId, &inventoryJson](EntityID itemEntity,
+		                                                                  ItemComponent &itemComp) {
 			    nlohmann::json itemJson;
 			    if (manager.hasComponent<PersistanceComponent>(itemEntity)) {
 				    itemJson["uuid"] = manager.getComponent<PersistanceComponent>(itemEntity).uuid;
@@ -98,36 +98,32 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 		saveData["player"]["inventory"] = inventoryJson;
 
 		if (manager.hasComponent<PartOfLayerComponent>(player)) {
-			auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
-			saveData["player"]["layerData"]["groupId"] = static_cast<int>(layerComp.groupId);
+			const auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
+			saveData["player"]["layerData"]["groupId"] = layerComp.groupId;
 		}
 	} else {
 		spdlog::warn("SaveManager: No player found in ECS to save!");
 	}
 	// Save doors
 	manager.view<PersistanceComponent, IsLockedComponent>().each(
-	    [&](EntityID id, PersistanceComponent &persist, IsLockedComponent &lockComp) {
+	    [&saveData]([[maybe_unused]] EntityID id, const PersistanceComponent &persist, IsLockedComponent &lockComp) {
 		    saveData["worldState"]["doorStates"][persist.uuid] = lockComp.isLocked;
 	    });
 
 	// Save dialogs
 	manager.view<PersistanceComponent, DialogComponent, InteractionComponent>().each(
-	    [&](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp,
-	        InteractionComponent &interaction) {
+	    [&saveData]([[maybe_unused]] EntityID id, const PersistanceComponent &persist, DialogComponent &dialogComp,
+	                InteractionComponent &interaction) {
 		    saveData["worldState"]["dialogStates"][persist.uuid] = dialogComp.currentNodeIndex;
 		    saveData["worldState"]["interactionStates"]["isActive"][persist.uuid] = interaction.isActive;
 		    saveData["worldState"]["interactionStates"]["deactivated"][persist.uuid] = interaction.deactivated;
 	    });
 
 	auto currentMusicOpt = AudioManager::getInstance().getCurrentMusicName();
-	if (currentMusicOpt.has_value()) {
-		saveData["worldState"]["currentMusic"] = currentMusicOpt.value();
-	} else {
-		saveData["worldState"]["currentMusic"] = "";
-	}
+	saveData["worldState"]["currentMusic"] = currentMusicOpt.value_or("");
 
 	saveData["worldState"]["deadUniqueEntities"] = PersistenceManager::getInstance().deadUniqueEntities;
-	manager.view<WorldComponent>().each([&](EntityID entity, WorldComponent &worldComp) {
+	manager.view<WorldComponent>().each([&saveData]([[maybe_unused]] EntityID entity, WorldComponent &worldComp) {
 		saveData["worldState"]["worldComponent"]["widthPixel"] = worldComp.widthPixel;
 		saveData["worldState"]["worldComponent"]["heightPixel"] = worldComp.heightPixel;
 
@@ -153,7 +149,7 @@ void SaveManager::saveGame(ArchetypeManager &manager, int slotIndex)
 nlohmann::json SaveManager::loadSaveFile(int slotIndex)
 {
 	if (!doesSaveExist(slotIndex)) {
-		throw std::runtime_error(fmt::format("Save slot {} does not exist!", slotIndex));
+		throw SaveSlotNotFoundException(fmt::format("Save slot {} does not exist!", slotIndex));
 	}
 
 	std::ifstream file(getSaveFilePath(slotIndex));
@@ -180,12 +176,13 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 	const auto &deadEntities = PersistenceManager::getInstance().deadUniqueEntities;
 	std::vector<EntityID> toDelete;
 
-	manager.view<PersistanceComponent>().each([&](EntityID id, PersistanceComponent &persistent) {
-		if (deadEntities.find(persistent.uuid) != deadEntities.end()) {
-			toDelete.push_back(id);
-			return;
-		}
-	});
+	manager.view<PersistanceComponent>().each(
+	    [&deadEntities, &toDelete](EntityID id, const PersistanceComponent &persistent) {
+		    if (deadEntities.contains(persistent.uuid)) {
+			    toDelete.push_back(id);
+			    return;
+		    }
+	    });
 
 	for (EntityID id : toDelete) {
 		manager.destroyEntity(id);
@@ -194,7 +191,7 @@ void SaveManager::applyWorldStateOverrides(ArchetypeManager &manager)
 	spdlog::info("World State Overrides Applied: Pruned {} dead entities.", toDelete.size());
 }
 
-void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, EntityID &player)
+void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &playerJson, const EntityID &player)
 {
 
 	if (manager.hasComponent<TransformComponent>(player)) {
@@ -215,48 +212,55 @@ void SaveManager::injectPlayer(ArchetypeManager &manager, const nlohmann::json &
 		charComp.stats.addScalableStats(MAX_HEALTH, playerJson["stats"].value("MAX_HEALTH", 100));
 
 		if (playerJson.contains("inventory")) {
-			charComp.equipedWeapon = 0;
-			charComp.equipedCompanion = 0;
-
-			for (const auto &itemJson : playerJson["inventory"]) {
-				if (!itemJson.contains("uuid"))
-					continue;
-
-				std::string savedUuid = itemJson["uuid"];
-				ITEM_TYPE type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
-				bool isEquipped = itemJson.value("isEquipped", false);
-
-				EntityID foundItem = EntityID();
-
-				manager.view<PersistanceComponent, PartOfLayerComponent>().each(
-				    [&](EntityID id, PersistanceComponent &persist, PartOfLayerComponent &layerComp) {
-					    if (persist.uuid == savedUuid) {
-						    foundItem = id;
-						    layerComp.groupId = charComp.inventory.inventoryWorldId;
-					    }
-				    });
-
-				if (foundItem.getId() == 0) {
-					spdlog::warn("Could not find mapped item with UUID {}!", savedUuid);
-					continue;
-				}
-				if (isEquipped) {
-					if (type == ITEM_TYPE::WEAPON) {
-						charComp.equipedWeapon = foundItem.getId();
-						spdlog::info("Equipped loaded weapon (New ID: {})", foundItem.getId());
-					} else if (type == ITEM_TYPE::COLLECTABLE_COMPANION) {
-						charComp.equipedCompanion = foundItem.getId();
-						spdlog::info("Equipped loaded companion (New ID: {})", foundItem.getId());
-					}
-				}
-			}
+			injectInventory(manager, charComp, playerJson["inventory"]);
 		}
 	}
-	if (playerJson.contains("layerData")) {
+	if (playerJson.contains("layerData") && manager.hasComponent<PartOfLayerComponent>(player)) {
 		auto &layerComp = manager.getComponent<PartOfLayerComponent>(player);
 		layerComp.groupId = playerJson["layerData"].value("groupId", -1);
 	}
 	spdlog::info("Player successfully injected into the world.");
+}
+
+void SaveManager::injectInventory(ArchetypeManager &manager, CharacterComponent &charComp,
+                                  const nlohmann::json &inventoryJson)
+{
+	charComp.equipedWeapon = 0;
+	charComp.equipedCompanion = 0;
+
+	for (const auto &itemJson : inventoryJson) {
+		if (!itemJson.contains("uuid"))
+			continue;
+
+		std::string savedUuid = itemJson["uuid"];
+		auto type = static_cast<ITEM_TYPE>(itemJson["itemType"].get<int>());
+		bool isEquipped = itemJson.value("isEquipped", false);
+
+		auto foundItem = EntityID();
+
+		manager.view<PersistanceComponent, PartOfLayerComponent>().each(
+		    [&foundItem, &savedUuid, &charComp](EntityID id, const PersistanceComponent &persist,
+		                                        PartOfLayerComponent &layerComp) {
+			    if (persist.uuid == savedUuid) {
+				    foundItem = id;
+				    layerComp.groupId = charComp.inventory.inventoryWorldId;
+			    }
+		    });
+
+		if (foundItem.getId() == 0) {
+			spdlog::warn("Could not find mapped item with UUID {}!", savedUuid);
+			continue;
+		}
+		if (isEquipped) {
+			if (type == ITEM_TYPE::WEAPON) {
+				charComp.equipedWeapon = foundItem.getId();
+				spdlog::info("Equipped loaded weapon (New ID: {})", foundItem.getId());
+			} else if (type == ITEM_TYPE::COLLECTABLE_COMPANION) {
+				charComp.equipedCompanion = foundItem.getId();
+				spdlog::info("Equipped loaded companion (New ID: {})", foundItem.getId());
+			}
+		}
+	}
 }
 
 void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann::json &worldStateJson)
@@ -267,7 +271,7 @@ void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann
 
 	const auto &wcJson = worldStateJson["worldComponent"];
 
-	manager.view<WorldComponent>().each([&](EntityID entity, WorldComponent &worldComp) {
+	manager.view<WorldComponent>().each([&wcJson]([[maybe_unused]] EntityID entity, WorldComponent &worldComp) {
 		worldComp.widthPixel = wcJson.value("widthPixel", 0u);
 		worldComp.heightPixel = wcJson.value("heightPixel", 0u);
 
@@ -282,8 +286,8 @@ void SaveManager::injectWorldComponent(ArchetypeManager &manager, const nlohmann
 void SaveManager::injectDoors(ArchetypeManager &manager, const nlohmann::json &doorStates)
 {
 	manager.view<PersistanceComponent, IsLockedComponent, InteractionComponent>().each(
-	    [&](EntityID id, PersistanceComponent &persist, IsLockedComponent &lockComp,
-	        InteractionComponent &interactComp) {
+	    [&doorStates]([[maybe_unused]] EntityID id, const PersistanceComponent &persist, IsLockedComponent &lockComp,
+	                  InteractionComponent &interactComp) {
 		    if (doorStates.contains(persist.uuid)) {
 			    bool isStillLocked = doorStates[persist.uuid];
 			    lockComp.isLocked = isStillLocked;
@@ -299,8 +303,8 @@ void SaveManager::injectDialogs(ArchetypeManager &manager, const nlohmann::json 
                                 const nlohmann::json &interactionStates)
 {
 	manager.view<PersistanceComponent, DialogComponent, InteractionComponent>().each(
-	    [&](EntityID id, PersistanceComponent &persist, DialogComponent &dialogComp,
-	        InteractionComponent &interactionComp) {
+	    [&dialogStates, &interactionStates]([[maybe_unused]] EntityID id, const PersistanceComponent &persist,
+	                                        DialogComponent &dialogComp, InteractionComponent &interactionComp) {
 		    if (dialogStates.contains(persist.uuid)) {
 			    dialogComp.currentNodeIndex = dialogStates[persist.uuid];
 			    if (interactionStates.contains(persist.uuid)) {
@@ -313,4 +317,12 @@ void SaveManager::injectDialogs(ArchetypeManager &manager, const nlohmann::json 
 			    }
 		    }
 	    });
+}
+void SaveManager::deleteSave(int slotIndex)
+{
+	std::filesystem::path path = getSaveFilePath(slotIndex);
+	if (std::filesystem::exists(path)) {
+		std::filesystem::remove(path);
+		spdlog::info("Deleted save file at slot {}", slotIndex);
+	}
 }

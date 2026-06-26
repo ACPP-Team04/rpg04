@@ -77,7 +77,7 @@ struct ECSManager {
 	      audioSystem(manager, audioManager), renderSystem(manager, window), inputSystem(manager, window),
 	      dialogSystem(manager, window, gui), movementSystem(manager, dialogSystem), cameraSystem(manager, window),
 	      switchLayerSystem(manager), collisionSystem(manager), interactionSystem(manager), item_system(manager),
-	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui, window), aiSystem(manager),
+	      menuSystem(manager, gui), door_system(manager), battleInputSystem(manager, gui), aiSystem(manager),
 	      combatSystem(manager, aiSystem, audioSystem), statsDistributorSystem(manager, gui),
 	      switch_battle_mode_system(manager, audioSystem), healthBarSystem(manager, gui, window),
 	      animation_movement_system(manager), animation_setter_system(manager), clean_up_system(manager),

@@ -3,6 +3,6 @@
 
 struct AnimationMovementSystem : System {
 
-	AnimationMovementSystem(ArchetypeManager &manager);
+	explicit AnimationMovementSystem(ArchetypeManager &manager);
 	void update() override;
 };

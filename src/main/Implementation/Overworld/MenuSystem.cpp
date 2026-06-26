@@ -15,6 +15,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include <format>
 #include <iomanip>
 #include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
@@ -23,7 +24,7 @@ enum class MENU_TAB { WEAPONS, COLLECTABLES, COMPANIONS, STATS };
 
 MenuSystem::MenuSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), gui(gui) {};
 
-void overworldMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &gui)
+void overworldMenu(WorldComponent *world, tgui::Gui &gui)
 {
 	if (gui.get("overworldMenu"))
 		return;
@@ -73,8 +74,7 @@ void overworldMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &
 	exitBtn->setPosition({"10%", yPos});
 	exitBtn->onClick([world, &gui]() {
 		spdlog::info("Overworld Menu: Safe Shutdown Requested...");
-		// TODO: Do we want auto save on exit?
-		// PersistenceManager::getInstance().requestSave = true;
+		// No auto-save
 		PersistenceManager::getInstance().requestQuit = true;
 		world->menuOpened = false;
 		gui.remove(gui.get("overworldMenu"));
@@ -83,13 +83,13 @@ void overworldMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &
 
 	gui.add(panel);
 }
-void openMenu(ArchetypeManager &manager, WorldComponent *world, tgui::Gui &gui)
+void openMenu(WorldComponent *world, tgui::Gui &gui)
 {
 	LAYERTYPE layertype = world->currentLayer;
 	world->menuOpened = true;
 
 	if (layertype == LAYERTYPE::OVERWORLD) {
-		overworldMenu(manager, world, gui);
+		overworldMenu(world, gui);
 	}
 }
 
@@ -152,7 +152,8 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 		statsPanel->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
 		mainPanel->add(statsPanel);
 
-		manager.view<PlayerComponent, CharacterComponent>().each([&](auto &entity, auto &player, auto &characterComp) {
+		manager.view<PlayerComponent, CharacterComponent>().each([&statsPanel](auto &entity, auto &player,
+		                                                                       auto &characterComp) {
 			auto numFightsLabel =
 			    tgui::Label::create("Number of Fights Won: " + std::to_string(characterComp.stats.numberOfFightsWon));
 			numFightsLabel->setTextSize(30);
@@ -212,12 +213,13 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 		}
 		std::vector<EntityID> itemsInInventory;
 
-		WorldUtils::viewInSpecificLayer<ItemComponent>(manager, characterComp.inventory.inventoryWorldId,
-		                                               [&](EntityID entity, ItemComponent &itemComp) {
-			                                               if (itemComp.itemType == activeTabItemType) {
-				                                               itemsInInventory.push_back(entity);
-			                                               }
-		                                               });
+		WorldUtils::viewInSpecificLayer<ItemComponent>(
+		    manager, characterComp.inventory.inventoryWorldId,
+		    [&activeTabItemType, &itemsInInventory](EntityID entity, const ItemComponent &itemComp) {
+			    if (itemComp.itemType == activeTabItemType) {
+				    itemsInInventory.push_back(entity);
+			    }
+		    });
 
 		if (!itemsInInventory.empty()) {
 			float yOffset = 10.f;
@@ -299,17 +301,16 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 						std::stringstream stream;
 						stream << std::fixed << std::setprecision(2) << weapon.getScalingFactor();
 						std::string formattedScaling = stream.str();
-						std::string enumNameScalingFactor = std::string(magic_enum::enum_name(weapon.scalingFactor));
-						std::string enumNameWeaponType = std::string(magic_enum::enum_name(weapon.weaponType));
-						std::string enumNameScalingStat = std::string(magic_enum::enum_name(weapon.scalingStat));
+						auto enumNameScalingFactor = std::string(magic_enum::enum_name(weapon.scalingFactor));
+						auto enumNameWeaponType = std::string(magic_enum::enum_name(weapon.weaponType));
+						auto enumNameScalingStat = std::string(magic_enum::enum_name(weapon.scalingStat));
 
-						auto statsLabel = tgui::Label::create(
-						    "Light Attack: " + std::to_string(weapon.lightAttackBaseDmg) + "\n"
-						    + "Heavy Attack: " + std::to_string(weapon.heavyAttackBaseDmg) + "\n"
-						    + "Ultimate Attack: " + std::to_string(weapon.ultimateAttackBaseDmg) + "\n"
-						    + "Scaling Factor: " + enumNameScalingFactor + " (" + formattedScaling + ")\n"
-						    + "Scaling Stat: " + enumNameScalingStat + "\n" + "Weapon Type: " + enumNameWeaponType);
-
+						auto statsLabel = tgui::Label::create(std::format(
+						    "Light Attack: {}\nHeavy Attack: {}\nUltimate Attack: "
+						    "{}\nScaling Factor: {} ({})\nScaling "
+						    "Stat: {}\nWeapon Type: {}",
+						    weapon.lightAttackBaseDmg, weapon.heavyAttackBaseDmg, weapon.ultimateAttackBaseDmg,
+						    enumNameScalingFactor, formattedScaling, enumNameScalingStat, enumNameWeaponType));
 						statsLabel->setPosition({20, 70});
 						statsLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
 						inspectorPanel->add(statsLabel);
@@ -323,13 +324,10 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 
 						auto &compStats = manager.getComponent<CharacterComponent>(itemEntity).stats;
 
-						std::string statsText = "HP: " + std::to_string((int)compStats.health) + " / "
-						                        + std::to_string(compStats.getStat(STATS::MAX_HEALTH)) + "\n\n"
-						                        + "Strength: " + std::to_string(compStats.getStat(STATS::STRENGTH))
-						                        + "\n"
-						                        + "Dexterity: " + std::to_string(compStats.getStat(STATS::DEXTERITY))
-						                        + "\n" + "Faith: " + std::to_string(compStats.getStat(STATS::FAITH));
-
+						std::string statsText =
+						    std::format("HP: {} / {}\n\nStrength: {}\nDexterity: {}\nFaith: {}", compStats.health,
+						                compStats.getStat(STATS::MAX_HEALTH), compStats.getStat(STATS::STRENGTH),
+						                compStats.getStat(STATS::DEXTERITY), compStats.getStat(STATS::FAITH));
 						auto statsLabel = tgui::Label::create(statsText);
 						statsLabel->setPosition({20, 70});
 						statsLabel->getRenderer()->setTextColor(tgui::Color::Yellow);
@@ -383,15 +381,17 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 void MenuSystem::update()
 {
 	WorldComponent *world = nullptr;
-	this->manager.view<WorldComponent>().each([&](auto &entity, auto &component) { world = &component; });
+	this->manager.view<WorldComponent>().each(
+	    [&world]([[maybe_unused]] auto &entity, auto &component) { world = &component; });
 	InputComponent *input = nullptr;
-	this->manager.view<InputComponent>().each([&](auto &entity, auto &inputComponent) { input = &inputComponent; });
+	this->manager.view<InputComponent>().each(
+	    [&input]([[maybe_unused]] auto &entity, auto &inputComponent) { input = &inputComponent; });
 	if (!world || !input) {
 		return;
 	}
 	if (input->menuButton.justPressed) {
 		if (!world->menuOpened) {
-			openMenu(manager, world, this->gui);
+			openMenu(world, this->gui);
 		} else {
 			world->menuOpened = false;
 			if (gui.get("overworldMenu")) {

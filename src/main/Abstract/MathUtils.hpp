@@ -17,7 +17,7 @@ static float distance(const sf::FloatRect &bounds, const sf::FloatRect &bounds2)
 	auto centerB = bounds2.getCenter();
 	float dx = centerA.x - centerB.x;
 	float dy = centerA.y - centerB.y;
-	return std::sqrt((dx * dx + dy * dy));
+	return std::sqrt(dx * dx + dy * dy);
 }
 
 static bool isinRadius(const sf::FloatRect rectA, const sf::FloatRect rectB, const float &radius)

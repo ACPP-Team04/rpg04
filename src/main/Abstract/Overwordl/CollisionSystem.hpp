@@ -5,6 +5,6 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 struct CollisionSystem : public System {
-	CollisionSystem(ArchetypeManager &manager);
+	explicit CollisionSystem(ArchetypeManager &manager);
 	void update() override;
 };

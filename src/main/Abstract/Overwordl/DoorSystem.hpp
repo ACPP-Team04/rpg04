@@ -3,7 +3,7 @@
 #include "Abstract/ECS/System/System.hpp"
 
 struct DoorSystem : public System {
-	DoorSystem(ArchetypeManager &manager);
+	explicit DoorSystem(ArchetypeManager &manager);
 
 	void update() override;
 };

@@ -37,5 +37,9 @@ struct BattleComponent : Component<BattleComponent> {
 	std::optional<EntityID> hoveringTarget = std::nullopt;
 	BATTLE_FACTION faction = BATTLE_FACTION::ENEMY;
 	BATTLE_CONTROLLER controller = BATTLE_CONTROLLER::AI;
-	void readFromJson(tson::TiledClass &j) override {}
+	void readFromJson(tson::TiledClass &j) override
+	{
+		// Intentionally empty:
+		// This component is strictly internal and is not parsed directly from Tiled
+	}
 };

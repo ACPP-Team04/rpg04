@@ -3,6 +3,6 @@
 
 struct BonfireSystem : System {
 
-	BonfireSystem(ArchetypeManager &manager);
+	explicit BonfireSystem(ArchetypeManager &manager);
 	void update() override;
 };

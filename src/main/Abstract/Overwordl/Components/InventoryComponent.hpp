@@ -11,10 +11,7 @@ struct InventoryComponent : public Component<InventoryComponent> {
 
 	std::unordered_map<ITEM_TYPE, EntityID> equiped;
 
-	void readFromJson(tson::TiledClass &j) override
-	{
-		inventoryWorldId = j.get<int>("inventoryWorldId");
-	}
+	void readFromJson(tson::TiledClass &j) override { inventoryWorldId = j.get<int>("inventoryWorldId"); }
 
 	void addItem(EntityID entity, ITEM_TYPE item)
 	{
@@ -48,7 +45,7 @@ struct InventoryComponent : public Component<InventoryComponent> {
 		return {};
 	}
 
-	bool containsItem(int entity)
+	bool containsItem(int entity) const
 	{
 		for (auto &item : items) {
 			if (item.second.contains(EntityID::fromExistingId(entity))) {
@@ -79,15 +76,13 @@ struct InventoryComponent : public Component<InventoryComponent> {
 
 	EntityID getEquippedItem(ITEM_TYPE item)
 	{
-		if (items.contains(item)) {
-			if (equiped.contains(item)) {
-				return equiped[item];
-			}
+		if (items.contains(item) && equiped.contains(item)) {
+			return equiped[item];
 		}
 		throw std::runtime_error("No equipment");
 	}
 
-	bool hasEquippedItem(ITEM_TYPE item)
+	bool hasEquippedItem(ITEM_TYPE item) const
 	{
 		if (items.contains(item)) {
 			if (equiped.contains(item)) {

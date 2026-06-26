@@ -27,6 +27,7 @@
 #include "Abstract/UI/GameOverMenu.hpp"
 #include "Abstract/UI/MainMenu.hpp"
 #include <Abstract/Combat/Components/CombatGodMode.hpp>
+#include <Abstract/Exception/PlayerNotFoundException.hpp>
 #include <Abstract/GameConfig/GameConfig.hpp>
 #include <Abstract/Overwordl/Components/PersistanceComponent.hpp>
 #include <Abstract/Persistance/SaveManager.hpp>
@@ -99,7 +100,7 @@ void initializeEngine(ArchetypeManager &manager)
 	});
 }
 
-void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
+void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser, ECSManager &ecsManager,
                          PersistenceRegistrationSystem &registrationSystem, CharacterPreProcessSystem &preprocess,
                          int slotIndex)
 {
@@ -113,6 +114,7 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
 		return;
 	}
 
+	readGameConfig();
 	manager.clear();
 	parser.update();
 	registrationSystem.update();
@@ -124,6 +126,7 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
 		spdlog::critical("WorldParser failed to spawn a default player!");
 		throw std::runtime_error("WorldParser failed to spawn a default player!");
 	}
+	applyGameConfig(ecsManager, playerOpt.value());
 	SaveManager::injectWorldComponent(manager, saveData["worldState"]);
 
 	SaveManager::injectPlayer(manager, saveData["player"], playerOpt.value());
@@ -135,11 +138,37 @@ void executeLoadSequence(ArchetypeManager &manager, WorldParser &parser,
 		SaveManager::injectDialogs(manager, saveData["worldState"]["dialogStates"],
 		                           saveData["worldState"]["interactionStates"]);
 	}
-	std::string savedMusic = saveData["worldState"].value("currentMusic", "");
-	if (!savedMusic.empty()) {
+
+	if (std::string savedMusic = saveData["worldState"].value("currentMusic", ""); !savedMusic.empty()) {
 		AudioManager::getInstance().playMusic(savedMusic, true);
 	}
 	spdlog::info("Load sequence completely finished!");
+}
+
+void handleSystemRequests(ECSManager &ecsManager, tgui::Gui &gui, GameState &gameState)
+{
+	auto &persistence = PersistenceManager::getInstance();
+
+	if (persistence.requestSave) {
+		SaveManager::saveGame(ecsManager.manager, 1);
+		persistence.requestSave = false;
+	}
+
+	if (persistence.requestLoad) {
+		executeLoadSequence(ecsManager.manager, ecsManager.worldParser, ecsManager,
+		                    ecsManager.persistanceRegistrationSystem, ecsManager.character_preprocess_system, 1);
+		persistence.requestLoad = false;
+	}
+
+	if (persistence.requestQuit) {
+		gameState = GameState::Quit;
+		persistence.requestQuit = false;
+	}
+	if (persistence.requestGameOver) {
+		gameState = GameState::GameOver;
+		GameOverMenu::setUpGameOverMenu(gui, gameState);
+		persistence.requestGameOver = false;
+	}
 }
 
 int main()
@@ -161,7 +190,7 @@ int main()
 		initializeEngine(ecsManager.manager);
 		auto player = WorldUtils::getPlayer(ecsManager.manager);
 		if (!player.has_value()) {
-			throw std::runtime_error("Startup failed: no player entity was created by WorldParser.");
+			throw PlayerNotFoundException("Startup failed: no player entity was created by WorldParser.");
 		}
 		applyGameConfig(ecsManager, player.value());
 		WorldUtils::playMusicForCurrentGroup(ecsManager.manager);
@@ -184,35 +213,10 @@ int main()
 					applyResize(window, gui, ecsManager);
 				}
 			}
-			auto &persistence = PersistenceManager::getInstance();
-
-			if (persistence.requestSave) {
-				SaveManager::saveGame(ecsManager.manager, 1);
-				persistence.requestSave = false;
-			}
-
-			if (persistence.requestLoad) {
-				executeLoadSequence(ecsManager.manager, ecsManager.worldParser,
-				                    ecsManager.persistanceRegistrationSystem, ecsManager.character_preprocess_system,
-				                    1);
-				persistence.requestLoad = false;
-			}
-
-			if (persistence.requestQuit) {
-				gameState = GameState::Quit;
-				persistence.requestQuit = false;
-			}
-			if (persistence.requestGameOver) {
-				gameState = GameState::GameOver;
-				GameOverMenu::setUpGameOverMenu(gui, gameState);
-				persistence.requestGameOver = false;
-			}
-
+			handleSystemRequests(ecsManager, gui, gameState);
 			if (gameState == GameState::Game) {
 				ecsManager.update();
-			}
-
-			if (gameState == GameState::Quit) {
+			} else if (gameState == GameState::Quit) {
 				window.close();
 			}
 

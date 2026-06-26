@@ -1,6 +1,7 @@
 #pragma once
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include <format>
 #include <string>
 
 class BattleUI {
@@ -10,7 +11,7 @@ class BattleUI {
 	tgui::Panel::Ptr actionPanel;
 
   public:
-	BattleUI(tgui::Gui &gui) : gui(gui) {};
+	explicit BattleUI(tgui::Gui &gui) : gui(gui) {};
 
 	void setupLayout()
 	{
@@ -58,22 +59,21 @@ class BattleUI {
 		actionPanel->setVisible(false);
 	}
 
-	tgui::Button::Ptr getButton(std::string name) { return actionPanel->get<tgui::Button>(name); }
+	tgui::Button::Ptr getButton(const std::string &name) const { return actionPanel->get<tgui::Button>(name); }
 
-	tgui::Label::Ptr getLabel(std::string name) { return actionPanel->get<tgui::Label>(name); }
+	tgui::Label::Ptr getLabel(const std::string &name) const { return actionPanel->get<tgui::Label>(name); }
 
-	void setActionPanelVisible(bool visible) { actionPanel->setVisible(visible); }
-	void setHUDVisible(bool visible) { hudPanel->setVisible(visible); }
-	void updateStats(float hp, float maxHp, int ap)
+	void setActionPanelVisible(bool visible) const { actionPanel->setVisible(visible); }
+	void setHUDVisible(bool visible) const { hudPanel->setVisible(visible); }
+	void updateStats(float hp, float maxHp, float ap) const
 	{
 		auto bar = hudPanel->get<tgui::ProgressBar>("HPBar");
-		bar->setMaximum(maxHp);
-		bar->setValue(hp);
-		bar->setText(std::to_string((int)hp) + " / " + std::to_string((int)maxHp));
-
-		hudPanel->get<tgui::Label>("APLabel")->setText("AP: " + std::to_string(ap));
+		bar->setMaximum(static_cast<unsigned int>(maxHp));
+		bar->setValue(static_cast<unsigned int>(hp));
+		bar->setText(std::format("{} / {}", (int)hp, (int)maxHp));
+		hudPanel->get<tgui::Label>("APLabel")->setText(std::format("AP: {}", static_cast<unsigned int>(ap)));
 	}
-	void updateDynamicPosition(float playerX, float screenMiddleX)
+	void updateDynamicPosition(float playerX, float screenMiddleX) const
 	{
 		if (playerX > screenMiddleX) {
 			hudPanel->setPosition("5%", "100% - 330");

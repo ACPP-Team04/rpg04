@@ -10,16 +10,15 @@ class BattleInputSystem : public System {
   private:
 	BattleUI ui;
 	void connectCallbacks();
-	sf::RenderWindow &window;
 	int currentTargetIndex = 0;
 	bool rightKeyWasPressed = false;
 	bool leftKeyWasPressed = false;
 	bool enterKeyWasPressed = false;
-	int lastDrawnAP = -1;
+	float lastDrawnAP = -1.0f;
 	EntityID lastActiveId;
 
   public:
-	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui, sf::RenderWindow &window);
+	BattleInputSystem(ArchetypeManager &manager, tgui::Gui &gui);
 
 	void update() override;
 	void init();

@@ -261,8 +261,8 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundUltimateAttack)
 	combatSystem.update();
 	EXPECT_EQ(BattleState::EXECUTING_ACTION, manager.getComponent<BattleComponent>(player).battleState);
 	EXPECT_EQ(2, manager.getComponent<BattleComponent>(player).AP);
-	// 100-(20+1*0.25*3)=79.25 -> (int) 79
-	EXPECT_EQ(79, characterComE.stats.health);
+	// 100-(20+1*0.25*3)= 100 - (int) 20.75 = 100-20= 80
+	EXPECT_EQ(80, characterComE.stats.health);
 	EXPECT_EQ(1, manager.getComponent<BattleComponent>(player).numberOfUltimateAttacksUsed);
 	manager.removeComponentFromEntity<HitFeedbackComponent>(enemy);
 	manager.removeComponentFromEntity<LungeComponent>(player);
@@ -1266,4 +1266,36 @@ TEST(CombatSystemTest, initialFightingSetupOneRoundRestWithoutSettingTarget)
 	//
 
 	EXPECT_THROW(combatSystem.update(), std::runtime_error);
+}
+
+TEST(CombatSystemTest, GetAttackerDoesNotMutateParticipantsList)
+{
+	ArchetypeManager manager;
+	AISystem aiSystem(manager);
+	AudioManager audioManager;
+	AudioSystem audioSystem(manager, audioManager);
+	CombatSystem combatSystem(manager, aiSystem, audioSystem);
+
+	EntityID player = manager.createEntity<BattleComponent>();
+	EntityID enemy1 = manager.createEntity<BattleComponent>();
+	EntityID enemy2 = manager.createEntity<BattleComponent>();
+
+	EntityID battleEntity = manager.createEntity<BattleManagerComponent>();
+	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battleEntity);
+
+	bmc.participants = {player, enemy1, enemy2};
+
+	manager.addComponentToEntity<DeathComponent>(enemy1);
+	bmc.currentTurnIndex = 1;
+
+	EntityID actualAttacker = combatSystem.getAttacker(bmc);
+
+	EXPECT_EQ(actualAttacker, enemy2);
+
+	EXPECT_EQ(bmc.currentTurnIndex, 2);
+
+	EXPECT_EQ(bmc.participants.size(), 3);
+	EXPECT_EQ(bmc.participants[0], player);
+	EXPECT_EQ(bmc.participants[1], enemy1);
+	EXPECT_EQ(bmc.participants[2], enemy2);
 }

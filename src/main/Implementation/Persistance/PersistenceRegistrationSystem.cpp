@@ -11,15 +11,15 @@
 #include "Abstract/PersistenceManager/PersistenceManager.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
 #include <cmath>
+#include <format>
 #include <spdlog/spdlog.h>
 #include <string>
+#include <vector>
 
 PersistenceRegistrationSystem::PersistenceRegistrationSystem(ArchetypeManager &manager) : System(manager) {}
 
 void PersistenceRegistrationSystem::update()
 {
-	auto &persistence = PersistenceManager::getInstance();
-
 	std::optional<EntityID> playerOpt = WorldUtils::getPlayer(manager);
 	if (!playerOpt.has_value()) {
 		spdlog::error("No player found in the current layer. Persistence registration skipped.");
@@ -31,16 +31,16 @@ void PersistenceRegistrationSystem::update()
 
 	// REGISTER ITEMS
 	manager.view<ItemComponent, TransformComponent, PartOfLayerComponent>().each(
-	    [&](EntityID id, ItemComponent &item, TransformComponent &trans, PartOfLayerComponent &layer) {
+	    [this, &commandBuffer](EntityID id, const ItemComponent &item, const TransformComponent &trans,
+	                           const PartOfLayerComponent &layer) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
-		    int x = static_cast<int>(std::round(trans.position.x));
-		    int y = static_cast<int>(std::round(trans.position.y));
+		    auto x = static_cast<int>(std::round(trans.position.x));
+		    auto y = static_cast<int>(std::round(trans.position.y));
 		    std::string name = item.name.empty() ? "UNKNOWN_ITEM" : item.name;
-		    std::string uuid = "ITEM_" + std::to_string(layer.groupId) + "_" + std::to_string(x) + "_"
-		                       + std::to_string(y) + "_" + name;
-		    commandBuffer.push_back({id, uuid});
+		    std::string uuid = std::format("ITEM_{}_{}_{}_{}", layer.groupId, x, y, name);
+		    commandBuffer.emplace_back(id, uuid);
 	    });
 
 	for (const auto &[id, uuid] : commandBuffer) {
@@ -51,18 +51,16 @@ void PersistenceRegistrationSystem::update()
 
 	// REGISTER ENEMIES
 	manager.view<CharacterComponent, TransformComponent, PartOfLayerComponent>().each(
-	    [&](EntityID id, CharacterComponent &character, TransformComponent &trans, PartOfLayerComponent &layer) {
+	    [this, &commandBuffer, &playerId](EntityID id, [[maybe_unused]] CharacterComponent &character,
+	                                      const TransformComponent &trans, const PartOfLayerComponent &layer) {
 		    if (id == playerId || manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
-		    int x = static_cast<int>(std::round(trans.position.x));
-		    int y = static_cast<int>(std::round(trans.position.y));
+		    auto x = static_cast<int>(std::round(trans.position.x));
+		    auto y = static_cast<int>(std::round(trans.position.y));
 
-		    std::string uuid =
-		        "ENEMY_" + std::to_string(layer.groupId) + "_" + std::to_string(x) + "_" + std::to_string(y);
-		    commandBuffer.push_back({id, uuid});
-		    // manager.addComponentToEntity<PersistanceComponent>(id);
-		    // manager.getComponent<PersistanceComponent>(id).uuid = uuid;
+		    std::string uuid = std::format("ENEMY_{}_{}_{}", layer.groupId, x, y);
+		    commandBuffer.emplace_back(id, uuid);
 	    });
 
 	for (const auto &[id, uuid] : commandBuffer) {
@@ -72,17 +70,17 @@ void PersistenceRegistrationSystem::update()
 	commandBuffer.clear();
 
 	manager.view<DialogComponent, InteractionComponent, TransformComponent, PartOfLayerComponent>().each(
-	    [&](EntityID id, DialogComponent &dialog, InteractionComponent &interactComp, TransformComponent &trans,
-	        PartOfLayerComponent &layer) {
+	    [this, &commandBuffer](EntityID id, const DialogComponent &dialog,
+	                           [[maybe_unused]] InteractionComponent &interactComp, const TransformComponent &trans,
+	                           const PartOfLayerComponent &layer) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
-		    int x = static_cast<int>(std::round(trans.position.x));
-		    int y = static_cast<int>(std::round(trans.position.y));
+		    auto x = static_cast<int>(std::round(trans.position.x));
+		    auto y = static_cast<int>(std::round(trans.position.y));
 		    std::string uuid =
-		        "Dialog_" + std::to_string(layer.groupId) + "_" + std::to_string(x) + "_" + std::to_string(y);
-
-		    commandBuffer.push_back({id, uuid});
+		        std::format("Dialog_{}_{}_{}_{}_{}", layer.groupId, x, y, dialog.currentNodeIndex, dialog.nodes.size());
+		    commandBuffer.emplace_back(id, uuid);
 	    });
 	for (const auto &[id, uuid] : commandBuffer) {
 		manager.addComponentToEntity<PersistanceComponent>(id);
@@ -91,15 +89,15 @@ void PersistenceRegistrationSystem::update()
 	commandBuffer.clear();
 
 	manager.view<IsLockedComponent, TransformComponent>().each(
-	    [&](EntityID id, IsLockedComponent &lockComp, TransformComponent &trans) {
+	    [this, &commandBuffer](EntityID id, const IsLockedComponent &lockComp, const TransformComponent &trans) {
 		    if (manager.hasComponent<PersistanceComponent>(id))
 			    return;
 
-		    int x = static_cast<int>(std::round(trans.position.x));
-		    int y = static_cast<int>(std::round(trans.position.y));
+		    auto x = static_cast<int>(std::round(trans.position.x));
+		    auto y = static_cast<int>(std::round(trans.position.y));
 		    int keyId = lockComp.keyId;
-		    std::string uuid = "LOCK_" + std::to_string(keyId) + "_" + std::to_string(x) + "_" + std::to_string(y);
-		    commandBuffer.push_back({id, uuid});
+		    std::string uuid = std::format("LOCK_{}_{}_{}", keyId, x, y);
+		    commandBuffer.emplace_back(id, uuid);
 	    });
 
 	for (const auto &[id, uuid] : commandBuffer) {
@@ -107,7 +105,7 @@ void PersistenceRegistrationSystem::update()
 		manager.getComponent<PersistanceComponent>(id).uuid = uuid;
 	}
 	commandBuffer.clear();
-	manager.view<PersistanceComponent>().each([&](EntityID id, PersistanceComponent &persistance) {
+	manager.view<PersistanceComponent>().each([](EntityID id, PersistanceComponent &persistance) {
 		spdlog::info("Entity {} registered with UUID: {}", id.getId(), persistance.uuid);
 	});
 }

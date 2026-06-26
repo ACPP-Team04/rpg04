@@ -3,6 +3,6 @@
 #include "Abstract/ECS/System/System.hpp"
 
 struct CleanUpSystem : public System {
-	CleanUpSystem(ArchetypeManager &manager);
+	explicit CleanUpSystem(ArchetypeManager &manager);
 	void update() override;
 };

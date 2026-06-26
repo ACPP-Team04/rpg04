@@ -4,12 +4,14 @@
 
 #include <Abstract/TILE_ENUMS.hpp>
 #include <Abstract/Utils/WorldUtlis.hpp>
+#include <format>
+#include <memory>
+#include <unordered_map>
 StatsDistributorSystem::StatsDistributorSystem(ArchetypeManager &manager, tgui::Gui &gui) : System(manager), gui(gui) {}
 
 void StatsDistributorSystem::update()
 {
-	auto view = manager.view<BattleManagerComponent>();
-	if (view.archetypes.size() == 0) {
+	if (manager.view<BattleManagerComponent>().archetypes.empty()) {
 		return;
 	}
 	auto player = WorldUtils::getPlayer(manager);
@@ -20,20 +22,18 @@ void StatsDistributorSystem::update()
 		return;
 	}
 	EntityID playerId = player.value();
-	auto &battle = manager.getComponent<BattleComponent>(playerId);
+	const auto &battle = manager.getComponent<BattleComponent>(playerId);
 
-	if (battle.battleState == BattleState::STATS_DISTRIBUTION) {
-		if (!isMenuOpen) {
-			showLevelUpMenu(playerId, battle);
-			isMenuOpen = true;
-		}
+	if (battle.battleState == BattleState::STATS_DISTRIBUTION && !isMenuOpen) {
+		showLevelUpMenu(playerId, battle);
+		isMenuOpen = true;
 	}
 }
 
-void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent &battle)
+void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, const BattleComponent &battle)
 {
-	auto &stats = manager.getComponent<CharacterComponent>(playerId).stats;
-	BattleManagerComponent &bmc = manager.getComponent<BattleManagerComponent>(battle.battleManagerId);
+	const auto &stats = manager.getComponent<CharacterComponent>(playerId).stats;
+	const auto &bmc = manager.getComponent<BattleManagerComponent>(battle.battleManagerId);
 	struct LevelUpData {
 		int points;
 		std::unordered_map<STATS, int> extraStats;
@@ -49,13 +49,25 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 	window->setPosition("50%", "50%");
 	gui.add(window);
 
-	data->mainLabel = tgui::Label::create("Points left: " + std::to_string(data->points));
+	data->mainLabel = tgui::Label::create(std::format("Points left: {}", data->points));
 	data->mainLabel->setPosition(20, 20);
 	window->add(data->mainLabel);
 
-	auto addStatRow = [window, data](std::string name, STATS statsEnum, int yPos, int currentVal, int stepSize = 1) {
+	auto updateStatUI = [data](tgui::Label::Ptr label, const std::string &name, STATS statsEnum, int pointCost,
+	                           int statGain, int baseVal) {
+		data->points -= pointCost;
+		data->extraStats[statsEnum] += statGain;
+
+		int currentTotalValue = baseVal + data->extraStats[statsEnum];
+		label->setText(std::format("{} ({}): + {}", name, currentTotalValue, data->extraStats[statsEnum]));
+		data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
+		data->mainLabel->setText(std::format("Points left: {}", data->points));
+	};
+
+	auto addStatRow = [&window, data, &updateStatUI](std::string name, STATS statsEnum, int yPos, int currentVal,
+	                                                 int stepSize = 1) {
 		data->extraStats[statsEnum] = 0;
-		auto label = tgui::Label::create(name + " (" + std::to_string(currentVal) + "): +0");
+		auto label = tgui::Label::create(std::format("{} ({}): +0", name, currentVal));
 		label->setPosition(20, yPos);
 		window->add(label);
 
@@ -67,23 +79,15 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 		btnMinus->setPosition(240, yPos);
 		btnMinus->setSize(30, 30);
 
-		btnPlus->onPress([data, statsEnum, label, name, stepSize]() {
+		btnPlus->onPress([data, updateStatUI, label, name, statsEnum, stepSize, currentVal]() {
 			if (data->points > 0) {
-				data->points--;
-				data->extraStats[statsEnum] += stepSize;
-				label->setText(name + ": +" + std::to_string(data->extraStats[statsEnum]));
-				data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
-				data->mainLabel->setText("Points left: " + std::to_string(data->points));
+				updateStatUI(label, name, statsEnum, 1, stepSize, currentVal);
 			}
 		});
 
-		btnMinus->onPress([data, statsEnum, label, name, stepSize]() {
+		btnMinus->onPress([data, updateStatUI, label, name, statsEnum, stepSize, currentVal]() {
 			if (data->extraStats[statsEnum] > 0) {
-				data->points++;
-				data->extraStats[statsEnum] -= stepSize;
-				label->setText(name + ": +" + std::to_string(data->extraStats[statsEnum]));
-				data->mainLabel->getRenderer()->setTextColor(tgui::Color::Black);
-				data->mainLabel->setText("Points left: " + std::to_string(data->points));
+				updateStatUI(label, name, statsEnum, -1, -stepSize, currentVal);
 			}
 		});
 
@@ -101,7 +105,7 @@ void StatsDistributorSystem::showLevelUpMenu(EntityID playerId, BattleComponent 
 	confirmBtn->onPress([this, playerId, data, window]() {
 		if (data->points > 0) {
 			data->mainLabel->getRenderer()->setTextColor(tgui::Color::Red);
-			data->mainLabel->setText("Please spend all points! Points left: " + std::to_string(data->points));
+			data->mainLabel->setText(std::format("Please spend all points! Points left: {}", data->points));
 			return;
 		}
 

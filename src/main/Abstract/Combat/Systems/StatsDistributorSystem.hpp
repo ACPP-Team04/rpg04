@@ -11,8 +11,8 @@ class StatsDistributorSystem : public System {
   public:
 	StatsDistributorSystem(ArchetypeManager &manager, tgui::Gui &gui);
 
-	void update();
+	void update() override;
 
   private:
-	void showLevelUpMenu(EntityID playerId, BattleComponent &battle);
+	void showLevelUpMenu(EntityID playerId, const BattleComponent &battle);
 };
