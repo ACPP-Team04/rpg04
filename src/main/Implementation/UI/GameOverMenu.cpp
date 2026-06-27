@@ -15,6 +15,7 @@ void GameOverMenu::setUpGameOverMenu(tgui::Gui &gui, GameState &state)
 	auto title = tgui::Label::create("YOU DIED");
 	title->setTextSize(72);
 	title->setPosition("50% - width / 2", "30%");
+	title->getRenderer()->setFont(FONT);
 	title->getRenderer()->setTextColor(tgui::Color::Red);
 	panel->add(title);
 
