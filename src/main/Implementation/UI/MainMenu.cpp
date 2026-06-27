@@ -26,6 +26,7 @@ void setLayout(tgui::Gui &gui, GameState &state)
 	auto title = tgui::Label::create("Zombie Knight");
 	title->setTextSize(48);
 	title->setPosition("50% - width / 2", "20%");
+	title->getRenderer()->setFont(FONT);
 	mainMenu->add(title);
 
 	auto startButton = tgui::Button::create("Start New Game");

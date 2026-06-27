@@ -8,5 +8,5 @@
 
 	},
 	"default_music": "overworld",
-	"log_level": "debug"
+	"log_level": "info"
 }

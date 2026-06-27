@@ -1,9 +1,9 @@
 #include "Abstract/Overwordl/HudSystem.hpp"
 
-#include <TGUI/Widgets/ChatBox.hpp>
 #include "Abstract/Overwordl/Components/InventoryComponent.hpp"
 #include "Abstract/Overwordl/Components/WorldComponent.hpp"
 #include "Abstract/Utils/WorldUtlis.hpp"
+#include <TGUI/Widgets/ChatBox.hpp>
 
 #include <TGUI/Widgets/Button.hpp>
 #include <TGUI/Widgets/HorizontalLayout.hpp>
@@ -40,13 +40,16 @@ void HudSystem::update()
 
 	if (!isHudPanelOpened(gui, "HudPanel")) {
 		openHudPanel(gui);
+		if (auto worldName = gui.get<tgui::Label>("WorldName")) {
+			worldName->getRenderer()->setFont(FONT);
+		}
 	}
 	std::shared_ptr<tgui::Label> wordlName = gui.get<tgui::Label>("WorldName");
 	wordlName.get()->setText(component->worlds[component->currentGroup].name);
 	std::shared_ptr<tgui::ChatBox> toastBox = gui.get<tgui::ChatBox>("ToastChatBox");
 	std::shared_ptr<tgui::ChatBox> persistantMessageBox = gui.get<tgui::ChatBox>("PersistanMessageBox");
 	wordlName->getRenderer()->setTextColor(toastBox.get()->getTextColor());
-	
+
 	if (elpasedFramesSinceLastMessage > TOAST_FRAME_DURATION) {
 		size_t size = toastBox.get()->getLineAmount();
 		if (size > 0) {
