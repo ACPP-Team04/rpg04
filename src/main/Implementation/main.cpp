@@ -180,7 +180,7 @@ int main()
 		    sf::VideoMode({static_cast<unsigned>(logicalSize.x), static_cast<unsigned>(logicalSize.y)}),
 		    "Zombie Knight");
 		tgui::Gui gui(window);
-		gui.setFont(FONT);
+		gui.setFont(DIALOG_FONT);
 		readGameConfig();
 
 		spdlog::info("Creating ECS manager...");
