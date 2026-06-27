@@ -12,7 +12,7 @@ Explore the overworld, manage your resources and fight your way through turn-bas
 **Exploration**
 * **W, A, S, D**: Move the player character
 * **I**: Open the inventory and resource management menu
-* **Esc**: Open the main menu (Save, Load, Exit)
+* **Esc**: Open the main menu (Resume game, Load, Exit)
 * **Interaction Button**: Will be shown in the HUD which button to press to interact
 
 **Combat**
@@ -98,6 +98,12 @@ Run tests
 .\build\Release\tests.exe
 ```
 
+### Configuration & Debugging
+
+You can adjust the game settings by editing the `src/ressources/config.json` file:
+
+* **Log Level:** Change the `log_level` to filter `spdlog` logging console output
+* **God Mode:** Set `godMode` to true to make the player invincible and allow them to defeat enemies with a single hit
 
 
 
