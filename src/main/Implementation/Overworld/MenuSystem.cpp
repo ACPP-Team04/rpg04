@@ -256,9 +256,11 @@ void buildInventoryMenu(ArchetypeManager &manager, WorldComponent *world, tgui::
 				              isEquipped, playerId]() {
 					inspectorPanel->removeAllWidgets();
 
-					auto title = tgui::Label::create("Inspecting " + itemName);
+					auto title = tgui::Label::create(itemName);
 					title->setTextSize(24);
 					title->setPosition({20, 20});
+
+					title->setSize({"100% - 140", 60});
 					title->getRenderer()->setTextColor(tgui::Color::White);
 					inspectorPanel->add(title);
 
